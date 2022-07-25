@@ -1,0 +1,11 @@
+﻿Name
+data:mission:op_mission:payload
+data:mission:op_mission:diversion:distance
+data:mission:op_mission:holding:duration
+data:mission:op_mission:main_route:range
+data:mission:op_mission:takeoff:V2
+data:mission:op_mission:takeoff:altitude
+data:mission:op_mission:takeoff:fuel
+data:mission:op_mission:taxi_in:duration
+data:mission:op_mission:taxi_out:duration
+data:mission:op_mission:taxi_out:thrust_rate

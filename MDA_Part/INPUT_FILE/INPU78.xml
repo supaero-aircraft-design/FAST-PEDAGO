@@ -1,10 +1,10 @@
 <FASTOAD_model>
   <data>
     <TLAR>
-      <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
+      <NPAX is_input="True">200.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
       <approach_speed units="m/s" is_input="True">67.90666666666667<!--top-level requirement: approach speed--></approach_speed>
       <cruise_mach is_input="True">0.78<!--top-level requirement: cruise Mach number--></cruise_mach>
-      <range units="NM" is_input="True">2500.0<!--top-level requirement: design range--></range>
+      <range units="NM" is_input="True">2500<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -59,6 +59,11 @@
         <kink>
           <span_ratio is_input="True">0.375<!--ratio (Y-position of kink)/(semi-span)--></span_ratio>
         </kink>
+        <MAC>
+          <at25percent>
+            <x units="m" is_input="True">16.0<!--X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)--></x>
+          </at25percent>
+        </MAC>
         <spar_ratio>
           <front>
             <kink is_input="True">0.15<!--ratio (front spar position)/(chord length) at wing kink--></kink>
@@ -75,6 +80,15 @@
     </geometry>
     <propulsion>
       <MTO_thrust units="N" is_input="True">117880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
+      <climb>
+        <thrust_rate is_input="True">0.93<!--Input defined by the mission.--></thrust_rate>
+      </climb>
+      <descent>
+        <thrust_rate is_input="True">0.18<!--Input defined by the mission.--></thrust_rate>
+      </descent>
+      <initial_climb>
+        <thrust_rate is_input="True">1.0<!--Input defined by the mission.--></thrust_rate>
+      </initial_climb>
       <rubber_engine>
         <bypass_ratio is_input="True">4.9<!--bypass ratio for rubber engine model--></bypass_ratio>
         <delta_t4_climb is_input="True">-50.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_climb>
@@ -84,12 +98,10 @@
         <overall_pressure_ratio is_input="True">32.6<!--Overall pressure ratio for rubber engine model--></overall_pressure_ratio>
         <turbine_inlet_temperature units="K" is_input="True">1633.0<!--design turbine inlet temperature (T4) for rubber engine model--></turbine_inlet_temperature>
       </rubber_engine>
+      <taxi>
+        <thrust_rate is_input="True">0.3<!--Input defined by the mission.--></thrust_rate>
+      </taxi>
     </propulsion>
-    <handling_qualities>
-      <static_margin>
-        <target is_input="True">nan</target>
-      </static_margin>
-    </handling_qualities>
     <load_case>
       <lc1>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
@@ -102,6 +114,12 @@
         <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
       </lc2>
     </load_case>
+    <weight>
+      <aircraft>
+        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">17000.0<!--design payload weight--></payload>
+      </aircraft>
+    </weight>
     <aerodynamics>
       <aircraft>
         <landing>
@@ -113,22 +131,38 @@
       </aircraft>
     </aerodynamics>
     <mission>
+      <MTOW_mission>
+        <diversion>
+          <distance units="NM" is_input="True">200.0<!--distance to travel during diversion in sizing mission--></distance>
+        </diversion>
+        <holding>
+          <duration units="min" is_input="True">45.0<!--duration of holding phase in sizing mission--></duration>
+        </holding>
+        <main_route>
+          <range units="NM" is_input="True">2500.0<!--Input defined by the mission.--></range>
+        </main_route>
+        <takeoff>
+          <V2 units="m/s" is_input="True">79.3<!--safety speed before reaching 35 feet height in sizing mission--></V2>
+          <altitude units="m" is_input="True">0.0<!--altitude at takeoff in sizing mission--></altitude>
+          <fuel units="kg" is_input="True">82.4<!--mass of consumed fuel during takeoff phase in sizing mission--></fuel>
+        </takeoff>
+        <taxi_in>
+          <duration units="s" is_input="True">300.0<!--duration of taxi-in phase in sizing mission--></duration>
+        </taxi_in>
+        <taxi_out>
+          <duration units="s" is_input="True">540.0<!--duration of taxi-out phase in sizing mission--></duration>
+          <thrust_rate units="s" is_input="True">0.25<!--thrust rate (between 0.0 and 1.0) during taxi-out phase in sizing mission--></thrust_rate>
+        </taxi_out>
+      </MTOW_mission>
       <sizing>
         <landing>
           <flap_angle units="deg" is_input="True">30.0<!--flap angle during landing phase in sizing mission--></flap_angle>
           <slat_angle units="deg" is_input="True">20.0<!--slat angle during landing phase in sizing mission--></slat_angle>
         </landing>
         <takeoff>
-          <V2 units="m/s" is_input="True">79.3<!--safety speed before reaching 35 feet height in sizing mission--></V2>
-          <altitude units="m" is_input="True">0.0<!--altitude at takeoff in sizing mission--></altitude>
           <flap_angle units="deg" is_input="True">10.0<!--flap angle during takeoff phase in sizing mission--></flap_angle>
-          <fuel units="kg" is_input="True">82.4<!--mass of consumed fuel during takeoff phase in sizing mission--></fuel>
           <slat_angle units="deg" is_input="True">18.0<!--slat angle during takeoff phase in sizing mission--></slat_angle>
         </takeoff>
-        <taxi_out>
-          <duration units="s" is_input="True">nan<!--duration of taxi-out in mission "sizing"--></duration>
-          <thrust_rate is_input="True">nan<!--thrust rate during taxi-out in mission "sizing"--></thrust_rate>
-        </taxi_out>
         <main_route>
           <cruise>
             <altitude units="ft" is_input="True">35000.0<!--altitude during cruise phase in sizing mission--></altitude>
@@ -160,10 +194,6 @@
             </MAC_position>
           </aft>
         </CG>
-        <payload>
-          <design_mass_per_passenger units="kg" is_input="True">90.72<!--Design value of mass per passenger--></design_mass_per_passenger>
-          <max_mass_per_passenger units="kg" is_input="True">130.72<!--Maximum value of mass per passenger--></max_mass_per_passenger>
-        </payload>
       </aircraft>
       <airframe>
         <flight_controls>
@@ -196,21 +226,6 @@
         </power>
       </systems>
     </weight>
-    <mission>
-      <sizing>
-        <breguet>
-          <climb>
-            <mass_ratio is_input="True">0.976<!--For Breguet performance computation: assumption of (mass at end of climb) / (mass at start of climb)--></mass_ratio>
-          </climb>
-          <descent>
-            <mass_ratio is_input="True">0.985<!--For Breguet performance computation: assumption of (mass at end of descent) / (mass at start of descent)--></mass_ratio>
-          </descent>
-          <reserve>
-            <mass_ratio is_input="True">0.06<!--For Breguet performance computation: (weight of fuel reserve)/ZFW--></mass_ratio>
-          </reserve>
-        </breguet>
-      </sizing>
-    </mission>
   </settings>
   <tuning>
     <propulsion>
