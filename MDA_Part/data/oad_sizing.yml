@@ -34,3 +34,14 @@ model:
     id: fastoad.handling_qualities.static_margin
   wing_area:
     id: fastoad.loop.wing_area
+optimization:
+  design_variables:
+  - name: data:geometry:wing:aspect_ratio
+    lower: 9.0
+    upper: 18.0
+  constraints:
+  - name: data:geometry:wing:span
+    upper: 60.0
+  objective:
+  - name: data:weight:aircraft:sizing_block_fuel
+    scaler: 0.0001

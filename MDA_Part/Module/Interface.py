@@ -7,6 +7,8 @@ from ipywidgets import Layout
 from Module.OAD import*
 import csv
 import yaml
+import statistics
+import plotly.graph_objects as go
 class Interface:
     
     
@@ -1008,7 +1010,7 @@ class Interface:
     def MDA_UI(self,event):
         clear_output()
         
-        table1=["RUN MDA","MISSION ANALYSIS","PARAMETRIC STUDY"]
+        table1=["RUN MDA","MISSION ANALYSIS","PARAMETRIC BRANCH"]
         table2=["MDA OUTPUTS ", "SAVE AIRCRAFT DATA", "DELETE AIRCRAFT DATA"]
         table3=["BACK","NEXT"]
         
@@ -2041,6 +2043,8 @@ class Interface:
         self.List_OWE=[]
         self.List_BF=[]
         self.List_SR=[]
+        self.List_CD=[]
+        self.List_finesse=[]
         
         path_to_target="OUTPUT_FILE"
         path_to_file_list = []
@@ -2059,11 +2063,13 @@ class Interface:
         
     def PARAMETRIC_UI2(self,event):
         aircraft=self.AC.value
+        path="OUTPUT_FILE"
+        self.AC_ref=pth.join(path,aircraft)
         mission_name=os.path.splitext(os.path.split(aircraft)[1])[0]+".CSV"
         path_miss="MISSION_FILE"
         try:
-            mission_path=pth.join(path_miss,mission_name)
-            SFC=self.OAD.para_sfc(mission_path)
+            self.mission_ref=pth.join(path_miss,mission_name)
+            SFC=self.OAD.para_sfc(self.mission_ref)
             self.List_SFC.append(SFC)
         except:
             print("------------NO MISSION FILE CORRESPONDING TO THE SELECTED AIRCRAFT-------------")
@@ -2087,9 +2093,14 @@ class Interface:
             
         
         Button3=widgets.Button(description="DRAG SAVING",tooltip="MODIFY THE AIRCRAFT DRAG",layout=layout_button,style=dict(button_color='#ebebeb'))
+        Button3.on_click(self.Drag_Saving_UI)
         Button4=widgets.Button(description="FUSELAGE STRETCH ",tooltip="MODIFY THE FUSELAGE GEOMETRY",layout=layout_button,style=dict(button_color='#ebebeb'))
+        Button4.on_click(self.Fuselage_Stretch_UI)
+        
         box_H=widgets.HBox(children=[Button1,Button2,Button3,Button4],layout=layout_H)
         Button=widgets.Button(description="LUNCH ANALYSIS",tooltip="SAVE THE SELECTED AIRCRAFT",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button.on_click(self.INCREMENTAL_DEVELOPEMENT)
+        
         self.ID2_box=widgets.VBox(children=[title,box_H,Button],layout=layout_box)
         display(self.ID2_box)
         
@@ -2107,6 +2118,9 @@ class Interface:
         self.BF_REF=self.MTOW-(self.OWE_REF-self.Max_Payload)
         self.List_BF.append(self.BF_REF)
         
+        clear_output()
+        display(self.ID1_box)
+        display(self.ID2_box)
         layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
         layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
         layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
@@ -2149,6 +2163,10 @@ class Interface:
             
         
     def NEO_UI(self,event):
+        clear_output()
+        display(self.ID1_box)
+        display(self.ID2_box)
+        
         layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
         layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
         layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
@@ -2190,17 +2208,449 @@ class Interface:
                 
            
 
-    
-   
- 
-   
-    
-   
-    
-    
-    
+    def Drag_Saving_UI(self,event):
+        path="OUTPUT_FILE"
+        file_name="ID_Aircraft_File.xml"
+        para_path=pth.join(path,file_name)
+        self.Para_Data2=self.OAD.Input_File(para_path)
+        self.CD=self.Para_Data2["data:aerodynamics:aircraft:cruise:CD"].value
+        finesse=self.Para_Data2["data:aerodynamics:aircraft:cruise:L_D_max"].value[0]
+        
+        clear_output()
+        display(self.ID1_box)
+        display(self.ID2_box)
+        layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
+        layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
+        layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%',justify_content='space-between')
+        layout_box=widgets.Layout(border='6px solid green', padding='10px', align_items='center', width='100%')
+        layout=widgets.Layout(width="50%", height='50px',justify_content='space-between')
+        style=style={'description_width': 'initial'}
+        layout_H=widgets.Layout( padding='10px', align_items='center', width='100%',justify_content='space-between')
+        layout_V=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
+        title=widgets.HTML(value=" <b>DRAG SAVING </b>") 
+
+        self.DRAG_1=widgets.BoundedFloatText(min=0,max=60,step=0.001,value=round(finesse,2),disabled=True,description="(L/D)_max",description_tooltip="max lift/drag ratio in cruise conditions",style=style,layout=layout)
+        Button=widgets.Button(description="SAVE",tooltip="SAVE THE DRAG MODIFICATION",layout=layout_button,style=dict(button_color="#33ffcc"))
+        
+        
+        box1=widgets.VBox(children=[self.DRAG_1],layout=layout_V)
+        
+        
+        
+        self.DRAG_2=widgets.BoundedFloatText(min=-100,max=0,step=0.001,value=0,disabled=False,description=" %∆(CD)",description_tooltip="%∆ (drag coefficient in cruise conditions)", style=style,layout=layout)
+        self.DRAG_2.observe(self.percent_drag_finesse,names="value")
+        
+        self.DRAG_3=widgets.BoundedFloatText(min=-20,max=20,step=0.001,value=0,disabled=True,description="∆(L/D)_max",description_tooltip="∆ (max lift/drag ratio in cruise conditions)",style=style,layout=layout)
+        self.DRAG_4=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=0,disabled=True,description="%∆(L/D)_max",description_tooltip="%∆ (max lift/drag ratio in cruise conditions)",style=style,layout=layout)
+       
+       
+        box2=widgets.VBox(children=[self.DRAG_2],layout=layout_V)
+        box3=widgets.HBox(children=[self.DRAG_3,self.DRAG_4],layout=layout_H)
+        box4=widgets.VBox(children=[box3],layout=layout_V)
+        Button=widgets.Button(description="SAVE",tooltip="SAVE THE DRAG MODIFICATION",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button.on_click(self.Drag_Saving)
+        self.CD_box=widgets.VBox(children=[title,box1,box2,box4,Button],layout=layout_box)
+        display(self.CD_box)
    
 
+    
+        
+    def percent_drag_finesse(self,change):
+        delta_percent=self.DRAG_2.value
+        new_percent=100+delta_percent
+        new_finesse=(100*self.DRAG_1.value)/new_percent
+        
+        delta_finesse=new_finesse-self.DRAG_1.value
+        delta_percent_finesse=(delta_finesse*100)/self.DRAG_1.value
+        self.DRAG_3.value=round(delta_finesse,2)
+        self.DRAG_4.value=round(delta_percent_finesse,2)
+    
+            
+    def Drag_Saving(self,event):
+        percent=1+self.DRAG_2.value/100
+        new_CD=[cd*percent for cd in self.CD]
+        new_finesse=self.DRAG_1.value+self.DRAG_3.value
+        path="OUTPUT_FILE"
+        file="ID_Aircraft_File.xml"
+        para_path=pth.join(path,file)
+        para_data=self.OAD.Input_File(para_path)
+        para_data["data:aerodynamics:aircraft:cruise:CD"].value=new_CD
+        para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value=new_finesse
+        para_data.save()
+        print("-------------------------------------DRAG MODIFICATIONS SAVED----------------------------------------")
+        
+    
+        
+   
+    def Fuselage_Stretch_UI(self,event):
+        
+        path="OUTPUT_FILE"
+        file="ID_Aircraft_File.xml"
+        para_path=pth.join(path,file)
+        para_data=self.OAD.Input_File(para_path)
+        
+        
+        
+        FUSE_1=para_data["data:geometry:fuselage:length"].value[0]
+        
+        self.CD0_fus=para_data["data:aerodynamics:fuselage:cruise:CD0"].value
+        FUSE_2=statistics.mean(self.CD0_fus)
+        
+        self.CD0_ac=para_data["data:aerodynamics:aircraft:cruise:CD0"].value
+        FUSE_3=statistics.mean(self.CD0_ac)
+        
+        self.CD_ac=para_data["data:aerodynamics:aircraft:cruise:CD"].value
+        FUSE_4=statistics.mean(self.CD_ac)
+        
+        FUSE_5=para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value[0]
+        FUSE_6=para_data["data:geometry:cabin:NPAX1"].value[0]
+        FUSE_7=para_data["data:weight:aircraft:OWE"].value[0]
+        
+        FUSE_16=para_data["data:weight:aircraft:payload"].value[0]
+        FUSE_17=para_data["data:weight:aircraft:max_payload"].value[0]
+        
+        # Compute the coeffecient k from the expression of the aircraft CD0 implemented in FAST-OAD
+        CD0_clean=statistics.mean(para_data["data:aerodynamics:aircraft:cruise:CD0:clean"].value)
+        CD0_parasitic=statistics.mean(para_data["data:aerodynamics:aircraft:cruise:CD0:parasitic"].value)
+        self.K_CD0=CD0_clean/CD0_parasitic
+        
+        
+        clear_output()
+        display(self.ID1_box)
+        display(self.ID2_box)
+        
+        layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
+        layout_button=widgets.Layout(width='40%', height='40px', border='4px solid black')
+        layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
+        layout_box=widgets.Layout(border='6px solid green', padding='10px', align_items='center', width='100%')
+        layout=widgets.Layout(width="50%", height='50px',justify_content='space-between')
+        style=style={'description_width': 'initial'}
+        layout_H=widgets.Layout( padding='10px', align_items='center', width='100%',justify_content='space-between')
+        layout_V=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
+        
+        title=widgets.HTML(value=" <b>FUSELAGE STRETCH </b>") 
+        
+        self.FUSE_1=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_1,2),disabled=True,description="fuselage:length (m)",description_tooltip="total fuselage length (m)",style=style,layout=layout)
+        self.FUSE_2=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_2,4),disabled=True,description="fuselage:cruise:CD0_mean",description_tooltip="The mean CD0 of the fuselage in cruise",style=style,layout=layout)
+        self.FUSE_3=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_3,4),disabled=True,description="aircraft:cruise:CD0_mean",description_tooltip="the mean CD0 of the aircraft in cruise",style=style,layout=layout)
+        self.FUSE_4=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_4,4),disabled=True,description="aircraft:cruise:CD_mean",description_tooltip="the mean CD0 of the aircraft in cruise",style=style,layout=layout)
+        self.FUSE_5=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_5,2),disabled=True,description="aircraft:cruise:L_D_max",description_tooltip="the max lift_drag ratio",style=style,layout=layout)
+        box1=widgets.HBox(children=[self.FUSE_2,self.FUSE_3],layout=layout_H)
+        box2=widgets.HBox(children=[self.FUSE_4,self.FUSE_5],layout=layout_H)
+        self.FUSE_6=widgets.BoundedFloatText(min=0,max=1000,step=1,value=round(FUSE_6,0),disabled=True,description="cabin:NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
+        self.FUSE_7=widgets.BoundedFloatText(min=0,max=60000,step=1,value=round(FUSE_7,3),disabled=True,description="OWE (Kg)",description_tooltip="Empty Operating Weight of the aircraft",style=style,layout=layout)
+        box3=widgets.HBox(children=[self.FUSE_6,self.FUSE_7],layout=layout_H)
+        
+        self.FUSE_16=widgets.BoundedFloatText(min=0,max=60000,step=1,value=round(FUSE_16,3),disabled=True,description="aircraft:payload (Kg)",description_tooltip="design payload weight",style=style,layout=layout)
+        self.FUSE_17=widgets.BoundedFloatText(min=0,max=60000,step=1,value=round(FUSE_17,3),disabled=True,description="aircraft:max_payload(Kg)",description_tooltip="design max payload weight",style=style,layout=layout)
+    
+        box11=widgets.HBox(children=[self.FUSE_16,self.FUSE_17],layout=layout_H)
+        box4=widgets.VBox(children=[self.FUSE_1,box1,box2,box3,box11],layout=layout_V)
+        
+        
+        self.FUSE_8=widgets.BoundedFloatText(min=0,max=100,step=0.01,value=0,disabled=False,description=" ∆ fuselage:length (m)",description_tooltip="variation of total fuselage length (m)",style=style,layout=layout)
+        self.FUSE_8.observe(self.delta_length_percent,names="value")
+    
+        self.FUSE_9=widgets.BoundedFloatText(min=0,max=100,step=0.01,value=0,disabled=False,description=" ∆ fuselage:length (%)",description_tooltip="variation of total fuselage length (m)",style=style,layout=layout)
+        self.FUSE_9.observe(self.percent_length_delta,names="value")
+        box5=widgets.HBox(children=[self.FUSE_8,self.FUSE_9],layout=layout_H)
+        box6=widgets.VBox(children=[box5],layout=layout_V)
+
+        
+        self.FUSE_10=widgets.BoundedFloatText(min=-100,max=100,step=0.01,value=0,disabled=True,description="∆ aircraft:cruise:L_D_max",description_tooltip="the max lift_drag ratio ",style=style,layout=layout)
+        
+        self.FUSE_11=widgets.BoundedFloatText(min=-100,max=100,step=0.01,value=0,disabled=True,description="∆ aircraft:cruise:L_D_max (%)",description_tooltip="the max lift_drag ratio ",style=style,layout=layout)
+        
+        box7=widgets.HBox(children=[self.FUSE_10,self.FUSE_11],layout=layout_H)
+        
+
+        self.FUSE_12=widgets.BoundedFloatText(min=0,max=1000,step=1,value=0,disabled=True,description="∆ cabin:NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
+        
+        self.FUSE_13=widgets.BoundedFloatText(min=0,max=1000,step=0.01,value=0,disabled=True,description="∆ cabin:NPAX1(%)",description_tooltip="number of passengers",style=style,layout=layout)
+        
+        
+        box8=widgets.HBox(children=[self.FUSE_12,self.FUSE_13],layout=layout_H)
+
+        self.FUSE_14=widgets.BoundedFloatText(min=0,max=60000,step=0.01,value=0,disabled=True,description="∆ OWE (Kg)",description_tooltip="Empty Operating Weight of the aircraft",style=style,layout=layout)
+        
+        
+        self.FUSE_15=widgets.BoundedFloatText(min=0,max=100,step=0.01,value=0,disabled=True,description=" ∆ OWE (%)",description_tooltip="Empty Operating Weight of the aircraft",style=style,layout=layout)
+        
+            
+        box9=widgets.HBox(children=[self.FUSE_14,self.FUSE_15],layout=layout_H)
+        
+        self.FUSE_18=widgets.BoundedFloatText(min=0,max=60000,step=1,value=0,disabled=True,description="∆ aircraft:max_payload(Kg)",description_tooltip="variation of the  design max payload weight",style=style,layout=layout)
+        self.FUSE_19=widgets.BoundedFloatText(min=0,max=60000,step=1,value=0,disabled=True,description="∆ aircraft:max_payload(%)",description_tooltip="∆ variation of the  design max payload weight(%)",style=style,layout=layout)
+        
+        box12=widgets.HBox(children=[self.FUSE_18,self.FUSE_19],layout=layout_H)
+        box10=widgets.VBox(children=[box7,box8,box9,box12],layout=layout_V)
+        
+        Button=widgets.Button(description="SAVE",tooltip="SAVE THE FUSELAGE MOFIFICATIONS ",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button.on_click(self.Fuselage_Stretch)
+        
+        self.FUSE_box=widgets.VBox(children=[title,box4,box6,box10,Button],layout=layout_box)
+        display(self.FUSE_box)
+        
+        
+    def delta_length_percent(self,change):
+        length_ref=self.FUSE_1.value
+        delta_length=self.FUSE_8.value
+        percent=(100*delta_length)/length_ref
+        self.FUSE_9.value=round(percent,2)
+        
+        #NEW FUSELAGE LENGTH
+        length_new=length_ref+delta_length
+        
+        #NEW NPAX
+        Npax_ref=self.FUSE_6.value
+        Npax_new=(length_new/length_ref)*Npax_ref
+        delta_Npax=(Npax_new-Npax_ref)
+        percent_Npax=(delta_Npax*100)/Npax_ref
+        self.FUSE_12.value=round(delta_Npax,0)
+        self.FUSE_13.value=round(percent_Npax,2)
+        
+        
+        #NEW OWE
+        OWE_ref=self.FUSE_7.value
+        OWE_new=(length_new/length_ref)*OWE_ref
+        delta_OWE=(OWE_new-OWE_ref)
+        percent_OWE=(delta_OWE*100)/OWE_ref
+        self.FUSE_14.value=round(delta_OWE,3)
+        self.FUSE_15.value=round(percent_OWE,2)
+        
+        
+        #NEW PAYLOAD
+        Payload_ref=self.FUSE_17.value
+        Payload_new=(Npax_new/Npax_ref)*Payload_ref
+        delta_Payload=(Payload_new-Payload_ref)
+        percent_Payload=(delta_Payload*100)/Payload_ref
+        self.FUSE_18.value=round(delta_Payload,3)
+        self.FUSE_19.value=round(percent_Payload,2)
+        
+        #NEW AERODYNAMICS
+        
+        #New CD0 of the fuselage
+        CD0_ref=self.FUSE_2.value
+        CD0_fus_new=(length_new/length_ref)*CD0_ref
+        
+        # Delta CD0 of the fuselage
+        delta_CD0_fus=CD0_fus_new-CD0_ref
+        
+        # Delta CD0 of the aircraft
+        delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        
+        # Delta CD of the aircraft
+        delta_CD_ac=delta_CD0_ac
+        
+        # Delta CD of the aircraft in %
+        CD_ref=self.FUSE_4.value
+        percent_CD=(100*delta_CD_ac)/CD_ref
+        
+        # new the lift drag ration in %
+        finesse_ref=self.FUSE_5.value
+        finesse_new=(100*finesse_ref)/(100+percent_CD)
+        delta_finesse=finesse_new-finesse_ref
+        percent_finesse=(100*delta_finesse)/finesse_ref
+        
+        self.FUSE_10.value=round(delta_finesse,2)
+        
+        self.FUSE_11.value=round(percent_finesse,2)
+            
+
+    def percent_length_delta(self,change):
+        length_ref=self.FUSE_1.value
+        percent=self.FUSE_9.value
+        delta_length=(percent*length_ref)/100
+        self.FUSE_8.value=round(delta_length,2)
+        
+        #NEW FUSELAGE LENGTH
+        length_new=length_ref+delta_length
+        
+        #NEW NPAX
+        Npax_ref=self.FUSE_6.value
+        Npax_new=(length_new/length_ref)*Npax_ref
+        delta_Npax=(Npax_new-Npax_ref)
+        percent_Npax=(delta_Npax*100)/Npax_ref
+        self.FUSE_12.value=round(delta_Npax,0)
+        self.FUSE_13.value=round(percent_Npax,2)
+        
+        
+        #NEW OWE
+        OWE_ref=self.FUSE_7.value
+        OWE_new=(length_new/length_ref)*OWE_ref
+        delta_OWE=(OWE_new-OWE_ref)
+        percent_OWE=(delta_OWE*100)/OWE_ref
+        self.FUSE_14.value=round(delta_OWE,3)
+        self.FUSE_15.value=round(percent_OWE,2)
+        
+        
+        #NEW PAYLOAD
+        Payload_ref=self.FUSE_17.value
+        Payload_new=(Npax_new/Npax_ref)*Payload_ref
+        delta_Payload=(Payload_new-Payload_ref)
+        percent_Payload=(delta_Payload*100)/Payload_ref
+        self.FUSE_18.value=round(delta_Payload,3)
+        self.FUSE_19.value=round(percent_Payload,2)
+        
+        #NEW AERODYNAMICS
+        
+        #New CD0 of the fuselage
+        CD0_ref=self.FUSE_2.value
+        CD0_fus_new=(length_new/length_ref)*CD0_ref
+        
+        
+        # Delta CD0 of the fuselage
+        delta_CD0_fus=CD0_fus_new-CD0_ref
+        self.percent_CD0_fus=(100*delta_CD0_fus)/CD0_ref
+        
+        # Delta CD0 of the aircraft
+        delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        self.percent_CD0_ac=(100*delta_CD0_ac)/self.FUSE_3.value
+        # Delta CD of the aircraft
+        delta_CD_ac=delta_CD0_ac
+        
+        # Delta CD of the aircraft in %
+        CD_ref=self.FUSE_4.value
+        self.percent_CD=(100*delta_CD_ac)/CD_ref
+        
+        # new the lift drag ration in %
+        finesse_ref=self.FUSE_5.value
+        finesse_new=(100*finesse_ref)/(100+self.percent_CD)
+        delta_finesse=finesse_new-finesse_ref
+        percent_finesse=(100*delta_finesse)/finesse_ref
+        
+        self.FUSE_10.value=round(delta_finesse,2)
+        
+        self.FUSE_11.value=round(percent_finesse,2)
+        
+    
+    def Fuselage_Stretch(self,event):
+        # new length
+        length=self.FUSE_1.value+self.FUSE_8.value
+        # new lift_drag ratio
+        finesse=self.FUSE_5.value+self.FUSE_10.value
+        # new NPAX1
+        Npax=self.FUSE_6.value+self.FUSE_12.value
+        # new OWE
+        OWE=self.FUSE_7.value+self.FUSE_11.value
+        # new PAYLOAD
+        Payload=self.FUSE_16.value+self.FUSE_18.value
+        
+        # new CD0 fuselage 
+        part_CD0_fus=1+self.percent_CD0_fus/100
+        new_CD0_fus=[cd*part_CD0_fus for cd in self.CD0_fus]
+        
+        part_CD0_ac=1+self.percent_CD0_ac/100
+        new_CD0_ac=[cd*part_CD0_ac for cd in self.CD0_ac]
+        
+        part_CD_ac=1+self.percent_CD/100
+        new_CD_ac=[cd*part_CD_ac for cd in self.CD_ac]
+        
+        path="OUTPUT_FILE"
+        file="ID_Aircraft_File.xml"
+        para_path=pth.join(path,file)
+        para_data=self.OAD.Input_File(para_path)
+        
+        para_data["data:geometry:fuselage:length"].value=length
+        para_data["data:geometry:cabin:NPAX1"].value=Npax
+        para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value=finesse
+        para_data["data:weight:aircraft:OWE"].value=OWE
+        para_data["data:weight:aircraft:max_payload"].value=Payload
+        para_data["data:aerodynamics:fuselage:cruise:CD0"].value=new_CD0_fus
+        para_data["data:aerodynamics:aircraft:cruise:CD0"].value=new_CD0_ac
+        para_data["data:aerodynamics:aircraft:cruise:CD"].value=new_CD_ac
+        
+        para_data.save()
+        
+        print("-------------------------------------FUSELAGE STRETCH SSAVED----------------------------------------")
+        
+        
+        
+        
+        
+        
+    def INCREMENTAL_DEVELOPEMENT(self,event):
+        clear_output()
+        display(self.ID2_box)
+        ac_ref=self.AC_ref
+        mission_ref=self.mission_ref
+        
+        path_ac="OUTPUT_FILE"
+        file_para="ID_Aircraft_File.xml"
+        ac_para=pth.join(path_ac,file_para)
+        
+        # Compute the new redesigned aircraft performance
+        print("---------------NEW PERFORMANCE COMPUTING -----------------------")
+        print("----------------------3 mn---------------------------------------")
+        
+        SOURCE=ac_para
+        path_config="data"
+        file_config="para_performance.yml"
+        CONFIGURATION=pth.join(path_config,file_config)
+        oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
+        oad.evaluate_problem(CONFIGURATION,overwrite=True)
+        
+        print("------------------NEW PERFORMANCE COMPUTED----------------------------")
+        
+        
+        path_miss="workdir"
+        file_miss="para_perfo.csv"
+        mission_para=pth.join(path_miss,file_miss)
+        
+        
+        # COMPUTE THE  MEAN_SFC 
+        
+        
+        SFC_ref=float(self.List_SFC[0])
+        if (len(self.List_SFC)>1):
+            SFC_para=float(self.List_SFC[len(self.List_SFC)-1])
+        else:
+            SFC_para=self.OAD.para_sfc(mission_para)
+        
+        # COMPUTE THE MEAN MASS
+        mass_ref=self.OAD.mass(mission_ref)
+        mass_para=self.OAD.mass(mission_para)
+        # COMPUTE THE SPECIFIC RANGE
+        SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,mass_ref)[0]
+        SR_para=self.OAD.compute_SR(ac_para,SFC_para,mass_para)[0]
+        
+        
+        # COMPUTE THE BLOCK FUEL
+        
+        data_ref=self.OAD.Input_File(ac_ref)
+        OWE_ref=data_ref["data:weight:aircraft:OWE"].value[0]
+        MTOW_ref=data_ref["data:weight:aircraft:MTOW"].value[0]
+        Max_Payload_ref=data_ref["data:weight:aircraft:max_payload"].value[0]
+        
+        BF_ref=MTOW_ref-OWE_ref-Max_Payload_ref
+        
+        data_para=self.OAD.Input_File(ac_para)
+        OWE_para=data_para["data:weight:aircraft:OWE"].value[0]
+        MTOW_para=data_para["data:weight:aircraft:MTOW"].value[0]
+        Max_Payload_para=data_para["data:weight:aircraft:max_payload"].value[0]
+        
+        BF_para=MTOW_para-OWE_para-Max_Payload_para
+        
+        #Plot the payload-range diagramm
+        
+        fig=self.OAD.para_payload_range(ac_ref,SFC_ref,"REFERENCE AIRCRAFT")
+
+        fig=self.OAD.para_payload_range(ac_para,SFC_para,"REDESIGNED AIRCRAFT",fig=fig)
+        
+        fig1 = go.Figure()
+        fig1.add_trace(go.Indicator(mode = "number+delta",value = BF_para,number={'suffix': " Kg "},title = {"text": "BLOCK FUEL"},domain = {'row': 0, 'column': 0},delta = {'reference': BF_ref, 'relative': True, 'position' : "top"}))
+        fig1.add_trace(go.Indicator(mode = "number+delta",value = SR_para,number = {'suffix': " Nm/Kg fuel"},title = {"text": "SPECIFIC RANGE"},domain = {'row': 1, 'column': 0},delta = {'reference': SR_ref, 'relative': True, 'position' : "top"}))
+   
+        
+        fig1.update_layout(paper_bgcolor = "lightgray",height=350,width=1000, grid = {'rows': 2, 'columns': 1, 'pattern': "independent"})
+        
+        fig2=self.OAD.Npax_BF_Diagramm(ac_ref,"REFERENCE AIRCRAFT")
+        fig2=self.OAD.Npax_BF_Diagramm(ac_para,"REDESIGNED AIRCRAFT",fig=fig2)
+        
+        
+        display(fig,fig2,fig1)
+        
+        
 
 
         

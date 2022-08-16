@@ -633,9 +633,13 @@ class MDA:
         file_path=pth.join(path,self.AC_ref)
         file_para="ID_Aircraft_File.xml"
         para_path=pth.join(path, file_para)
-        with open(para_path, 'r+') as f:
-            f.truncate(0)
         shutil.copy(file_path, para_path)
+    
+    
+    def para_k_ra(self,range):
+        self.range=range
+        k_ra = 1 - 0.895 * np.exp(-(self.range/814))
+        return k_ra
         
     def para_sfc(self,path):
         self.path=path 
@@ -685,7 +689,8 @@ class MDA:
     
     def para_payload_range(self,Path,sfc,name=None, fig=None, file_formatter=None):
         self.Path=Path
-        self.scf=sfc
+        self.sfc=sfc
+        self.name=name
         ### Variable definition ###
         List_points = []
         Range = []
@@ -707,11 +712,11 @@ class MDA:
         Point_B = Point_A
         Fuel_Weight = MTOW - (OWE + Max_Payload)
         
-        coefficient = self.coefficient_range(Data,self.sfc)
+        coefficient = self.para_coefficient_range(Data,self.sfc)
         
         #print (coefficient)
         Range_B = coefficient * np.log(1 + (Fuel_Weight / MZFW))
-        Range_B = self.k_ra(Range_B) * Range_B
+        Range_B = self.para_k_ra(Range_B) * Range_B
         #print (Range_B)
         List_points = List_points + [float(Point_B)]
         Range = Range + [float(Range_B)]
@@ -720,14 +725,14 @@ class MDA:
         ### Point D ###
         Point_D = Max_Payload - (MFW - Fuel_Weight)
         Range_D = coefficient * np.log(1 + (MFW / (MTOW - MFW)))
-        Range_D = self.k_ra(Range_D) * Range_D
+        Range_D = self.para_k_ra(Range_D) * Range_D
 
         List_points = List_points + [float(Point_D)]
         Range = Range + [float(Range_D)]
         ### Point E ###
         Point_E = 0
         Range_E = coefficient * np.log(1 + (MFW / OWE))
-        Range_E = self.k_ra(Range_E) * Range_E
+        Range_E = self.para_k_ra(Range_E) * Range_E
         List_points = List_points + [float(Point_E)]
         Range = Range + [float(Range_E)]
         Range=[i*0.539957/1000 for i in Range]  #From meter to nm
@@ -737,8 +742,8 @@ class MDA:
             fig = go.Figure()
             
         # scatter_prd= go.Scatter(x=Range, y=List_points, name="Payload-Range diagram"+name,#                         )
-        scatter_prd = go.Scatter(x=Range, y=List_points, name="Payload-Range diagram")
-        scatter_nominal = go.Scatter(x=(np.asarray(Data["data:TLAR:range"].value)), y=np.asarray(Data["data:weight:aircraft:payload"].value),name="Nominal working point" )
+        scatter_prd = go.Scatter(x=Range, y=List_points, name=self.name)
+        scatter_nominal = go.Scatter(x=(np.asarray(Data["data:TLAR:range"].value)), y=np.asarray(Data["data:weight:aircraft:payload"].value),name="Nominal working point:"+" "+ self.name )
         fig.add_trace(scatter_prd)
         fig.add_trace(scatter_nominal)
         fig = go.FigureWidget(fig)
@@ -749,9 +754,82 @@ class MDA:
         return fig
 
        
-    
+ # COMPUTE THE SPECIFIC AIRCRAFT RANGE
+
+    def mass(self,path):
+        self.path=path
+        f = open(self.path)
+        myreader = csv.reader(f, delimiter=',')
+        i = 0
+        j = 0
+        
+        table = []
+        list_mass = []
+        for row in myreader:
+            table.append(row)
+            
+        for k in range(0, len(table[0])):
+            if ('mass [kg]' in table[0]):
+                index = table[0].index('mass [kg]')
+                for v in range(1, len(table)):
+                    if table[v][-1] == "MTOW_mission:main_route:cruise" or table[v][-1]=="MTOW_mission:main_route:climb":
+                        list_mass.append(float(table[v][index]))
+                        
+        mean_mass = sum(list_mass) / len(list_mass)
+        return mean_mass
         
         
+    def compute_SR(self,Path,SFC,Mass, file_formatter=None):
+        self.Path=Path
+        self.SFC=SFC
+        self.Mass=Mass
+        variables = VariableIO(self.Path, file_formatter).read()
+        g = 9.81
+        gamma = 1.4
+        R = 287
+        z = np.asarray(variables["data:mission:sizing:main_route:cruise:altitude"].value)
+        z=z/3.28084 #   lenght from feet to meters 1 m = 3.28084 feets
+        T = 288 - 0.0065 * z
+        a = (gamma * R * T) ** (1 / 2)
+        M = np.asarray(variables["data:TLAR:cruise_mach"].value)
+        L_over_D = np.asarray(variables["data:aerodynamics:aircraft:cruise:L_D_max"].value)
+        
+        P = self.Mass * g
+        SR = (a * M * L_over_D) / (self.SFC * P)
+        SR= SR * 0.000539957 # from m/kg fuel to Nm/kg fuel 1 m = 0.000539957 Nm
+        return (SR)
+        
+        
+    def Npax_BF_Diagramm(self,Path,name=None, fig=None, file_formatter=None):
+        self.Path=Path
+        List_BF = [0]
+        self.name=name
+        List_Npax_BF = [0]
+        Data=VariableIO(self.Path, file_formatter).read()
+        MTOW= np.asarray(Data["data:weight:aircraft:MTOW"].value)
+        OWE = np.asarray(Data["data:weight:aircraft:OWE"].value)
+        Max_Payload = np.asarray(Data["data:weight:aircraft:max_payload"].value)
+        NPAX1=np.asarray(Data["data:geometry:cabin:NPAX1"].value)
+        
+        BF=MTOW-OWE-Max_Payload
+        Npax_BF=NPAX1/BF
+        List_BF=List_BF+[float(BF)]
+        List_Npax_BF=List_Npax_BF+[float(Npax_BF)]
+        
+        if fig is None:
+            fig = go.Figure()
+            
+        # scatter_prd= go.Scatter(x=Range, y=List_points, name="Payload-Range diagram"+name,#                         )
+        scatter_Npax_BF = go.Scatter(x=List_BF, y=List_Npax_BF, name=self.name)
+        
+        fig.add_trace(scatter_Npax_BF )
+        
+        fig = go.FigureWidget(fig)
+    # Set x-axes titles
+        fig.update_xaxes(title_text="BF [KG]")
+ # Set y-axes titles
+        fig.update_yaxes(title_text="NPAX/BF[Seat/Kg Fuel]")
+        return fig
         
  # MODIFYING THE FAST MissionViewer class in order to use it with the interface user        
 

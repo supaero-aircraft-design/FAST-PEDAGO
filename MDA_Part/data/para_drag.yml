@@ -1,9 +1,0 @@
-title: Sample OAD Process
-input_file: ../workdir/para_drag_in.xml
-output_file: ../workdir/para_drag_out.xml
-model:
-  nonlinear_solver: om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)
-  linear_solver: om.DirectSolver()
-  aerodynamics_highspeed:
-    id: fastoad.aerodynamics.highspeed.legacy
-  
