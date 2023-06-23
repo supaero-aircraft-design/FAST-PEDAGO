@@ -1,7 +1,7 @@
 title: Sample OAD Process
 
 # List of folder paths where user added custom registered OpenMDAO components
-module_folders:
+module_folders: D:/fl.lutz/FAST/FAST-OAD/FAST-PEDAGO/models
 
 # Input and output files
 input_file: ./problem_inputs.xml
@@ -19,21 +19,8 @@ model:
   nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
   linear_solver: om.DirectSolver()
 
-
-  
-  
-  
-optimization: # This section is needed only if optimization process is run
-  design_variables:
-    - name: data:geometry:wing:aspect_ratio
-      lower: 9.0
-      upper: 18.0
-  constraints:
-    - name: data:geometry:wing:span
-      upper: 60.0
-  objective:
-    - name: data:mission:sizing:needed_block_fuel
-      scaler: 1.e-4
+  weight:
+    id: fastoad.weight.legacy
    
-
-    
+submodels:
+  service.weight.mass_breakdown: fastoad.submodel.weight.mass.with_k_factor_owe
