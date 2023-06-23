@@ -4,7 +4,7 @@
       <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
       <approach_speed units="m/s" is_input="True">67.90666666666667<!--top-level requirement: approach speed--></approach_speed>
       <cruise_mach is_input="True">0.78<!--Input defined by the mission.--></cruise_mach>
-      <range units="nmi" is_input="True">2500.0<!--top-level requirement: design range--></range>
+      <range units="nmi" is_input="True">4000.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -116,8 +116,8 @@
     </load_case>
     <weight>
       <aircraft>
-        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">17000.0<!--_inp_data:weight:aircraft:payload--></payload>
+        <max_payload units="kg" is_input="True">20000.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">12000.0<!--_inp_data:weight:aircraft:payload--></payload>
       </aircraft>
     </weight>
     <aerodynamics>
@@ -139,19 +139,22 @@
           <duration units="min" is_input="True">45.0<!--Input defined by the mission.--></duration>
         </holding>
         <main_route>
-          <range units="nmi" is_input="True">2500.0<!--Input defined by the mission.--></range>
+          <range units="nmi" is_input="True">4000.0<!--Input defined by the mission.--></range>
         </main_route>
         <takeoff>
-          <V2 units="m/s" is_input="True">79.3<!--takeoff safety speed for mission "MTOW_mission"--></V2>
-          <altitude units="m" is_input="True">0.0<!--altitude of airport for mission "MTOW_mission"--></altitude>
-          <fuel units="kg" is_input="True">82.4<!--burned fuel during takeoff phase of mission "MTOW_mission"--></fuel>
+          <V2 units="m/s" is_input="True">79.3<!--Input defined by the mission.--></V2>
+          <duration units="s" is_input="True">0.0<!--Input defined by the mission.--></duration>
+          <fuel units="kg" is_input="True">87.0<!--Input defined by the mission.--></fuel>
+          <safety_altitude units="ft" is_input="True">35.0<!--Input defined by the mission.--></safety_altitude>
         </takeoff>
         <taxi_in>
           <duration units="s" is_input="True">300.0<!--Input defined by the mission.--></duration>
         </taxi_in>
         <taxi_out>
-          <duration units="s" is_input="True">540.0<!--duration of taxi-out in mission "MTOW_mission"--></duration>
-          <thrust_rate units="s" is_input="True">0.25<!--thrust rate during taxi-out in mission "MTOW_mission"--></thrust_rate>
+          <altitude units="ft" is_input="True">0.0<!--Input defined by the mission.--></altitude>
+          <duration units="s" is_input="True">540.0<!--Input defined by the mission.--></duration>
+          <thrust_rate units="s" is_input="True">0.25<!--Input defined by the mission.--></thrust_rate>
+          <true_airspeed units="m/s" is_input="True">0.0<!--Input defined by the mission.--></true_airspeed>
         </taxi_out>
       </MTOW_mission>
       <sizing>
@@ -184,6 +187,13 @@
         </CD>
       </wing>
     </aerodynamics>
+    <mission>
+      <MTOW_mission>
+        <taxi_out>
+          <time_step units="s" is_input="True">60.0<!--Input defined by the mission.--></time_step>
+        </taxi_out>
+      </MTOW_mission>
+    </mission>
     <weight>
       <aircraft>
         <CG>

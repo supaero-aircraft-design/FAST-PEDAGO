@@ -1,0 +1,130 @@
+[tool.poetry]
+name = "FAST-PEDAGO"
+version = "0.0.1" 
+readme = "README.md"
+description = ""
+authors = [
+    "Christophe DAVID <christophe.david@onera.fr>",
+    "Scott DELBECQ <Scott.DELBECQ@isae-supaero.fr>"
+]
+packages = [
+    { include = "fastoad", from = "src" },
+]
+exclude = ["**/tests/**"]
+
+homepage = "https://github.com/fast-aircraft-design/FAST-OAD"
+keywords = [
+    "aircraft",
+    "design",
+    "multi-disciplinary"
+]
+license = "GPL-3.0-only"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+
+[tool.poetry.dependencies]
+# IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
+# ReadTheDocs to be able to compile the documentation.
+# A pre-commit hook has been added to do this task. As a result, any modification
+# of poetry.lock file will modify docs/requirements.txt and make
+# the commit fail because "files were modified by this hook". In that case,
+# doing again the commit including changes in docs/requirements.txt will succeed.
+python = "^3.7"
+numpy = "^1.21.0"
+scipy = "^1.4.1"
+pandas = "^1.1.0"
+openmdao = "^3.10"
+ipopo = "^1.0.0"
+ipywidgets = "^7.7.0"
+ipysheet = ">=0.5.0, <1"
+plotly = "^5.0.0"
+wop = "^2.2.0"
+lxml = "^4.6.5"
+tomlkit = ">=0.5.3, <1"
+"ruamel.yaml" = ">=0.15.78, <0.18"
+jsonschema = ">=3.2.0, <5"
+ensure = "^1.0.0"
+tabulate = "^0.8.9"
+aenum = "^3.1.0"
+jupyterlab = "^3.3.0"
+jupyter-client = "!=7.0.0, !=7.0.1, !=7.0.2, !=7.0.3, !=7.0.4, !=7.0.5"  # v7.0.6 fixes issue #381
+notebook = "^6.0"
+stdatm = "0.*"
+Deprecated = "^1.2.13"
+click = "^8.0.3"
+importlib-metadata = { version = "^4.2", python = "<3.10" }
+mpi4py = {version = "^3", optional = true}
+
+[tool.poetry.extras]
+mpi4py = ["mpi4py"]
+
+[tool.poetry.dev-dependencies]
+fast-oad-cs25 = ">=0.1.4"
+pytest = "^7.2"
+pytest-cov = "^4.0"
+coverage = { extras = ["toml"], version = "^7.0" }
+pre-commit = "^2.14.1"
+black = { version = "21.9b0", extras = ["jupyter"], allow-prereleases = true }
+pylint = "^2.10.2"
+nbval = "^0.10"
+sphinx = "^4.1.2"
+sphinx-rtd-theme = "^1.0"
+sphinxcontrib-bibtex = "^2.3.0"
+flake8 = "^4.0.1"
+matplotlib = "^3.1.2"
+nbstripout = "^0.6.0"
+
+[tool.poetry.scripts]
+fastoad = "fastoad.cmd.cli:fast_oad"
+fast-oad = "fastoad.cmd.cli:fast_oad"
+
+[tool.poetry.plugins."fastoad.plugins"]
+"bundled" = "fastoad"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov fastoad --cov-report term-missing --cov-report html --verbose"
+testpaths = ["src", "tests"]
+norecursedirs = ["dist", "build", ".tox", ".ipynb_checkpoints"]
+
+[tool.coverage.run]
+branch = true
+source = ["fastoad"]
+omit = ["*/test/*", "*/tests/*"]
+[tool.coverage.paths]
+source = ["src/", "*/site-packages/"]
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ = = .__main__.:"
+]

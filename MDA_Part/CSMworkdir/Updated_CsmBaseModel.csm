@@ -1,0 +1,312 @@
+# CeRAS Aircraft - Baseline model
+# Written by José Carola dos Santos and Sameer Sheriff
+
+# Fuselage variables
+DESPMTR fus:height 4.05988
+DESPMTR fus:width  3.91988
+DESPMTR fus:length 37.50736 
+DESPMTR fus:front_length 6.9018 
+DESPMTR fus:rear_length 14.61557
+
+#defining ratios from CeRAS model
+SET ratio:x fus:length/3.749
+SET ratio:y fus:height/0.4140
+SET ratio:z fus:width/0.4000
+
+# Values from FAST_OAD for calculations
+DESPMTR wing:mac:Xat25     16.0   #X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose
+DESPMTR wing:mac:leadingX  2.92673    #X-position of leading edge of mean aerodynamic chord w.r.t. leading edge of root chord
+DESPMTR wing:mac:length    4.81387    #length of mean aerodynamic chord of wing
+
+DESPMTR wing:kink:leadingX 2.74365   #X-position of leading edge at wing kink w.r.t. leading edge of root chord
+DESPMTR wing:kink:y 	   7.34519   #Y-position of wing kink 	
+
+DESPMTR wing:tip:leadingX  8.98063  #X-position of leading edge at wing kink w.r.t. leading edge of root chord
+DESPMTR wing:tip:y         19.58716 #Y-position of wing kink 	
+
+DESPMTR vtp:mac25:Xat25    2.68091   #X-position of the 25% of mean aerodynamic chord of vertical tail w.r.t. leading edge of root chord
+DESPMTR vtp:mac25:wingMac  17.00648  #distance along X between 25% MAC of wing and 25% MAC of vertical tail
+DESPMTR vtp:sweep:0        40.5148  #sweep angle at leading edge of vertical tail
+DESPMTR vtp:span    	   7.64716  #vertical tail span
+
+DESPMTR	htp:mac25:Xat25    1.76771	#X-position of the 25% of mean aerodynamic chord of horizontal tail w.r.t. leading edge of root chord
+DESPMTR htp:mac25:wingMac  18.1317  #distance along X between 25% MAC of wing and 25% MAC of horizontal tail
+DESPMTR htp:sweep:0        33.31651  #sweep angle at leading edge of horizontal tail
+DESPMTR htp:span           13.11077  #horizontal tail span
+
+## WING VARIABLES
+
+# Root airfoil values
+SET       wing:root:X     (wing:mac:Xat25)-(wing:mac:leadingX)-(wing:mac:length/4) 
+DESPMTR   wing:root:Y     0.00      # Y-coordinte of root leading edge
+DESPMTR   wing:root:Z     0.00      # Z-coordinte of root leading edge
+DESPMTR   wing:root:c     7.03384    # chord of root
+DESPMTR   wing:root:t     0.15746    # thickness/chord of root
+DESPMTR   wing:root:m     0.00      # camber/chord of root
+DESPMTR   wing:root:a     0.00      # angle of attack of root (deg)
+# intermediate airfoil values - coincident with fuselage
+SET       wing:int:X      wing:root:X    # X-coordinte of intermediate airfoil section - same as root airfoil
+DESPMTR   wing:int:Y      0.00           # Y-coordinte of intermediate airfoil section
+SET       wing:int:Z      (fus:width)/2  # Z-coordinte of intermediate airfoil section
+SET       wing:int:c      wing:root:c    # chord of intermediate airfoil section
+SET       wing:int:t      wing:root:t    # thickness/chord of intermediate airfoil section
+DESPMTR   wing:int:m      0.00           # camber/chord of intermediate airfoil section
+DESPMTR   wing:int:a      0.00           # angle of attack of intermediate airfoil section (deg)
+# second intermediate values - airfoil at kink 
+SET       wing:kink:X     (wing:root:X)+(wing:kink:leadingX) # X-coordinte of root leading edge
+DESPMTR   wing:kink:Y     0.00     	   # Y-coordinte of root leading edge
+SET       wing:kink:Z     wing:kink:y  # Z-coordinte of root leading edge   
+DESPMTR   wing:kink:c     4.29019       # chord at kink
+DESPMTR   wing:kink:t     0.11937      # thickness/chord of root
+DESPMTR   wing:kink:m     0.00         # camber/chord of root
+DESPMTR   wing:kink:a     0.00         # angle of attack of root (deg)
+# tip airfoil values
+SET       wing:tip:X      (wing:root:X)+(wing:tip:leadingX) # X-coordinte of tip leading edge
+DESPMTR   wing:tip:Y      0.00         # Y-coordinte of tip leading edge
+SET       wing:tip:Z      wing:tip:y   # Z-coordinte of tip leading edge 
+DESPMTR   wing:tip:c      1.69953       # chord of tip
+DESPMTR   wing:tip:t      0.10921       # thickness/chord of tip
+DESPMTR   wing:tip:m      0.00         # camber/chord of tip
+DESPMTR   wing:tip:a      0.00         # angle of attack of tip (deg)
+
+## HORIZONTAL TAIL PLANE VARIABLES
+
+# root airfoil values 
+SET       htp:root:X     (wing:mac:Xat25)+(htp:mac25:wingMac)-(htp:mac25:Xat25)
+DESPMTR   htp:root:Y     0.00     # Y-coordinte of root leading edge
+DESPMTR   htp:root:Z     0.00     # Z-coordinte of root leading edge
+DESPMTR   htp:root:c     4.70416  # chord of root
+DESPMTR   htp:root:t     0.1      # thickness/chord of root
+DESPMTR   htp:root:m     0.00     # camber/chord of root
+DESPMTR   htp:root:a     0.00     # angle of attack of root (deg)
+# tip airfoil values 
+SET       htp:tip:X      (htp:root:X)+(tand(htp:sweep:0)*(htp:span/2)) # X-coordinte of tip leading edge
+DESPMTR   htp:tip:Y      0.00         # Y-coordinte of tip leading edge
+SET       htp:tip:Z      (htp:span)/2 # Z-coordinte of tip leading edge
+DESPMTR   htp:tip:c      1.41125      # chord of tip
+DESPMTR   htp:tip:t      0.1          # thickness/chord of tip
+DESPMTR   htp:tip:m      0.00         # camber/chord of tip
+DESPMTR   htp:tip:a      0.00         # angle of attack of tip (deg)
+
+## VERTICAL TAIL PLANE VARIABLES
+
+#root
+SET       vtp:root:X     (wing:mac:Xat25)+(vtp:mac25:wingMac)-(vtp:mac25:Xat25)
+DESPMTR   vtp:root:Y     0.00      # Y-coordinte of root leading edge
+DESPMTR   vtp:root:Z     0.00      # Z-coordinte of root leading edge  # -1.71
+DESPMTR   vtp:root:c     6.74349   # chord of root     
+DESPMTR   vtp:root:t     0.1       # thickness/chord of root
+DESPMTR   vtp:root:m     0.00      # camber/chord of root
+DESPMTR   vtp:root:a     0.00      # angle of attack of root (deg)
+# tip
+SET       vtp:tip:X      (vtp:root:X)+(tand(vtp:sweep:0)*vtp:span) # X-coordinte of tip leading edge
+DESPMTR   vtp:tip:Y      0.0       # Y-coordinte of tip leading edge
+SET       vtp:tip:Z      (vtp:span)  # Z-coordinte of tip leading edge  # 7.748163043445385 + 1.00
+DESPMTR   vtp:tip:c      2.02305   # chord length at tip of vertical tail
+DESPMTR   vtp:tip:t      0.1       # thickness/chord of tip
+DESPMTR   vtp:tip:m      0.00      # camber/chord of tip
+DESPMTR   vtp:tip:a      0.00      # angle of attack of tip (deg)
+
+## Building cylindrical part of fuselage
+MARK
+   UDPRIM supell rx fus:width/2 ry fus:height/2
+   ROTATEY 90 0 0
+   TRANSLATE fus:front_length 0 0
+   UDPRIM supell rx fus:width/2 ry fus:height/2
+   ROTATEY 90 0 0
+   TRANSLATE (fus:length-fus:rear_length) 0 0 
+   RULE
+GROUP
+STORE fus_cylindrical
+
+## Building Fuselage Front section
+# Supell - super ellipse creates the circular sections
+# rx refers to the width and ry referes to the height
+MARK 
+   POINT 0 -0.066*(ratio:y) 0
+   #circle1
+   UDPRIM supell rx 0.078*(ratio:y/2) ry 0.08*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.017*ratio:x) (-0.065*ratio:y) 0
+   #circle2
+   UDPRIM supell rx 0.1330*(ratio:y/2) ry 0.135*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.049*ratio:x) (-0.065*ratio:y) 0
+   #circle3
+   UDPRIM supell rx 0.1670*(ratio:y/2) ry 0.1660*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.077*ratio:x) (-0.063*ratio:y) 0
+   #circle4
+   UDPRIM supell rx 0.2190*(ratio:y/2) ry 0.2061*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.129*ratio:x) (-0.061*ratio:y) 0
+   #circle5
+   UDPRIM supell rx 0.2870*(ratio:y/2) ry 0.2970*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.207*ratio:x) (-0.032*ratio:y) 0
+   #circle6
+   UDPRIM supell rx 0.3450*(ratio:y/2) ry 0.3561*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.298*ratio:x) (-0.016*ratio:y) 0
+   #circle7
+   UDPRIM supell rx 0.3840*(ratio:y/2) ry 0.3924*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.415*ratio:x) (-0.0068*ratio:y) 0
+   #circle8
+   UDPRIM supell rx 0.3990*(ratio:y/2) ry 0.4090*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE (0.531*ratio:x) 0 0
+   #circle9
+   UDPRIM supell rx fus:width/2 ry fus:height/2 #rx 0.4000*(ratio:y/2) ry 0.4140*(ratio:z/2) 
+   ROTATEY 90 0 0 
+   TRANSLATE fus:front_length 0 0
+   RULE
+STORE fus_front
+
+# Building Fuselage Rear section
+# Supell - super ellipse creates the circular sections
+# rx refers to the width and ry referes to the height
+MARK
+  MARK
+   #circle1
+   UDPRIM supell rx fus:width/2 ry fus:height/2 #rx 0.4000*ratio:y/2 ry 0.4140*ratio:z/2
+   ROTATEY 90 0 0 
+   TRANSLATE (fus:length-fus:rear_length) 0 0
+   #circle2
+   UDPRIM supell rx 0.40*ratio:y/2 ry 0.4100*ratio:z/2
+   ROTATEY 90 0 0 
+   TRANSLATE (2.538*ratio:x) (+0.0020*ratio:y) 0
+   #circle3
+   UDPRIM supell rx 0.40*ratio:y/2 ry 0.38*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE (2.753*ratio:x) (+0.0170*ratio:y) 0
+   #circle4
+   UDPRIM supell rx 0.350*ratio:y/2 ry 0.33*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE (2.986*ratio:x) (+0.0392*ratio:y) 0
+   #circle5
+   UDPRIM supell rx 0.2650*ratio:y/2 ry 0.2711*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE (3.205*ratio:x) (+0.0610*ratio:y) 0
+   #circle6
+   UDPRIM supell rx 0.1730*ratio:y/2 ry 0.18*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE (3.507*ratio:x) (+0.0940*ratio:y) 0
+   #circle7
+   UDPRIM supell rx 0.1210*ratio:y/2 ry 0.117*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE (3.651*ratio:x) (+0.1060*ratio:y) 0
+   #circle8
+   UDPRIM supell rx 0.0529*ratio:y/2 ry 0.051*ratio:z/2 
+   ROTATEY 90 0 0 
+   TRANSLATE fus:length (+0.110*ratio:y) 0
+   RULE
+STORE fus_rear
+   
+RESTORE fus_front
+RESTORE fus_cylindrical
+UNION
+RESTORE fus_rear
+UNION
+DUMP fuselage.stp
+STORE fus_full
+
+## Building wing
+MARK
+   # right wing tip
+   UDPRIM    naca   thickness  wing:tip:t   camber  wing:tip:m
+   SCALE     wing:tip:c
+   ROTATEZ  -wing:tip:a   0      0
+   TRANSLATE wing:tip:X   wing:tip:Y  -wing:tip:Z
+   # right second intermediate
+   UDPRIM    naca   thickness  wing:kink:t   camber  wing:kink:m
+   SCALE     wing:kink:c
+   ROTATEZ  -wing:kink:a   0      0
+   TRANSLATE wing:kink:X   wing:kink:Y  -wing:kink:Z
+   # right intermediate
+   UDPRIM    naca   thickness  wing:int:t   camber  wing:int:m
+   SCALE     wing:int:c
+   ROTATEZ  -wing:int:a   0      0
+   TRANSLATE wing:int:X   wing:int:Y  -wing:int:Z
+   # wing root
+   UDPRIM    naca   thickness  wing:root:t  camber  wing:root:m
+   SCALE     wing:root:c
+   ROTATEZ  -wing:root:a  0      0
+   TRANSLATE wing:root:X  wing:root:Y  wing:root:Z
+   # left intermediate
+   UDPRIM    naca   thickness  wing:int:t   camber  wing:int:m
+   SCALE     wing:int:c
+   ROTATEZ  -wing:int:a   0      0
+   TRANSLATE wing:int:X   wing:int:Y   wing:int:Z
+   # left second intermediate
+   UDPRIM    naca   thickness  wing:kink:t   camber  wing:kink:m
+   SCALE     wing:kink:c
+   ROTATEZ  -wing:kink:a   0      0
+   TRANSLATE wing:kink:X   wing:kink:Y   wing:kink:Z
+   # left wing tip
+   UDPRIM    naca   thickness  wing:tip:t   camber  wing:tip:m
+   SCALE     wing:tip:c
+   ROTATEZ  -wing:tip:a   0      0
+   TRANSLATE wing:tip:X   wing:tip:Y   wing:tip:Z
+
+# ruled surface
+RULE
+#ATTRIBUTE _color $red
+ATTRIBUTE _color $cyan
+DUMP wing_only.stp   
+STORE wing
+
+## Building horizontal tail plane
+MARK
+   # right horizontal wing tip
+   UDPRIM    naca   thickness  htp:tip:t   camber  htp:tip:m
+   SCALE     htp:tip:c
+   ROTATEZ  -htp:tip:a   0      0
+   TRANSLATE htp:tip:X   htp:tip:Y  -htp:tip:Z
+   # horizontal wing root
+   UDPRIM    naca   thickness  htp:root:t  camber  htp:root:m
+   SCALE     htp:root:c
+   ROTATEZ  -htp:root:a  0      0
+   TRANSLATE htp:root:X  htp:root:Y  htp:root:Z
+   # left horizontal wing tip
+   UDPRIM    naca   thickness  htp:tip:t   camber  htp:tip:m
+   SCALE     htp:tip:c
+   ROTATEZ  -htp:tip:a   0      0
+   TRANSLATE htp:tip:X   htp:tip:Y   htp:tip:Z  
+# ruled surface
+RULE
+ATTRIBUTE _color $red  
+TRANSLATE 0 1.1 0
+DUMP htp.stp
+STORE htp
+   
+   
+## Building vertical tail plane
+MARK
+   # vertical wing tip
+   UDPRIM    naca   thickness  vtp:tip:t   camber  vtp:tip:m
+   SCALE     vtp:tip:c
+   ROTATEZ  -vtp:tip:a   0      0
+   TRANSLATE vtp:tip:X   vtp:tip:Y  -vtp:tip:Z
+   # vertical wing root
+   UDPRIM    naca   thickness  vtp:root:t  camber  vtp:root:m
+   SCALE     vtp:root:c
+   ROTATEZ  -vtp:root:a  0      0
+   TRANSLATE vtp:root:X  vtp:root:Y  vtp:root:Z  
+# ruled surface  
+RULE
+ATTRIBUTE _color $yellow  
+ROTATEX 90 0 0
+TRANSLATE 0 1.4 0
+DUMP vtp.stp
+STORE vtp
+
+RESTORE fus_full
+RESTORE wing
+UNION
+RESTORE htp
+UNION
+RESTORE vtp
+UNION
+DUMP full_model.stp
+END

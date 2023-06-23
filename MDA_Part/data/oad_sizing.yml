@@ -36,12 +36,12 @@ model:
     id: fastoad.loop.wing_area
 optimization:
   design_variables:
-  - name: data:geometry:wing:aspect_ratio
-    lower: 9.0
-    upper: 18.0
+  - name: data:weight:aircraft:payload
+    lower: 0.0
+    upper: 0.0
   constraints:
-  - name: data:geometry:wing:span
-    upper: 60.0
+  - name: data:TLAR:range
+    lower: 4000.0
   objective:
-  - name: data:weight:aircraft:sizing_block_fuel
+  - name: data:TLAR:range
     scaler: 0.0001
