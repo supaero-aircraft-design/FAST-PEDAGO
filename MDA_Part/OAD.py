@@ -109,8 +109,32 @@ class MDA:
         with open(file_path, 'r+') as f:
             f.truncate(0)
         
-        problem={'title': 'Sample OAD Process','input_file': '../workdir/oad_sizing_in.xml','output_file': '../workdir/oad_sizing_out.xml','model': {'nonlinear_solver': 'om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)', 'linear_solver': 'om.DirectSolver()', 'geometry': {'id':'fastoad.geometry.legacy'},'weight': {'id': 'fastoad.weight.legacy', 'payload_from_npax': False}, 'mtow': {'id':'fastoad.mass_performances.compute_MTOW'},
-  'aerodynamics_highspeed': {'id': 'fastoad.aerodynamics.highspeed.legacy'}, 'aerodynamics_lowspeed': {'id':'fastoad.aerodynamics.lowspeed.legacy'},'aerodynamics_takeoff': {'id': 'fastoad.aerodynamics.takeoff.legacy'}, 'aerodynamics_landing': {'id':'fastoad.aerodynamics.landing.legacy','use_xfoil': False},'performance': {'id': 'fastoad.performances.mission','propulsion_id':'fastoad.wrapper.propulsion.rubber_engine', 'mission_file_path': '../File/Mission/design_mission.yml','mission_name': 'MTOW_mission','out_file': '../workdir/oad_sizing.csv','adjust_fuel': True,'is_sizing': True},'hq_tail_sizing': {'id': 'fastoad.handling_qualities.tail_sizing'},'hq_static_margin': {'id': 'fastoad.handling_qualities.static_margin'},'wing_area': {'id': 'fastoad.loop.wing_area'}}}
+        problem={'title': 'Sample OAD Process',
+                 'module_folders': 'C:/Users/ERIC/Documents/GitHub/FAST-PEDAGO/models',
+                 'input_file': '../workdir/oad_sizing_in.xml',
+                 'output_file': '../workdir/oad_sizing_out.xml',
+                 'model': {'nonlinear_solver': 'om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)',
+                           'linear_solver': 'om.DirectSolver()',
+                           'geometry': {'id':'fastoad.geometry.legacy'},
+                           'weight': {'id': 'fastoad.weight.legacy', 'payload_from_npax': False},
+                           'mtow': {'id':'fastoad.mass_performances.compute_MTOW'},
+                           'aerodynamics_highspeed': {'id': 'fastoad.aerodynamics.highspeed.legacy'},
+                           'aerodynamics_lowspeed': {'id':'fastoad.aerodynamics.lowspeed.legacy'},
+                           'aerodynamics_takeoff': {'id': 'fastoad.aerodynamics.takeoff.legacy'},
+                           'aerodynamics_landing': {'id':'fastoad.aerodynamics.landing.legacy','use_xfoil': False},
+                           'performance': {'id': 'fastoad.performances.mission',
+                                           'propulsion_id':'fastoad.wrapper.propulsion.rubber_engine',
+                                           'mission_file_path': '../File/Mission/design_mission.yml',
+                                           'mission_name': 'MTOW_mission',
+                                           'out_file': '../workdir/oad_sizing.csv',
+                                           'adjust_fuel': True,
+                                           'is_sizing': True},
+                           'hq_tail_sizing': {'id': 'fastoad.handling_qualities.tail_sizing'},
+                           'hq_static_margin': {'id': 'fastoad.handling_qualities.static_margin'},
+                           'wing_area': {'id': 'fastoad.loop.wing_area'}},
+                 'submodels':{'service.weight.mass_breakdown':'fastoad.submodel.weight.mass.with_k_factor_owe'}}
+        #submodels has been added to inlcude the new local submodel to compute OWE with k_factor if necessary.
+
         
         if ("geometry" in self.list_modules):
             problem["model"]["geometry"]={'id': 'fastoad.geometry.legacy'}
@@ -123,6 +147,7 @@ class MDA:
         else:
             if("weight" in problem["model"].keys()):
                 problem["model"].pop("weight")
+                problem.pop("submodels")
         
         if ("mtow" in self.list_modules):
             problem["model"]["mtow"]={'id': 'fastoad.mass_performances.compute_MTOW'}
@@ -179,8 +204,8 @@ class MDA:
         else:
             if("wing_area" in problem["model"].keys()):
                 problem["model"].pop("wing_area")
-                
-        
+
+
         with open(file_path,"w") as f:
             yaml.dump(problem,f,sort_keys=False)
             f.close()
@@ -195,7 +220,7 @@ class MDA:
             
             
         except:
-            print("MDA PROBELM NOT DEFINED. PLEASE SELECT MODULES TO DEFINE YOUR MDA ")
+            print("MDA PROBLEM NOT DEFINED. PLEASE SELECT MODULES TO DEFINE YOUR MDA ")
         
         
 
@@ -316,15 +341,18 @@ class MDA:
 # Run OAD PROBLEM
 
     def RUN_OAD(self):
-        
+
         self.problem=oad.evaluate_problem(self.CONFIGURATION_FILE,overwrite=True)
         return self.problem
 
-    def RUN_OAD_EXO(self):
 
+    def RUN_OAD_EXO(self):
+        conf=pth.join("data", "oad_sizing_exo_noperfo.yml")
+        self.problem_exo = oad.evaluate_problem(conf, overwrite=True)
+        return self.problem_exo
+    def RUN_OAD_EXO_PERFO(self):
         self.problem_exo = oad.evaluate_problem(self.CONFIGURATION_FILE_EXO, overwrite=True)
         return self.problem_exo
-    
 # View AIRCRAFT OUTPUTS DATA
     def Join_File(self,path,name):
         self.path=path
@@ -516,7 +544,7 @@ class MDA:
         coefficient = a * M * L_over_D / (mean_sfc * 9.81)
         return (coefficient)
     
-    def payload_range(self,Path, Perfo_csv_path, fig=None, file_formatter=None):
+    def payload_range(self,Path, Perfo_csv_path,name=None, fig=None, file_formatter=None):
         self.Path=Path
         self.Perfo_csv_path=Perfo_csv_path
         ### Variable definition ###
@@ -528,6 +556,10 @@ class MDA:
         MFW = np.asarray(Data["data:weight:aircraft:MFW"].value)
         MZFW = np.asarray(Data["data:weight:aircraft:MZFW"].value)
         Max_Payload = np.asarray(Data["data:weight:aircraft:max_payload"].value)
+        try:
+            reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
+        except:
+            reserve=0
         
         ### Point A ###
         Point_A = Max_Payload
@@ -539,27 +571,23 @@ class MDA:
         ### Point B ###
         Point_B = Point_A
         Fuel_Weight = MTOW - (OWE + Max_Payload)
-        
         coefficient = self.coefficient_range(Data,self.Perfo_csv_path)
-        
-        #print (coefficient)
-        Range_B = coefficient * np.log(1 + (Fuel_Weight / MZFW))
+
+        Range_B = coefficient * np.log(MTOW / (OWE + Point_B+reserve))
         Range_B = self.k_ra(Range_B) * Range_B
-        #print (Range_B)
         List_points = List_points + [float(Point_B)]
         Range = Range + [float(Range_B)]
-        
-        
+
         ### Point D ###
         Point_D = MTOW - (OWE+MFW)
-        Range_D = coefficient * np.log(1 + (MFW / (OWE+Point_D)))
+        Range_D = coefficient * np.log(MTOW / (OWE + Point_D + reserve))
         Range_D = self.k_ra(Range_D) * Range_D
-
         List_points = List_points + [float(Point_D)]
         Range = Range + [float(Range_D)]
+
         ### Point E ###
         Point_E = 0
-        Range_E = coefficient * np.log(1 + (MFW / OWE))
+        Range_E = coefficient * np.log( (OWE+MFW) / (OWE+reserve))
         Range_E = self.k_ra(Range_E) * Range_E
         List_points = List_points + [float(Point_E)]
         Range = Range + [float(Range_E)]
@@ -570,7 +598,7 @@ class MDA:
             fig = go.Figure()
             
         # scatter_prd= go.Scatter(x=Range, y=List_points, name="Payload-Range diagram"+name,#                         )
-        scatter_prd = go.Scatter(x=Range, y=List_points, name="Payload-Range diagram")
+        scatter_prd = go.Scatter(x=Range, y=List_points, name=name)
         scatter_nominal = go.Scatter(x=(np.asarray(Data["data:TLAR:range"].value)), y=np.asarray(Data["data:weight:aircraft:payload"].value),name="Nominal working point" )
         fig.add_trace(scatter_prd)
         fig.add_trace(scatter_nominal)
@@ -854,8 +882,8 @@ class MDA:
         Range_DOC =np.asarray(Data["data:TLAR:range"].value)
         PL_DOC = np.asarray(Data["data:weight:aircraft:payload"].value)
         coefficient = self.para_coefficient_range(Data, self.sfc_bf)  # (aM L_D)/g*SFC
-
-        BF_DOC = math.exp( (1000*Range_DOC*1.852)/(coefficient) )*(OWE+PL_DOC) - (OWE+PL_DOC)
+        reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
+        BF_DOC = math.exp( (1000*Range_DOC*1.852)/(coefficient) )*(OWE+PL_DOC+reserve) - (OWE+PL_DOC+reserve)
 
 
 

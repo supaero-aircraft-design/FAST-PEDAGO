@@ -67,10 +67,10 @@ class Interface:
 
         table=["REFERENCE","CONFIGURATION","AIRCRAFT DATA","MDA","ANALYSIS","OPTIMIZATION","INCREMENTAL DEVELOPMENT"]
         title = widgets.HTML(
-            value=" <h1 style='text-align:center;font-weight:bold;font-family:Arial, sans-serif;font-size:28px;color:#003399;text-decoration:underline;'>FAST OVERALL AIRCRAFT DESIGN [FAST-OAD]</h1>")
+            value=" <h1 style='text-align:center;font-weight:bold;font-family:Arial, sans-serif;font-size:28px;color:#003399;text-decoration:underline;'>FAST OVERALL AIRCRAFT DESIGN</h1>")
         layout_button=Layout(width='17%', height='80px', border='4px solid black')
         layout_box = Layout(width='100%',height='40%',align_items='center',justify_content='center')
-        layout_title= widgets.Layout(align_items='center',justify_content='center',width='75%',height='50%')
+        layout_title= widgets.Layout(align_items='center',justify_content='center',width='65%',height='50%')
         self.Button_M0 = widgets.Button(description='DEMO', layout=layout_button, style=dict(button_color="#00d600"))
         self.Button_M1=widgets.Button(description=table[0], layout=layout_button, style=dict(button_color="#ebebeb"))
         self.Button_M2=widgets.Button(description=table[1], layout=layout_button,disabled=True, style=dict(button_color='#ebebeb'))
@@ -132,18 +132,38 @@ class Interface:
         buttonINFO.on_click(info_message)
 
 
-        button_git = widgets.Button(description="")
-        button_git.icon ="fa-github"
-        button_git.layout.width = 'auto'
-        button_git.layout.height = 'auto'
-        def open_github_page(event):
-            webbrowser.open_new_tab("https://github.com/fast-aircraft-design")
-        button_git.on_click(open_github_page)
+        button_git_FAST = widgets.Button(description="FAST-OAD")
+        button_git_FAST.icon ="fa-github"
+        button_git_FAST.layout.width = 'auto'
+        button_git_FAST.layout.height = 'auto'
+        def open_github_FAST(event):
+            webbrowser.open_new_tab("https://github.com/fast-aircraft-design/FAST-OAD")
+        button_git_FAST.on_click(open_github_FAST)
+
+        button_git_CS25 = widgets.Button(description="CS25")
+        button_git_CS25.icon ="fa-github"
+        button_git_CS25.layout.width = 'auto'
+        button_git_CS25.layout.height = 'auto'
+        def open_github_CS25(event):
+            webbrowser.open_new_tab("https://github.com/fast-aircraft-design/FAST-OAD_CS25")
+        button_git_CS25.on_click(open_github_CS25)
+
+        button_git_GA = widgets.Button(description="GA")
+        button_git_GA.icon ="fa-github"
+        button_git_GA.layout.width = 'auto'
+        button_git_GA.layout.height = 'auto'
+        def open_github_GA(event):
+            webbrowser.open_new_tab("https://github.com/supaero-aircraft-design/FAST-GA")
+        button_git_GA.on_click(open_github_GA)
+
+        box_buttons_git = widgets.HBox(children=[button_git_FAST,button_git_CS25,button_git_GA],
+                                       layout=Layout(border='0px solid black',margin='0 0 0 0px', padding='0px',
+                                        justify_content='center', align_items='center', width='100%',height='10%'))
 
         box1 = widgets.HBox(children=[title],layout=layout_title)
         box2=widgets.HBox(children=Line_1,layout=layout_box)
-        box22 = widgets.HBox(children=Line_2, layout=layout_box)
-        box4 = widgets.Box(children=[buttonINFO, output,button_git],layout=Layout(border='0px solid black',
+        box3 = widgets.HBox(children=Line_2, layout=layout_box)
+        box4 = widgets.Box(children=[buttonINFO, output],layout=Layout(border='0px solid black',
                                          margin='0 0 0 0px', padding='0px', align_items='center', width='100',height='12%'))
         box4.add_class('custom-vbox')
         display(widgets.HTML("""
@@ -153,7 +173,7 @@ class Interface:
         }
         </style>
         """))
-        self.menu=widgets.VBox(children=[box1,box2,box22,box4],layout=Layout(border='6px solid black'
+        self.menu=widgets.VBox(children=[box1,box_buttons_git,box2,box3,box4],layout=Layout(border='6px solid black'
                                ,margin='100 20 50 100px', padding='10px', align_items='center', width='940px',height='665px',
                                justify_content='center'))
         self.menu.add_class('vbox-with-background')
@@ -1164,16 +1184,13 @@ class Interface:
         # Layout widget
         layout = widgets.Layout(width="75%", height='50px', justify_content='space-between')
         style = style = {'description_width': 'initial'}
-        layout_button = widgets.Layout(width='30%', height='50px', border='4px solid black')
-        layout_box = widgets.Layout(border='6px solid black', padding='10px', align_items='center', width='100%')
-
-
         self.INPUT_FILE_EXO = self.OAD.Generate_Input_File_Exo()
         #here we have input file + configuration already created
 
         self.INPUT_EXO = self.OAD.Input_File(self.INPUT_FILE_EXO)
         #here we can access the values of our input file
 
+        List_StudyName = []
 
         self.Variable_Exo_1 = self.INPUT_EXO["data:TLAR:NPAX"].value[0]
         self.Variable_Exo_2 = self.INPUT_EXO["data:TLAR:approach_speed"].value[0]
@@ -1184,7 +1201,6 @@ class Interface:
         self.Variable_Exo_7 = self.INPUT_EXO["data:geometry:wing:aspect_ratio"].value[0]
         self.Variable_Exo_8 = self.INPUT_EXO["data:propulsion:rubber_engine:bypass_ratio"].value[0]
         #herer we have each varaible of interest stored
-
 
         self.In_Variable_Exo_1 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.Variable_Exo_1,
                                                    description="Npax", description_tooltip='Number of Passengers',
@@ -1210,7 +1226,7 @@ class Interface:
         self.In_Variable_Exo_8 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.Variable_Exo_8,
                                                    description="BPR", description_tooltip='Bypass ratio of the engine',
                                                   style=style,layout=layout)
-
+        self.StudyName = widgets.Text(description="NAME",placeholder='Write a name for you modification',style=style,layout=layout)
 
         def save_variable_interests(event):
 
@@ -1222,22 +1238,23 @@ class Interface:
             self.INPUT_EXO["data:weight:aircraft:payload"].value = self.In_Variable_Exo_6.value
             self.INPUT_EXO["data:geometry:wing:aspect_ratio"].value = self.In_Variable_Exo_7.value
             self.INPUT_EXO["data:propulsion:rubber_engine:bypass_ratio"].value = self.In_Variable_Exo_8.value
+
             self.INPUT_EXO.save()
+            List_StudyName.append(self.StudyName)
             print('The variables have been updated')
 
-        button_Update_Variables = widgets.Button(description='Update VoI',description_tooltip='Update Variables of Interest')
-        button_Update_Variables.icon = "fa-check"
-        button_Update_Variables.layout.width = 'auto'
-        button_Update_Variables.layout.height = 'auto'
-        button_Update_Variables.on_click(save_variable_interests)
+        self.button_Update_Variables = widgets.Button(description='Update VoI',description_tooltip='Update Variables of Interest')
+        self.button_Update_Variables.icon = "fa-check"
+        self.button_Update_Variables.layout.width = 'auto'
+        self.button_Update_Variables.layout.height = 'auto'
+        self.button_Update_Variables.on_click(save_variable_interests)
 
         # here, after this save function, the new values modifies by the user are changed in the input file
-
         def RUN_MDA_EXO_Function():
             MDA_problem_exo = self.OAD.RUN_OAD_EXO() # This runs the MDA problem
+            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_CSV_File("workdir\oad_sizing.csv", "OUTPUT_EXO", str(self.StudyName.value))
             return MDA_problem_exo
-
-
         # Function to update the progress bar
         def update_progress_bar():
             total_iterations = 100
@@ -1247,10 +1264,8 @@ class Interface:
             with progressbar.ProgressBar(widgets=custom_widget,max_value=total_iterations) as bar:
                 for i in range(total_iterations):
                     # Update progress bar
-                    time.sleep(2)  # Simulate time for updating progress
+                    time.sleep(0.02)  # Simulate time for updating progress
                     bar.update(i + 1)
-
-
         def RUN_MDA_EXO(event):
             # Create a thread for the simulation
             simulation_thread = threading.Thread(target=RUN_MDA_EXO_Function)
@@ -1262,106 +1277,255 @@ class Interface:
             # Wait for the simulation thread to complete
             simulation_thread.join()
             print('Problem solved.')
+            time.sleep(2)  # Simulate time for updating progress
+            clear_output()
+            display(self.BOX_INPUT)
+
+            button_plots = widgets.Button(description='Update Plots')
+            button_plots.icon = 'fa-check'
+            button_plots.layout.width = 'auto'
+            button_plots.layout.height = 'auto'
+            button_plots.on_click(self.UpdatePlots)
+
+            path_to_target = "OUTPUT_EXO"
+            path_to_file_list_xml = []
+            temp = os.listdir(path_to_target)
+            for i in range(0, len(temp)):
+                if temp[i][-3:] == 'xml':
+                    path_to_file_list_xml.append(temp[i])
+
+            self.output_list_exo_xml = widgets.SelectMultiple(options=path_to_file_list_xml,
+                                                              description='Select an Aircraft:', disabled=False,
+                                                              style={'description_width': 'initial'},
+                                                              layout=widgets.Layout(width="300px", height="150 px"),
+                                                              rows=len(path_to_file_list_xml))
+            self.C_select = widgets.HBox(children=[self.output_list_exo_xml,button_plots],
+                                                  layout=widgets.Layout(border='2px solid black', align_items='center',
+                                                                        justify_content='space-around',
+                                                                        padding='5px', width='100%'))
+            display(self.C_select)
+
+        #Function to run the problem with Performance Module
+        def RUN_MDA_EXO_Function_Perfo():
+            MDA_problem_exo = self.OAD.RUN_OAD_EXO_PERFO() # This runs the MDA problem
+            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_CSV_File("workdir\oad_sizing.csv", "OUTPUT_EXO", str(self.StudyName.value))
+            return MDA_problem_exo
+        # Function to update the progress bar
+        def update_progress_bar2():
+            total_iterations = 100
+            custom_widget = [
+                'Progress: ',progressbar.Bar(marker='█', left='', right='|'),
+                ' ',progressbar.Percentage()]
+            with progressbar.ProgressBar(widgets=custom_widget,max_value=total_iterations) as bar:
+                for i in range(total_iterations):
+                    # Update progress bar
+                    time.sleep(1.7)  # Simulate time for updating progress
+                    bar.update(i + 1)
+
+        def RUN_MDA_EXO_PERFO(event):
+            # Create a thread for the simulation
+            simulation_thread = threading.Thread(target=RUN_MDA_EXO_Function_Perfo)
+            print('The problem is being solved (PERFORMANCE MODULE USED): ☕... ')
+            # Start the simulation thread
+            simulation_thread.start()
+            # Start the progress bar thread
+            update_progress_bar2()
+            # Wait for the simulation thread to complete
+            simulation_thread.join()
+            print('Problem solved.')
+            time.sleep(2)  # Simulate time for updating progress
+            clear_output()
+            display(self.BOX_INPUT)
+
+            button_plots = widgets.Button(description='Update Plots')
+            button_plots.icon = 'fa-check'
+            button_plots.layout.width = 'auto'
+            button_plots.layout.height = 'auto'
+            button_plots.on_click(self.UpdatePlots)
+
+            path_to_target = "OUTPUT_EXO"
+            path_to_file_list_xml = []
+            temp = os.listdir(path_to_target)
+            for i in range(0, len(temp)):
+                if temp[i][-3:] == 'xml':
+                    path_to_file_list_xml.append(temp[i])
+
+            self.output_list_exo_xml = widgets.SelectMultiple(options=path_to_file_list_xml,
+                                                              description='Select an Aircraft:', disabled=False,
+                                                              style={'description_width': 'initial'},
+                                                              layout=widgets.Layout(width="300px", height="150 px"),
+                                                              rows=len(path_to_file_list_xml))
+            self.C_select = widgets.HBox(children=[self.output_list_exo_xml, button_plots],
+                                         layout=widgets.Layout(border='2px solid black', align_items='center',
+                                                               justify_content='space-around',
+                                                               padding='5px', width='100%'))
+            display(self.C_select)
 
 
         #here we run the EXO problem
-        button_Run_Exo = widgets.Button(description='LAUNCH')
-        button_Run_Exo.icon = 'fa-rocket'
-        button_Run_Exo.layout.width = 'auto'
-        button_Run_Exo.layout.height = 'auto'
-        button_Run_Exo.on_click(RUN_MDA_EXO)
+        self.button_Run_Exo = widgets.Button(description='LAUNCH')
+        self.button_Run_Exo.icon = 'fa-rocket'
+        self.button_Run_Exo.layout.width = 'auto'
+        self.button_Run_Exo.layout.height = 'auto'
+        self.button_Run_Exo.on_click(RUN_MDA_EXO)
+        #here we run the EXO problem
+        self.button_Run_Exo_Perfo = widgets.Button(description='LAUNCH Performance')
+        self.button_Run_Exo_Perfo.icon = 'fa-rocket'
+        self.button_Run_Exo_Perfo.layout.width = 'auto'
+        self.button_Run_Exo_Perfo.layout.height = 'auto'
+        self.button_Run_Exo_Perfo.on_click(RUN_MDA_EXO_PERFO)
 
-
-        C_exo1 = widgets.HTML(value=" <b><u>Variables of Interest</u></b>")
-        C_exo2 = widgets.HTML(value=" <b><u>Analysis Tool Side</u></b>")
-
-        #here we have the inputs as varaibles of interest + the update button
-        C_Vertical_box1 = widgets.VBox(children=[C_exo1,self.In_Variable_Exo_1,self.In_Variable_Exo_2,self.In_Variable_Exo_3,
-            self.In_Variable_Exo_4,self.In_Variable_Exo_5,self.In_Variable_Exo_6,self.In_Variable_Exo_7,self.In_Variable_Exo_8,
-                button_Update_Variables],layout=widgets.Layout(border='2px solid black', align_items='center', padding='2px', width='40%'))
-
-        #here we have different plots
-        self.fig1 = oad.wing_geometry_plot("workdir/oad_sizing_out.xml")
-        self.fig2 = oad.aircraft_geometry_plot("workdir/oad_sizing_out.xml")
-        self.fig3 = oad.drag_polar_plot("workdir/oad_sizing_out.xml")
-        self.fig4 = self.OAD.payload_range("workdir/oad_sizing_out.xml","workdir/oad_sizing.csv")
-        self.fig5 = oad.mass_breakdown_bar_plot("workdir/oad_sizing_out.xml", name='oad_sizing')
-        self.fig6 = oad.mass_breakdown_sun_plot("workdir/oad_sizing_out.xml")
+        self.fig1 = oad.wing_geometry_plot("workdir/oad_sizing_out_exo.xml")
+        self.fig2 = oad.aircraft_geometry_plot("workdir/oad_sizing_out_exo.xml")
+        self.fig3 = oad.drag_polar_plot("workdir/oad_sizing_out_exo.xml")
+        self.fig4 = self.OAD.payload_range("workdir/oad_sizing_out_exo.xml", "workdir/oad_sizing_exo.csv",name='oad_sizing_exo')
+        self.fig5 = oad.mass_breakdown_bar_plot("workdir/oad_sizing_out_exo.xml", name='oad_sizing_exo')
+        self.fig6 = oad.mass_breakdown_sun_plot("workdir/oad_sizing_out_exo.xml")
         self.output_fig5 = widgets.Output()
         with self.output_fig5:
             display(self.fig5)
         self.output_fig5 = go.FigureWidget(self.fig5)
+
         self.output_fig6 = widgets.Output()
         with self.output_fig6:
             display(self.fig6)
         self.output_fig6 = go.FigureWidget(self.fig6)
         self.output_fig7 = widgets.Output()
-        Mission = [pth.join('workdir', 'oad_sizing.csv')]
-        name = ['oad_sizing']
+        Mission = [pth.join('workdir', 'oad_sizing_exo.csv')]
+        name = ['oad_sizing_exo']
         with self.output_fig7:
             self.fig7 = self.OAD.MISSION_PLOT(Mission,name)
 
-        self.tab_Analysis_Exo = widgets.Tab(children=[self.fig1,self.fig2,self.fig3,self.fig4,self.output_fig7,self.output_fig5,self.output_fig6])
 
-        self.tab_Analysis_Exo.set_title(0, 'Wing Geometry')
-        self.tab_Analysis_Exo.set_title(1, 'Aicraft Geometry')
-        self.tab_Analysis_Exo.set_title(2, 'Drag polar')
-        self.tab_Analysis_Exo.set_title(3, 'Payload-Range')
-        self.tab_Analysis_Exo.set_title(4, 'Mission')
-        self.tab_Analysis_Exo.set_title(5, 'Bar Mass breakdown')
-        self.tab_Analysis_Exo.set_title(6, 'SUN Mass Breakdown')
-
-
-
+        self.tab_Analysis_Exo_1 = widgets.Tab(children=[self.fig1,self.fig2,self.fig3,self.output_fig5,
+                                                        self.output_fig6,self.fig4,self.output_fig7])
+        self.tab_Analysis_Exo_1.set_title(0, 'Wing Geometry')
+        self.tab_Analysis_Exo_1.set_title(1, 'Aircraft Geometry')
+        self.tab_Analysis_Exo_1.set_title(2, 'Drag polar')
+        self.tab_Analysis_Exo_1.set_title(3, 'Bar Mass breakdown')
+        self.tab_Analysis_Exo_1.set_title(4, 'SUN Mass Breakdown')
+        self.tab_Analysis_Exo_1.set_title(5, 'Payload-Range')
+        self.tab_Analysis_Exo_1.set_title(6, 'Mission')
 
 
 
-        button_plots = widgets.Button(description='Update Plots')
-        button_plots.icon = 'fa-check'
-        button_plots.layout.width = 'auto'
-        button_plots.layout.height = 'auto'
-        button_plots.on_click(self.UpdatePlots)
 
-        #here we have the luanch button
+        C_exo1 = widgets.HTML(value=" <b><u>Variables of Interest</u></b>")
+        C_exo1_1 = widgets.HTML(value=" <u>TLARS</u>")
+        C_exo1_2 = widgets.HTML(value=" <u>Weight</u>")
+        C_exo1_3 = widgets.HTML(value=" <u>Wing Geo</u>")
+        C_exo1_4 = widgets.HTML(value=" <u>Propulsion</u>")
+        C_exo2 = widgets.HTML(value=" <b><u>Analysis Tool Side</u></b>")
 
-        C_Vertical_box2 = widgets.VBox(children=[C_exo2,self.tab_Analysis_Exo],
+        #here we have the inputs as varaibles of interest + the update button
+        C_Vertical_box1 = widgets.VBox(children=[C_exo1,C_exo1_1,self.In_Variable_Exo_1,self.In_Variable_Exo_2,self.In_Variable_Exo_3,
+            self.In_Variable_Exo_4,C_exo1_2,self.In_Variable_Exo_5,self.In_Variable_Exo_6,C_exo1_3,self.In_Variable_Exo_7,C_exo1_4,
+            self.In_Variable_Exo_8,self.StudyName,self.button_Update_Variables],
+                  layout=widgets.Layout(border='2px solid black', align_items='center', padding='2px', width='40%'))
+
+
+        C_Vertical_box2 = widgets.VBox(children=[C_exo2,self.tab_Analysis_Exo_1],
             layout=widgets.Layout(border='2px solid black', align_items='center', padding='5px', width='200%'))
 
-        self.C_Horizontal_box1 = widgets.HBox(children=[button_Run_Exo,button_plots],
-            layout=widgets.Layout(border='2px solid black', align_items='center',justify_content='space-around', padding='5px', width='100%'))
+
+        self.C_Horizontal_box1 = widgets.HBox(children=[self.button_Run_Exo,self.button_Run_Exo_Perfo],
+            layout=widgets.Layout(border='2px solid black', align_items='center',justify_content='space-around',
+                                  padding='5px', width='100%'))
 
         self.C_Horizontal_box2 = widgets.HBox(children=[C_Vertical_box1,C_Vertical_box2],
             layout=widgets.Layout(border='2px solid black', align_items='center', padding='5px', width='100%'))
 
-        self.Vetical_box3 = widgets.VBox(children=[self.C_Horizontal_box1,self.C_Horizontal_box2],
+
+        self.Vertical_box3 = widgets.VBox(children=[self.C_Horizontal_box1,self.C_Horizontal_box2],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='5px', width='100%'))
 
-        return display(self.Vetical_box3)
+        return display(self.Vertical_box3)
 
     def UpdatePlots(self,event):
-        self.fig1 = oad.wing_geometry_plot("workdir/oad_sizing_out.xml")
-        self.fig2 = oad.aircraft_geometry_plot("workdir/oad_sizing_out.xml")
-        self.fig3 = oad.drag_polar_plot("workdir/oad_sizing_out.xml")
-        self.fig4 = self.OAD.payload_range("workdir/oad_sizing_out.xml", "workdir/oad_sizing.csv")
-        self.fig5 = oad.mass_breakdown_bar_plot("workdir/oad_sizing_out.xml", name='oad_sizing')
-        self.fig6 = oad.mass_breakdown_sun_plot("workdir/oad_sizing_out.xml")
-        self.output_fig5 = widgets.Output()
-        with self.output_fig5:
-            display(self.fig5)
-        self.output_fig5 = go.FigureWidget(self.fig5)
+        clear_output()
+        display(self.BOX_INPUT)
+        display(self.C_select)
 
-        self.output_fig6 = widgets.Output()
-        with self.output_fig6:
-            display(self.fig6)
+        liste_exo_xml = self.output_list_exo_xml.value
+        path = "OUTPUT_EXO"
+        XML_Liste_Design = []
+        XML_Liste_Name = []
+        CSV_Liste_Design = []
+        CSV_Liste_Name = []
+        i = 0
+        while (i < len(liste_exo_xml)):
+            OUTPUT = pth.join(path, liste_exo_xml[i])
+            XML_Liste_Design.append(OUTPUT)
+            OUTPUT= OUTPUT[:-3]
+            OUTPUT += "csv"
+            CSV_Liste_Design.append(OUTPUT)
+            name = os.path.splitext(os.path.split(liste_exo_xml[i])[1])[0]
+            XML_Liste_Name.append(name)
+            CSV_Liste_Name.append(name)
+            i = i + 1
+
+        # here we have different plots
+        self.fig1 = oad.wing_geometry_plot(XML_Liste_Design[0], XML_Liste_Name[0])
+        self.fig2 = oad.aircraft_geometry_plot(XML_Liste_Design[0], XML_Liste_Name[0])
+        self.fig3 = oad.drag_polar_plot(XML_Liste_Design[0], XML_Liste_Name[0])
+        self.fig4 = self.OAD.payload_range(XML_Liste_Design[0], CSV_Liste_Design[0],name=XML_Liste_Name[0])
+        self.fig5 = oad.mass_breakdown_bar_plot(XML_Liste_Design[0], name=XML_Liste_Name[0])
+        self.fig6 = oad.mass_breakdown_sun_plot(XML_Liste_Design[0])
+        i = 1
+        while (i < len(liste_exo_xml)):
+            self.fig1 = oad.wing_geometry_plot(XML_Liste_Design[i],XML_Liste_Name[i],fig=self.fig1)
+            self.fig2 = oad.aircraft_geometry_plot(XML_Liste_Design[i],XML_Liste_Name[i],fig=self.fig2)
+            self.fig3 = oad.drag_polar_plot(XML_Liste_Design[i],XML_Liste_Name[i],fig=self.fig3)
+            self.fig4 = self.OAD.payload_range(XML_Liste_Design[i], CSV_Liste_Design[i],name=XML_Liste_Name[i],fig=self.fig4)
+            self.fig5 = oad.mass_breakdown_bar_plot(XML_Liste_Design[i], name=XML_Liste_Name[i],fig=self.fig5)
+            self.fig6 = oad.mass_breakdown_sun_plot(XML_Liste_Design[i])
+            i = i + 1
+
+
+        self.output_fig5 = go.FigureWidget(self.fig5)
         self.output_fig6 = go.FigureWidget(self.fig6)
         self.output_fig7 = widgets.Output()
-        Mission = [pth.join('workdir', 'oad_sizing.csv')]
-        name = ['oad_sizing']
         with self.output_fig7:
-            self.fig7 = self.OAD.MISSION_PLOT(Mission,name)
+            self.fig7 = self.OAD.MISSION_PLOT(CSV_Liste_Design, CSV_Liste_Name)
 
-        self.tab_Analysis_Exo.children = [self.fig1,self.fig2,self.fig3,self.fig4,self.output_fig7,self.output_fig5,self.output_fig6]
+        self.tab_Analysis_Exo_1 = widgets.Tab(children=[self.fig1, self.fig2, self.fig3, self.output_fig5,
+                                                        self.output_fig6,self.fig4, self.output_fig7])
+        self.tab_Analysis_Exo_1.set_title(0, 'Wing Geometry')
+        self.tab_Analysis_Exo_1.set_title(1, 'Aircraft Geometry')
+        self.tab_Analysis_Exo_1.set_title(2, 'Drag polar')
+        self.tab_Analysis_Exo_1.set_title(3, 'Bar Mass breakdown')
+        self.tab_Analysis_Exo_1.set_title(4, 'SUN Mass Breakdown')
+        self.tab_Analysis_Exo_1.set_title(5, 'Payload-Range')
+        self.tab_Analysis_Exo_1.set_title(6, 'Mission')
+
+        #here we have the luanch button
+        C_exo1 = widgets.HTML(value=" <b><u>Variables of Interest</u></b>")
+        C_exo1_1 = widgets.HTML(value=" <u>TLARS</u>")
+        C_exo1_2 = widgets.HTML(value=" <u>Weight</u>")
+        C_exo1_3 = widgets.HTML(value=" <u>Wing Geo</u>")
+        C_exo1_4 = widgets.HTML(value=" <u>Propulsion</u>")
+        C_exo2 = widgets.HTML(value=" <b><u>Analysis Tool Side</u></b>")
+
+        #here we have the inputs as varaibles of interest + the update button
+        C_Vertical_box1 = widgets.VBox(children=[C_exo1,C_exo1_1,self.In_Variable_Exo_1,self.In_Variable_Exo_2,self.In_Variable_Exo_3,
+            self.In_Variable_Exo_4,C_exo1_2,self.In_Variable_Exo_5,self.In_Variable_Exo_6,C_exo1_3,self.In_Variable_Exo_7,C_exo1_4,
+            self.In_Variable_Exo_8,self.StudyName,self.button_Update_Variables],
+                  layout=widgets.Layout(border='2px solid black', align_items='center', padding='2px', width='40%'))
+        C_Vertical_box2 = widgets.VBox(children=[C_exo2,self.tab_Analysis_Exo_1],
+            layout=widgets.Layout(border='2px solid black', align_items='center', padding='5px', width='200%'))
+        self.C_Horizontal_box1 = widgets.HBox(children=[self.button_Run_Exo,self.button_Run_Exo_Perfo],
+            layout=widgets.Layout(border='2px solid black', align_items='center',justify_content='space-around',
+                                  padding='5px', width='100%'))
+        self.C_Horizontal_box2 = widgets.HBox(children=[C_Vertical_box1,C_Vertical_box2],
+            layout=widgets.Layout(border='2px solid black', align_items='center', padding='5px', width='100%'))
+        self.Vertical_box3 = widgets.VBox(children=[self.C_Horizontal_box1,self.C_Horizontal_box2],
+            layout=widgets.Layout(border='3px solid black', align_items='center', padding='5px', width='100%'))
+
         print('Plots have been updated.')
+        return display(self.Vertical_box3)
+
+
 
 
 
@@ -1394,7 +1558,18 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color = "#ebebeb"
         self.Button_M4.style.button_color = "#00d600"
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
         print("MDA ANALYSIS PHASE")
         print(
             "-------------------------------------------------------------------------------------------------------------------------------")
@@ -1450,8 +1625,18 @@ class Interface:
         self.Button_M1.style.button_color='#ebebeb'
         self.Button_M2.style.button_color="#00d600"
         self.Button_M2.disabled=False
-
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
         print("CONFIGRATION PHASE")
         print("-------------------------------------------------------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------------------------------------------------------")
@@ -1630,7 +1815,18 @@ class Interface:
         self.Button_M2.style.button_color='#ebebeb'
         self.Button_M3.style.button_color="#00d600"
         self.Button_M3.disabled=False
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
         print("AIRCRAFT INPUTS DATA PHASE")
         print("-------------------------------------------------------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------------------------------------------------------")
@@ -1766,7 +1962,18 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color="#ebebeb"
         self.Button_M4.style.button_color="#00d600"
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
         print("MDA ANALYSIS PHASE")
         print("-------------------------------------------------------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------------------------------------------------------")
@@ -3404,7 +3611,18 @@ class Interface:
         clear_output()
         self.Button_M4.style.button_color="#ebebeb"
         self.Button_M5.style.button_color="#00d600"
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
         print("AIRCRAFT ANALYSIS PHASE")
         print("-------------------------------------------------------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------------------------------------------------------")
@@ -3514,7 +3732,18 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color='#ebebeb'
         self.Button_M6.style.button_color="#00d600"
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
 # FUNCTION: FROM THE ANAYSIS PHASE TO MDA  PHASE
     def analysis_to_mda (self,event):
         clear_output()
@@ -3823,10 +4052,10 @@ class Interface:
             j=j+1
 
 
-        fig=self.OAD.payload_range(FILE_PATH[0],MISSION_PATH[0])
+        fig=self.OAD.payload_range(FILE_PATH[0],MISSION_PATH[0],name=mission_name[0])
         k=1
         while (k<len(FILE_PATH)):
-            fig=self.OAD.payload_range(FILE_PATH[k],MISSION_PATH[k],fig=fig)
+            fig=self.OAD.payload_range(FILE_PATH[k],MISSION_PATH[k],name=mission_name[k],fig=fig)
             k=k+1
 
         fig.show()
@@ -4316,7 +4545,18 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color='#ebebeb'
         self.Button_M6.style.button_color='#ebebeb'
-        display(self.menu)
+        image_path="Images/Wing.jpg"
+        custom_css = f'''
+        .vbox-with-background {{
+            background-image: url("{image_path}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+        }}
+        '''
+        display(HTML(f'<style>{custom_css}</style>'),self.menu)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # PARAMETRIC BRANCH # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -4381,9 +4621,10 @@ class Interface:
         layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
         layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
         layout_H2 = widgets.Layout(border='4px solid black', padding='10px', justify_content='space-between',align_items='center', width='100%')
+        layout_H3 = widgets.Layout(border='4px solid black', padding='10px', justify_content='space-around',align_items='center', width='100%')
         layout_box=widgets.Layout(border='6px solid black', padding='10px', align_items='center', width='100%')
-        title1=widgets.HTML(value=" <b>STEP 1 INCREMENTAL DEVELOPMENT </b>")
-        title1_2 = widgets.HTML(value=" <b>STEP 1.5 INCREMENTAL DEVELOPMENT </b>")
+        title1=widgets.HTML(value=" <b>INCREMENTAL DEVELOPMENT TYPE 1 </b>")
+        title1_2 = widgets.HTML(value=" <b>INCREMENTAL DEVELOPMENT TYPE 1.5 </b>")
         title2 = widgets.HTML(value=" <b>STEP 2 INCREMENTAL DEVELOPMENT </b>")
         Button1=widgets.Button(description="WEIGHT SAVING",tooltip="MODIFY THE AIRCRAFT OWE",layout=layout_button,style=dict(button_color='#ebebeb'))
         Button1.on_click(self.Weight_Saving_UI)
@@ -4407,11 +4648,16 @@ class Interface:
         box_H2 = widgets.HBox(children=[Button5, Button6], layout=layout_H2)
         box_H3 = widgets.HBox(children=[Button7], layout=layout_H2)
 
-        Button1=widgets.Button(description="LAUNCH ANALYSIS - STEP 1 and 1.5",tooltip="Launch the ID analysis of level STEP 1 and 1.5",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button1.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP1)
-        Button2=widgets.Button(description="LAUNCH ANALYSIS - STEP 2",tooltip="Launch the ID analysis of level STEP 2",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button2.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP2)
 
+        Button1=widgets.Button(description="RUN - STEP 1 ",tooltip="Launch the ID analysis of level STEP 1",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button1.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP1)
+
+        Button2=widgets.Button(description="RUN - STEP 2",tooltip="Launch the ID analysis of level STEP 2",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button2.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP2_OWE)
+
+
+
+        box_H_Button_Run = widgets.HBox(children=[Button1, Button2], layout=layout_H3)
         # ---------------------------------------------------------------------------------------------------------------
         buttonHOME = widgets.Button(description='')
         buttonHOME.icon = 'fa-home'
@@ -4441,7 +4687,7 @@ class Interface:
         accordion2.set_title(0, 'STEP 1.5')
         accordion3.set_title(0, 'STEP 2')
         accordion_box = widgets.HBox(children=[accordion1,accordion2,accordion3], layout=widgets.Layout(width='100%'))
-        self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,Button1,title2,box_H3,Button2,buttonHOME],layout=layout_box)
+        self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,box_H_Button_Run,buttonHOME],layout=layout_box)
         display(self.ID2_box)
 
 
@@ -4874,12 +5120,6 @@ class Interface:
 
 
 
-
-
-
-
-
-
     def Drag_Saving_UI(self,event):
         path="OUTPUT_FILE"
         file_name="IncrementalDevelopment_Aircraft_File.xml"
@@ -5250,7 +5490,7 @@ class Interface:
 
 
     def Fuselage_Stretch(self,event):
-        self.ID_Type = self.ID_Type + ["Fuselage Stretch"]
+        self.ID_Type = self.ID_Type + ["Fuselage Simple Stretch"]
         # new length
         length=self.FUSE_1.value+self.FUSE_8.value
         # new lift_drag ratio
@@ -5294,8 +5534,8 @@ class Interface:
 
 
 
-    def BlockFuel_ID(self,OWE,PL,RANGE,coefficient):
-        BF_DOC = math.exp((1000 * RANGE * 1.852) / (coefficient)) * (OWE + PL) - (OWE + PL)
+    def BlockFuel_ID(self,OWE,PL,RANGE,coefficient,reserve):
+        BF_DOC = math.exp((1000 * RANGE * 1.852) / (coefficient)) * (OWE + PL + reserve) - (OWE + PL + reserve)
         return BF_DOC
 
 
@@ -5356,36 +5596,22 @@ class Interface:
         PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0]
         Range_DOC_ref = 4000  # np.asarray(Data["data:TLAR:range"].value)
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
-        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        #MTOW_ref=data_ref["data:weight:aircraft:MTOW"].value[0]
-        #Max_Payload_ref=data_ref["data:weight:aircraft:max_payload"].value[0]
-        #BF_ref=MTOW_ref-OWE_ref-Max_Payload_ref
-
+        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
 
         data_para = self.OAD.Input_File(ac_para)
         OWE_para=data_para["data:weight:aircraft:OWE"].value[0]
         PL_DOC_para = data_para["data:weight:aircraft:payload"].value[0]
         Range_DOC_para = 4000  # np.asarray(Data["data:TLAR:range"].value)
         coefficient_para = self.OAD.para_coefficient_range(data_para, SFC_para)
-        BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para)
         reserve_para = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        #MTOW_para=data_para["data:weight:aircraft:MTOW"].value[0]
-        #Max_Payload_para=data_para["data:weight:aircraft:max_payload"].value[0]
-        #BF_para=MTOW_para-OWE_para-Max_Payload_para
+        BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para,reserve_para)
 
         # COMPUTE THE SPECIFIC RANGE
         SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
         SR_para=self.OAD.compute_SR(ac_para,SFC_para,BF_para)[0]
 
         # COMPUTE THE MEAN MASS
-        #mass mission includes cruise and main route climb
-        mass_ref=self.OAD.mass(mission_ref)
-        if self.var_mtow == None:
-            mass_para = self.OAD.mass(mission_ref) # It is the same as the MDA is not run in STEP1
-        else:
-            mass_para = self.OAD.mass(mission_ref) + self.var_mtow
-
         mass_ref= OWE_ref +PL_DOC_ref +(reserve_ref+BF_ref/2)
         mass_para = OWE_para + PL_DOC_para + (reserve_para+BF_para/2)
 
@@ -5456,7 +5682,7 @@ class Interface:
         print('Problem solved.')
         print("------------------NEW PERFORMANCE COMPUTED----------------------------")
 
-    def INCREMENTAL_DEVELOPEMENT_STEP2(self,event):
+    def INCREMENTAL_DEVELOPEMENT_STEP2_OWE(self,event):
 
         clear_output()
         display(self.ID2_box)
@@ -5465,6 +5691,8 @@ class Interface:
         ac_ref=self.AC_ref
         mission_ref=self.mission_ref
         data_ref = self.OAD.Input_File(ac_ref)
+        OWE_ref = data_ref["data:weight:aircraft:OWE"].value[0]
+        CD_ref = data_ref["data:aerodynamics:aircraft:cruise:CD"].value[0]
 
         #DATA AC STEP1
         path_ac="OUTPUT_FILE"
@@ -5472,36 +5700,33 @@ class Interface:
         ac_para_S1=pth.join(path_ac,file_para_S1)
         SOURCE = ac_para_S1
         data_para = self.OAD.Input_File(ac_para_S1)
+        # Getting the inputs optimization problem from the user interface
+        if "Weight Saving" in self.ID_Type:
+            delta_percent_owe_extra = 0.0102
+        else:
+            delta_percent_owe_extra=0
+
+        #DATA OWE or FUSELAGE OWE or NEO OWE STEP 2
+        OWE_step1 = data_para["data:weight:aircraft:OWE"].value[0]
+        OWE_percent = (1 - (OWE_ref-OWE_step1) / OWE_ref) + delta_percent_owe_extra
+        data_para["data:weight:k_factor_OWE"].value=OWE_percent
+
+        #DATA DRAG SAVING or FUSELAGE STRETCH EXTRA DRAG or NEO DRAG STEP 2
+        CD_step1 = data_para["data:aerodynamics:aircraft:cruise:CD"].value[0]
+        CD_percent = (1 - (CD_ref - CD_step1) / CD_ref)
+        data_para["tuning:aerodynamics:aircraft:cruise:CD:k"].value = CD_percent
+
+        #DATA SFC or NEO SFC STEP 2
+        if "SFC" in self.ID_Type:
+            SFC_ref = float(self.List_SFC[0])
+            SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
+            SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
+            data_para["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+
+        data_para.save()
+
 
         #BUILD CONFIG AND INPUTS FOR STEP 2 problem
-
-        # Getting the inputs optimization problem from the user interface
-        max_pl = data_para["data:weight:aircraft:max_payload"].value[0]
-        OWE_Design = data_para["data:weight:aircraft:OWE"].value[0]
-        Range_DOC_para_S1 = data_para["data:TLAR:range"].value[0]
-        des1_name="data:weight:aircraft:max_payload"
-        des1_low=max_pl-5000
-        des1_up=max_pl+100
-        des2_name="data:weight:aircraft:OWE"
-        des2_low=OWE_Design
-        des2_up=OWE_Design+1
-        #cons_name=self.CONS_W2.value
-        #cons_up_low=self.CONS_LU.value
-        #cons_val=self.CONS_VAL.value
-        obj_name="data:weight:aircraft:MTOW"
-
-        # Optimization problem dictionnary
-        data={'optimization': {'design_variables': [{'name': des1_name,'lower': des1_low,'upper': des1_up}],
-                               'constraints': [{'name': des2_name,'lower': des2_low,'upper': des2_up}],
-                               'objective': [{'name': obj_name, 'scaler': 0.0001}]
-                               }}
-        #data = {'optimization': {'design_variables': [{'name': des_name, 'lower': des_low, 'upper': des_up}],'constraints': [{'name': cons_name, cons_up_low: cons_val}],'objective': [{'name': obj_name, 'scaler': 0.0001}]}}
-        # The configuration file path
-        file_name="oad_sizing_step2_owe.yml"
-        path="data"
-        file_path=pth.join(path,file_name)
-        # Optimization problem definiton
-        self.OAD.Write_Optimization_Problem(file_path,data)
 
         path_config="data"
         file_config="oad_sizing_step2_owe.yml" #"para_performance.yml"
@@ -5510,7 +5735,7 @@ class Interface:
 
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_PARA():
-            self.OWE_STEP2=oad.optimize_problem(CONFIGURATION, overwrite=True)
+            self.OWE_STEP2=oad.evaluate_problem(CONFIGURATION, overwrite=True)
             self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT_FILE", "STEP2_OWE")
 
 
@@ -5523,7 +5748,7 @@ class Interface:
             with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
                 for i in range(total_iterations):
                     # Update progress bar
-                    time.sleep(2)  # Simulate time for updating progress
+                    time.sleep(0.8)  # Simulate time for updating progress
                     bar.update(i + 1)
 
 
@@ -5567,16 +5792,17 @@ class Interface:
         PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0]
         Range_DOC_ref = 4000  # np.asarray(Data["data:TLAR:range"].value)
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
-        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
+
 
         #FOR THE STEP 1 AC
         OWE_para_S1=data_para["data:weight:aircraft:OWE"].value[0]
         PL_DOC_para_S1 = data_para["data:weight:aircraft:payload"].value[0]
         Range_DOC_para_S1 = 4000  # np.asarray(Data["data:TLAR:range"].value)
         coefficient_para_S1 = self.OAD.para_coefficient_range(data_para, SFC_para_S1)
-        BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1)
         reserve_para_S1 = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1,reserve_para_S1)
 
 
         #FOR THE STEP 2 AC
@@ -5585,8 +5811,8 @@ class Interface:
         PL_DOC_para_S2 = data_para["data:weight:aircraft:payload"].value[0]
         Range_DOC_para_S2 = 4000  # np.asarray(Data["data:TLAR:range"].value)
         coefficient_para_S2 = self.OAD.para_coefficient_range(data_para, SFC_para_S2)
-        BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2)
         reserve_para_S2 = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2,reserve_para_S2)
 
 
         # COMPUTE THE SPECIFIC RANGE
@@ -5599,17 +5825,30 @@ class Interface:
         mass_para_S1 = OWE_para_S1 + PL_DOC_para_S1 + (reserve_para_S1 + BF_para_S1/2)
         mass_para_S2 = OWE_para_S2 + PL_DOC_para_S2 + (reserve_para_S2 + BF_para_S2/2)
 
-        Percent_BF = 100*(BF_para_S1-BF_ref)/BF_ref
-        Percent_SR = 100 * (SR_para_S1 - SR_ref) / SR_ref
-        Percent_Mass = 100 * (mass_para_S1 - mass_ref) / mass_ref
+        Percent_BF_S1 = 100*(BF_para_S1-BF_ref)/BF_ref
+        Percent_SR_S1 = 100 * (SR_para_S1 - SR_ref) / SR_ref
+        Percent_Mass_S1 = 100 * (mass_para_S1 - mass_ref) / mass_ref
         data = [
-            ["<u>Ref A/C</u>",  "<u>New A/C</u>", "<u>Variation %</u>"],
-            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S1,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF,2))+"</b>"],
-            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S1,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR,2))+"</b>"],
-            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S1, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass, 2))+"</b>"],
+            ["<u>Ref A/C</u>",  "<u>STEP 1 A/C</u>", "<u>Variation w.r.t REF %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S1,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S1,2))+"</b>"],
+            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S1,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S1,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S1, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S1, 2))+"</b>"],
             ]
-        table_widget = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
+        table_widget_S1 = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
             layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
+
+        Percent_BF_S2 = 100*(BF_para_S2-BF_ref)/BF_ref
+        Percent_SR_S2 = 100 * (SR_para_S2 - SR_ref) / SR_ref
+        Percent_Mass_S2 = 100 * (mass_para_S2 - mass_ref) / mass_ref
+        data = [
+            ["<u>Ref A/C</u>",  "<u>STEP 2 A/C</u>", "<u>Variation w.r.t REF %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S2,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S2,2))+"</b>"],
+            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S2,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S2,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S2, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S2, 2))+"</b>"],
+            ]
+        table_widget_S2 = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
+            layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
+
 
         buttonINFO = widgets.Button(description='')
         buttonINFO.icon = 'fa-info-circle'
@@ -5643,7 +5882,7 @@ class Interface:
         fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S1,SFC_para_S1,"STEP 1",fig=fig2,Color='red')
         fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S2, SFC_para_S2, "STEP 2", fig=fig2, Color='green')
 
-        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget,infobox],
+        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget_S1,table_widget_S2,infobox],
             layout=widgets.Layout(border='1px solid black', align_items='center', padding='2px', width='100%'))
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
@@ -5665,7 +5904,7 @@ class Interface:
 
 
 
-    def INCREMENTAL_DEVELOPEMENT_STEP3(self,event):
+    def INCREMENTAL_DEVELOPEMENT_STEP2_DRAG(self,event):
 
         clear_output()
         display(self.ID2_box)

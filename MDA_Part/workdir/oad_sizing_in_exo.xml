@@ -102,13 +102,6 @@
         <thrust_rate is_input="True">0.3<!--Input defined by the mission.--></thrust_rate>
       </taxi>
     </propulsion>
-    <weight>
-      <k_factor_OWE is_input="True">1.0</k_factor_OWE>
-      <aircraft>
-        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">17000.0<!--design payload weight--></payload>
-      </aircraft>
-    </weight>
     <load_case>
       <lc1>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
@@ -121,6 +114,12 @@
         <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
       </lc2>
     </load_case>
+    <weight>
+      <aircraft>
+        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">17000.0<!--design payload weight--></payload>
+      </aircraft>
+    </weight>
     <aerodynamics>
       <aircraft>
         <landing>

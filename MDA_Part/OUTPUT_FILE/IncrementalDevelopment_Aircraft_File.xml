@@ -219,127 +219,14 @@
         <thrust_rate is_input="True">0.3<!--Input defined by the mission.--></thrust_rate>
       </taxi>
     </propulsion>
-    <load_case>
-      <lc1>
-        <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
-        <Vc_EAS units="m/s" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
-        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 1 (gust with minimum aircraft mass)--></altitude>
-      </lc1>
-      <lc2>
-        <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 2 (gust with maximum aircraft mass)--></U_gust>
-        <Vc_EAS units="knot" is_input="True">728.9416846652267<!--equivalent air speed for sizing load case 2 (gust with maximum aircraft mass)--></Vc_EAS>
-        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
-      </lc2>
-    </load_case>
-    <mission>
-      <MTOW_mission>
-        <TOW units="kg" is_input="False">84698.76733274588<!--Loaded fuel at beginning for mission "MTOW_mission"--></TOW>
-        <ZFW units="kg" is_input="False">57571.2788475733<!--Zero Fuel Weight for mission "MTOW_mission"--></ZFW>
-        <block_fuel units="kg" is_input="False">27494.036681907524<!--Loaded fuel at beginning for mission "MTOW_mission"_inp_data:mission:MTOW_mission:block_fuel--></block_fuel>
-        <consumed_fuel_before_input_weight units="kg" is_input="False">366.5481830622739<!--consumed fuel quantity before target mass defined for "MTOW_mission", if any (e.g. TakeOff Weight)--></consumed_fuel_before_input_weight>
-        <distance units="m" is_input="False">8133392.370896712<!--covered ground distance during mission "MTOW_mission"--></distance>
-        <duration units="s" is_input="False">38355.84376297744<!--duration of mission "MTOW_mission"--></duration>
-        <fuel units="kg" is_input="False">26350.40077542382<!--burned fuel during mission "MTOW_mission"--></fuel>
-        <needed_block_fuel units="kg" is_input="False">27494.036681907524<!--Needed fuel to complete mission "MTOW_mission", including reserve fuel--></needed_block_fuel>
-        <diversion>
-          <distance units="nmi" is_input="True">200.0<!--Input defined by the mission.--></distance>
-          <duration units="s" is_input="False">2115.9268639729635<!--duration of route "diversion" in mission "MTOW_mission"--></duration>
-          <fuel units="kg" is_input="False">1480.7027763172591<!--burned fuel during route "diversion" in mission "MTOW_mission"--></fuel>
-          <cruise>
-            <distance units="m" is_input="False">132619.7975925561<!--covered ground distance during phase "cruise" of route "diversion" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">627.2424909731344<!--duration of phase "cruise" of route "diversion" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">518.0799616828081<!--burned fuel during phase "cruise" of route "diversion" in mission "MTOW_mission"--></fuel>
-          </cruise>
-          <descent>
-            <distance units="m" is_input="False">177076.25740956608<!--covered ground distance during phase "descent" of route "diversion" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">1137.1702717743756<!--duration of phase "descent" of route "diversion" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">367.88811067142524<!--burned fuel during phase "descent" of route "diversion" in mission "MTOW_mission"--></fuel>
-          </descent>
-          <diversion_climb>
-            <distance units="m" is_input="False">60704.791221437044<!--covered ground distance during phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">351.5141012254535<!--duration of phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">594.7347039630258<!--burned fuel during phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></fuel>
-          </diversion_climb>
-        </diversion>
-        <holding>
-          <distance units="m" is_input="False">354995.51639653277<!--covered ground distance during phase "holding" in mission "MTOW_mission"--></distance>
-          <duration units="min" is_input="True">45.0<!--Input defined by the mission.--></duration>
-          <fuel units="kg" is_input="False">1449.0183281503632<!--burned fuel during phase "holding" in mission "MTOW_mission"--></fuel>
-        </holding>
-        <main_route>
-          <distance units="m" is_input="False">7407996.00827662<!--covered ground distance during route "main_route" in mission "MTOW_mission"--></distance>
-          <duration units="s" is_input="False">32699.91689900448<!--duration of route "main_route" in mission "MTOW_mission"--></duration>
-          <fuel units="kg" is_input="False">22873.19991564253<!--burned fuel during route "main_route" in mission "MTOW_mission"--></fuel>
-          <range units="nmi" is_input="True">4000.0<!--Input defined by the mission.--></range>
-          <climb>
-            <distance units="m" is_input="False">356342.65220670286<!--covered ground distance during phase "climb" of route "main_route" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">1672.5318303934391<!--duration of phase "climb" of route "main_route" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">2182.565143195752<!--burned fuel during phase "climb" of route "main_route" in mission "MTOW_mission"--></fuel>
-          </climb>
-          <cruise>
-            <distance units="m" is_input="False">6775606.897861565<!--covered ground distance during phase "cruise" of route "main_route" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">29427.307354243294<!--duration of phase "cruise" of route "main_route" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">20068.13925975797<!--burned fuel during phase "cruise" of route "main_route" in mission "MTOW_mission"--></fuel>
-          </cruise>
-          <descent>
-            <distance units="m" is_input="False">269061.65922541264<!--covered ground distance during phase "descent" of route "main_route" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">1536.158639707679<!--duration of phase "descent" of route "main_route" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">466.1569729780458<!--burned fuel during phase "descent" of route "main_route" in mission "MTOW_mission"--></fuel>
-          </descent>
-          <initial_climb>
-            <distance units="m" is_input="False">6984.798982938659<!--covered ground distance during phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></distance>
-            <duration units="s" is_input="False">63.91907466006512<!--duration of phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></duration>
-            <fuel units="kg" is_input="False">156.33853971076314<!--burned fuel during phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></fuel>
-          </initial_climb>
-        </main_route>
-        <reserve>
-          <fuel units="kg" is_input="False">1143.6359064837059<!--reserve fuel for mission "MTOW_mission"--></fuel>
-        </reserve>
-        <takeoff>
-          <V2 units="m/s" is_input="True">79.3<!--Input defined by the mission.--></V2>
-          <duration units="s" is_input="True">0.0<!--Input defined by the mission.--></duration>
-          <fuel units="kg" is_input="True">87.0<!--Input defined by the mission.--></fuel>
-          <safety_altitude units="ft" is_input="True">35.0<!--Input defined by the mission.--></safety_altitude>
-        </takeoff>
-        <taxi_in>
-          <distance units="m" is_input="False">0.0<!--covered ground distance during phase "taxi_in" in mission "MTOW_mission"--></distance>
-          <duration units="s" is_input="True">300.0<!--Input defined by the mission.--></duration>
-          <fuel units="kg" is_input="False">180.93157225139294<!--burned fuel during phase "taxi_in" in mission "MTOW_mission"--></fuel>
-        </taxi_in>
-        <taxi_out>
-          <altitude units="ft" is_input="True">0.0<!--Input defined by the mission.--></altitude>
-          <duration units="s" is_input="True">540.0<!--Input defined by the mission.--></duration>
-          <thrust_rate units="s" is_input="True">0.25<!--Input defined by the mission.--></thrust_rate>
-          <true_airspeed units="m/s" is_input="True">0.0<!--Input defined by the mission.--></true_airspeed>
-        </taxi_out>
-      </MTOW_mission>
-      <sizing>
-        <cs25>
-          <sizing_load_1 units="kg" is_input="False">258186.91046231985</sizing_load_1>
-          <sizing_load_2 units="kg" is_input="False">278169.9324176783</sizing_load_2>
-        </cs25>
-        <landing>
-          <flap_angle units="deg" is_input="True">30.0</flap_angle>
-          <slat_angle units="deg" is_input="True">20.0</slat_angle>
-        </landing>
-        <takeoff>
-          <flap_angle units="deg" is_input="True">10.0</flap_angle>
-          <slat_angle units="deg" is_input="True">18.0</slat_angle>
-        </takeoff>
-        <main_route>
-          <cruise>
-            <altitude units="ft" is_input="True">35000.0</altitude>
-          </cruise>
-        </main_route>
-      </sizing>
-    </mission>
     <weight>
+      <k_factor_OWE is_input="True">1.0</k_factor_OWE>
       <aircraft>
         <MFW units="kg" is_input="False">27494.036668234832<!--maximum fuel weight--></MFW>
         <MLW units="kg" is_input="False">69505.5555784277<!--maximum landing weight--></MLW>
         <MTOW units="kg" is_input="False">84698.76733274588<!--maximum takeoff weight--></MTOW>
         <MZFW units="kg" is_input="False">65571.2788475733<!--maximum zero fuel weight--></MZFW>
-        <OWE units="kg" is_input="False">43292.71490519464<!--Mass of crew--></OWE>
+        <OWE units="kg" is_input="False">43748.42769367037<!--Mass of crew--></OWE>
         <additional_fuel_capacity units="kg" is_input="False">-1.3672692148247734e-05<!--fuel mass capacity of wing that exceeds sizing mission requirement--></additional_fuel_capacity>
         <max_payload units="kg" is_input="True">20000.0<!--max payload weight--></max_payload>
         <payload units="kg" is_input="True">12000.0<!--_inp_data:weight:aircraft:payload--></payload>
@@ -600,6 +487,120 @@
         </rear_fret>
       </payload>
     </weight>
+    <load_case>
+      <lc1>
+        <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
+        <Vc_EAS units="m/s" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
+        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 1 (gust with minimum aircraft mass)--></altitude>
+      </lc1>
+      <lc2>
+        <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 2 (gust with maximum aircraft mass)--></U_gust>
+        <Vc_EAS units="knot" is_input="True">728.9416846652267<!--equivalent air speed for sizing load case 2 (gust with maximum aircraft mass)--></Vc_EAS>
+        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
+      </lc2>
+    </load_case>
+    <mission>
+      <MTOW_mission>
+        <TOW units="kg" is_input="False">84698.76733274588<!--Loaded fuel at beginning for mission "MTOW_mission"--></TOW>
+        <ZFW units="kg" is_input="False">57571.2788475733<!--Zero Fuel Weight for mission "MTOW_mission"--></ZFW>
+        <block_fuel units="kg" is_input="False">27494.036681907524<!--Loaded fuel at beginning for mission "MTOW_mission"_inp_data:mission:MTOW_mission:block_fuel--></block_fuel>
+        <consumed_fuel_before_input_weight units="kg" is_input="False">366.5481830622739<!--consumed fuel quantity before target mass defined for "MTOW_mission", if any (e.g. TakeOff Weight)--></consumed_fuel_before_input_weight>
+        <distance units="m" is_input="False">8133392.370896712<!--covered ground distance during mission "MTOW_mission"--></distance>
+        <duration units="s" is_input="False">38355.84376297744<!--duration of mission "MTOW_mission"--></duration>
+        <fuel units="kg" is_input="False">26350.40077542382<!--burned fuel during mission "MTOW_mission"--></fuel>
+        <needed_block_fuel units="kg" is_input="False">27494.036681907524<!--Needed fuel to complete mission "MTOW_mission", including reserve fuel--></needed_block_fuel>
+        <diversion>
+          <distance units="nmi" is_input="True">200.0<!--Input defined by the mission.--></distance>
+          <duration units="s" is_input="False">2115.9268639729635<!--duration of route "diversion" in mission "MTOW_mission"--></duration>
+          <fuel units="kg" is_input="False">1480.7027763172591<!--burned fuel during route "diversion" in mission "MTOW_mission"--></fuel>
+          <cruise>
+            <distance units="m" is_input="False">132619.7975925561<!--covered ground distance during phase "cruise" of route "diversion" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">627.2424909731344<!--duration of phase "cruise" of route "diversion" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">518.0799616828081<!--burned fuel during phase "cruise" of route "diversion" in mission "MTOW_mission"--></fuel>
+          </cruise>
+          <descent>
+            <distance units="m" is_input="False">177076.25740956608<!--covered ground distance during phase "descent" of route "diversion" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">1137.1702717743756<!--duration of phase "descent" of route "diversion" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">367.88811067142524<!--burned fuel during phase "descent" of route "diversion" in mission "MTOW_mission"--></fuel>
+          </descent>
+          <diversion_climb>
+            <distance units="m" is_input="False">60704.791221437044<!--covered ground distance during phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">351.5141012254535<!--duration of phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">594.7347039630258<!--burned fuel during phase "diversion_climb" of route "diversion" in mission "MTOW_mission"--></fuel>
+          </diversion_climb>
+        </diversion>
+        <holding>
+          <distance units="m" is_input="False">354995.51639653277<!--covered ground distance during phase "holding" in mission "MTOW_mission"--></distance>
+          <duration units="min" is_input="True">45.0<!--Input defined by the mission.--></duration>
+          <fuel units="kg" is_input="False">1449.0183281503632<!--burned fuel during phase "holding" in mission "MTOW_mission"--></fuel>
+        </holding>
+        <main_route>
+          <distance units="m" is_input="False">7407996.00827662<!--covered ground distance during route "main_route" in mission "MTOW_mission"--></distance>
+          <duration units="s" is_input="False">32699.91689900448<!--duration of route "main_route" in mission "MTOW_mission"--></duration>
+          <fuel units="kg" is_input="False">22873.19991564253<!--burned fuel during route "main_route" in mission "MTOW_mission"--></fuel>
+          <range units="nmi" is_input="True">4000.0<!--Input defined by the mission.--></range>
+          <climb>
+            <distance units="m" is_input="False">356342.65220670286<!--covered ground distance during phase "climb" of route "main_route" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">1672.5318303934391<!--duration of phase "climb" of route "main_route" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">2182.565143195752<!--burned fuel during phase "climb" of route "main_route" in mission "MTOW_mission"--></fuel>
+          </climb>
+          <cruise>
+            <distance units="m" is_input="False">6775606.897861565<!--covered ground distance during phase "cruise" of route "main_route" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">29427.307354243294<!--duration of phase "cruise" of route "main_route" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">20068.13925975797<!--burned fuel during phase "cruise" of route "main_route" in mission "MTOW_mission"--></fuel>
+          </cruise>
+          <descent>
+            <distance units="m" is_input="False">269061.65922541264<!--covered ground distance during phase "descent" of route "main_route" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">1536.158639707679<!--duration of phase "descent" of route "main_route" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">466.1569729780458<!--burned fuel during phase "descent" of route "main_route" in mission "MTOW_mission"--></fuel>
+          </descent>
+          <initial_climb>
+            <distance units="m" is_input="False">6984.798982938659<!--covered ground distance during phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></distance>
+            <duration units="s" is_input="False">63.91907466006512<!--duration of phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></duration>
+            <fuel units="kg" is_input="False">156.33853971076314<!--burned fuel during phase "initial_climb" of route "main_route" in mission "MTOW_mission"--></fuel>
+          </initial_climb>
+        </main_route>
+        <reserve>
+          <fuel units="kg" is_input="False">1143.6359064837059<!--reserve fuel for mission "MTOW_mission"--></fuel>
+        </reserve>
+        <takeoff>
+          <V2 units="m/s" is_input="True">79.3<!--Input defined by the mission.--></V2>
+          <duration units="s" is_input="True">0.0<!--Input defined by the mission.--></duration>
+          <fuel units="kg" is_input="True">87.0<!--Input defined by the mission.--></fuel>
+          <safety_altitude units="ft" is_input="True">35.0<!--Input defined by the mission.--></safety_altitude>
+        </takeoff>
+        <taxi_in>
+          <distance units="m" is_input="False">0.0<!--covered ground distance during phase "taxi_in" in mission "MTOW_mission"--></distance>
+          <duration units="s" is_input="True">300.0<!--Input defined by the mission.--></duration>
+          <fuel units="kg" is_input="False">180.93157225139294<!--burned fuel during phase "taxi_in" in mission "MTOW_mission"--></fuel>
+        </taxi_in>
+        <taxi_out>
+          <altitude units="ft" is_input="True">0.0<!--Input defined by the mission.--></altitude>
+          <duration units="s" is_input="True">540.0<!--Input defined by the mission.--></duration>
+          <thrust_rate units="s" is_input="True">0.25<!--Input defined by the mission.--></thrust_rate>
+          <true_airspeed units="m/s" is_input="True">0.0<!--Input defined by the mission.--></true_airspeed>
+        </taxi_out>
+      </MTOW_mission>
+      <sizing>
+        <cs25>
+          <sizing_load_1 units="kg" is_input="False">258186.91046231985</sizing_load_1>
+          <sizing_load_2 units="kg" is_input="False">278169.9324176783</sizing_load_2>
+        </cs25>
+        <landing>
+          <flap_angle units="deg" is_input="True">30.0</flap_angle>
+          <slat_angle units="deg" is_input="True">20.0</slat_angle>
+        </landing>
+        <takeoff>
+          <flap_angle units="deg" is_input="True">10.0</flap_angle>
+          <slat_angle units="deg" is_input="True">18.0</slat_angle>
+        </takeoff>
+        <main_route>
+          <cruise>
+            <altitude units="ft" is_input="True">35000.0</altitude>
+          </cruise>
+        </main_route>
+      </sizing>
+    </mission>
     <aerodynamics>
       <aircraft>
         <cruise>

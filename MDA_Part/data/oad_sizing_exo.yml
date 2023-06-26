@@ -1,6 +1,6 @@
 title: Sample OAD Process
-input_file: ../workdir/oad_sizing_in.xml
-output_file: ../workdir/oad_sizing_out.xml
+input_file: ../workdir/oad_sizing_in_exo.xml
+output_file: ../workdir/oad_sizing_out_exo.xml
 model:
   nonlinear_solver: om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)
   linear_solver: om.DirectSolver()

@@ -334,6 +334,7 @@
       </sizing>
     </mission>
     <weight>
+      <k_factor_OWE is_input="True">1.0</k_factor_OWE>
       <aircraft>
         <MFW units="kg" is_input="False">27494.036668234832<!--maximum fuel weight--></MFW>
         <MLW units="kg" is_input="False">69505.5555784277<!--maximum landing weight--></MLW>

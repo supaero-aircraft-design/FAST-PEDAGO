@@ -1,7 +1,6 @@
 title: Sample OAD Process
-module_folders: C:/Users/ERIC/Documents/GitHub/FAST-PEDAGO/models
-input_file: ../workdir/oad_sizing_in.xml
-output_file: ../workdir/oad_sizing_out.xml
+input_file: ../workdir/oad_sizing_in_exo.xml
+output_file: ../workdir/oad_sizing_out_exo.xml
 model:
   nonlinear_solver: om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)
   linear_solver: om.DirectSolver()
@@ -21,19 +20,9 @@ model:
   aerodynamics_landing:
     id: fastoad.aerodynamics.landing.legacy
     use_xfoil: false
-  performance:
-    id: fastoad.performances.mission
-    propulsion_id: fastoad.wrapper.propulsion.rubber_engine
-    mission_file_path: ../File/Mission/design_mission.yml
-    mission_name: MTOW_mission
-    out_file: ../workdir/oad_sizing.csv
-    adjust_fuel: true
-    is_sizing: true
   hq_tail_sizing:
     id: fastoad.handling_qualities.tail_sizing
   hq_static_margin:
     id: fastoad.handling_qualities.static_margin
   wing_area:
     id: fastoad.loop.wing_area
-submodels:
-  service.weight.mass_breakdown: fastoad.submodel.weight.mass.with_k_factor_owe
