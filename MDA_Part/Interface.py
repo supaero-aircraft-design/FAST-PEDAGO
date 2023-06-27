@@ -677,7 +677,7 @@ class Interface:
 
 
         self.MassLoop_1_min = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.MassLoop_value1_min,
-                                                   description="MTOW- MIN [kg]", description_tooltip='Maximum take off weight',
+                                                   description="MTOW- MIN [kg]", description_tooltip='Min take off weight',
                                                   style=style,layout=layout)
         self.MassLoop_2_min = widgets.BoundedFloatText(min=0, max=1000, step=0.1, value=self.MassLoop_value2_min,
                                                   description="Span [m]",
@@ -709,63 +709,63 @@ class Interface:
 
 
         self.MassLoop_1_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="OWE [kg]",
+                                                            description="OWE min [kg]",
                                                             description_tooltip='Operational Weight Empty for Min MTOW', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_2_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Operator items [kg]",
+                                                            description="Operator items min [kg]",
                                                             description_tooltip='Weight of the operational items', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_3_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Wing weight [kg]",
+                                                            description="Wing weight min [kg]",
                                                             description_tooltip='Weight of the wing', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_4_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Fuselage weight [kg]",
+                                                            description="Fuselage weight min [kg]",
                                                             description_tooltip='Weight of the fuselage', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_5_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Powerplant weight [kg]",
+                                                            description="Powerplant weight min [kg]",
                                                             description_tooltip='Weight of the engines', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_6_OUT_min = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Landing gear weight [kg]",
+                                                            description="Landing gear weight min [kg]",
                                                             description_tooltip='Weight of the landing gear', style=style,
                                                             layout=layout, width='150px')
 
 
 
         self.MassLoop_1_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="OWE [kg]",
+                                                            description="OWE max [kg]",
                                                             description_tooltip='Operational Weight Empty for Max MTOW',
                                                             style=style, layout=layout, width='150px')
         self.MassLoop_2_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Operator items [kg]",
+                                                            description="Operator items max  [kg]",
                                                             description_tooltip='Weight of the operational items', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_3_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Wing weight [kg]",
+                                                            description="Wing weight max [kg]",
                                                             description_tooltip='Weight of the wing', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_4_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Fuselage weight [kg]",
+                                                            description="Fuselage weight max  [kg]",
                                                             description_tooltip='Weight of the fuselage', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_5_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Powerplant weight [kg]",
+                                                            description="Powerplant weight max [kg]",
                                                             description_tooltip='Weight of the engines', style=style,
                                                             layout=layout, width='150px')
         self.MassLoop_6_OUT_max = widgets.BoundedFloatText(min=0, max=900000, value=0, disabled=True,
-                                                            description="Landing gear weight [kg]",
+                                                            description="Landing gear weight max [kg]",
                                                             description_tooltip='Weight of the landing gear', style=style,
                                                             layout=layout, width='150px')
 
-        self.MissionLoop_1 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.MassLoop_value1_min,disabled=True,
-                                                   description="MTOW- MIN [kg]", description_tooltip='Maximum take off weight',
-                                                  style=style,layout=layout)
-        self.MissionLoop_2 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.MassLoop_value1_max,disabled=True,
-                                                   description="MTOW- MAX [kg]", description_tooltip='Maximum take off weight',
-                                                  style=style,layout=layout)
+        #self.MissionLoop_1 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.MassLoop_1_min.value,disabled=True,
+        # description="MTOW- MIN [kg]", description_tooltip='Maximum take off weight',
+        # style=style,layout=layout)
+        #self.MissionLoop_2 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value=self.MassLoop_1_max.value,disabled=True,
+        # description="MTOW- MAX [kg]", description_tooltip='Maximum take off weight',
+                                                  #style=style,layout=layout)
         self.MissionLoop_3 = widgets.BoundedFloatText(min=0, max=900000, step=0.1, value= self.Breguet_value1,disabled=True,
                                                       description="L/D",description_tooltip='Finesse',
                                                       style=style, layout=layout)
@@ -823,6 +823,8 @@ class Interface:
         # ----
         self.MTOW_opt = 0 #initializing MTOW optimal value
         def update_massloop(event):
+            clear_output()
+            display(self.BOX_INPUT)
             #this computes the aircrafts structure mass
             a= 0.0191*self.MassLoop_1_min.value**(0.8)
             b= self.MassLoop_2_min.value**(1.2)
@@ -900,6 +902,7 @@ class Interface:
             Y_converged = m1*X_converged +n1
             # here finishes the convergence point searching
             self.MTOW_opt = X_converged
+            display(self.tab_Basis_IN)
 
             print('The convergence point is: ' + ' MTOW= '+str(round(X_converged,3)) +' kg '+' OWE= '+str(round(Y_converged,3))+' kg' )
 
@@ -937,27 +940,23 @@ class Interface:
         button_Update_Massloop.on_click(update_massloop)
 
         C_box_massloop_Min = widgets.VBox(
-            children=[self.MassLoop_1_min, self.MassLoop_2_min, self.MassLoop_3_min, self.MassLoop_4_min, self.MassLoop_5_min,self.MassLoop_6_min,
+            children=[self.MassLoop_1_min,self.MassLoop_1_max, self.MassLoop_2_min, self.MassLoop_3_min, self.MassLoop_4_min, self.MassLoop_5_min,self.MassLoop_6_min,
                       self.MassLoop_7_min],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
         C_box_massloop_Out_Min = widgets.VBox(
-            children=[self.MassLoop_1_OUT_min,self.MassLoop_2_OUT_min,self.MassLoop_3_OUT_min,self.MassLoop_4_OUT_min,self.MassLoop_5_OUT_min,self.MassLoop_6_OUT_min],
+            children=[self.MassLoop_1_OUT_min,self.MassLoop_2_OUT_min,self.MassLoop_3_OUT_min,self.MassLoop_4_OUT_min,self.MassLoop_5_OUT_min,self.MassLoop_6_OUT_min,
+                      self.MassLoop_1_OUT_max, self.MassLoop_2_OUT_max, self.MassLoop_3_OUT_max,
+                      self.MassLoop_4_OUT_max, self.MassLoop_5_OUT_max, self.MassLoop_6_OUT_max],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
 
-        C_box_massloop_Max = widgets.VBox(
-            children=[self.MassLoop_1_max, self.MassLoop_2_min, self.MassLoop_3_min, self.MassLoop_4_min, self.MassLoop_5_min,self.MassLoop_6_min,
-                      self.MassLoop_7_min],
-            layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
-        C_box_massloop_Out_Max = widgets.VBox(
-            children=[self.MassLoop_1_OUT_max,self.MassLoop_2_OUT_max,self.MassLoop_3_OUT_max,self.MassLoop_4_OUT_max,self.MassLoop_5_OUT_max,self.MassLoop_6_OUT_max],
-            layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
+
 
         C_box_inter_massloop_min = widgets.HBox(children=[C_box_massloop_Min, C_box_massloop_Out_Min], layout=layout_box)
-        C_box_inter_massloop_max = widgets.HBox(children=[C_box_massloop_Max, C_box_massloop_Out_Max], layout=layout_box)
+
 
 
         C_box_missionloop = widgets.VBox(
-            children=[self.MissionLoop_1,self.MissionLoop_2,self.MissionLoop_3,self.MissionLoop_4,self.MissionLoop_5,self.MissionLoop_6,self.MissionLoop_7,self.MissionLoop_8],
+            children=[self.MissionLoop_3,self.MissionLoop_4,self.MissionLoop_5,self.MissionLoop_6,self.MissionLoop_7,self.MissionLoop_8],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
         C_box_missionloop_Out = widgets.VBox(
             children=[self.MissionLoop_1_OUT_min,self.MissionLoop_2_OUT_min,self.MissionLoop_3_OUT_min,self.MissionLoop_1_OUT_max,
@@ -977,7 +976,7 @@ class Interface:
 
 
         self.C_basis_massloop_box = widgets.VBox(children=[button_Update_Massloop,C_massloop1,C_box_inter_massloop_min,
-                                 C_box_inter_massloop_max,C_massloop2,C_box_inter_missionloop, C_massloop3],layout=layout_box)
+                                                   C_massloop2,C_box_inter_missionloop, C_massloop3],layout=layout_box)
 
 
 
@@ -1010,6 +1009,13 @@ class Interface:
         self.Constraint_climbing_vel = Data_Constraint_IN[10]  # m/s
         self.Constraint_density_climbing = Data_Constraint_IN[11]  # kg/m^s
         self.Constraint_n = Data_Constraint_IN[12]  # n load factor n=1 if
+
+        #Landing
+        self.Constraint_density_landing = Data_Constraint_IN[13]  # Landing density kg/m^3
+        self.Constraint_clmax_landing = Data_Constraint_IN[14]  # Landing CLmax
+        self.Constraint_distance_landing = Data_Constraint_IN[15]  # Landing distance in m
+
+
 
 
 
@@ -1056,11 +1062,25 @@ class Interface:
                                                    description="Load factor n", description_tooltip='Load factor',
                                                   style=style,layout=layout)
 
+        self.Constraint_14_density_landing = widgets.BoundedFloatText(min=0, max=2, step=0.1, value=self.Constraint_density_landing,
+                                                   description="Density Landing [kg/m^3]", description_tooltip='Density',
+                                                  style=style,layout=layout)
+        self.Constraint_15_clmax_landing = widgets.BoundedFloatText(min=0, max=3, step=0.1, value=self.Constraint_clmax_landing,
+                                                   description="CL max at landing", description_tooltip='CL max at landing configuration',
+                                                  style=style,layout=layout)
+        self.Constraint_16_distance_landing = widgets.BoundedFloatText(min=0, max=4000, step=0.5, value=self.Constraint_distance_landing,
+                                                   description="Landing Distance [m]", description_tooltip='Landing distance required in meters',
+                                                  style=style,layout=layout)
+
+
+
         # ----Creating the plot for MASS MISSION LOOP
 
 
 
         def update_constraint(event):
+            clear_output()
+            display(self.BOX_INPUT)
             #create vector Wing loading
             W_S =numpy.linspace(1000, 7000, num=100)
             #this computes the aircrafts Vstall
@@ -1084,6 +1104,10 @@ class Interface:
 
             T_W_Climbing = q*self.Constraint_7_Cd0.value/W_S + (K*self.Constraint_13_n.value**2 /q)*W_S + (1/self.Constraint_11_climb_velocity.value)*self.Constraint_10_climb_rate.value
 
+            # this computes the W/S restriccion to w.r.t Landing operations
+            WingLoading_Landing = ((self.Constraint_16_distance_landing.value/1.67) - 1000)*(
+                (self.Constraint_14_density_landing.value*self.Constraint_15_clmax_landing.value)/(80*0.66))
+
             Data_Constraint_IN[0] = self.Constraint_1_Density.value  # kg/m^3
             Data_Constraint_IN[1] = self.Constraint_2_Clmax.value  # Cl max
             Data_Constraint_IN[2] = self.Constraint_3_TOP.value  # Cl max
@@ -1097,6 +1121,10 @@ class Interface:
             Data_Constraint_IN[10] = self.Constraint_11_climb_velocity.value  # m/S
             Data_Constraint_IN[11] = self.Constraint_12_density_CL.value  # kg/m^3
             Data_Constraint_IN[12] = self.Constraint_13_n.value  # load factor
+            Data_Constraint_IN[13] = self.Constraint_14_density_landing.value # Landing density kg/m^3
+            Data_Constraint_IN[14] = self.Constraint_15_clmax_landing.value # Landing CLmax
+            Data_Constraint_IN[15] = self.Constraint_16_distance_landing.value # Landing distance in m
+            display(self.tab_Basis_IN)
 
 
 
@@ -1121,10 +1149,14 @@ class Interface:
             x_climbing = W_S
             y_climbing = T_W_Climbing
 
+            x_land = [WingLoading_Landing, WingLoading_Landing]
+            y_land = [0, 20]
+
             fig.add_trace(go.Scatter(name='V stall', x=x_stall, y=y_stall, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Take Off', x=x_takeoff, y=y_takeoff, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Straight level flight', x=x_level, y=y_level, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Climbing', x=x_climbing, y=y_climbing, mode='lines+markers'))
+            fig.add_trace(go.Scatter(name='Landing', x=x_land, y=y_land, mode='lines+markers'))
 
             # set axis labels
             fig.update_layout(xaxis_title='W/S [N/m^2]', yaxis_title='T/W')
@@ -1153,7 +1185,9 @@ class Interface:
         C_box_constraint_climb = widgets.VBox(children=[self.Constraint_10_climb_rate,self.Constraint_11_climb_velocity,
                                                         self.Constraint_12_density_CL,self.Constraint_13_n],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
-
+        C_box_constraint_land = widgets.VBox(children=[self.Constraint_14_density_landing,self.Constraint_15_clmax_landing,
+                                                       self.Constraint_16_distance_landing],
+            layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
         # Titles in MassMissionLoop
         C_constraint1 = widgets.HTML(value=" <b>V stall inputs</b>")
         C_constraint2 = widgets.HTML(value=" <b>Take Off</b>")
@@ -1162,7 +1196,7 @@ class Interface:
         C_constraint5 = widgets.HTML(value=" <b>Straight Level Flight</b>")
 
         self.C_basis_constraint_box = widgets.VBox(children=[button_Update_Constraint,C_constraint1,C_box_constraint_stall,
-                                                             C_constraint2,C_box_constraint_takeoff,C_constraint3,
+                                                             C_constraint2,C_box_constraint_takeoff,C_constraint3,C_box_constraint_land,
                                                              C_constraint4,C_box_constraint_climb,C_constraint5,C_box_constraint_level],layout=layout_box)
 
 
@@ -4640,20 +4674,20 @@ class Interface:
         Button6=widgets.Button(description="NEO (no redesign)",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
         Button6.on_click(self.NEO_UI_1)
 
-        Button7=widgets.Button(description="NEO (loop)",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
-        Button7.on_click(self.NEO_UI_2)
+        #Button7=widgets.Button(description="NEO (loop)",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
+        #Button7.on_click(self.NEO_UI_2)
 
 
         box_H=widgets.HBox(children=[Button1,Button2,Button3,Button4],layout=layout_H)
         box_H2 = widgets.HBox(children=[Button5, Button6], layout=layout_H2)
-        box_H3 = widgets.HBox(children=[Button7], layout=layout_H2)
+        #box_H3 = widgets.HBox(children=[Button7], layout=layout_H2)
 
 
         Button1=widgets.Button(description="RUN - STEP 1 ",tooltip="Launch the ID analysis of level STEP 1",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button1.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP1)
+        Button1.on_click(self.INCREMENTAL_DEVELOPMENT_STEP1)
 
         Button2=widgets.Button(description="RUN - STEP 2",tooltip="Launch the ID analysis of level STEP 2",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button2.on_click(self.INCREMENTAL_DEVELOPEMENT_STEP2_OWE)
+        Button2.on_click(self.INCREMENTAL_DEVELOPMENT_STEP2)
 
 
 
@@ -4669,24 +4703,20 @@ class Interface:
         self.var_mtow = None
 
         C_file1 = open("BlockImage/Parametric/STEP1.PNG", "rb")
-        C_file2 = open("BlockImage/Parametric/STEP1_5.PNG", "rb")
-        C_file3 = open("BlockImage/Parametric/STEP2.PNG", "rb")
+        C_file2 = open("BlockImage/Parametric/STEP2.PNG", "rb")
         C_image1 = C_file1.read()
         C_image2 = C_file2.read()
-        C_image3 = C_file3.read()
         C_img1 = widgets.Image(value=C_image1, format="PNG", width="100%", height="100%")
         C_img2 = widgets.Image(value=C_image2, format="PNG", width="100%", height="100%")
-        C_img3 = widgets.Image(value=C_image3, format="PNG", width="100%", height="100%")
+
 
 
         # GEOMETRY MODULES BY COMPUTED BLOCKS
         accordion1 = widgets.Accordion(children=[C_img1], selected_index=None)
         accordion2 = widgets.Accordion(children=[C_img2], selected_index=None)
-        accordion3 = widgets.Accordion(children=[C_img3], selected_index=None)
         accordion1.set_title(0, 'STEP 1')
-        accordion2.set_title(0, 'STEP 1.5')
-        accordion3.set_title(0, 'STEP 2')
-        accordion_box = widgets.HBox(children=[accordion1,accordion2,accordion3], layout=widgets.Layout(width='100%'))
+        accordion2.set_title(0, 'STEP 2')
+        accordion_box = widgets.HBox(children=[accordion1,accordion2], layout=widgets.Layout(width='100%'))
         self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,box_H_Button_Run,buttonHOME],layout=layout_box)
         display(self.ID2_box)
 
@@ -4787,9 +4817,6 @@ class Interface:
         clear_output()
         print("--------------------SFC MODIFICATIONS SAVED---------------------")
         display( self.ID2_box)
-
-
-
 
 
     def NEO_UI_1(self,event):
@@ -5539,7 +5566,7 @@ class Interface:
         return BF_DOC
 
 
-    def INCREMENTAL_DEVELOPEMENT_STEP1(self,event):
+    def INCREMENTAL_DEVELOPMENT_STEP1(self,event):
 
         clear_output()
         display(self.ID2_box)
@@ -5682,7 +5709,7 @@ class Interface:
         print('Problem solved.')
         print("------------------NEW PERFORMANCE COMPUTED----------------------------")
 
-    def INCREMENTAL_DEVELOPEMENT_STEP2_OWE(self,event):
+    def INCREMENTAL_DEVELOPMENT_STEP2(self,event):
 
         clear_output()
         display(self.ID2_box)
@@ -5729,7 +5756,7 @@ class Interface:
         #BUILD CONFIG AND INPUTS FOR STEP 2 problem
 
         path_config="data"
-        file_config="oad_sizing_step2_owe.yml" #"para_performance.yml"
+        file_config="oad_sizing_step2.yml" #"para_performance.yml"
         CONFIGURATION=pth.join(path_config,file_config)
         oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
 
@@ -5898,209 +5925,6 @@ class Interface:
         display(C_Vertical_Para)
         print('Problem solved.')
         print("------------------NEW PERFORMANCE COMPUTED----------------------------")
-
-
-
-
-
-
-    def INCREMENTAL_DEVELOPEMENT_STEP2_DRAG(self,event):
-
-        clear_output()
-        display(self.ID2_box)
-
-        ac_ref=self.AC_ref
-        mission_ref=self.mission_ref
-
-        path_ac="OUTPUT_FILE"
-        file_para="IncrementalDevelopment_Aircraft_File.xml"
-        ac_para=pth.join(path_ac,file_para)
-
-        # Compute the new redesigned aircraft performance
-
-        SOURCE=ac_para
-        path_config="data"
-        file_config="para_sizing.yml" #"para_performance.yml"
-        CONFIGURATION=pth.join(path_config,file_config)
-        oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
-
-        # here, after this save function, the new values modifies by the user are changed in the input file
-
-        def RUN_MDA_PARA():
-            self.ParametricProblem = oad.evaluate_problem(CONFIGURATION, overwrite=True)
-            self.OAD.Save_File(self.ParametricProblem.output_file_path, "OUTPUT_FILE", "para_OUT")
-
-
-        # Function to update the progress bar
-        def update_progress_bar():
-            total_iterations = 100
-            custom_widget = [
-                'Progress: ', progressbar.Bar(marker='█', left=' ', right='|'),
-                ' ', progressbar.Percentage()]
-            with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
-                for i in range(total_iterations):
-                    # Update progress bar
-                    time.sleep(2)  # Simulate time for updating progress
-                    bar.update(i + 1)
-
-
-        # Create a thread for the simulation
-        simulation_thread = threading.Thread(target=RUN_MDA_PARA)
-        print('The problem is being solved: ☕... ')
-        # Start the simulation thread
-        simulation_thread.start()
-        # Start the progress bar thread
-        update_progress_bar()
-        # Wait for the simulation thread to complete
-        simulation_thread.join()
-        print('Problem solved.')
-        print("------------------NEW PERFORMANCE COMPUTED----------------------------")
-
-        time.sleep(1.5)
-        clear_output()
-        display(self.ID2_box)
-
-        path_miss="workdir"
-        file_miss="para_perfo.csv"
-        mission_para=pth.join(path_miss,file_miss) #new aircraft mission after looping
-
-        path_ac="OUTPUT_FILE"
-        file_para="para_OUT.xml"
-        ac_para=pth.join(path_ac,file_para)  #new aircraft after ID and looping
-
-
-        # COMPUTE THE  MEAN_SFC
-
-
-        SFC_ref=float(self.List_SFC[0])
-        if (len(self.List_SFC)>1):
-            SFC_para=float(self.List_SFC[len(self.List_SFC)-1])
-        else:
-            SFC_para=self.OAD.para_sfc(mission_para)
-
-        # COMPUTE THE MEAN MASS
-        #mass mission includes cruise and main route climb
-        mass_ref=self.OAD.mass(mission_ref)
-        mass_para=self.OAD.mass(mission_para)
-        # COMPUTE THE SPECIFIC RANGE
-        SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,mass_ref)[0]
-        SR_para=self.OAD.compute_SR(ac_para,SFC_para,mass_para)[0]
-
-
-        # COMPUTE THE BLOCK FUEL
-
-        data_ref=self.OAD.Input_File(ac_ref)
-        OWE_ref=data_ref["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0]
-        Range_DOC_ref = 4000  # np.asarray(Data["data:TLAR:range"].value)
-        coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
-        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref)
-        reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        #MTOW_ref=data_ref["data:weight:aircraft:MTOW"].value[0]
-        #Max_Payload_ref=data_ref["data:weight:aircraft:max_payload"].value[0]
-        #BF_ref=MTOW_ref-OWE_ref-Max_Payload_ref
-
-
-        data_para = self.OAD.Input_File(ac_para)
-        OWE_para=data_para["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_para = data_para["data:weight:aircraft:payload"].value[0]
-        Range_DOC_para = 4000  # np.asarray(Data["data:TLAR:range"].value)
-        coefficient_para = self.OAD.para_coefficient_range(data_para, SFC_para)
-        BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para)
-        reserve_para = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        #MTOW_para=data_para["data:weight:aircraft:MTOW"].value[0]
-        #Max_Payload_para=data_para["data:weight:aircraft:max_payload"].value[0]
-        #BF_para=MTOW_para-OWE_para-Max_Payload_para
-
-        # COMPUTE THE SPECIFIC RANGE
-        SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
-        SR_para=self.OAD.compute_SR(ac_para,SFC_para,BF_para)[0]
-
-        # COMPUTE THE MEAN MASS
-        #mass mission includes cruise and main route climb
-        mass_ref=self.OAD.mass(mission_ref)
-        if self.var_mtow == None:
-            mass_para = self.OAD.mass(mission_ref) # It is the same as the MDA is not run in STEP1
-        else:
-            mass_para = self.OAD.mass(mission_ref) + self.var_mtow
-
-        mass_ref= OWE_ref +PL_DOC_ref +(reserve_ref+BF_ref/2)
-        mass_para = OWE_para + PL_DOC_para + (reserve_para+BF_para/2)
-
-        Percent_BF = 100*(BF_para-BF_ref)/BF_ref
-        Percent_SR = 100 * (SR_para - SR_ref) / SR_ref
-        Percent_Mass = 100 * (mass_para - mass_ref) / mass_ref
-        data = [
-            ["<u>Ref A/C</u>",  "<u>New A/C</u>", "<u>Variation %</u>"],
-            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF,2))+"</b>"],
-            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR,2))+"</b>"],
-            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass, 2))+"</b>"],
-            ]
-        table_widget = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
-            layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
-
-        buttonINFO = widgets.Button(description='')
-        buttonINFO.icon = 'fa-info-circle'
-        buttonINFO.layout.width = 'auto'
-        buttonINFO.layout.height = 'auto'
-        output = widgets.Output()
-
-        def info_message(event):
-            with output:
-                output.clear_output()
-                if len(output.outputs) > 0:
-                    output.clear_output()
-
-                else:
-                    print('Block Fuel is computed for Max Range at Max Payload.\n'
-                          'The mass used to compute the Specific Range is the average over the climb and cruise phase.\n'
-                          'BF/Npax-BF is computed at DOC (TLAR RANGE at SPP)'
-                          )
-        buttonINFO.on_click(info_message)
-        infobox = widgets.Box(children=[buttonINFO, output], layout=Layout(border='0px solid black',
-                                                                           margin='50 0 50 0px', padding='5px',
-                                                                           align_items='center', width='100'))
-        #Plot the payload-range diagramm
-
-        if self.var_owe == None:
-            self.var_owe =0
-        if self.var_mtow == None:
-            self.var_mtow = 0
-        fig=self.OAD.para_payload_range(ac_ref,SFC_ref,var_owe=None,var_mtow=None,name="REF AC",Color='blue')
-
-        fig=self.OAD.para_payload_range(ac_para,SFC_para,self.var_owe,self.var_mtow,"NEW AC",fig=fig,Color='red')
-
-
-        fig2=self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,"REF AC",Color='blue')
-        fig2=self.OAD.Npax_BF_Diagramm(ac_para,SFC_para,"NEW AC",fig=fig2,Color='red')
-
-        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget,infobox],
-            layout=widgets.Layout(border='1px solid black', align_items='center', padding='2px', width='100%'))
-
-        C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
-
-        self.tab_Analysis_Para = widgets.Tab(children=[fig,C_V_BlockFuel],
-                                             layout=widgets.Layout(border='0px solid black', align_items='center', padding='2px', width='100%'))
-        self.tab_Analysis_Para.set_title(0, 'Payload - Range ')
-        self.tab_Analysis_Para.set_title(1, 'BF/Npax & SR')
-        C_Vertical_Para = widgets.VBox(children=[C_para1,C_para2,self.tab_Analysis_Para],
-            layout=widgets.Layout(border='5px solid black', align_items='center', padding='5px', width='100%'))
-
-        display(C_Vertical_Para)
-        print('Problem solved.')
-        print("------------------NEW PERFORMANCE COMPUTED----------------------------")
-
-
-
-
-
-
-
-
-
-
-
 
 
 
