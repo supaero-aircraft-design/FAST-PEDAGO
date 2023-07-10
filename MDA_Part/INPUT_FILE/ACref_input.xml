@@ -4,7 +4,7 @@
       <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
       <approach_speed units="m/s" is_input="True">67.90666666666667<!--top-level requirement: approach speed--></approach_speed>
       <cruise_mach is_input="True">0.78<!--top-level requirement: cruise Mach number--></cruise_mach>
-      <range units="NM" is_input="True">2500.0<!--top-level requirement: design range--></range>
+      <range units="NM" is_input="True">3500.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -53,9 +53,9 @@
         <thickness_ratio is_input="True">0.1<!--thickness ratio of vertical tail--></thickness_ratio>
       </vertical_tail>
       <wing>
-        <aspect_ratio is_input="True">15.0<!--wing aspect ratio--></aspect_ratio>
+        <aspect_ratio is_input="True">12.0<!--wing aspect ratio--></aspect_ratio>
         <sweep_25 units="deg" is_input="True">24.54<!--sweep angle at 25% chord of wing--></sweep_25>
-        <virtual_taper_ratio is_input="True">0.313<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
+        <virtual_taper_ratio is_input="True">0.46950000000000003<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
         <kink>
           <span_ratio is_input="True">0.375<!--ratio (Y-position of kink)/(semi-span)--></span_ratio>
         </kink>
@@ -79,7 +79,7 @@
       </wing>
     </geometry>
     <propulsion>
-      <MTO_thrust units="N" is_input="True">117880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
+      <MTO_thrust units="N" is_input="True">119880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
       <climb>
         <thrust_rate is_input="True">0.93<!--Input defined by the mission.--></thrust_rate>
       </climb>
@@ -90,7 +90,7 @@
         <thrust_rate is_input="True">1.0<!--Input defined by the mission.--></thrust_rate>
       </initial_climb>
       <rubber_engine>
-        <bypass_ratio is_input="True">4.9<!--bypass ratio for rubber engine model--></bypass_ratio>
+        <bypass_ratio is_input="True">5.5<!--bypass ratio for rubber engine model--></bypass_ratio>
         <delta_t4_climb is_input="True">-50.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_climb>
         <delta_t4_cruise is_input="True">-100.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_cruise>
         <design_altitude units="m" is_input="True">10058.4<!--design altitude for rubber engine model--></design_altitude>
@@ -102,6 +102,13 @@
         <thrust_rate is_input="True">0.3<!--Input defined by the mission.--></thrust_rate>
       </taxi>
     </propulsion>
+    <weight>
+      <k_factor_OWE is_input="True">1.0</k_factor_OWE>
+      <aircraft>
+        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">17000.0<!--design payload weight--></payload>
+      </aircraft>
+    </weight>
     <load_case>
       <lc1>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
@@ -114,12 +121,6 @@
         <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
       </lc2>
     </load_case>
-    <weight>
-      <aircraft>
-        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">17000.0<!--design payload weight--></payload>
-      </aircraft>
-    </weight>
     <aerodynamics>
       <aircraft>
         <landing>

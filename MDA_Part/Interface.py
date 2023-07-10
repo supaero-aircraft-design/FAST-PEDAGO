@@ -23,21 +23,24 @@ import threading
 import progressbar
 import time
 import webbrowser
+import xml.etree.ElementTree as ET
+
 class Interface:
 
 
     def __init__(self):
-        self.path1="File\Reference"
-        self.path2="File\Configuration"
+        self.path1 = "File\Reference"
+        self.path2 = "File\Configuration"
         self.path3 = "OUTPUT_FILE"
-        self.OAD= MDA()
+        self.OAD = MDA()
 
 
 
 # Function to read csv file
 
-    def csv_to_table(self,path_to_target):
-        self.path_to_target=path_to_target
+    def csv_to_table(self, path_to_target):
+
+        self.path_to_target = path_to_target
         table = []
         f = open(self.path_to_target)
         myreader = csv.reader(f, delimiter=';')
@@ -47,8 +50,9 @@ class Interface:
         return table
 
     def HomeInterface(self,event):
+
         clear_output()
-        image_path="Images/Wing.jpg"
+        image_path = "Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -62,7 +66,8 @@ class Interface:
         display(HTML(f'<style>{custom_css}</style>'),self.menu)
 
 
-    #The principal FAST-OAD ANALYSIS INTERFACE
+    # The principal FAST-OAD ANALYSIS INTERFACE
+
     def Menu(self):
 
         table=["REFERENCE","CONFIGURATION","AIRCRAFT DATA","MDA","ANALYSIS","OPTIMIZATION","INCREMENTAL DEVELOPMENT"]
@@ -137,6 +142,7 @@ class Interface:
         button_git_FAST.layout.width = 'auto'
         button_git_FAST.layout.height = 'auto'
         def open_github_FAST(event):
+
             webbrowser.open_new_tab("https://github.com/fast-aircraft-design/FAST-OAD")
         button_git_FAST.on_click(open_github_FAST)
 
@@ -145,14 +151,16 @@ class Interface:
         button_git_CS25.layout.width = 'auto'
         button_git_CS25.layout.height = 'auto'
         def open_github_CS25(event):
+
             webbrowser.open_new_tab("https://github.com/fast-aircraft-design/FAST-OAD_CS25")
         button_git_CS25.on_click(open_github_CS25)
 
-        button_git_GA = widgets.Button(description="GA")
+        button_git_GA = widgets.Button(description="CS23")
         button_git_GA.icon ="fa-github"
         button_git_GA.layout.width = 'auto'
         button_git_GA.layout.height = 'auto'
         def open_github_GA(event):
+
             webbrowser.open_new_tab("https://github.com/supaero-aircraft-design/FAST-GA")
         button_git_GA.on_click(open_github_GA)
 
@@ -195,8 +203,7 @@ class Interface:
             "--------------------------------------------------------------------------------------------------------")
         return self.demo
 
-    #User interface for the
-    #reference aircraft choice step
+    # User interface for the reference aircraft choice step
     def demo_models(self):
         clear_output()
         title = widgets.HTML(value=" <b>Learning Environment </b>")
@@ -1081,22 +1088,23 @@ class Interface:
         def update_constraint(event):
             clear_output()
             display(self.BOX_INPUT)
-            #create vector Wing loading
-            W_S =numpy.linspace(1000, 7000, num=100)
+
             #this computes the aircrafts Vstall
             Vstall = math.sqrt(2*self.MTOW_opt*9.8066/(self.Constraint_1_Density.value*self.Constraint_2_Clmax.value*self.MassLoop_3_min.value))
             WingLoading_Stall = 0.5*self.Constraint_1_Density.value*self.Constraint_2_Clmax.value*Vstall**2
 
             # this computes the take off curve
             density_ratio_sigma = self.Constraint_4_Density_TO.value / self.Constraint_5_Density_SL.value
-
-            T_W_TakeOff = W_S / (self.Constraint_3_TOP.value * density_ratio_sigma * self.Constraint_6_CL_TO.value  )
+            #create vector Wing loading
+            W_S_to =numpy.linspace(0, 7000, num=100)
+            T_W_TakeOff = W_S_to / (self.Constraint_3_TOP.value * density_ratio_sigma * self.Constraint_6_CL_TO.value  )
 
             # this computes the straight level flight curve
             q = 0.5*self.Constraint_9_density_FL.value*self.Breguet_2.value**2 #dynamic pressure
             AR= (self.MassLoop_2_min.value**2)/(self.MassLoop_3_min.value)
             K = 1/(math.pi*AR*self.Constraint_8_e.value)
 
+            W_S = numpy.linspace(300, 7000, num=100)
             T_W_LevelFlight = q*self.Constraint_7_Cd0.value/W_S + (K/q)*W_S
 
             # this computes the climbing curve
@@ -1105,8 +1113,11 @@ class Interface:
             T_W_Climbing = q*self.Constraint_7_Cd0.value/W_S + (K*self.Constraint_13_n.value**2 /q)*W_S + (1/self.Constraint_11_climb_velocity.value)*self.Constraint_10_climb_rate.value
 
             # this computes the W/S restriccion to w.r.t Landing operations
-            WingLoading_Landing = ((self.Constraint_16_distance_landing.value/1.67) - 1000)*(
-                (self.Constraint_14_density_landing.value*self.Constraint_15_clmax_landing.value)/(80*0.66))
+            #Conversion meters to feet, kg to lbs
+            Landing_distance =self.Constraint_16_distance_landing.value/0.3048  # feet
+            Density_at_landing= self.Constraint_14_density_landing.value*0.062428
+            WingLoading_Landing = ((Landing_distance) - 0)*((Density_at_landing*self.Constraint_15_clmax_landing.value)/(80))
+            WingLoading_Landing = WingLoading_Landing*0.04214*9.8066
 
             Data_Constraint_IN[0] = self.Constraint_1_Density.value  # kg/m^3
             Data_Constraint_IN[1] = self.Constraint_2_Clmax.value  # Cl max
@@ -1140,7 +1151,7 @@ class Interface:
             x_stall = [WingLoading_Stall, WingLoading_Stall]
             y_stall = [0, 20]
 
-            x_takeoff = W_S
+            x_takeoff = W_S_to
             y_takeoff = T_W_TakeOff
 
             x_level = W_S
@@ -4613,6 +4624,19 @@ class Interface:
         for i in range(0, len(temp)):
             if temp[i][-3:] =='xml':
                 path_to_file_list.append(temp[i])
+        STEP1 = "IncrementalDevelopment_Aircraft_File.xml"
+        STEP2 = "STEP2_AC.xml"
+        STEP3 = "STEP3_AC.xml"
+        
+        if STEP1 in path_to_file_list:
+
+            path_to_file_list.remove(STEP1)
+        if STEP2 in path_to_file_list:
+
+            path_to_file_list.remove(STEP2)
+
+        if STEP3 in path_to_file_list:
+            path_to_file_list.remove(STEP3)
 
         title=widgets.HTML(value=" <b>INCREMENTAL DEVELOPEMENT </b>")
         self.AC=widgets.Select(options=path_to_file_list,description='AIRCRFAT SELECTION:',disabled=False,style={'description_width': 'initial'},layout=widgets.Layout(width="500px", height="150 px"),rows=len(path_to_file_list))
@@ -4635,6 +4659,9 @@ class Interface:
         aircraft=self.AC.value
         path="OUTPUT_FILE"
         self.AC_ref=pth.join(path,aircraft)
+
+
+
         mission_name=os.path.splitext(os.path.split(aircraft)[1])[0]+".CSV"
         path_miss="MISSION_FILE"
         try:
@@ -4671,27 +4698,23 @@ class Interface:
 
         Button5=widgets.Button(description="FUSELAGE SIMPLE STRETCH ",tooltip="MODIFY THE FUSELAGE GEOMETRY",layout=layout_button,style=dict(button_color='#ebebeb'))
         Button5.on_click(self.Fuselage_Stretch_UI)
-        Button6=widgets.Button(description="NEO (no redesign)",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
+        Button6=widgets.Button(description="NEO",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
         Button6.on_click(self.NEO_UI_1)
-
-        #Button7=widgets.Button(description="NEO (loop)",tooltip="NEW ENGINE OPTION",layout=layout_button,style=dict(button_color='#ebebeb'))
-        #Button7.on_click(self.NEO_UI_2)
-
 
         box_H=widgets.HBox(children=[Button1,Button2,Button3,Button4],layout=layout_H)
         box_H2 = widgets.HBox(children=[Button5, Button6], layout=layout_H2)
-        #box_H3 = widgets.HBox(children=[Button7], layout=layout_H2)
+
+        Button1_run=widgets.Button(description="RUN - STEP 1 ",tooltip="Launch the ID analysis of level STEP 1",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button1_run.on_click(self.INCREMENTAL_DEVELOPMENT_STEP1)
+
+        Button2_run=widgets.Button(description="RUN - STEP 2",tooltip="Launch the ID analysis of level STEP 2",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button2_run.on_click(self.INCREMENTAL_DEVELOPMENT_STEP2)
+
+        Button3_run=widgets.Button(description="RUN - STEP 3",tooltip="Launch the ID analysis of level STEP 3",layout=layout_button,style=dict(button_color="#33ffcc"))
+        Button3_run.on_click(self.INCREMENTAL_DEVELOPMENT_STEP3)
 
 
-        Button1=widgets.Button(description="RUN - STEP 1 ",tooltip="Launch the ID analysis of level STEP 1",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button1.on_click(self.INCREMENTAL_DEVELOPMENT_STEP1)
-
-        Button2=widgets.Button(description="RUN - STEP 2",tooltip="Launch the ID analysis of level STEP 2",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button2.on_click(self.INCREMENTAL_DEVELOPMENT_STEP2)
-
-
-
-        box_H_Button_Run = widgets.HBox(children=[Button1, Button2], layout=layout_H3)
+        box_H_Button_Run = widgets.HBox(children=[Button1_run, Button2_run,Button3_run], layout=layout_H3)
         # ---------------------------------------------------------------------------------------------------------------
         buttonHOME = widgets.Button(description='')
         buttonHOME.icon = 'fa-home'
@@ -4704,20 +4727,58 @@ class Interface:
 
         C_file1 = open("BlockImage/Parametric/STEP1.PNG", "rb")
         C_file2 = open("BlockImage/Parametric/STEP2.PNG", "rb")
+        C_file3 = open("BlockImage/Parametric/STEP3.PNG", "rb")
         C_image1 = C_file1.read()
         C_image2 = C_file2.read()
+        C_image3 = C_file3.read()
         C_img1 = widgets.Image(value=C_image1, format="PNG", width="100%", height="100%")
         C_img2 = widgets.Image(value=C_image2, format="PNG", width="100%", height="100%")
+        C_img3 = widgets.Image(value=C_image3, format="PNG", width="100%", height="100%")
 
 
 
         # GEOMETRY MODULES BY COMPUTED BLOCKS
         accordion1 = widgets.Accordion(children=[C_img1], selected_index=None)
         accordion2 = widgets.Accordion(children=[C_img2], selected_index=None)
+        accordion3 = widgets.Accordion(children=[C_img3], selected_index=None)
         accordion1.set_title(0, 'STEP 1')
         accordion2.set_title(0, 'STEP 2')
-        accordion_box = widgets.HBox(children=[accordion1,accordion2], layout=widgets.Layout(width='100%'))
-        self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,box_H_Button_Run,buttonHOME],layout=layout_box)
+        accordion3.set_title(0, 'STEP 3')
+        accordion_box = widgets.HBox(children=[accordion1,accordion2,accordion3], layout=widgets.Layout(width='100%'))
+
+        # ---------------------------------------------------------------------------------------------------------------
+        buttonINFO = widgets.Button(description='')
+        buttonINFO.icon = 'fa-info-circle'
+        buttonINFO.layout.width = 'auto'
+        buttonINFO.layout.height = 'auto'
+        output = widgets.Output()
+
+        def info_message(event):
+            with output:
+                output.clear_output()
+                if len(output.outputs) > 0:
+                    output.clear_output()
+                else:
+                    print('Space dedicated to the evaluation of Incremental Developments.\n'
+                          '1-Click on the type of modification you want to analyse. One at a time. \n'
+                          '2-Fill the required gaps.\n'
+                          '3-Launch Step 1, then Step 2 and finally Step 3. You must follow this order.\n'
+                          '4-The results are in OUTPUT_FILE folder: Incremental_Development_Aircraft_File, STEP2_AC and STEP3_AC\n'
+                          'Between modifications it is necessary to run the software again to choose the reference AC. If not, the modifications are accumulated\n'
+                          )
+
+        buttonINFO.on_click(info_message)
+        box4 = widgets.Box(children=[buttonINFO, output], layout=Layout(border='1px solid black',
+                                                                        margin='50 0 50 0px', padding='5px',
+                                                                        align_items='center', width='100'))
+        # ---------------------------------------------------------------------------------------------------------------
+        infoHome_box = widgets.HBox(children=[buttonHOME,box4], layout=Layout(border='0px solid black', padding='5px', justify_content='center',align_items='center', width='100%'))
+        self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,box_H_Button_Run,infoHome_box],layout=layout_box)
+        path="OUTPUT_FILE"
+        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        para_path=pth.join(path,file_name)
+        self.Para_Data1=self.OAD.Input_File(para_path)
+        self.OWE_REF=self.Para_Data1["data:weight:aircraft:OWE"].value[0]
         display(self.ID2_box)
 
 
@@ -4828,10 +4889,9 @@ class Interface:
         para_path=pth.join(path,file_name)
         self.Para_DataNEO=self.OAD.Input_File(para_path)
         self.EngineMass=self.Para_DataNEO["data:weight:propulsion:engine:mass"].value[0]
+        self.PropulsionMass = self.Para_DataNEO["data:weight:propulsion:mass"].value[0]
         self.NacelleWetArea = self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value[0]
         self.OWE_REF = self.Para_DataNEO["data:weight:aircraft:OWE"].value[0]
-        #self.NacelleDiameter = self.Para_DataNEO["data:propulsion:MTO_thrust"].value[0]
-
 
 
         layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
@@ -4898,254 +4958,89 @@ class Interface:
 
 
     def NEO_save_1(self,event):
-        # from fastoad_cs25.models.aerodynamics.components.compute_polar import ComputePolar
-        from fastoad_cs25.models.aerodynamics.components.cd0_nacelles_pylons import Cd0NacellesAndPylons
-        from fastoad_cs25.models.aerodynamics.components.cd0_total import Cd0Total
-        #Here we add new SFC, NEW ENGINE MASS, NEW ENGINE NACELLE
-        #self.Para_DataNEO["data:propulsion:MTO_thrust"].value = self.NEO_33.value
-        self.ID_Type = self.ID_Type + ["NEO"]
-        NEO_NEW=self.NEO_11.value # +self.List_SFC[0]
-        self.List_SFC.append(NEO_NEW)
-        self.Para_DataNEO["data:weight:propulsion:engine:mass"].value = self.NEO_22.value
-        self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value = self.NEO_33.value
 
-        #Here we change the value of the OWE because of the change of the engine weight
+        # Here we add new SFC, NEW ENGINE MASS, NEW ENGINE NACELLE
+        self.ID_Type = self.ID_Type + ["NEO"]
+        NEO_NEW = self.NEO_11.value  # +self.List_SFC[0] # new sfc
+        self.List_SFC.append(NEO_NEW)
+        nacelle_old_wetted_area = self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value[0]
+        self.Para_DataNEO["data:weight:propulsion:engine:mass"].value = self.NEO_22.value  # Both engines
+        self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value = self.NEO_33.value  #One engine
+        self.Para_DataNEO["data:weight:propulsion:mass"].value= self.PropulsionMass - self.EngineMass + self.NEO_22.value
+        # Here we change the value of the OWE because of the change of the engine weight
         New_OWE = self.OWE_REF - self.EngineMass + self.NEO_22.value
         self.Para_DataNEO["data:weight:aircraft:OWE"].value = New_OWE
         self.var_owe = New_OWE - self.OWE_REF
-        #Here we SAVE direct variation
+        # Here we SAVE direct variation
         self.Para_DataNEO.save()
 
-        inputs = {}
-        inputs["data:geometry:propulsion:engine:count"]  = self.Para_DataNEO["data:geometry:propulsion:engine:count"].value[0]
-        inputs["data:geometry:wing:area"] = self.Para_DataNEO["data:geometry:wing:area"].value[0]
-        inputs["data:aerodynamics:aircraft:takeoff:mach"] = self.Para_DataNEO["data:aerodynamics:aircraft:takeoff:mach"].value[0]
-        inputs["data:aerodynamics:wing:low_speed:reynolds"] = self.Para_DataNEO["data:aerodynamics:wing:low_speed:reynolds"].value[0]
-        inputs["data:TLAR:cruise_mach"] = self.Para_DataNEO["data:TLAR:cruise_mach"].value[0]
-        inputs["data:aerodynamics:wing:cruise:reynolds"] = self.Para_DataNEO["data:aerodynamics:wing:cruise:reynolds"].value[0]
-        inputs["data:TLAR:cruise_mach"] = self.Para_DataNEO["data:TLAR:cruise_mach"].value[0]
-        inputs["data:aerodynamics:wing:cruise:reynolds"] = self.Para_DataNEO["data:aerodynamics:wing:cruise:reynolds"].value[0]
-        inputs["data:geometry:propulsion:nacelle:length"] = self.Para_DataNEO["data:geometry:propulsion:nacelle:length"].value[0]
-        inputs["data:geometry:propulsion:nacelle:wetted_area"] = self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value
-        inputs["data:geometry:propulsion:fan:length"] = self.Para_DataNEO["data:geometry:propulsion:fan:length"].value[0]
-        inputs["data:geometry:propulsion:pylon:length"] = self.Para_DataNEO["data:geometry:propulsion:pylon:length"].value[0]
-        inputs["data:geometry:propulsion:pylon:wetted_area"] = self.Para_DataNEO["data:geometry:propulsion:pylon:wetted_area"].value[0]
-        inputs["data:geometry:aircraft:wetted_area"] = self.Para_DataNEO["data:geometry:aircraft:wetted_area"].value[0]
-        inputs["data:aerodynamics:wing:low_speed:CD0"] = self.Para_DataNEO["data:aerodynamics:wing:low_speed:CD0"].value[:]
-        inputs["data:aerodynamics:wing:cruise:CD0"] = numpy.array(self.Para_DataNEO["data:aerodynamics:wing:cruise:CD0"].value[:])
-        inputs["data:aerodynamics:fuselage:cruise:CD0"] = numpy.array(self.Para_DataNEO["data:aerodynamics:fuselage:cruise:CD0"].value[:])
-        inputs["data:aerodynamics:horizontal_tail:cruise:CD0"] = self.Para_DataNEO["data:aerodynamics:horizontal_tail:cruise:CD0"].value[:]
-        inputs["data:aerodynamics:vertical_tail:cruise:CD0"] = self.Para_DataNEO["data:aerodynamics:vertical_tail:cruise:CD0"].value[:]
-        inputs["data:aerodynamics:nacelles:cruise:CD0"] = self.Para_DataNEO["data:aerodynamics:nacelles:cruise:CD0"].value[:]
-        inputs["data:aerodynamics:pylons:cruise:CD0"] = self.Para_DataNEO["data:aerodynamics:pylons:cruise:CD0"].value[:]
+        # Compute Cd0NacellesAndPylons() from FAST-OAD.CS25
+        nac_length = self.Para_DataNEO["data:geometry:propulsion:nacelle:length"].value[0]
+        wet_area_nac = self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value
+        fan_length = self.Para_DataNEO["data:geometry:propulsion:fan:length"].value[0]
+        wing_area = self.Para_DataNEO["data:geometry:wing:area"].value[0]
+        mach = self.Para_DataNEO["data:TLAR:cruise_mach"].value[0]
+        reynolds = self.Para_DataNEO["data:aerodynamics:wing:cruise:reynolds"].value[0]
+        n_engines = self.Para_DataNEO["data:geometry:propulsion:engine:count"].value[0]
 
-        inputs["tuning:aerodynamics:aircraft:cruise:CD:k"] = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:k"].value[0]
-        inputs["tuning:aerodynamics:aircraft:cruise:CD:offset"] = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:offset"].value[0]
-        inputs["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:k"] = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:k"].value[0]
-        inputs["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:offset"] = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:offset"].value[0]
-        inputs["data:aerodynamics:aircraft:low_speed:CL"] = self.Para_DataNEO["data:aerodynamics:aircraft:low_speed:CL"].value[:]
-        inputs["data:aerodynamics:aircraft:low_speed:CD0"] = self.Para_DataNEO["data:aerodynamics:aircraft:low_speed:CD0"].value[:]
-        inputs["data:aerodynamics:aircraft:low_speed:CD:trim"] = self.Para_DataNEO["data:aerodynamics:aircraft:low_speed:CD:trim"].value[:]
-        inputs["data:aerodynamics:aircraft:low_speed:induced_drag_coefficient"] = self.Para_DataNEO["data:aerodynamics:aircraft:low_speed:induced_drag_coefficient"].value[0]
-        inputs["data:aerodynamics:high_lift_devices:takeoff:CL"] = self.Para_DataNEO["data:aerodynamics:high_lift_devices:takeoff:CL"].value[0]
-        inputs["data:aerodynamics:high_lift_devices:takeoff:CD"] = self.Para_DataNEO["data:aerodynamics:high_lift_devices:takeoff:CD"].value[0]
-        inputs["data:aerodynamics:high_lift_devices:landing:CL"] = self.Para_DataNEO["data:aerodynamics:high_lift_devices:landing:CL"].value[0]
-        inputs["data:aerodynamics:high_lift_devices:landing:CD"] = self.Para_DataNEO["data:aerodynamics:high_lift_devices:landing:CD"].value[0]
-        inputs["data:aerodynamics:aircraft:cruise:CL"] = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CL"].value[:]
-        inputs["data:aerodynamics:aircraft:cruise:CD0"] = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0"].value[:]
-        inputs["data:aerodynamics:aircraft:cruise:CD:trim"] = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:trim"].value[:]
-        inputs["data:aerodynamics:aircraft:cruise:CD:compressibility"] = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:compressibility"].value[:]
-        inputs["data:aerodynamics:aircraft:cruise:induced_drag_coefficient"] = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:induced_drag_coefficient"].value[0]
+        cf_nac =0.455 / ((1 + 0.144 * mach**2) ** 0.65 * (numpy.log10(reynolds * nac_length)) ** 2.58)
+        e_fan = 0.22
+        kn_cd0_nac = 1 + 0.05 + 5.8 * e_fan / fan_length
+        cd0_int_nac = 0.0002
+        cd0_nac = n_engines * (kn_cd0_nac * cf_nac * wet_area_nac / wing_area + cd0_int_nac)
 
-        #Here we start calculating other variation because of the change of Wetted Area
-        outputs= {}
-        compute_cd0_nacelle = Cd0NacellesAndPylons()
-        compute_cd0_nacelle.compute(inputs,outputs)
-        inputs.update(outputs)
+        # Compute Cd0Total() from FAST-OAD.CS25
+        wet_area_total = self.Para_DataNEO["data:geometry:aircraft:wetted_area"].value[0] -nacelle_old_wetted_area*n_engines +wet_area_nac*n_engines
+        cd0_wing = numpy.array(self.Para_DataNEO["data:aerodynamics:wing:cruise:CD0"].value[:])
+        cd0_fus = numpy.array(self.Para_DataNEO["data:aerodynamics:fuselage:cruise:CD0"].value[:])
+        cd0_ht = numpy.array(self.Para_DataNEO["data:aerodynamics:horizontal_tail:cruise:CD0"].value[:])
+        cd0_vt = numpy.array(self.Para_DataNEO["data:aerodynamics:vertical_tail:cruise:CD0"].value[:])
+        cd0_pylon = numpy.array(self.Para_DataNEO["data:aerodynamics:pylons:cruise:CD0"].value[:])
+        k_parasite = (
+                -2.39 * pow(10, -12) * wet_area_total ** 3
+                + 2.58 * pow(10, -8) * wet_area_total ** 2
+                - 0.89 * pow(10, -4) * wet_area_total
+                + 0.163)
 
-        compute_cd0_total = Cd0Total()
-        compute_cd0_total.compute(inputs,outputs)
-        inputs.update(outputs)
+        cd0_total_clean = cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_nac + cd0_pylon
+        cd0_total = cd0_total_clean * (1.0 + k_parasite)
+        self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0"].value = cd0_total
+        self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0:clean"].value = cd0_total_clean
+        self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0:parasitic"].value = cd0_total - cd0_total_clean
+        self.Para_DataNEO.save()
 
-        k_cd = inputs["tuning:aerodynamics:aircraft:cruise:CD:k"]
-        offset_cd = inputs["tuning:aerodynamics:aircraft:cruise:CD:offset"]
-        k_winglet_cd = inputs["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:k"]
-        offset_winglet_cd = inputs["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:offset"]
-        cl = self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CL"].value[:]#inputs["data:aerodynamics:aircraft:cruise:CL"]
-        cd0 = inputs["data:aerodynamics:aircraft:cruise:CD0"]
-
-        cd_trim = inputs["data:aerodynamics:aircraft:cruise:CD:trim"]
-
-        cd_c = inputs["data:aerodynamics:aircraft:cruise:CD:compressibility"]
-
-        coef_k = inputs["data:aerodynamics:aircraft:cruise:induced_drag_coefficient"]
+        k_cd = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:k"].value[0]
+        offset_cd = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:offset"].value[0]
+        k_winglet_cd = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:k"].value[0]
+        offset_winglet_cd = self.Para_DataNEO["tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:offset"].value[0]
+        cl = numpy.array(self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CL"].value[:])
+        cd0_total= numpy.array(cd0_total)
+        cd_trim = numpy.array(self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:trim"].value[:])
+        cd_c = numpy.array(self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:compressibility"].value[:])
+        coef_k = numpy.array(self.Para_DataNEO["data:aerodynamics:aircraft:cruise:induced_drag_coefficient"].value[0])
         delta_cl_hl = 0.0
         delta_cd_hl = 0.0
 
-        cl = numpy.array(cl)
-        cd0 = numpy.array(cd0)
-        cd_trim = numpy.array(cd_trim)
-        cd_c = numpy.array(cd_c)
         cl = cl + delta_cl_hl
-        cd = (cd0 + cd_c + cd_trim + coef_k * cl ** 2 * k_winglet_cd + offset_winglet_cd + delta_cd_hl) * k_cd + offset_cd
+        cd = (cd0_total + cd_c + cd_trim + coef_k * cl ** 2 * k_winglet_cd + offset_winglet_cd + delta_cd_hl) * k_cd + offset_cd
 
         lift_drag_ratio = cl / cd
 
         optimum_index = numpy.argmax(lift_drag_ratio)
         optimum_Cz = cl[optimum_index]
         optimum_Cd = cd[optimum_index]
-        outputs["data:aerodynamics:aircraft:cruise:L_D_max"] = optimum_Cz / optimum_Cd
-
         self.Para_DataNEO["data:aerodynamics:aircraft:cruise:L_D_max"].value = optimum_Cz / optimum_Cd
         self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD"].value = cd
-        self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0"].value = cd0
+        self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD0"].value = cd0_total
         self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:trim"].value = cd_trim
         self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:compressibility"].value = cd_c
-
+        self.Para_DataNEO["data:geometry:aircraft:wetted_area"].value = wet_area_total
         if self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value != self.NEO_3.value:
             self.Para_DataNEO.save()
 
         clear_output()
         display( self.ID2_box)
         print("--------------------NEW ENGINE MODIFICATIONS SAVED---------------------")
-
-
-
-
-    def NEO_UI_2(self,event):
-        clear_output()
-        display(self.ID2_box)
-
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
-        para_path=pth.join(path,file_name)
-        self.Para_DataNEO_S2=self.OAD.Input_File(para_path)
-
-        self.MTO_Thrust = self.Para_DataNEO_S2["data:propulsion:MTO_thrust"].value[0]
-        self.nacelle_wetted_area = self.Para_DataNEO_S2["data:geometry:propulsion:nacelle:wetted_area"].value[0]
-        self.nacelle_diameter = self.Para_DataNEO_S2["data:geometry:propulsion:nacelle:diameter"].value[0]
-        self.nacelle_length = self.Para_DataNEO_S2["data:geometry:propulsion:nacelle:length"].value[0]
-        self.engine_mass = self.Para_DataNEO_S2["data:weight:propulsion:engine:mass"].value[0]
-
-
-
-        layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
-        layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
-        layout_H=widgets.Layout(border='4px solid black', padding='10px', align_items='center', width='100%')
-        layout_box=widgets.Layout(border='6px solid black', padding='10px', align_items='center', width='100%')
-        layout=widgets.Layout(width="100%", height='50px',justify_content='space-around')
-        style=style={'description_width': 'initial'}
-
-        title = widgets.HTML(value=" <b>MODIFY NEO </b>")
-        title2 = widgets.HTML(value=" <b>-OLD ENGINE OPTION- </b>", layout=widgets.Layout(border='0px solid black', padding='5px', align_items='center', width='100%',justify_content='space-around'))
-        title3 = widgets.HTML(value=" <b>-NEW ENGINE OPTION- </b>", layout=widgets.Layout(border='0px solid black', padding='5px', align_items='center', width='100%',justify_content='space-around'))
-
-        self.NEO_S2_1 = widgets.BoundedFloatText(min=0, max=1000000, step=0.001, value=round(self.MTO_Thrust,5),disabled=True,description="Engine Thrust (N)",description_tooltip="Thrust of one engine",style=style,layout=layout)
-
-        self.NEO_S2_2 = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=round(self.nacelle_wetted_area,3),disabled=True,description="Nacelle Wetted Area[m^2]",description_tooltip="Engine nacelle wetted area",style=style,layout=layout)
-        self.NEO_S2_3 = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=round(self.nacelle_diameter, 3),disabled=True, description="Nacelle Diameter[m]",description_tooltip="Engine nacelle diameter", style=style,layout=layout)
-        self.NEO_S2_4 = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=round(self.nacelle_length, 3),disabled=True, description="Nacelle Length[m]",description_tooltip="Engine nacelle length", style=style,layout=layout)
-        self.NEO_S2_5 = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=round(self.engine_mass, 3),disabled=True, description="Engines Mass [kg]",description_tooltip="Engines mass (two engines)", style=style, layout=layout)
-
-        self.NEO_S2_2_new = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=0,disabled=True, description="Nacelle Wetted Area[m^2]",description_tooltip="Engine nacelle wetted area", style=style,layout=layout)
-        self.NEO_S2_3_new = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=0,disabled=True, description="Nacelle Diameter[m]",description_tooltip="Engine nacelle diameter", style=style,layout=layout)
-        self.NEO_S2_4_new = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=0,disabled=True, description="Nacelle Length[m]",description_tooltip="Engine nacelle length", style=style,layout=layout)
-        self.NEO_S2_5_new = widgets.BoundedFloatText(min=0, max=1000000, step=1, value=0,disabled=True, description="Engines Mass [kg]",description_tooltip="Engines mass (two engines)", style=style,layout=layout)
-
-        self.NEO_S2_2_new.observe(self.delta_NEO_S2_percent, names="value")
-        self.NEO_S2_3_new.observe(self.delta_NEO_S2_percent, names="value")
-        self.NEO_S2_4_new.observe(self.delta_NEO_S2_percent, names="value")
-        self.NEO_S2_5_new.observe(self.delta_NEO_S2_percent, names="value")
-
-        self.NEO_S2_2_new.observe(self.percent_NEO_S2_delta, names="value")
-        self.NEO_S2_3_new.observe(self.percent_NEO_S2_delta, names="value")
-        self.NEO_S2_4_new.observe(self.percent_NEO_S2_delta, names="value")
-        self.NEO_S2_5_new.observe(self.percent_NEO_S2_delta, names="value")
-
-
-        self.NEO_S2_1a = widgets.BoundedFloatText(min=-1000000, max=1000000, step=1,value=0,disabled=False,description="∆(MTO_THRUST)",description_tooltip="Delta MTO_THRUST",style=style,layout=layout)
-        self.NEO_S2_1a.observe(self.delta_NEO_S2_percent, names="value")
-        self.NEO_S2_1b = widgets.BoundedFloatText(min=-1000000, max=1000000, step=1, value=0, disabled=False, description="∆%(MTO_THRUST)",description_tooltip="% MTO_THRUST", style=style, layout=layout)
-        self.NEO_S2_1b.observe(self.percent_NEO_S2_delta, names="value")
-
-
-        Button = widgets.Button(description="SAVE",tooltip="SAVE THE NEO MODIFICATION",layout=layout_button,style=dict(button_color="#33ffcc"))
-        Button.on_click(self.NEO_save_2)
-        #Button_Variation = widgets.Button(description="Show Variation",tooltip="Show the delta and percent variations",layout=layout_button)
-        #Button_Variation.on_click(variation_NEO)
-        self.NEO_S2_H1 = widgets.HBox(children=[title2,title3], layout=widgets.Layout(border='5px solid black',width='100%',justify_content='center'))
-        self.NEO_S2_H2 = widgets.HBox(children=[self.NEO_S2_1,self.NEO_S2_1a,self.NEO_S2_1b], layout=widgets.Layout(border='5px solid black', padding='10px', align_items='center', width='100%',justify_content='space-around'))
-        self.NEO_S2_V1 = widgets.VBox(children=[self.NEO_S2_2,self.NEO_S2_3,self.NEO_S2_4, self.NEO_S2_5], layout=widgets.Layout(border='5px solid black', padding='10px', align_items='center', width='100%',justify_content='space-around'))
-        self.NEO_S2_V2 = widgets.VBox(children=[self.NEO_S2_2_new,self.NEO_S2_3_new,self.NEO_S2_4_new, self.NEO_S2_5_new], layout=widgets.Layout(border='5px solid black', padding='10px', align_items='center', width='100%',justify_content='space-around'))
-        self.NEO_S2_Horizontal = widgets.HBox(children=[self.NEO_S2_V1,self.NEO_S2_V2], layout=widgets.Layout(border='0px solid black', padding='0px', width='100%',justify_content='space-around'))
-        self.NEO_S2_box = widgets.VBox(children=[title,self.NEO_S2_H2,self.NEO_S2_H1,self.NEO_S2_Horizontal,Button], layout=widgets.Layout(border='5px solid black', padding='10px', align_items='center', width='100%',justify_content='space-around'))
-        display(self.NEO_S2_box)
-
-
-    def delta_NEO_S2_percent(self,change):
-        delta=self.NEO_S2_1a.value
-        percent=(delta/self.NEO_S2_1.value)*100
-        self.NEO_S2_1b.value=round(percent,3)
-
-        #Computed with formulation retrieved from FAST-OAD_CS25 geometry module and weight module (not propulsion)
-        New_MTO_Thrust = self.NEO_S2_1.value + delta
-        #Relations Extracted from FASTOAD-CS25 geometry components
-        NacelleWettedArea = (0.0004 * New_MTO_Thrust * 0.225) + 11
-        NacelleDiameter = 0.00904 * numpy.sqrt(New_MTO_Thrust * 0.225) + 0.7
-        NacelleLength = 0.032 * numpy.sqrt(New_MTO_Thrust * 0.225)
-
-        n_engines = self.Para_DataNEO_S2["data:geometry:propulsion:engine:count"].value[0]
-        k_b1 = self.Para_DataNEO_S2["tuning:weight:propulsion:engine:mass:k"].value[0]
-        offset_b1 = self.Para_DataNEO_S2["tuning:weight:propulsion:engine:mass:offset"].value[0]
-        temp_b1 = 22.2e-3 * New_MTO_Thrust
-        temp_b1 *= n_engines * 1.55
-        EngineMass= k_b1 * temp_b1 + offset_b1
-
-        self.NEO_S2_2_new.value = round(NacelleWettedArea, 3)
-        self.NEO_S2_3_new.value = round(NacelleDiameter, 3)
-        self.NEO_S2_4_new.value = round(NacelleLength, 3)
-        self.NEO_S2_5_new.value = round(EngineMass, 3)
-
-    def percent_NEO_S2_delta(self,change):
-        percent=self.NEO_S2_1b.value
-        delta=(percent*self.NEO_S2_1.value)/100
-        self.NEO_S2_1a.value=round(delta,3)
-
-        # Computed with formulation retrieved from FAST-OAD_CS25 geometry module and weight module (not propulsion)
-        New_MTO_Thrust = self.NEO_S2_1.value + delta
-        # Relations Extracted from FASTOAD-CS25 geometry components
-        NacelleWettedArea = (0.0004 * New_MTO_Thrust * 0.225) + 11
-        NacelleDiameter = 0.00904 * numpy.sqrt(New_MTO_Thrust * 0.225) + 0.7
-        NacelleLength = 0.032 * numpy.sqrt(New_MTO_Thrust * 0.225)
-
-        n_engines = self.Para_DataNEO_S2["data:geometry:propulsion:engine:count"].value[0]
-        k_b1 = self.Para_DataNEO_S2["tuning:weight:propulsion:engine:mass:k"].value[0]
-        offset_b1 = self.Para_DataNEO_S2["tuning:weight:propulsion:engine:mass:offset"].value[0]
-        temp_b1 = 22.2e-3 * New_MTO_Thrust
-        temp_b1 *= n_engines * 1.55
-        EngineMass = k_b1 * temp_b1 + offset_b1
-
-        self.NEO_S2_2_new.value = round(NacelleWettedArea,3)
-        self.NEO_S2_3_new.value = round(NacelleDiameter,3)
-        self.NEO_S2_4_new.value = round(NacelleLength,3)
-        self.NEO_S2_5_new.value = round(EngineMass,3)
-
-
-    def NEO_save_2(self,event):
-        #Here we add new SFC, NEW ENGINE MASS, NEW ENGINE NACELLE
-        self.Para_DataNEO_S2["data:propulsion:MTO_thrust"].value = self.NEO_S2_1.value + self.NEO_S2_1a.value
-        self.ID_Type = self.ID_Type + ["NEO Step 2"]
-
-
-        #Here we SAVE direct variation
-        self.Para_DataNEO_S2.save()
-
-
-        clear_output()
-        display( self.ID2_box)
-        print("--------------------NEW ENGINE MODIFICATIONS SAVED---------------------")
-
-
 
     def Drag_Saving_UI(self,event):
         path="OUTPUT_FILE"
@@ -5282,25 +5177,30 @@ class Interface:
         para_path=pth.join(path,file)
         para_data=self.OAD.Input_File(para_path)
 
+        self.Fuselage_Weight_ref = para_data["data:weight:airframe:fuselage:mass"].value[0]
+        self.Paint_Weight_ref = para_data["data:weight:airframe:paint:mass"].value[0]
+        self.Furniture_Weight_ref = para_data["data:weight:furniture:mass"].value[0]
 
+        self.WettedArea_Aircraft_ref = para_data["data:geometry:aircraft:wetted_area"].value[0]
+        self.WettedArea_Fuse_ref = para_data["data:geometry:fuselage:wetted_area"].value[0]
 
         FUSE_1=para_data["data:geometry:fuselage:length"].value[0]
 
-        self.CD0_fus=para_data["data:aerodynamics:fuselage:cruise:CD0"].value
+        self.CD0_fus = para_data["data:aerodynamics:fuselage:cruise:CD0"].value
         FUSE_2=statistics.mean(self.CD0_fus)
 
-        self.CD0_ac=para_data["data:aerodynamics:aircraft:cruise:CD0"].value
+        self.CD0_ac = para_data["data:aerodynamics:aircraft:cruise:CD0"].value
         FUSE_3=statistics.mean(self.CD0_ac)
 
-        self.CD_ac=para_data["data:aerodynamics:aircraft:cruise:CD"].value
+        self.CD_ac = para_data["data:aerodynamics:aircraft:cruise:CD"].value
         FUSE_4=statistics.mean(self.CD_ac)
 
-        FUSE_5=para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value[0]
-        FUSE_6=para_data["data:geometry:cabin:NPAX1"].value[0]
-        FUSE_7=para_data["data:weight:aircraft:OWE"].value[0]
+        FUSE_5 = para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value[0]
+        FUSE_6 = para_data["data:TLAR:NPAX"].value[0]
+        FUSE_7 = para_data["data:weight:aircraft:OWE"].value[0]
 
-        FUSE_16=para_data["data:weight:aircraft:payload"].value[0]
-        FUSE_17=para_data["data:weight:aircraft:max_payload"].value[0]
+        FUSE_16 = para_data["data:weight:aircraft:payload"].value[0]
+        FUSE_17 = para_data["data:weight:aircraft:max_payload"].value[0]
 
         # Compute the coeffecient k from the expression of the aircraft CD0 implemented in FAST-OAD
         CD0_clean=statistics.mean(para_data["data:aerodynamics:aircraft:cruise:CD0:clean"].value)
@@ -5329,7 +5229,7 @@ class Interface:
         self.FUSE_5=widgets.BoundedFloatText(min=0,max=100,step=0.001,value=round(FUSE_5,2),disabled=True,description="aircraft:cruise:L_D_max",description_tooltip="the max lift_drag ratio",style=style,layout=layout)
         box1=widgets.HBox(children=[self.FUSE_2,self.FUSE_3],layout=layout_H)
         box2=widgets.HBox(children=[self.FUSE_4,self.FUSE_5],layout=layout_H)
-        self.FUSE_6=widgets.BoundedFloatText(min=0,max=1000,step=1,value=round(FUSE_6,0),disabled=True,description="cabin:NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
+        self.FUSE_6=widgets.BoundedFloatText(min=0,max=1000,step=1,value=round(FUSE_6,0),disabled=True,description="NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
         self.FUSE_7=widgets.BoundedFloatText(min=0,max=60000,step=1,value=round(FUSE_7,3),disabled=True,description="OWE (Kg)",description_tooltip="Empty Operating Weight of the aircraft",style=style,layout=layout)
         box3=widgets.HBox(children=[self.FUSE_6,self.FUSE_7],layout=layout_H)
 
@@ -5356,9 +5256,9 @@ class Interface:
         box7=widgets.HBox(children=[self.FUSE_10,self.FUSE_11],layout=layout_H)
 
 
-        self.FUSE_12=widgets.BoundedFloatText(min=0,max=1000,step=1,value=0,disabled=True,description="∆ cabin:NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
+        self.FUSE_12=widgets.BoundedFloatText(min=0,max=1000,step=1,value=0,disabled=True,description="∆ NPAX1",description_tooltip="number of passengers",style=style,layout=layout)
 
-        self.FUSE_13=widgets.BoundedFloatText(min=0,max=1000,step=0.01,value=0,disabled=True,description="∆ cabin:NPAX1(%)",description_tooltip="number of passengers",style=style,layout=layout)
+        self.FUSE_13=widgets.BoundedFloatText(min=0,max=1000,step=0.01,value=0,disabled=True,description="∆ NPAX1(%)",description_tooltip="number of passengers",style=style,layout=layout)
 
 
         box8=widgets.HBox(children=[self.FUSE_12,self.FUSE_13],layout=layout_H)
@@ -5404,7 +5304,12 @@ class Interface:
 
         #NEW OWE
         OWE_ref=self.FUSE_7.value
-        OWE_new=(length_new/length_ref)*OWE_ref
+        Fuselage_Weight_new = self.Fuselage_Weight_ref * (length_new/length_ref)
+        Paint_Weight_new = self.Paint_Weight_ref * (length_new/length_ref)
+        Furniture_weight_new = self.Furniture_Weight_ref *(length_new/length_ref)
+        miscellaneous_weight_ref = self.Fuselage_Weight_ref+self.Paint_Weight_ref+ self.Furniture_Weight_ref
+        miscellaneous_weight_new = Fuselage_Weight_new + Paint_Weight_new + Furniture_weight_new
+        OWE_new = OWE_ref - miscellaneous_weight_ref + miscellaneous_weight_new
         delta_OWE=(OWE_new-OWE_ref)
         percent_OWE=(delta_OWE*100)/OWE_ref
         self.FUSE_14.value=round(delta_OWE,3)
@@ -5413,13 +5318,17 @@ class Interface:
 
         #NEW PAYLOAD
         Payload_ref=self.FUSE_17.value
-        Payload_new=(Npax_new/Npax_ref)*Payload_ref
+        Payload_new=round(Npax_new,0)*130.72
         delta_Payload=(Payload_new-Payload_ref)
         percent_Payload=(delta_Payload*100)/Payload_ref
         self.FUSE_18.value=round(delta_Payload,3)
         self.FUSE_19.value=round(percent_Payload,2)
 
         #NEW AERODYNAMICS
+        WettedArea_Aircraft_ref=self.WettedArea_Aircraft_ref
+        WettedArea_Fuse_new=self.WettedArea_Fuse_ref*(length_new/length_ref)
+        WettedArea_Aircraft_new= WettedArea_Aircraft_ref-self.WettedArea_Fuse_ref+WettedArea_Fuse_new
+        k_parasite = (-2.39 * pow(10, -12) * WettedArea_Aircraft_new**3+ 2.58 * pow(10, -8) * WettedArea_Aircraft_new**2- 0.89 * pow(10, -4) * WettedArea_Aircraft_new+ 0.163)
 
         #New CD0 of the fuselage
         CD0_ref=self.FUSE_2.value
@@ -5429,7 +5338,8 @@ class Interface:
         delta_CD0_fus=CD0_fus_new-CD0_ref
 
         # Delta CD0 of the aircraft
-        delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        #delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        delta_CD0_ac = (1+k_parasite)* delta_CD0_fus
 
         # Delta CD of the aircraft
         delta_CD_ac=delta_CD0_ac
@@ -5469,7 +5379,12 @@ class Interface:
 
         #NEW OWE
         OWE_ref=self.FUSE_7.value
-        OWE_new=(length_new/length_ref)*OWE_ref
+        Fuselage_Weight_new = self.Fuselage_Weight_ref * (length_new / length_ref)
+        Paint_Weight_new = self.Paint_Weight_ref * (length_new / length_ref)
+        Furniture_weight_new = self.Furniture_Weight_ref * (length_new / length_ref)
+        miscellaneous_weight_ref = self.Fuselage_Weight_ref + self.Paint_Weight_ref + self.Furniture_Weight_ref
+        miscellaneous_weight_new = Fuselage_Weight_new + Paint_Weight_new + Furniture_weight_new
+        OWE_new = OWE_ref - miscellaneous_weight_ref + miscellaneous_weight_new
         delta_OWE=(OWE_new-OWE_ref)
         percent_OWE=(delta_OWE*100)/OWE_ref
         self.FUSE_14.value=round(delta_OWE,3)
@@ -5478,14 +5393,18 @@ class Interface:
 
         #NEW PAYLOAD
         Payload_ref=self.FUSE_17.value
-        Payload_new=(Npax_new/Npax_ref)*Payload_ref
+        Payload_new=round(Npax_new,0)*130.72
         delta_Payload=(Payload_new-Payload_ref)
         percent_Payload=(delta_Payload*100)/Payload_ref
         self.FUSE_18.value=round(delta_Payload,3)
         self.FUSE_19.value=round(percent_Payload,2)
 
         #NEW AERODYNAMICS
-
+        # NEW AERODYNAMICS
+        WettedArea_Aircraft_ref = self.WettedArea_Aircraft_ref
+        self.WettedArea_Fuse_new = self.WettedArea_Fuse_ref * (length_new / length_ref)
+        self.WettedArea_Aircraft_new = WettedArea_Aircraft_ref - self.WettedArea_Fuse_ref + self.WettedArea_Fuse_new
+        k_parasite = (-2.39 * pow(10, -12) * self.WettedArea_Aircraft_new ** 3 + 2.58 * pow(10,-8) * self.WettedArea_Aircraft_new ** 2 - 0.89 * pow(10, -4) * self.WettedArea_Aircraft_new + 0.163)
         #New CD0 of the fuselage
         CD0_ref=self.FUSE_2.value
         CD0_fus_new=(length_new/length_ref)*CD0_ref
@@ -5496,7 +5415,8 @@ class Interface:
         self.percent_CD0_fus=(100*delta_CD0_fus)/CD0_ref
 
         # Delta CD0 of the aircraft
-        delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        #delta_CD0_ac=self.K_CD0*delta_CD0_fus
+        delta_CD0_ac = (1+k_parasite)* delta_CD0_fus
         self.percent_CD0_ac=(100*delta_CD0_ac)/self.FUSE_3.value
         # Delta CD of the aircraft
         delta_CD_ac=delta_CD0_ac
@@ -5547,12 +5467,16 @@ class Interface:
 
         para_data["data:geometry:fuselage:length"].value=length
         para_data["data:geometry:cabin:NPAX1"].value=Npax
+        para_data["data:TLAR:NPAX"].value=Npax
         para_data["data:aerodynamics:aircraft:cruise:L_D_max"].value=finesse
         para_data["data:weight:aircraft:OWE"].value=OWE
-        para_data["data:weight:aircraft:max_payload"].value=Payload
+        para_data["data:weight:aircraft:max_payload"].value=130.72*Npax
+        para_data["data:weight:aircraft:payload"].value = 90.72*Npax
         para_data["data:aerodynamics:fuselage:cruise:CD0"].value=new_CD0_fus
         para_data["data:aerodynamics:aircraft:cruise:CD0"].value=new_CD0_ac
         para_data["data:aerodynamics:aircraft:cruise:CD"].value=new_CD_ac
+        para_data["data:geometry:aircraft:wetted_area"].value[0] =self.WettedArea_Aircraft_new
+        para_data["data:geometry:fuselage:wetted_area"].value[0] =self.WettedArea_Fuse_new
 
         para_data.save()
         clear_output()
@@ -5620,19 +5544,22 @@ class Interface:
 
         data_ref=self.OAD.Input_File(ac_ref)
         OWE_ref=data_ref["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0]
-        Range_DOC_ref = 4000  # np.asarray(Data["data:TLAR:range"].value)
+        Pax_ref = data_ref["data:TLAR:NPAX"].value[0]
+        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0] #+10*Pax_ref
+        Range_DOC_ref = data_ref["data:TLAR:range"].value[0]
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
 
         data_para = self.OAD.Input_File(ac_para)
         OWE_para=data_para["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_para = data_para["data:weight:aircraft:payload"].value[0]
-        Range_DOC_para = 4000  # np.asarray(Data["data:TLAR:range"].value)
+        Pax_para = data_para["data:TLAR:NPAX"].value[0]
+        PL_DOC_para = data_para["data:weight:aircraft:payload"].value[0]  # +Pax_para*10
+        Range_DOC_para = data_para["data:TLAR:range"].value[0]
         coefficient_para = self.OAD.para_coefficient_range(data_para, SFC_para)
         reserve_para = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para,reserve_para)
+
 
         # COMPUTE THE SPECIFIC RANGE
         SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
@@ -5645,14 +5572,21 @@ class Interface:
         Percent_BF = 100*(BF_para-BF_ref)/BF_ref
         Percent_SR = 100 * (SR_para - SR_ref) / SR_ref
         Percent_Mass = 100 * (mass_para - mass_ref) / mass_ref
+        Percent_BFPAX = 100*( (BF_para/Pax_para) - (BF_ref/Pax_ref) ) / (BF_ref/Pax_ref)
+
         data = [
-            ["<u>Ref A/C</u>",  "<u>New A/C</u>", "<u>Variation %</u>"],
-            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF,2))+"</b>"],
-            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR,2))+"</b>"],
-            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass, 2))+"</b>"],
+            ["<u>Ref A/C</u>",  "<u>STEP 1 A/C</u>", "<u>Variation %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,0))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  " +"<b>" + str(round(BF_para,0)) + "</b>"+"  [kg]", "<b>"+str(round(Percent_BF,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref/Pax_ref, 2)) + "</b>" + "  [kg/pax]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para/Pax_para, 2)) + "</b>" + "  [kg/pax]","<b>" + str(round(Percent_BFPAX, 2)) + "</b>"],
+            ["<i>Mean Specific Range = </i>  " + "<b>"+str(round(SR_ref,3)) + "</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  " + "<b>"+str(round(SR_para,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 0))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>" + str(round(mass_para, 0))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass, 2))+"</b>"],
             ]
-        table_widget = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
-            layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
+
+        font_size = "16px"  # Adjust the font size as desired
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
 
         buttonINFO = widgets.Button(description='')
         buttonINFO.icon = 'fa-info-circle'
@@ -5667,8 +5601,7 @@ class Interface:
                     output.clear_output()
 
                 else:
-                    print('Block Fuel is computed for Max Range at Max Payload.\n'
-                          'The mass used to compute the Specific Range is the average over the climb and cruise phase.\n'
+                    print('Block Fuel is at DOC.\n'
                           'BF/Npax-BF is computed at DOC (TLAR RANGE at SPP)'
                           )
         buttonINFO.on_click(info_message)
@@ -5682,14 +5615,25 @@ class Interface:
 
         # Plot the payload-range diagram
         fig=self.OAD.para_payload_range(ac_ref,SFC_ref,var_owe=None,var_mtow=None,name="REF AC",Color='blue')
+        fig=self.OAD.para_payload_range(ac_para,SFC_para,self.var_owe,self.var_mtow,"STEP1",fig=fig,Color='red')
 
-        fig=self.OAD.para_payload_range(ac_para,SFC_para,self.var_owe,self.var_mtow,"NEW AC",fig=fig,Color='red')
+        KgPax_ref=data_ref["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        KgPax_S1=data_para["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        C_paraPaxref = widgets.HTML(value="AC REF: Npax= "+str(Pax_ref)+" @ "+ str(KgPax_ref+0)+ " kg/pax for SPP")
+        C_paraPaxS1 = widgets.HTML(value="AC STEP1: Npax= " + str(Pax_para)+" @ "+ str(KgPax_S1+0)+ " kg/pax for SPP")
 
-        C_V_BF = widgets.VBox(children=[fig],
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref,C_paraPaxS1],
+                layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px', width='100%'))
+        else:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref],
+                layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
+
+        C_V_PL = widgets.VBox(children=[fig,C_V_PL_info_Pax],
                                      layout=widgets.Layout(border='0px solid black', align_items='center',
                                                            padding='0px', width='100%'))
 
-        fig2=self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,"REF AC",Color='blue')
+        fig2=self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
         fig2=self.OAD.Npax_BF_Diagramm(ac_para,SFC_para,"NEW AC",fig=fig2,Color='red')
 
         C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget,infobox],
@@ -5698,10 +5642,15 @@ class Interface:
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
         C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
 
-        self.tab_Analysis_Para = widgets.Tab(children=[C_V_BF,C_V_BlockFuel],layout=widgets.Layout(border='0px solid black',
+        fig3 = self.OAD.WeightBar_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
+        fig3 = self.OAD.WeightBar_Diagramm(ac_para,SFC_para,"STEP 1",fig=fig3,Color='red')
+
+
+        self.tab_Analysis_Para = widgets.Tab(children=[C_V_PL,C_V_BlockFuel,fig3],layout=widgets.Layout(border='0px solid black',
                                                                     align_items='center', padding='0px', width='100%'))
         self.tab_Analysis_Para.set_title(0, 'Payload - Range ')
         self.tab_Analysis_Para.set_title(1, 'BF/Npax & SR')
+        self.tab_Analysis_Para.set_title(2, 'Mass Breakdown')
         C_Vertical_Para = widgets.VBox(children=[C_para1,C_para2,self.tab_Analysis_Para],
             layout=widgets.Layout(border='2px solid black', align_items='center', padding='2px', width='100%'))
 
@@ -5720,37 +5669,50 @@ class Interface:
         data_ref = self.OAD.Input_File(ac_ref)
         OWE_ref = data_ref["data:weight:aircraft:OWE"].value[0]
         CD_ref = data_ref["data:aerodynamics:aircraft:cruise:CD"].value[0]
+        EngineMasses_ref = data_ref["data:weight:propulsion:engine:mass"].value[0]
 
         #DATA AC STEP1
         path_ac="OUTPUT_FILE"
         file_para_S1="IncrementalDevelopment_Aircraft_File.xml"
         ac_para_S1=pth.join(path_ac,file_para_S1)
         SOURCE = ac_para_S1
-        data_para = self.OAD.Input_File(ac_para_S1)
-        # Getting the inputs optimization problem from the user interface
-        if "Weight Saving" in self.ID_Type:
-            delta_percent_owe_extra = 0.0102
-        else:
-            delta_percent_owe_extra=0
+        data_para_S1 = self.OAD.Input_File(ac_para_S1)
 
         #DATA OWE or FUSELAGE OWE or NEO OWE STEP 2
-        OWE_step1 = data_para["data:weight:aircraft:OWE"].value[0]
-        OWE_percent = (1 - (OWE_ref-OWE_step1) / OWE_ref) + delta_percent_owe_extra
-        data_para["data:weight:k_factor_OWE"].value=OWE_percent
-
-        #DATA DRAG SAVING or FUSELAGE STRETCH EXTRA DRAG or NEO DRAG STEP 2
-        CD_step1 = data_para["data:aerodynamics:aircraft:cruise:CD"].value[0]
+        # DATA DRAG SAVING or FUSELAGE STRETCH EXTRA DRAG or NEO DRAG STEP 2
+        OWE_step1 = data_para_S1["data:weight:aircraft:OWE"].value[0]
+        OWE_percent = (1 - (OWE_ref-OWE_step1) / OWE_ref)
+        CD_step1 = data_para_S1["data:aerodynamics:aircraft:cruise:CD"].value[0]
         CD_percent = (1 - (CD_ref - CD_step1) / CD_ref)
-        data_para["tuning:aerodynamics:aircraft:cruise:CD:k"].value = CD_percent
+        EngineMasses_step1 = data_para_S1["data:weight:propulsion:engine:mass"].value[0]
+        EngineMasses_percent = (1 - (EngineMasses_ref - EngineMasses_step1) / EngineMasses_ref)
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            data_para_S1["data:weight:k_factor_OWE"].value=1
+            data_para_S1["tuning:aerodynamics:aircraft:cruise:CD:k"].value = 1
+        else:
+            data_para_S1["data:weight:k_factor_OWE"].value = OWE_percent
+            data_para_S1["tuning:aerodynamics:aircraft:cruise:CD:k"].value = CD_percent
+
+
 
         #DATA SFC or NEO SFC STEP 2
         if "SFC" in self.ID_Type:
             SFC_ref = float(self.List_SFC[0])
             SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
             SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
-            data_para["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
+        #DATA SFC or NEO SFC STEP 2
+        if "NEO" in self.ID_Type:
+            SFC_ref = float(self.List_SFC[0])
+            SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
+            SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
+            data_para_S1["data:weight:k_factor_OWE"].value = 1
+            data_para_S1["tuning:weight:propulsion:engine:mass:k"].value = EngineMasses_percent
 
-        data_para.save()
+        data_para_S1.save()
 
 
         #BUILD CONFIG AND INPUTS FOR STEP 2 problem
@@ -5763,7 +5725,10 @@ class Interface:
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_PARA():
             self.OWE_STEP2=oad.evaluate_problem(CONFIGURATION, overwrite=True)
-            self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT_FILE", "STEP2_OWE")
+            self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT_FILE", "STEP2_AC")
+            # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
+            self.path_out = "Base Files"
+            self.OAD.Save_File(self.OWE_STEP2.output_file_path, self.path_out, "STEP2_AC")
 
 
         # Function to update the progress bar
@@ -5775,7 +5740,7 @@ class Interface:
             with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
                 for i in range(total_iterations):
                     # Update progress bar
-                    time.sleep(0.8)  # Simulate time for updating progress
+                    time.sleep(1)  # Simulate time for updating progress
                     bar.update(i + 1)
 
 
@@ -5797,11 +5762,11 @@ class Interface:
 
         #NEW DATA OF THE STEP 2 AC
         path_miss="workdir"
-        file_miss="para_perfo.csv"
+        file_miss="step2_oad_sizing.csv"
         mission_para_S2=pth.join(path_miss,file_miss) #new aircraft mission after looping
 
         path_ac="OUTPUT_FILE"
-        file_para="STEP2_OWE.xml"
+        file_para="STEP2_AC.xml"
         ac_para_S2=pth.join(path_ac,file_para)  #new aircraft after ID and looping
 
 
@@ -5816,27 +5781,53 @@ class Interface:
         # COMPUTE THE BLOCK FUEL
         # FOR THE REC AC
         OWE_ref=data_ref["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0]
-        Range_DOC_ref = 4000  # np.asarray(Data["data:TLAR:range"].value)
+        Pax_ref = data_ref["data:TLAR:NPAX"].value[0]
+        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0] #+Pax_ref*10
+        Range_DOC_ref = data_ref["data:TLAR:range"].value[0]
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
 
 
         #FOR THE STEP 1 AC
-        OWE_para_S1=data_para["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_para_S1 = data_para["data:weight:aircraft:payload"].value[0]
-        Range_DOC_para_S1 = 4000  # np.asarray(Data["data:TLAR:range"].value)
-        coefficient_para_S1 = self.OAD.para_coefficient_range(data_para, SFC_para_S1)
-        reserve_para_S1 = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        OWE_para_S1=data_para_S1["data:weight:aircraft:OWE"].value[0]
+        Pax_para_S1 = data_para_S1["data:TLAR:NPAX"].value[0]
+        PL_DOC_para_S1 = data_para_S1["data:weight:aircraft:payload"].value[0] #+10*Pax_para_S1
+        Range_DOC_para_S1 = data_para_S1["data:TLAR:range"].value[0]
+        coefficient_para_S1 = self.OAD.para_coefficient_range(data_para_S1, SFC_para_S1)
+        reserve_para_S1 = data_para_S1["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1,reserve_para_S1)
 
 
         #FOR THE STEP 2 AC
         data_para = self.OAD.Input_File(ac_para_S2)
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            # Parse the source XML file
+            source_tree = ET.parse(SOURCE)
+            source_root = source_tree.getroot()
+            # Find the TLAR element in the source tree
+            aero_element = source_root.find("data/aerodynamics")
+            # Parse the destination XML file
+            dest_tree = ET.parse(ac_para_S2)
+            dest_root = dest_tree.getroot()
+            # Find the TLAR element in the destination tree
+            dest_aero_element = dest_root.find("data/aerodynamics")
+            # Remove the existing TLAR element from the destination tree
+            dest_aero_element.clear()
+            for child in aero_element:
+                dest_aero_element.append(child)
+
+            dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
+            path_ac = "OUTPUT_FILE"
+            file_para = "STEP2_AC.xml"
+            ac_para_S2 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
+            data_para = self.OAD.Input_File(ac_para_S2)
+
+
         OWE_para_S2=data_para["data:weight:aircraft:OWE"].value[0]
-        PL_DOC_para_S2 = data_para["data:weight:aircraft:payload"].value[0]
-        Range_DOC_para_S2 = 4000  # np.asarray(Data["data:TLAR:range"].value)
+        Pax_para_S2 = data_para["data:TLAR:NPAX"].value[0]
+        PL_DOC_para_S2 = data_para["data:weight:aircraft:payload"].value[0] #+Pax_para_S2*10
+        Range_DOC_para_S2 = data_para["data:TLAR:range"].value[0]
         coefficient_para_S2 = self.OAD.para_coefficient_range(data_para, SFC_para_S2)
         reserve_para_S2 = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2,reserve_para_S2)
@@ -5855,26 +5846,37 @@ class Interface:
         Percent_BF_S1 = 100*(BF_para_S1-BF_ref)/BF_ref
         Percent_SR_S1 = 100 * (SR_para_S1 - SR_ref) / SR_ref
         Percent_Mass_S1 = 100 * (mass_para_S1 - mass_ref) / mass_ref
+        Percent_BFPAX_S1 = 100 * ((BF_para_S1 / Pax_para_S1) - (BF_ref / Pax_ref)) / (BF_ref / Pax_ref)
+
         data = [
             ["<u>Ref A/C</u>",  "<u>STEP 1 A/C</u>", "<u>Variation w.r.t REF %</u>"],
-            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S1,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S1,2))+"</b>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,0))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S1,0))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S1,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref / Pax_ref, 2)) + "</b>" + "  [kg/pax]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para_S1 / Pax_para_S1, 2)) + "</b>" + "  [kg/pax]","<b>" + str(round(Percent_BFPAX_S1, 2)) + "</b>"],
             ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S1,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S1,2))+"</b>"],
-            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S1, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S1, 2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 0))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S1, 0))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S1, 2))+"</b>"],
             ]
-        table_widget_S1 = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
-            layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
+        font_size = "16px"  # Adjust the font size as desired
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget_S1 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
 
         Percent_BF_S2 = 100*(BF_para_S2-BF_ref)/BF_ref
         Percent_SR_S2 = 100 * (SR_para_S2 - SR_ref) / SR_ref
         Percent_Mass_S2 = 100 * (mass_para_S2 - mass_ref) / mass_ref
+        Percent_BFPAX_S2 = 100 * ((BF_para_S2 / Pax_para_S2) - (BF_ref / Pax_ref)) / (BF_ref / Pax_ref)
+
         data = [
             ["<u>Ref A/C</u>",  "<u>STEP 2 A/C</u>", "<u>Variation w.r.t REF %</u>"],
-            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S2,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S2,2))+"</b>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,0))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S2,0))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S2,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref / Pax_ref, 2)) + "</b>" + "  [kg/pax]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para_S2 / Pax_para_S2, 2)) + "</b>" + "  [kg/pax]","<b>" + str(round(Percent_BFPAX_S2, 2)) + "</b>"],
             ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S2,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S2,2))+"</b>"],
-            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S2, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S2, 2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 0))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S2, 0))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S2, 2))+"</b>"],
             ]
-        table_widget_S2 = widgets.GridBox(children=[widgets.HTML(str(value)) for row in data for value in row],
-            layout=widgets.Layout(grid_template_columns="repeat(3, auto)",width='100%'))
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget_S2 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
 
 
         buttonINFO = widgets.Button(description='')
@@ -5889,7 +5891,8 @@ class Interface:
                 if len(output.outputs) > 0:
                     output.clear_output()
                 else:
-                    print('Block Fuel is computed for DOC.\n')
+                    print('Block Fuel is at DOC at SPP.'
+                          )
         buttonINFO.on_click(info_message)
         infobox = widgets.Box(children=[buttonINFO, output], layout=Layout(border='0px solid black',
                                                                            margin='50 0 50 0px', padding='5px',
@@ -5904,21 +5907,384 @@ class Interface:
         fig=self.OAD.para_payload_range(ac_ref,SFC_ref,var_owe=None,var_mtow=None,name="REF AC",Color='blue')
         fig=self.OAD.para_payload_range(ac_para_S1,SFC_para_S1,self.var_owe,self.var_mtow,"STEP1",fig=fig,Color='red')
         fig=self.OAD.para_payload_range(ac_para_S2,SFC_para_S2,var_owe=None,var_mtow=None,name="STEP2",fig=fig,Color='green')
+
+        KgPax_ref=data_ref["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        KgPax_S1=data_para_S1["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        C_paraPaxref = widgets.HTML(value="AC REF: Npax= "+str(Pax_ref)+" @ "+ str(KgPax_ref+0)+ " kg/pax for SPP")
+        C_paraPaxS1 = widgets.HTML(value="AC STEP1: Npax= " + str(Pax_para_S1)+" @ "+ str(KgPax_S1+0)+ " kg/pax for SPP")
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref,C_paraPaxS1],
+                layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px', width='100%'))
+        else:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref],
+                layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
+
+
+        C_V_PL = widgets.VBox(children=[fig,C_V_PL_info_Pax],layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
+
+        # Plot the BF/NPAX DIAGRAM
+        fig2 = self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
+        fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S1,SFC_para_S1,"STEP 1",fig=fig2,Color='red')
+        fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S2, SFC_para_S2,name="STEP 2", fig=fig2, Color='green')
+
+        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget_S1,table_widget_S2,infobox],
+            layout=widgets.Layout(border='1px solid black', align_items='center', padding='2px', width='100%'))
+
+        fig3 = self.OAD.WeightBar_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
+        fig3 = self.OAD.WeightBar_Diagramm(ac_para_S1,SFC_para_S1,"STEP 1",fig=fig3,Color='red')
+        fig3 = self.OAD.WeightBar_Diagramm(ac_para_S2, SFC_para_S2,name="STEP 2", fig=fig3, Color='green')
+
+        C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
+        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
+        self.tab_Analysis_Para = widgets.Tab(children=[C_V_PL,C_V_BlockFuel,fig3],
+                                             layout=widgets.Layout(border='0px solid black', align_items='center', padding='2px', width='100%'))
+        self.tab_Analysis_Para.set_title(0, 'Payload - Range ')
+        self.tab_Analysis_Para.set_title(1, 'BF/Npax & SR')
+        self.tab_Analysis_Para.set_title(2, 'Mass Breakdown')
+        C_Vertical_Para = widgets.VBox(children=[C_para1,C_para2,self.tab_Analysis_Para],
+            layout=widgets.Layout(border='5px solid black', align_items='center', padding='5px', width='100%'))
+
+        display(C_Vertical_Para)
+        print('Problem solved.')
+        print("------------------NEW PERFORMANCE COMPUTED----------------------------")
+
+
+    def INCREMENTAL_DEVELOPMENT_STEP3(self,event):
+
+        clear_output()
+        display(self.ID2_box)
+
+        #DATA AC REFERENCE
+        ac_ref=self.AC_ref
+        mission_ref=self.mission_ref
+        data_ref = self.OAD.Input_File(ac_ref)
+        OWE_ref = data_ref["data:weight:aircraft:OWE"].value[0]
+        CD_ref = data_ref["data:aerodynamics:aircraft:cruise:CD"].value[0]
+
+        #DATA AC STEP1
+        path_ac="OUTPUT_FILE"
+        file_para_S1="IncrementalDevelopment_Aircraft_File.xml"
+        ac_para_S1=pth.join(path_ac,file_para_S1)
+        SOURCE = ac_para_S1
+        data_para_S1 = self.OAD.Input_File(ac_para_S1)
+
+        #DATA AC STEP2
+        path_ac="OUTPUT_FILE"
+        file_para_S2="STEP2_AC.xml"
+        ac_para_S2=pth.join(path_ac,file_para_S2)
+        data_para_S2 = self.OAD.Input_File(ac_para_S2)
+
+        #DATA OWE or FUSELAGE OWE or NEO OWE STEP 2
+        #DATA DRAG SAVING or FUSELAGE STRETCH EXTRA DRAG or NEO DRAG STEP 2
+        OWE_step1 = data_para_S1["data:weight:aircraft:OWE"].value[0]
+        OWE_percent = (1 - (OWE_ref-OWE_step1) / OWE_ref)
+        CD_step1 = data_para_S1["data:aerodynamics:aircraft:cruise:CD"].value[0]
+        CD_percent = (1 - (CD_ref - CD_step1) / CD_ref)
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            data_para_S1["data:weight:k_factor_OWE"].value=1.0
+            data_para_S1["tuning:aerodynamics:aircraft:cruise:CD:k"].value = 1.0
+        else:
+            data_para_S1["data:weight:k_factor_OWE"].value = OWE_percent
+            data_para_S1["tuning:aerodynamics:aircraft:cruise:CD:k"].value = CD_percent
+
+
+
+        #DATA SFC or NEO SFC STEP 2
+        if "SFC" in self.ID_Type:
+            SFC_ref = float(self.List_SFC[0])
+            SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
+            SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
+
+        if "NEO" in self.ID_Type:
+            #NPAX_cabin_ref = data_ref["data:geometry:cabin:NPAX1"].value[0]
+            #NPAX_cabin_Step1 = data_para["data:geometry:cabin:NPAX1"].value[0]
+            #TLAR_PAX_ref = data_ref["data:TLAR:NPAX"].value[0]
+            #TLAR_PAX_S1= data_ref["data:TLAR:NPAX"].value[0]
+            #data_para["data:TLAR:NPAX"].value = TLAR_PAX_S1
+            SFC_ref = float(self.List_SFC[0])
+            SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
+            SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
+            data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
+
+        data_para_S1.save()
+
+
+        #BUILD CONFIG AND INPUTS FOR STEP 2 problem
+
+        path_config="data"
+        file_config="oad_sizing_step3.yml" #"para_performance.yml"
+        CONFIGURATION=pth.join(path_config,file_config)
+        oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
+
+        # here, after this save function, the new values modifies by the user are changed in the input file
+        def RUN_MDA_PARA():
+            self.OWE_STEP3=oad.evaluate_problem(CONFIGURATION, overwrite=True)
+            self.OAD.Save_File(self.OWE_STEP3.output_file_path, "OUTPUT_FILE", "STEP3_AC")
+            # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
+            self.path_out = "Base Files"
+            self.OAD.Save_File(self.OWE_STEP3.output_file_path, self.path_out, "STEP3_AC")
+
+
+        # Function to update the progress bar
+        def update_progress_bar():
+            total_iterations = 100
+            custom_widget = [
+                'Progress: ', progressbar.Bar(marker='█', left=' ', right='|'),
+                ' ', progressbar.Percentage()]
+            with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
+                for i in range(total_iterations):
+                    # Update progress bar
+                    time.sleep(1)  # Simulate time for updating progress
+                    bar.update(i + 1)
+
+
+        # Create a thread for the simulation
+        simulation_thread = threading.Thread(target=RUN_MDA_PARA)
+        print('The problem is being solved: ☕... ')
+        # Start the simulation thread
+        simulation_thread.start()
+        # Start the progress bar thread
+        update_progress_bar()
+        # Wait for the simulation thread to complete
+        simulation_thread.join()
+        print('Problem solved.')
+        print("------------------NEW PERFORMANCE COMPUTED----------------------------")
+
+        time.sleep(1.5)
+        clear_output()
+        display(self.ID2_box)
+
+        #NEW DATA OF THE STEP 3 AC
+        path_miss="workdir"
+        file_miss="step2_oad_sizing.csv"
+        mission_para_S2=pth.join(path_miss,file_miss) #new aircraft mission after looping
+        file_miss="step3_oad_sizing.csv"
+        mission_para_S3=pth.join(path_miss,file_miss) #new aircraft mission after looping
+
+        path_ac="OUTPUT_FILE"
+        file_para="STEP3_AC.xml"
+        ac_para_S3=pth.join(path_ac,file_para)  #new aircraft after ID and looping
+        data_para_S3 = self.OAD.Input_File(ac_para_S3)
+
+        # COMPUTE THE  MEAN_SFC
+        SFC_ref=float(self.List_SFC[0])
+        if (len(self.List_SFC)>1):
+            SFC_para_S1=float(self.List_SFC[len(self.List_SFC)-1])
+        else:
+            SFC_para_S1=self.OAD.para_sfc(mission_ref)
+        SFC_para_S2 = self.OAD.para_sfc(mission_para_S2)
+        SFC_para_S3 = self.OAD.para_sfc(mission_para_S3)
+
+        # COMPUTE THE BLOCK FUEL
+        # FOR THE REC AC
+        OWE_ref=data_ref["data:weight:aircraft:OWE"].value[0]
+        Pax_ref = data_ref["data:TLAR:NPAX"].value[0]
+        PL_DOC_ref = data_ref["data:weight:aircraft:payload"].value[0] #+Pax_ref*10
+        Range_DOC_ref = data_ref["data:TLAR:range"].value[0]
+        coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
+        reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
+
+
+        #FOR THE STEP 1 AC
+        OWE_para_S1=data_para_S1["data:weight:aircraft:OWE"].value[0]
+        Pax_para_S1 = data_para_S1["data:TLAR:NPAX"].value[0]
+        PL_DOC_para_S1 = data_para_S1["data:weight:aircraft:payload"].value[0] #+Pax_para_S1*10
+        Range_DOC_para_S1 = data_para_S1["data:TLAR:range"].value[0]
+        coefficient_para_S1 = self.OAD.para_coefficient_range(data_para_S1, SFC_para_S1)
+        reserve_para_S1 = data_para_S1["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1,reserve_para_S1)
+
+        #FOR THE STEP 2 AC
+
+        data_para_S2 = self.OAD.Input_File(ac_para_S2)
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            # Parse the source XML file
+            source_tree = ET.parse(SOURCE)
+            source_root = source_tree.getroot()
+            # Find the TLAR element in the source tree
+            aero_element = source_root.find("data/aerodynamics")
+            # Parse the destination XML file
+            dest_tree = ET.parse(ac_para_S2)
+            dest_root = dest_tree.getroot()
+            # Find the TLAR element in the destination tree
+            dest_aero_element = dest_root.find("data/aerodynamics")
+            # Remove the existing TLAR element from the destination tree
+            dest_aero_element.clear()
+            for child in aero_element:
+                dest_aero_element.append(child)
+
+            dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
+            path_ac = "OUTPUT_FILE"
+            file_para = "STEP2_AC.xml"
+            ac_para_S2 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
+            data_para_S2 = self.OAD.Input_File(ac_para_S2)
+
+        OWE_para_S2=data_para_S2["data:weight:aircraft:OWE"].value[0]
+        Pax_para_S2 = data_para_S2["data:TLAR:NPAX"].value[0]
+        PL_DOC_para_S2 = data_para_S2["data:weight:aircraft:payload"].value[0] #+Pax_para_S2*10
+        Range_DOC_para_S2 = data_para_S2["data:TLAR:range"].value[0]
+        coefficient_para_S2 = self.OAD.para_coefficient_range(data_para_S2, SFC_para_S2)
+        reserve_para_S2 = data_para_S2["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2,reserve_para_S2)
+
+
+        #FOR THE STEP 3 AC
+        OWE_para_S3=data_para_S3["data:weight:aircraft:OWE"].value[0]
+        Pax_para_S3 = data_para_S3["data:TLAR:NPAX"].value[0]
+        PL_DOC_para_S3 = data_para_S3["data:weight:aircraft:payload"].value[0] #+Pax_para_S3*10
+        Range_DOC_para_S3 = data_para_S3["data:TLAR:range"].value[0]
+        coefficient_para_S3 = self.OAD.para_coefficient_range(data_para_S3, SFC_para_S3)
+        reserve_para_S3 = data_para_S3["data:mission:MTOW_mission:reserve:fuel"].value[0]
+        BF_para_S3 = self.BlockFuel_ID(OWE_para_S3, PL_DOC_para_S3, Range_DOC_para_S3, coefficient_para_S3,reserve_para_S3)
+
+
+        # COMPUTE THE SPECIFIC RANGE
+        SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
+        SR_para_S1=self.OAD.compute_SR(ac_para_S1,SFC_para_S1,BF_para_S1)[0]
+        SR_para_S2 = self.OAD.compute_SR(ac_para_S2, SFC_para_S2, BF_para_S2)[0]
+        SR_para_S3 = self.OAD.compute_SR(ac_para_S3, SFC_para_S3, BF_para_S3)[0]
+
+        # COMPUTE THE MEAN MASS
+        mass_ref= OWE_ref +PL_DOC_ref +(reserve_ref+BF_ref/2)
+        mass_para_S1 = OWE_para_S1 + PL_DOC_para_S1 + (reserve_para_S1 + BF_para_S1/2)
+        mass_para_S2 = OWE_para_S2 + PL_DOC_para_S2 + (reserve_para_S2 + BF_para_S2/2)
+        mass_para_S3 = OWE_para_S3 + PL_DOC_para_S3 + (reserve_para_S3 + BF_para_S3/2)
+
+        Percent_BF_S1 = 100*(BF_para_S1-BF_ref)/BF_ref
+        Percent_SR_S1 = 100 * (SR_para_S1 - SR_ref) / SR_ref
+        Percent_Mass_S1 = 100 * (mass_para_S1 - mass_ref) / mass_ref
+        Percent_BFPAX_S1 = 100 * ((BF_para_S1 / Pax_para_S1) - (BF_ref / Pax_ref)) / (BF_ref / Pax_ref)
+
+        data = [
+            ["<u>Ref A/C</u>",  "<u>STEP 1 A/C</u>", "<u>Variation w.r.t REF %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S1,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S1,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref / Pax_ref, 2)) + "</b>" + "  [kg/pax]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para_S1 / Pax_para_S1, 2)) + "</b>" + "  [kg/pax]","<b>" + str(round(Percent_BFPAX_S1, 2)) + "</b>"],
+            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S1,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S1,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S1, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S1, 2))+"</b>"],
+            ]
+        font_size = "16px"  # Adjust the font size as desired
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget_S1 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
+
+
+        Percent_BF_S2 = 100*(BF_para_S2-BF_ref)/BF_ref
+        Percent_SR_S2 = 100 * (SR_para_S2 - SR_ref) / SR_ref
+        Percent_Mass_S2 = 100 * (mass_para_S2 - mass_ref) / mass_ref
+        Percent_BFPAX_S2 = 100 * ((BF_para_S2 / Pax_para_S2) - (BF_ref / Pax_ref)) / (BF_ref / Pax_ref)
+
+        data = [
+            ["<u>Ref A/C</u>",  "<u>STEP 2 A/C</u>", "<u>Variation w.r.t REF %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S2,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S2,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref / Pax_ref, 2)) + "</b>" + "  [kg]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para_S2 / Pax_para_S2, 3)) + "</b>" + "  [kg]","<b>" + str(round(Percent_BFPAX_S2, 2)) + "</b>"],
+            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S2,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S2,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S2, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S2, 2))+"</b>"],
+            ]
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget_S2 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
+
+
+        Percent_BF_S3 = 100*(BF_para_S3-BF_ref)/BF_ref
+        Percent_SR_S3 = 100 * (SR_para_S3 - SR_ref) / SR_ref
+        Percent_Mass_S3 = 100 * (mass_para_S3 - mass_ref) / mass_ref
+        Percent_BFPAX_S3 = 100 * ((BF_para_S3 / Pax_para_S3) - (BF_ref / Pax_ref)) / (BF_ref / Pax_ref)
+
+        data = [
+            ["<u>Ref A/C</u>",  "<u>STEP 3 A/C</u>", "<u>Variation w.r.t REF %</u>"],
+            ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,2))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  "+"<b>"+str(round(BF_para_S3,2))+"</b>"+"  [kg]", "<b>"+str(round(Percent_BF_S3,2))+"</b>"],
+            ["<i>BF/Npax = </i>  " + "<b>" + str(round(BF_ref / Pax_ref, 2)) + "</b>" + "  [kg/pax]","<i>BF/Npax = </i>  " + "<b>" + str(round(BF_para_S3 / Pax_para_S3, 2)) + "</b>" + "  [kg/pax]","<b>" + str(round(Percent_BFPAX_S3, 2)) + "</b>"],
+            ["<i>Mean Specific Range = </i>  "+ "<b>"+str(round(SR_ref,3))+"</b>" + "  [NM/kg]", "<i>Mean Specific Range = </i>  "+"<b>"+str(round(SR_para_S3,3))+"</b>" +"  [NM/kg]", "<b>"+str(round(Percent_SR_S3,2))+"</b>"],
+            ["<i>Mean Mass = </i>  " + "<b>"+str(round(mass_ref, 2))+"</b>" + "  [kg]", "<i>Mean Mass = </i>  " + "<b>"+str(round(mass_para_S3, 2))+"</b>" + "  [kg]","<b>"+str(round(Percent_Mass_S3, 2))+"</b>"],
+            ]
+        html_data = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row]for row in data]
+
+        table_widget_S3 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
+
+        buttonINFO = widgets.Button(description='')
+        buttonINFO.icon = 'fa-info-circle'
+        buttonINFO.layout.width = 'auto'
+        buttonINFO.layout.height = 'auto'
+        output = widgets.Output()
+
+        def info_message(event):
+            with output:
+                output.clear_output()
+                if len(output.outputs) > 0:
+                    output.clear_output()
+                else:
+                    print('Block Fuel is at DOC.\n'
+                          'BF/Npax-BF is computed at DOC (TLAR RANGE at SPP)'
+                          )
+        buttonINFO.on_click(info_message)
+        infobox = widgets.Box(children=[buttonINFO, output], layout=Layout(border='0px solid black',
+                                                                           margin='50 0 50 0px', padding='5px',
+                                                                           align_items='center', width='100'))
+
+
+        if self.var_owe == None:
+            self.var_owe =0
+        if self.var_mtow == None:
+            self.var_mtow = 0
+        # Plot the payload-range diagram
+        fig = self.OAD.para_payload_range(ac_ref,SFC_ref,var_owe=None,var_mtow=None,name="REF AC",Color='blue')
+        fig = self.OAD.para_payload_range(ac_para_S1,SFC_para_S1,self.var_owe,self.var_mtow,"STEP1",fig=fig,Color='red')
+        fig = self.OAD.para_payload_range(ac_para_S2,SFC_para_S2,var_owe=None,var_mtow=None,name="STEP2",fig=fig,Color='green')
+        fig = self.OAD.para_payload_range(ac_para_S3, SFC_para_S3, var_owe=None, var_mtow=None, name="STEP3", fig=fig,Color='black')
+
+        KgPax_ref=data_ref["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        KgPax_S1=data_para_S1["settings:weight:aircraft:payload:design_mass_per_passenger"].value[0]
+        C_paraPaxref = widgets.HTML(value="AC REF: Npax= "+str(Pax_ref)+" @ "+ str(KgPax_ref+0)+ " kg/pax for SPP")
+        C_paraPaxS1 = widgets.HTML(value="AC STEP1: Npax= " + str(Pax_para_S1)+" @ "+ str(KgPax_S1+0)+ " kg/pax for SPP")
+        if "Fuselage Simple Stretch" in self.ID_Type:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref,C_paraPaxS1],
+                layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px', width='100%'))
+        else:
+            C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref],
+                layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
+
+        C_V_PL = widgets.VBox(children=[fig, C_V_PL_info_Pax],
+                              layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px',
+                                                    width='100%'))
+
         # Plot the BF/NPAX DIAGRAM
         fig2 = self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,"REF AC",Color='blue')
         fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S1,SFC_para_S1,"STEP 1",fig=fig2,Color='red')
         fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S2, SFC_para_S2, "STEP 2", fig=fig2, Color='green')
+        fig2 = self.OAD.Npax_BF_Diagramm(ac_para_S3, SFC_para_S3, "STEP 3", fig=fig2, Color='black')
 
-        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget_S1,table_widget_S2,infobox],
+        fig3 = oad.wing_geometry_plot(ac_ref,name="AC ref")
+        fig3 = oad.wing_geometry_plot(ac_para_S3,name="AC STEP 3",fig=fig3)
+        fig3 = go.FigureWidget(fig3)
+        fig4 = oad.aircraft_geometry_plot(ac_ref,name="AC ref")
+        fig4 = oad.aircraft_geometry_plot(ac_para_S3, name="AC STEP 3",fig=fig4)
+        fig4 = go.FigureWidget(fig4)
+        fig5 = oad.mass_breakdown_bar_plot(ac_ref, name='AC ref')
+        fig5 = oad.mass_breakdown_bar_plot(ac_para_S1, name='AC STEP1',fig=fig5)
+        fig5 = oad.mass_breakdown_bar_plot(ac_para_S2, name='AC STEP2',fig=fig5)
+        fig5 = oad.mass_breakdown_bar_plot(ac_para_S3, name='AC STEP3',fig=fig5)
+        fig5 = go.FigureWidget(fig5)
+
+        C_V_BlockFuel = widgets.VBox(children=[fig2,table_widget_S1,table_widget_S2,table_widget_S3,infobox],
             layout=widgets.Layout(border='1px solid black', align_items='center', padding='2px', width='100%'))
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
         C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
 
-        self.tab_Analysis_Para = widgets.Tab(children=[fig,C_V_BlockFuel],
+        self.tab_Analysis_Para = widgets.Tab(children=[C_V_PL,C_V_BlockFuel,fig3,fig4,fig5],
                                              layout=widgets.Layout(border='0px solid black', align_items='center', padding='2px', width='100%'))
         self.tab_Analysis_Para.set_title(0, 'Payload - Range ')
         self.tab_Analysis_Para.set_title(1, 'BF/Npax & SR')
+        self.tab_Analysis_Para.set_title(2, 'AC Geometry')
+        self.tab_Analysis_Para.set_title(3, 'Wing Geometry')
+        self.tab_Analysis_Para.set_title(4, 'Mass diagram')
         C_Vertical_Para = widgets.VBox(children=[C_para1,C_para2,self.tab_Analysis_Para],
             layout=widgets.Layout(border='5px solid black', align_items='center', padding='5px', width='100%'))
 

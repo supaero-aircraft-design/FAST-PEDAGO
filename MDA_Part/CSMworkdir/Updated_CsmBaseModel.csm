@@ -4,7 +4,7 @@
 # Fuselage variables
 DESPMTR fus:height 4.05988
 DESPMTR fus:width  3.91988
-DESPMTR fus:length 37.50736 
+DESPMTR fus:length 40.94736 
 DESPMTR fus:front_length 6.9018 
 DESPMTR fus:rear_length 14.61557
 
@@ -15,24 +15,24 @@ SET ratio:z fus:width/0.4000
 
 # Values from FAST_OAD for calculations
 DESPMTR wing:mac:Xat25     16.0   #X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose
-DESPMTR wing:mac:leadingX  2.92673    #X-position of leading edge of mean aerodynamic chord w.r.t. leading edge of root chord
-DESPMTR wing:mac:length    4.81387    #length of mean aerodynamic chord of wing
+DESPMTR wing:mac:leadingX  2.56731    #X-position of leading edge of mean aerodynamic chord w.r.t. leading edge of root chord
+DESPMTR wing:mac:length    4.33406    #length of mean aerodynamic chord of wing
 
-DESPMTR wing:kink:leadingX 2.74365   #X-position of leading edge at wing kink w.r.t. leading edge of root chord
-DESPMTR wing:kink:y 	   7.34519   #Y-position of wing kink 	
+DESPMTR wing:kink:leadingX 2.37959   #X-position of leading edge at wing kink w.r.t. leading edge of root chord
+DESPMTR wing:kink:y 	   6.62623   #Y-position of wing kink 	
 
-DESPMTR wing:tip:leadingX  8.98063  #X-position of leading edge at wing kink w.r.t. leading edge of root chord
-DESPMTR wing:tip:y         19.58716 #Y-position of wing kink 	
+DESPMTR wing:tip:leadingX  8.01138  #X-position of leading edge at wing kink w.r.t. leading edge of root chord
+DESPMTR wing:tip:y         17.66995 #Y-position of wing kink 	
 
-DESPMTR vtp:mac25:Xat25    2.68091   #X-position of the 25% of mean aerodynamic chord of vertical tail w.r.t. leading edge of root chord
-DESPMTR vtp:mac25:wingMac  17.00648  #distance along X between 25% MAC of wing and 25% MAC of vertical tail
+DESPMTR vtp:mac25:Xat25    2.36228   #X-position of the 25% of mean aerodynamic chord of vertical tail w.r.t. leading edge of root chord
+DESPMTR vtp:mac25:wingMac  20.03368  #distance along X between 25% MAC of wing and 25% MAC of vertical tail
 DESPMTR vtp:sweep:0        40.5148  #sweep angle at leading edge of vertical tail
-DESPMTR vtp:span    	   7.64716  #vertical tail span
+DESPMTR vtp:span    	   6.7383  #vertical tail span
 
-DESPMTR	htp:mac25:Xat25    1.76771	#X-position of the 25% of mean aerodynamic chord of horizontal tail w.r.t. leading edge of root chord
-DESPMTR htp:mac25:wingMac  18.1317  #distance along X between 25% MAC of wing and 25% MAC of horizontal tail
+DESPMTR	htp:mac25:Xat25    1.56206	#X-position of the 25% of mean aerodynamic chord of horizontal tail w.r.t. leading edge of root chord
+DESPMTR htp:mac25:wingMac  21.2621  #distance along X between 25% MAC of wing and 25% MAC of horizontal tail
 DESPMTR htp:sweep:0        33.31651  #sweep angle at leading edge of horizontal tail
-DESPMTR htp:span           13.11077  #horizontal tail span
+DESPMTR htp:span           11.58549  #horizontal tail span
 
 ## WING VARIABLES
 
@@ -40,7 +40,7 @@ DESPMTR htp:span           13.11077  #horizontal tail span
 SET       wing:root:X     (wing:mac:Xat25)-(wing:mac:leadingX)-(wing:mac:length/4) 
 DESPMTR   wing:root:Y     0.00      # Y-coordinte of root leading edge
 DESPMTR   wing:root:Z     0.00      # Z-coordinte of root leading edge
-DESPMTR   wing:root:c     7.03384    # chord of root
+DESPMTR   wing:root:c     6.26624    # chord of root
 DESPMTR   wing:root:t     0.15746    # thickness/chord of root
 DESPMTR   wing:root:m     0.00      # camber/chord of root
 DESPMTR   wing:root:a     0.00      # angle of attack of root (deg)
@@ -56,7 +56,7 @@ DESPMTR   wing:int:a      0.00           # angle of attack of intermediate airfo
 SET       wing:kink:X     (wing:root:X)+(wing:kink:leadingX) # X-coordinte of root leading edge
 DESPMTR   wing:kink:Y     0.00     	   # Y-coordinte of root leading edge
 SET       wing:kink:Z     wing:kink:y  # Z-coordinte of root leading edge   
-DESPMTR   wing:kink:c     4.29019       # chord at kink
+DESPMTR   wing:kink:c     3.88664       # chord at kink
 DESPMTR   wing:kink:t     0.11937      # thickness/chord of root
 DESPMTR   wing:kink:m     0.00         # camber/chord of root
 DESPMTR   wing:kink:a     0.00         # angle of attack of root (deg)
@@ -64,7 +64,7 @@ DESPMTR   wing:kink:a     0.00         # angle of attack of root (deg)
 SET       wing:tip:X      (wing:root:X)+(wing:tip:leadingX) # X-coordinte of tip leading edge
 DESPMTR   wing:tip:Y      0.00         # Y-coordinte of tip leading edge
 SET       wing:tip:Z      wing:tip:y   # Z-coordinte of tip leading edge 
-DESPMTR   wing:tip:c      1.69953       # chord of tip
+DESPMTR   wing:tip:c      1.5284       # chord of tip
 DESPMTR   wing:tip:t      0.10921       # thickness/chord of tip
 DESPMTR   wing:tip:m      0.00         # camber/chord of tip
 DESPMTR   wing:tip:a      0.00         # angle of attack of tip (deg)
@@ -75,7 +75,7 @@ DESPMTR   wing:tip:a      0.00         # angle of attack of tip (deg)
 SET       htp:root:X     (wing:mac:Xat25)+(htp:mac25:wingMac)-(htp:mac25:Xat25)
 DESPMTR   htp:root:Y     0.00     # Y-coordinte of root leading edge
 DESPMTR   htp:root:Z     0.00     # Z-coordinte of root leading edge
-DESPMTR   htp:root:c     4.70416  # chord of root
+DESPMTR   htp:root:c     4.15689  # chord of root
 DESPMTR   htp:root:t     0.1      # thickness/chord of root
 DESPMTR   htp:root:m     0.00     # camber/chord of root
 DESPMTR   htp:root:a     0.00     # angle of attack of root (deg)
@@ -83,7 +83,7 @@ DESPMTR   htp:root:a     0.00     # angle of attack of root (deg)
 SET       htp:tip:X      (htp:root:X)+(tand(htp:sweep:0)*(htp:span/2)) # X-coordinte of tip leading edge
 DESPMTR   htp:tip:Y      0.00         # Y-coordinte of tip leading edge
 SET       htp:tip:Z      (htp:span)/2 # Z-coordinte of tip leading edge
-DESPMTR   htp:tip:c      1.41125      # chord of tip
+DESPMTR   htp:tip:c      1.24707      # chord of tip
 DESPMTR   htp:tip:t      0.1          # thickness/chord of tip
 DESPMTR   htp:tip:m      0.00         # camber/chord of tip
 DESPMTR   htp:tip:a      0.00         # angle of attack of tip (deg)
@@ -94,7 +94,7 @@ DESPMTR   htp:tip:a      0.00         # angle of attack of tip (deg)
 SET       vtp:root:X     (wing:mac:Xat25)+(vtp:mac25:wingMac)-(vtp:mac25:Xat25)
 DESPMTR   vtp:root:Y     0.00      # Y-coordinte of root leading edge
 DESPMTR   vtp:root:Z     0.00      # Z-coordinte of root leading edge  # -1.71
-DESPMTR   vtp:root:c     6.74349   # chord of root     
+DESPMTR   vtp:root:c     5.94203   # chord of root     
 DESPMTR   vtp:root:t     0.1       # thickness/chord of root
 DESPMTR   vtp:root:m     0.00      # camber/chord of root
 DESPMTR   vtp:root:a     0.00      # angle of attack of root (deg)
@@ -102,7 +102,7 @@ DESPMTR   vtp:root:a     0.00      # angle of attack of root (deg)
 SET       vtp:tip:X      (vtp:root:X)+(tand(vtp:sweep:0)*vtp:span) # X-coordinte of tip leading edge
 DESPMTR   vtp:tip:Y      0.0       # Y-coordinte of tip leading edge
 SET       vtp:tip:Z      (vtp:span)  # Z-coordinte of tip leading edge  # 7.748163043445385 + 1.00
-DESPMTR   vtp:tip:c      2.02305   # chord length at tip of vertical tail
+DESPMTR   vtp:tip:c      1.78261   # chord length at tip of vertical tail
 DESPMTR   vtp:tip:t      0.1       # thickness/chord of tip
 DESPMTR   vtp:tip:m      0.00      # camber/chord of tip
 DESPMTR   vtp:tip:a      0.00      # angle of attack of tip (deg)

@@ -1783,7 +1783,7 @@
                 <fuselage>
                     <mass>
                         <k is_input="True">
-                            1.0<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
+                            1.1<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
                         <offset units="kg" is_input="True">
                             0.0<!--fuselage (A2): correction offset to be applied on computed mass--></offset>
                     </mass>

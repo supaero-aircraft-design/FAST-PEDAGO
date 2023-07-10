@@ -116,7 +116,7 @@ class MDA:
                  'model': {'nonlinear_solver': 'om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)',
                            'linear_solver': 'om.DirectSolver()',
                            'geometry': {'id':'fastoad.geometry.legacy'},
-                           'weight': {'id': 'fastoad.weight.legacy', 'payload_from_npax': False},
+                           'weight': {'id': 'fastoad.weight.legacy', 'payload_from_npax': True},
                            'mtow': {'id':'fastoad.mass_performances.compute_MTOW'},
                            'aerodynamics_highspeed': {'id': 'fastoad.aerodynamics.highspeed.legacy'},
                            'aerodynamics_lowspeed': {'id':'fastoad.aerodynamics.lowspeed.legacy'},
@@ -143,7 +143,7 @@ class MDA:
                 problem["model"].pop("geometry")
         
         if ("weight" in self.list_modules):
-            problem["model"]["weight"]={'id': 'fastoad.weight.legacy', 'payload_from_npax': False}
+            problem["model"]["weight"]={'id': 'fastoad.weight.legacy', 'payload_from_npax': True}
         else:
             if("weight" in problem["model"].keys()):
                 problem["model"].pop("weight")
@@ -745,8 +745,9 @@ class MDA:
         MZFW = np.asarray(Data["data:weight:aircraft:MZFW"].value)
         Max_Payload = np.asarray(Data["data:weight:aircraft:max_payload"].value)
         Payload_spp = np.asarray(Data["data:weight:aircraft:payload"].value)
+        Pax_cabin_SPP = np.asarray(Data["data:TLAR:NPAX"].value)
         reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
-        
+
         ### Point A ###
         if var_owe ==None:
             Point_A = Max_Payload
@@ -754,7 +755,7 @@ class MDA:
             Point_A = Max_Payload - var_owe
         Range_A = 0
         FuelA= 0
-
+        Point_A=MZFW-OWE
         self.BlockFuel = self.BlockFuel +[float(FuelA)]
         self.Range = self.Range + [float(Range_A)]
         List_points = List_points + [float(Point_A)]
@@ -801,19 +802,31 @@ class MDA:
         self.Range=[i*0.539957/1000 for i in self.Range]  #From meter to nm
         self.BlockFuel = self.BlockFuel + [float(MFW)]
 
+        Payload_design= Payload_spp[0] #+Pax_cabin_SPP[0]*10
+        if Payload_design > Point_D:
+            x_extra = np.interp(Payload_design, [List_points[2],List_points[1]], [self.Range[2],self.Range[1]])
+        else:
+            x_extra = np.interp(Payload_design, [List_points[3], List_points[2]], [self.Range[3], self.Range[2]])
+
+        x_design_range=[x_extra]
+        y_design_range = [Payload_design]
+
         ### Graphic Display ###
         if fig is None:
             fig = go.Figure()
 
         scatter_prd = go.Scatter(x=self.Range, y=List_points, name=self.name,line=dict(color=Color))
-        scatter_nominal = go.Scatter(x=(np.asarray(Data["data:TLAR:range"].value)), y=np.asarray(Data["data:weight:aircraft:payload"].value),name="Nominal Point:"+" "+ self.name,line=dict(color=Color) )
+        scatter_nominal = go.Scatter(x=(np.asarray(Data["data:TLAR:range"].value)), y=np.asarray(Data["data:weight:aircraft:payload"].value),name="DOC:"+" "+ self.name,line=dict(color=Color) )
+        scatter_design = go.Scatter(x=x_design_range,y=y_design_range,name="SPP range:" + " " + self.name, line=dict(color=Color, dash="dash"), marker=dict(symbol="cross"))
         fig.add_trace(scatter_prd)
         fig.add_trace(scatter_nominal)
+        fig.add_trace(scatter_design)
+
         fig = go.FigureWidget(fig)
     # Set x-axes titles
         fig.update_xaxes(title_text="Range [Nm]")
- # Set y-axes titles
-        fig.update_yaxes(title_text="Payload [Kg]")
+    # Set y-axes titles
+        fig.update_yaxes(title_text="Payload [kg]")
         fig.update_layout(title="PAYLOAD - RANGE", title_x=0.9)
         return fig
 
@@ -870,21 +883,17 @@ class MDA:
         self.name=name
         self.BlockFuel = []
 
+
         Data=VariableIO(self.Path, file_formatter).read()
         OWE = np.asarray(Data["data:weight:aircraft:OWE"].value)
-        #Max_Payload = np.asarray(Data["data:weight:aircraft:max_payload"].value)
-
-        Pax_cabin_SPP = np.asarray(Data["data:geometry:cabin:NPAX1"].value)
-        #Pax_TLAR = np.asarray(Data["data:TLAR:NPAX"].value)
-        #Mean_Pax_Weight_Max = Max_Payload / Pax_TLAR
-
+        Pax_cabin_SPP = np.asarray(Data["data:TLAR:NPAX"].value)
         ### Point DOC ###
-        Range_DOC =np.asarray(Data["data:TLAR:range"].value)
-        PL_DOC = np.asarray(Data["data:weight:aircraft:payload"].value)
+        Range_DOC = np.asarray(Data["data:TLAR:range"].value)
+        PL_DOC = np.asarray(Data["data:weight:aircraft:payload"].value)# +10*Pax_cabin_SPP[0]
+
         coefficient = self.para_coefficient_range(Data, self.sfc_bf)  # (aM L_D)/g*SFC
         reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
-        BF_DOC = math.exp( (1000*Range_DOC*1.852)/(coefficient) )*(OWE+PL_DOC+reserve) - (OWE+PL_DOC+reserve)
-
+        BF_DOC = (OWE+PL_DOC+reserve)*(math.exp( (1000*Range_DOC*1.852)/(coefficient) ) - 1)
 
 
         if fig is None:
@@ -896,13 +905,36 @@ class MDA:
         
         fig = go.FigureWidget(fig)
         # Set x-axes titles
-        fig.update_xaxes(title_text="BF [KG]")
+        fig.update_xaxes(title_text="BF [kg]")
         # Set y-axes titles
-        fig.update_yaxes(title_text="BF/NPAX [Kg Fuel/Seat]")
+        fig.update_yaxes(title_text="BF/NPAX [kg Fuel/Seat]")#,scaleanchor="x",scaleratio=1)
         fig.update_layout(title="BF/Npax - BF @ DOC", title_x=0.9)
+        fig.update_layout(xaxis_type='log',yaxis_type='log')
         return fig
 
+    def WeightBar_Diagramm(self, Path, sfc, name=None, fig=None, file_formatter=None, Color=None):
+        self.Path = Path
+        self.sfc_bf = sfc
+        self.name = name
+        self.BlockFuel = []
 
+        Data=VariableIO(self.Path, file_formatter).read()
+        MTOW = np.asarray(Data["data:weight:aircraft:MTOW"].value)
+        OWE = np.asarray(Data["data:weight:aircraft:OWE"].value)
+        MZFW = np.asarray(Data["data:weight:aircraft:MZFW"].value)
+        MFW = np.asarray(Data["data:weight:aircraft:MFW"].value)
+        MLW = np.asarray(Data["data:weight:aircraft:MFW"].value)
+
+        categories = ['MTOW', 'OWE', 'MZFW','MFW','MLW']
+        values = [MTOW[0], OWE[0], MZFW[0], MFW[0], MLW[0] ]
+        if fig is None:
+            fig = go.Figure()
+
+        scatter_WeightBar_Diagramm = go.Bar(x=categories, y=values, name=self.name, base=dict(color=Color))
+        fig.update_layout(title='Weights Diagram',xaxis=dict(title='Categories'),yaxis=dict(title='Mass [kg]'))
+        fig.add_trace(scatter_WeightBar_Diagramm)
+        fig = go.FigureWidget(fig)
+        return fig
         
  # MODIFYING THE FAST MissionViewer class in order to use it with the interface user        
 

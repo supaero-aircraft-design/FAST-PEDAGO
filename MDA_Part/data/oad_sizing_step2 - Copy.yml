@@ -8,18 +8,11 @@ model:
   linear_solver: om.DirectSolver()
   weight:
     id: fastoad.weight.legacy
-    payload_from_npax: true
+    payload_from_npax: false
   mtow:
     id: fastoad.mass_performances.compute_MTOW
   aerodynamics_highspeed:
     id: fastoad.aerodynamics.highspeed.legacy
-  aerodynamics_lowspeed:
-    id: fastoad.aerodynamics.lowspeed.legacy
-  aerodynamics_takeoff:
-    id: fastoad.aerodynamics.takeoff.legacy
-  aerodynamics_landing:
-    id: fastoad.aerodynamics.landing.legacy
-    use_xfoil: false
   performance:
     id: fastoad.performances.mission
     propulsion_id: fastoad.wrapper.propulsion.rubber_engine
