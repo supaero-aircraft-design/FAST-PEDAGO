@@ -468,6 +468,12 @@ class Interface:
                                   layout=layout_box)
 
 
+        # COMPUTE WING UI ##############################################################################################
+
+
+        ################################################################################################################
+
+
 
 
 
@@ -1018,9 +1024,9 @@ class Interface:
         self.Constraint_n = Data_Constraint_IN[12]  # n load factor n=1 if
 
         #Landing
-        self.Constraint_density_landing = Data_Constraint_IN[13]  # Landing density kg/m^3
-        self.Constraint_clmax_landing = Data_Constraint_IN[14]  # Landing CLmax
-        self.Constraint_distance_landing = Data_Constraint_IN[15]  # Landing distance in m
+        #self.Constraint_density_landing = Data_Constraint_IN[13]  # Landing density kg/m^3
+        #self.Constraint_clmax_landing = Data_Constraint_IN[14]  # Landing CLmax
+        #self.Constraint_distance_landing = Data_Constraint_IN[15]  # Landing distance in m
 
 
 
@@ -1069,15 +1075,15 @@ class Interface:
                                                    description="Load factor n", description_tooltip='Load factor',
                                                   style=style,layout=layout)
 
-        self.Constraint_14_density_landing = widgets.BoundedFloatText(min=0, max=2, step=0.1, value=self.Constraint_density_landing,
-                                                   description="Density Landing [kg/m^3]", description_tooltip='Density',
-                                                  style=style,layout=layout)
-        self.Constraint_15_clmax_landing = widgets.BoundedFloatText(min=0, max=3, step=0.1, value=self.Constraint_clmax_landing,
-                                                   description="CL max at landing", description_tooltip='CL max at landing configuration',
-                                                  style=style,layout=layout)
-        self.Constraint_16_distance_landing = widgets.BoundedFloatText(min=0, max=4000, step=0.5, value=self.Constraint_distance_landing,
-                                                   description="Landing Distance [m]", description_tooltip='Landing distance required in meters',
-                                                  style=style,layout=layout)
+        #self.Constraint_14_density_landing = widgets.BoundedFloatText(min=0, max=2, step=0.1, value=self.Constraint_density_landing,
+        #  description="Density Landing [kg/m^3]", description_tooltip='Density',
+        #  style=style,layout=layout)
+        #self.Constraint_15_clmax_landing = widgets.BoundedFloatText(min=0, max=3, step=0.1, value=self.Constraint_clmax_landing,
+        #   description="CL max at landing", description_tooltip='CL max at landing configuration',
+        #  style=style,layout=layout)
+        #self.Constraint_16_distance_landing = widgets.BoundedFloatText(min=0, max=4000, step=0.5, value=self.Constraint_distance_landing,
+        #  description="Landing Distance [m]", description_tooltip='Landing distance required in meters',
+        #  style=style,layout=layout)
 
 
 
@@ -1096,7 +1102,7 @@ class Interface:
             # this computes the take off curve
             density_ratio_sigma = self.Constraint_4_Density_TO.value / self.Constraint_5_Density_SL.value
             #create vector Wing loading
-            W_S_to =numpy.linspace(0, 7000, num=100)
+            W_S_to =numpy.linspace(0, 9000, num=100)
             T_W_TakeOff = W_S_to / (self.Constraint_3_TOP.value * density_ratio_sigma * self.Constraint_6_CL_TO.value  )
 
             # this computes the straight level flight curve
@@ -1104,7 +1110,7 @@ class Interface:
             AR= (self.MassLoop_2_min.value**2)/(self.MassLoop_3_min.value)
             K = 1/(math.pi*AR*self.Constraint_8_e.value)
 
-            W_S = numpy.linspace(300, 7000, num=100)
+            W_S = numpy.linspace(300, 9000, num=100)
             T_W_LevelFlight = q*self.Constraint_7_Cd0.value/W_S + (K/q)*W_S
 
             # this computes the climbing curve
@@ -1114,10 +1120,10 @@ class Interface:
 
             # this computes the W/S restriccion to w.r.t Landing operations
             #Conversion meters to feet, kg to lbs
-            Landing_distance =self.Constraint_16_distance_landing.value/0.3048  # feet
-            Density_at_landing= self.Constraint_14_density_landing.value*0.062428
-            WingLoading_Landing = ((Landing_distance) - 0)*((Density_at_landing*self.Constraint_15_clmax_landing.value)/(80))
-            WingLoading_Landing = WingLoading_Landing*0.04214*9.8066
+            #Landing_distance =self.Constraint_16_distance_landing.value/0.3048  # feet
+            #Density_at_landing= self.Constraint_14_density_landing.value*0.062428
+            #WingLoading_Landing = ((Landing_distance) - 0)*((Density_at_landing*self.Constraint_15_clmax_landing.value)/(80))
+            #WingLoading_Landing = WingLoading_Landing*0.04214*9.8066
 
             Data_Constraint_IN[0] = self.Constraint_1_Density.value  # kg/m^3
             Data_Constraint_IN[1] = self.Constraint_2_Clmax.value  # Cl max
@@ -1132,9 +1138,9 @@ class Interface:
             Data_Constraint_IN[10] = self.Constraint_11_climb_velocity.value  # m/S
             Data_Constraint_IN[11] = self.Constraint_12_density_CL.value  # kg/m^3
             Data_Constraint_IN[12] = self.Constraint_13_n.value  # load factor
-            Data_Constraint_IN[13] = self.Constraint_14_density_landing.value # Landing density kg/m^3
-            Data_Constraint_IN[14] = self.Constraint_15_clmax_landing.value # Landing CLmax
-            Data_Constraint_IN[15] = self.Constraint_16_distance_landing.value # Landing distance in m
+            #Data_Constraint_IN[13] = self.Constraint_14_density_landing.value # Landing density kg/m^3
+            #Data_Constraint_IN[14] = self.Constraint_15_clmax_landing.value # Landing CLmax
+            #Data_Constraint_IN[15] = self.Constraint_16_distance_landing.value # Landing distance in m
             display(self.tab_Basis_IN)
 
 
@@ -1160,14 +1166,14 @@ class Interface:
             x_climbing = W_S
             y_climbing = T_W_Climbing
 
-            x_land = [WingLoading_Landing, WingLoading_Landing]
-            y_land = [0, 20]
+            #x_land = [WingLoading_Landing, WingLoading_Landing]
+            #y_land = [0, 20]
 
             fig.add_trace(go.Scatter(name='V stall', x=x_stall, y=y_stall, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Take Off', x=x_takeoff, y=y_takeoff, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Straight level flight', x=x_level, y=y_level, mode='lines+markers'))
             fig.add_trace(go.Scatter(name='Climbing', x=x_climbing, y=y_climbing, mode='lines+markers'))
-            fig.add_trace(go.Scatter(name='Landing', x=x_land, y=y_land, mode='lines+markers'))
+            #fig.add_trace(go.Scatter(name='Landing', x=x_land, y=y_land, mode='lines+markers'))
 
             # set axis labels
             fig.update_layout(xaxis_title='W/S [N/m^2]', yaxis_title='T/W')
@@ -1196,9 +1202,9 @@ class Interface:
         C_box_constraint_climb = widgets.VBox(children=[self.Constraint_10_climb_rate,self.Constraint_11_climb_velocity,
                                                         self.Constraint_12_density_CL,self.Constraint_13_n],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
-        C_box_constraint_land = widgets.VBox(children=[self.Constraint_14_density_landing,self.Constraint_15_clmax_landing,
-                                                       self.Constraint_16_distance_landing],
-            layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
+        #C_box_constraint_land = widgets.VBox(children=[self.Constraint_14_density_landing,self.Constraint_15_clmax_landing,
+        #     self.Constraint_16_distance_landing],
+        # layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
         # Titles in MassMissionLoop
         C_constraint1 = widgets.HTML(value=" <b>V stall inputs</b>")
         C_constraint2 = widgets.HTML(value=" <b>Take Off</b>")
@@ -1207,7 +1213,7 @@ class Interface:
         C_constraint5 = widgets.HTML(value=" <b>Straight Level Flight</b>")
 
         self.C_basis_constraint_box = widgets.VBox(children=[button_Update_Constraint,C_constraint1,C_box_constraint_stall,
-                                                             C_constraint2,C_box_constraint_takeoff,C_constraint3,C_box_constraint_land,
+                                                             C_constraint2,C_box_constraint_takeoff,
                                                              C_constraint4,C_box_constraint_climb,C_constraint5,C_box_constraint_level],layout=layout_box)
 
 
@@ -4627,7 +4633,7 @@ class Interface:
         STEP1 = "IncrementalDevelopment_Aircraft_File.xml"
         STEP2 = "STEP2_AC.xml"
         STEP3 = "STEP3_AC.xml"
-        
+
         if STEP1 in path_to_file_list:
 
             path_to_file_list.remove(STEP1)
