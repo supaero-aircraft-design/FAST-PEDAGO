@@ -1,5 +1,5 @@
 title: Sample OAD Process
-module_folders: C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\models
+module_folders: ../models
 input_file: ../workdir/oad_sizing_in.xml
 output_file: ../workdir/oad_sizing_out.xml
 model:

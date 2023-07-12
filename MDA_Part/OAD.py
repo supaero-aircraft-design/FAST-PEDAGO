@@ -110,7 +110,7 @@ class MDA:
             f.truncate(0)
         
         problem={'title': 'Sample OAD Process',
-                 'module_folders': 'C:/Users/ERIC/Documents/GitHub/FAST-PEDAGO/models',
+                 'module_folders': '../models',
                  'input_file': '../workdir/oad_sizing_in.xml',
                  'output_file': '../workdir/oad_sizing_out.xml',
                  'model': {'nonlinear_solver': 'om.NonlinearBlockGS(maxiter=50, atol=1e-2, stall_limit=5)',
