@@ -47,11 +47,9 @@ from ipywidgets import Layout
 class MDA:
 
     def __init__(self):
-        self.DATA_FOLDER_PATH = "data"
-        self.WORK_FOLDER_PATH = "workdir"
+        self.DATA_FOLDER_PATH = "File\Reference"
+        self.WORK_FOLDER_PATH = "File\workdir"
 
-        self.path1 = "Reference\Ref"
-        self.path2 = "Reference\Configuration"
 
     # OAD instruction for the reference file
     def Source_File(self, path, file):
@@ -103,7 +101,7 @@ class MDA:
 
     def write_configuration(self,list_modules):
         self.list_modules=list_modules
-        path="data"
+        path="File\data"
         file="oad_sizing.yml"
         file_path=pth.join(path,file)
         with open(file_path, 'r+') as f:
@@ -181,7 +179,7 @@ class MDA:
                 
         if ("performance" in self.list_modules):
             problem["model"]["performance"]={'id': 'fastoad.performances.mission','propulsion_id': 'fastoad.wrapper.propulsion.rubber_engine',
-   'mission_file_path': '../File/Mission/design_mission.yml','mission_name': 'MTOW_mission','out_file': '../workdir/oad_sizing.csv','adjust_fuel': True,
+   'mission_file_path': '../Mission/design_mission.yml','mission_name': 'MTOW_mission','out_file': '../workdir/oad_sizing.csv','adjust_fuel': True,
    'is_sizing': True}
         else:
             if("performance" in problem["model"].keys()):
@@ -310,7 +308,7 @@ class MDA:
         return self.INPUT
 
     def Generate_Input_File_Exo(self):
-        configuration_exo_path = "data"
+        configuration_exo_path = "File\data"
         file_conf = "oad_sizing_exo.yml"
         file = "Aircraft_reference_data.xml"
         input_exo_path = "File\Reference"
@@ -347,7 +345,7 @@ class MDA:
 
 
     def RUN_OAD_EXO(self):
-        conf=pth.join("data", "oad_sizing_exo_noperfo.yml")
+        conf=pth.join("File\data", "oad_sizing_exo_noperfo.yml")
         self.problem_exo = oad.evaluate_problem(conf, overwrite=True)
         return self.problem_exo
     def RUN_OAD_EXO_PERFO(self):
@@ -564,7 +562,6 @@ class MDA:
         ### Point A ###
         Point_A = Max_Payload
         Range_A = 0
-        
         Range = Range + [float(Range_A)]
         List_points = List_points + [float(Point_A)]
         
@@ -671,9 +668,9 @@ class MDA:
     def PARA_AC_FILE(self,AC_ref):
     
         self.AC_ref=AC_ref
-        path="OUTPUT_FILE"
+        path="OUTPUT\OUTPUT_FILE"
         file_path=pth.join(path,self.AC_ref)
-        file_para="IncrementalDevelopment_Aircraft_File.xml"
+        file_para="STEP1_AC.xml"
         para_path=pth.join(path, file_para)
         shutil.copy(file_path, para_path)
     
@@ -749,10 +746,6 @@ class MDA:
         reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
 
         ### Point A ###
-        if var_owe ==None:
-            Point_A = Max_Payload
-        else:
-            Point_A = Max_Payload - var_owe
         Range_A = 0
         FuelA= 0
         Point_A=MZFW-OWE
@@ -803,8 +796,11 @@ class MDA:
         self.BlockFuel = self.BlockFuel + [float(MFW)]
 
         Payload_design= Payload_spp[0] #+Pax_cabin_SPP[0]*10
-        if Payload_design > Point_D:
+        if Payload_design > Point_D and Payload_design <= Point_B:
             x_extra = np.interp(Payload_design, [List_points[2],List_points[1]], [self.Range[2],self.Range[1]])
+        elif Payload_design > Point_B:
+            x_extra = np.interp(Payload_design, [List_points[2], List_points[1]], [self.Range[2], self.Range[1]])
+            print("Design range is out of limits. Incremental Development failed.")
         else:
             x_extra = np.interp(Payload_design, [List_points[3], List_points[2]], [self.Range[3], self.Range[2]])
 
@@ -828,6 +824,7 @@ class MDA:
     # Set y-axes titles
         fig.update_yaxes(title_text="Payload [kg]")
         fig.update_layout(title="PAYLOAD - RANGE", title_x=0.9)
+
         return fig
 
        

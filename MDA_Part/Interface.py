@@ -30,8 +30,7 @@ class Interface:
 
     def __init__(self):
         self.path1 = "File\Reference"
-        self.path2 = "File\Configuration"
-        self.path3 = "OUTPUT_FILE"
+        self.path3 = "OUTPUT\OUTPUT_FILE"
         self.OAD = MDA()
 
 
@@ -52,7 +51,7 @@ class Interface:
     def HomeInterface(self,event):
 
         clear_output()
-        image_path = "Images/Wing.jpg"
+        image_path = "BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -105,7 +104,7 @@ class Interface:
         Line_1=[self.Button_M0,self.Button_M1,self.Button_M2,self.Button_M3]
         Line_2 = [ self.Button_M4, self.Button_M5,self.Button_M6, self.Button_M7]
 
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -430,7 +429,7 @@ class Interface:
         button_Update_FUS.layout.height = 'auto'
         button_Update_FUS.on_click(update_fus)
 
-        C_file = open("Images/cabin.PNG", "rb")
+        C_file = open("BlockImage/Images/cabin.PNG", "rb")
         C_image = C_file.read()
         C_img = widgets.Image(value=C_image, format="PNG", width="45%", height="100%")
 
@@ -1303,8 +1302,8 @@ class Interface:
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_EXO_Function():
             MDA_problem_exo = self.OAD.RUN_OAD_EXO() # This runs the MDA problem
-            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT_EXO", str(self.StudyName.value))
-            self.OAD.Save_CSV_File("workdir\oad_sizing.csv", "OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT\OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_CSV_File("File\workdir\oad_sizing.csv", "OUTPUT\OUTPUT_EXO", str(self.StudyName.value))
             return MDA_problem_exo
         # Function to update the progress bar
         def update_progress_bar():
@@ -1338,7 +1337,7 @@ class Interface:
             button_plots.layout.height = 'auto'
             button_plots.on_click(self.UpdatePlots)
 
-            path_to_target = "OUTPUT_EXO"
+            path_to_target = "OUTPUT\OUTPUT_EXO"
             path_to_file_list_xml = []
             temp = os.listdir(path_to_target)
             for i in range(0, len(temp)):
@@ -1359,8 +1358,8 @@ class Interface:
         #Function to run the problem with Performance Module
         def RUN_MDA_EXO_Function_Perfo():
             MDA_problem_exo = self.OAD.RUN_OAD_EXO_PERFO() # This runs the MDA problem
-            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT_EXO", str(self.StudyName.value))
-            self.OAD.Save_CSV_File("workdir\oad_sizing.csv", "OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_File(MDA_problem_exo.output_file_path, "OUTPUT\OUTPUT_EXO", str(self.StudyName.value))
+            self.OAD.Save_CSV_File("File\workdir\oad_sizing.csv", "OUTPUT\OUTPUT_EXO", str(self.StudyName.value))
             return MDA_problem_exo
         # Function to update the progress bar
         def update_progress_bar2():
@@ -1395,7 +1394,7 @@ class Interface:
             button_plots.layout.height = 'auto'
             button_plots.on_click(self.UpdatePlots)
 
-            path_to_target = "OUTPUT_EXO"
+            path_to_target = "OUTPUT\OUTPUT_EXO"
             path_to_file_list_xml = []
             temp = os.listdir(path_to_target)
             for i in range(0, len(temp)):
@@ -1427,12 +1426,12 @@ class Interface:
         self.button_Run_Exo_Perfo.layout.height = 'auto'
         self.button_Run_Exo_Perfo.on_click(RUN_MDA_EXO_PERFO)
 
-        self.fig1 = oad.wing_geometry_plot("workdir/oad_sizing_out_exo.xml")
-        self.fig2 = oad.aircraft_geometry_plot("workdir/oad_sizing_out_exo.xml")
-        self.fig3 = oad.drag_polar_plot("workdir/oad_sizing_out_exo.xml")
-        self.fig4 = self.OAD.payload_range("workdir/oad_sizing_out_exo.xml", "workdir/oad_sizing_exo.csv",name='oad_sizing_exo')
-        self.fig5 = oad.mass_breakdown_bar_plot("workdir/oad_sizing_out_exo.xml", name='oad_sizing_exo')
-        self.fig6 = oad.mass_breakdown_sun_plot("workdir/oad_sizing_out_exo.xml")
+        self.fig1 = oad.wing_geometry_plot("File/workdir/oad_sizing_out_exo.xml")
+        self.fig2 = oad.aircraft_geometry_plot("File/workdir/oad_sizing_out_exo.xml")
+        self.fig3 = oad.drag_polar_plot("File/workdir/oad_sizing_out_exo.xml")
+        self.fig4 = self.OAD.payload_range("File/workdir/oad_sizing_out_exo.xml", "File/workdir/oad_sizing_exo.csv",name='oad_sizing_exo')
+        self.fig5 = oad.mass_breakdown_bar_plot("File/workdir/oad_sizing_out_exo.xml", name='oad_sizing_exo')
+        self.fig6 = oad.mass_breakdown_sun_plot("File/workdir/oad_sizing_out_exo.xml")
         self.output_fig5 = widgets.Output()
         with self.output_fig5:
             display(self.fig5)
@@ -1443,7 +1442,7 @@ class Interface:
             display(self.fig6)
         self.output_fig6 = go.FigureWidget(self.fig6)
         self.output_fig7 = widgets.Output()
-        Mission = [pth.join('workdir', 'oad_sizing_exo.csv')]
+        Mission = [pth.join('File/workdir', 'oad_sizing_exo.csv')]
         name = ['oad_sizing_exo']
         with self.output_fig7:
             self.fig7 = self.OAD.MISSION_PLOT(Mission,name)
@@ -1499,7 +1498,7 @@ class Interface:
         display(self.C_select)
 
         liste_exo_xml = self.output_list_exo_xml.value
-        path = "OUTPUT_EXO"
+        path = "OUTPUT\OUTPUT_EXO"
         XML_Liste_Design = []
         XML_Liste_Name = []
         CSV_Liste_Design = []
@@ -1586,10 +1585,7 @@ class Interface:
         clear_output()
         self.ref = self.reference_aircraft(self.path1)
         print("REFERENCE AIRCRAFT PHASE")
-        print(
-            "-----------------------------------------------------------------------------------------------------------")
-        print(
-            "-----------------------------------------------------------------------------------------------------------")
+        print("-------------------------------------------------------------------------------------------------------")
         return self.ref
 
     def menu_to_input(self, event):
@@ -1609,7 +1605,7 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color = "#ebebeb"
         self.Button_M4.style.button_color = "#00d600"
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -1631,8 +1627,6 @@ class Interface:
 
 
 #The Interface for choosing the reference aircraft file
-
-
     def dropdown_reference(self,change):
 
         ref=self.OAD.Source_File(self.path1,change.new)
@@ -1662,11 +1656,9 @@ class Interface:
     def delete_reference(self,event):
         clear_output()
         display(self.REF_BOX)
-        self.delete_ref=self.OAD.Delete_File('data\Aircraft_reference_data.xml')
-        print("Your referene aircraft data file suppressed")
-
+        self.delete_ref=self.OAD.Delete_File('File\Reference\Aircraft_reference_data.xml')
+        print("Your reference aircraft data file has been suppressed")
         print("Choose your reference file")
-        print("-------------------------------------------------------------------------------------------------------------------------------")
         print("-------------------------------------------------------------------------------------------------------------------------------")
         return self.delete_ref
 
@@ -1676,7 +1668,7 @@ class Interface:
         self.Button_M1.style.button_color='#ebebeb'
         self.Button_M2.style.button_color="#00d600"
         self.Button_M2.disabled=False
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -1866,7 +1858,7 @@ class Interface:
         self.Button_M2.style.button_color='#ebebeb'
         self.Button_M3.style.button_color="#00d600"
         self.Button_M3.disabled=False
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -2013,7 +2005,7 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color="#ebebeb"
         self.Button_M4.style.button_color="#00d600"
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -2072,9 +2064,9 @@ class Interface:
             self.T_value4 = "NaN"
 
 
-        T_path1="Table/TLARS_name.csv"
-        T_path2="Table/TLARS_unit.csv"
-        T_path3="Table/TLARS_des.csv"
+        T_path1="BlockImage/Table/TLARS_name.csv"
+        T_path2="BlockImage/Table/TLARS_unit.csv"
+        T_path3="BlockImage/Table/TLARS_des.csv"
         T_Table1=self.csv_to_table(T_path1)
         T_Table2=self.csv_to_table(T_path2)
         T_Table3=self.csv_to_table(T_path3)
@@ -2138,9 +2130,9 @@ class Interface:
             status_C_value7 = True
 
 
-        C_path1 = "Table/cab_name.csv"
-        C_path2 = "Table/cab_unit.csv"
-        C_path3 = "Table/cab_des.csv"
+        C_path1 = "BlockImage/Table/cab_name.csv"
+        C_path2 = "BlockImage/Table/cab_unit.csv"
+        C_path3 = "BlockImage/Table/cab_des.csv"
         C_Table1 = self.csv_to_table(C_path1)
         C_Table2 = self.csv_to_table(C_path2)
         C_Table3 = self.csv_to_table(C_path3)
@@ -2171,7 +2163,7 @@ class Interface:
                                               description=C_Table4[6], description_tooltip=C_Table3[6], style=style,
                                               layout=layout)
 
-        C_file = open("Images/cabin.PNG", "rb")
+        C_file = open("BlockImage/Images/cabin.PNG", "rb")
         C_image = C_file.read()
         C_img = widgets.Image(value=C_image, format="PNG", width="45%", height="100%")
         C_box_C = widgets.VBox(
@@ -2243,9 +2235,9 @@ class Interface:
             status_W_value10 = True
 
 
-        W_path1 = "Table/wing_name.csv"
-        W_path2 = "Table/wing_unit.csv"
-        W_path3 = "Table/wing_des.csv"
+        W_path1 = "BlockImage/Table/wing_name.csv"
+        W_path2 = "BlockImage/Table/wing_unit.csv"
+        W_path3 = "BlockImage/Table/wing_des.csv"
         W_Table1 = self.csv_to_table(W_path1)
         W_Table2 = self.csv_to_table(W_path2)
         W_Table3 = self.csv_to_table(W_path3)
@@ -2290,7 +2282,7 @@ class Interface:
             children=[self.WING_1, self.WING_2, self.WING_3, self.WING_4, self.WING_5, self.WING_6, self.WING_7,
                       self.WING_8, self.WING_9, self.WING_10],
             layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px', width='100%'))
-        W_file = open("Images/Wing.PNG", "rb")
+        W_file = open("BlockImage/Images/Wing.PNG", "rb")
         W_image = W_file.read()
         W_img = widgets.Image(value=W_image, format="PNG", width="100%", height="50%")
         self.W_box = widgets.VBox(children=[W_title, W_box_W, W_img, W_Button], layout=layout_box)
@@ -2311,9 +2303,9 @@ class Interface:
 
 
 
-        F_path1 = "Table/flap_name.csv"
-        F_path2 = "Table/flap_unit.csv"
-        F_path3 = "Table/flap_des.csv"
+        F_path1 = "BlockImage/Table/flap_name.csv"
+        F_path2 = "BlockImage/Table/flap_unit.csv"
+        F_path3 = "BlockImage/Table/flap_des.csv"
         F_Table1 = self.csv_to_table(F_path1)
         F_Table2 = self.csv_to_table(F_path2)
         F_Table3 = self.csv_to_table(F_path3)
@@ -2333,7 +2325,7 @@ class Interface:
         F_box_F = widgets.VBox(children=[self.FLAP_1, self.FLAP_2],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        F_file = open("Images/flaps.PNG", "rb")
+        F_file = open("BlockImage/Images/flaps.PNG", "rb")
         F_image = F_file.read()
         F_img = widgets.Image(value=F_image, format="PNG", width="70%", height="100%")
         self.F_box = widgets.VBox(children=[F_title, F_box_F, F_img, F_Button], layout=layout_box)
@@ -2354,9 +2346,9 @@ class Interface:
 
 
 
-        S_path1 = "Table/slat_name.csv"
-        S_path2 = "Table/slat_unit.csv"
-        S_path3 = "Table/slat_des.csv"
+        S_path1 = "BlockImage/Table/slat_name.csv"
+        S_path2 = "BlockImage/Table/slat_unit.csv"
+        S_path3 = "BlockImage/Table/slat_des.csv"
         S_Table1 = self.csv_to_table(S_path1)
         S_Table2 = self.csv_to_table(S_path2)
         S_Table3 = self.csv_to_table(S_path3)
@@ -2376,7 +2368,7 @@ class Interface:
         S_box_S = widgets.VBox(children=[self.SLAT_1, self.SLAT_2],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        S_file = open("Images/SLATS.PNG", "rb")
+        S_file = open("BlockImage/Images/SLATS.PNG", "rb")
         S_image = S_file.read()
         S_img = widgets.Image(value=S_image, format="PNG", width="70%", height="100%")
         self.S_box = widgets.VBox(children=[S_title, S_box_S, S_img, S_Button], layout=layout_box)
@@ -2411,9 +2403,9 @@ class Interface:
 
 
 
-        H_path1 = "Table/ht_name.csv"
-        H_path2 = "Table/ht_unit.csv"
-        H_path3 = "Table/ht_des.csv"
+        H_path1 = "BlockImage/Table/ht_name.csv"
+        H_path2 = "BlockImage/Table/ht_unit.csv"
+        H_path3 = "BlockImage/Table/ht_des.csv"
         H_Table1 = self.csv_to_table(H_path1)
         H_Table2 = self.csv_to_table(H_path2)
         H_Table3 = self.csv_to_table(H_path3)
@@ -2439,7 +2431,7 @@ class Interface:
         H_box_H = widgets.VBox(children=[self.HT_1, self.HT_2, self.HT_3, self.HT_4],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        H_file = open("Images/HT.PNG", "rb")
+        H_file = open("BlockImage/Images/HT.PNG", "rb")
         H_image = H_file.read()
         H_img = widgets.Image(value=H_image, format="PNG", width="70%", height="100%")
         self.H_box = widgets.VBox(children=[H_title, H_box_H, H_img, H_Button], layout=layout_box)
@@ -2471,9 +2463,9 @@ class Interface:
             status_V_value4 = True
 
 
-        V_path1 = "Table/vt_name.csv"
-        V_path2 = "Table/vt_unit.csv"
-        V_path3 = "Table/vt_des.csv"
+        V_path1 = "BlockImage/Table/vt_name.csv"
+        V_path2 = "BlockImage/Table/vt_unit.csv"
+        V_path3 = "BlockImage/Table/vt_des.csv"
         V_Table1 = self.csv_to_table(V_path1)
         V_Table2 = self.csv_to_table(V_path2)
         V_Table3 = self.csv_to_table(V_path3)
@@ -2499,7 +2491,7 @@ class Interface:
         V_box_V = widgets.VBox(children=[self.VT_1, self.VT_2, self.VT_3, self.VT_4],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        V_file = open("Images/HT.PNG", "rb")
+        V_file = open("BlockImage/Images/HT.PNG", "rb")
         V_image = V_file.read()
         V_img = widgets.Image(value=V_image, format="PNG", width="70%", height="100%")
         self.V_box = widgets.VBox(children=[V_title, V_box_V, V_img, V_Button], layout=layout_box)
@@ -2526,9 +2518,9 @@ class Interface:
 
 
 
-        P_path1 = "Table/prop_name.csv"
-        P_path2 = "Table/prop_unit.csv"
-        P_path3 = "Table/prop_des.csv"
+        P_path1 = "BlockImage/Table/prop_name.csv"
+        P_path2 = "BlockImage/Table/prop_unit.csv"
+        P_path3 = "BlockImage/Table/prop_des.csv"
         P_Table1 = self.csv_to_table(P_path1)
         P_Table2 = self.csv_to_table(P_path2)
         P_Table3 = self.csv_to_table(P_path3)
@@ -2551,7 +2543,7 @@ class Interface:
         P_box_P = widgets.VBox(children=[self.PROP_1, self.PROP_2, self.PROP_3],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        P_file = open("Images/Engine.PNG", "rb")
+        P_file = open("BlockImage/Images/Engine.PNG", "rb")
         P_image = P_file.read()
         P_img = widgets.Image(value=P_image, format="PNG", width="100%", height="100%")
         self.P_box = widgets.VBox(children=[P_title, P_box_P, P_img, P_Button], layout=layout_box)
@@ -2583,9 +2575,9 @@ class Interface:
 
 
 
-        We_path1 = "Table/We_name.csv"
-        We_path2 = "Table/We_unit.csv"
-        We_path3 = "Table/We_des.csv"
+        We_path1 = "BlockImage/Table/We_name.csv"
+        We_path2 = "BlockImage/Table/We_unit.csv"
+        We_path3 = "BlockImage/Table/We_des.csv"
         We_Table1 = self.csv_to_table(We_path1)
         We_Table2 = self.csv_to_table(We_path2)
         We_Table3 = self.csv_to_table(We_path3)
@@ -2602,7 +2594,7 @@ class Interface:
         We_box_We = widgets.VBox(children=[self.We_1, self.We_2],
                                  layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                        width='100%'))
-        We_file = open("Images/WE.PNG", "rb")
+        We_file = open("BlockImage/Images/WE.PNG", "rb")
         We_image = We_file.read()
         We_img = widgets.Image(value=We_image, format="PNG", width="100%", height="50%")
         self.We_box = widgets.VBox(children=[We_title, We_box_We, We_img, We_Button], layout=layout_box)
@@ -2623,9 +2615,9 @@ class Interface:
 
 
 
-        A_path1 = "Table/aero_name.csv"
-        A_path2 = "Table/aero_unit.csv"
-        A_path3 = "Table/aero_des.csv"
+        A_path1 = "BlockImage/Table/aero_name.csv"
+        A_path2 = "BlockImage/Table/aero_unit.csv"
+        A_path3 = "BlockImage/Table/aero_des.csv"
         A_Table1 = self.csv_to_table(A_path1)
         A_Table2 = self.csv_to_table(A_path2)
         A_Table3 = self.csv_to_table(A_path3)
@@ -2646,7 +2638,7 @@ class Interface:
         A_box_A = widgets.VBox(children=[self.AERO_1, self.AERO_2],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        A_file = open("Images/aero.PNG", "rb")
+        A_file = open("BlockImage/Images/aero.PNG", "rb")
         A_image = A_file.read()
         A_img = widgets.Image(value=A_image, format="PNG", width="100%", height="50%")
         self.A_box = widgets.VBox(children=[A_title, A_box_A, A_img, A_Button], layout=layout_box)
@@ -2693,9 +2685,9 @@ class Interface:
 
 
 
-        L_path1 = "Table/load_name.csv"
-        L_path2 = "Table/load_unit.csv"
-        L_path3 = "Table/load_des.csv"
+        L_path1 = "BlockImage/Table/load_name.csv"
+        L_path2 = "BlockImage/Table/load_unit.csv"
+        L_path3 = "BlockImage/Table/load_des.csv"
         L_Table1 = self.csv_to_table(L_path1)
         L_Table2 = self.csv_to_table(L_path2)
         L_Table3 = self.csv_to_table(L_path3)
@@ -2728,7 +2720,7 @@ class Interface:
         L_box_L = widgets.VBox(children=[self.LOAD_1, self.LOAD_2, self.LOAD_3, self.LOAD_4, self.LOAD_5, self.LOAD_6],
                                layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                      width='100%'))
-        L_file = open("Images/load.PNG", "rb")
+        L_file = open("BlockImage/Images/load.PNG", "rb")
         L_image = L_file.read()
         L_img = widgets.Image(value=L_image, format="PNG", width="100%", height="50%")
         self.L_box = widgets.VBox(children=[L_title, L_box_L, L_img, L_Button], layout=layout_box)
@@ -2768,9 +2760,9 @@ class Interface:
             status_MTOW_value5 = True
 
 
-        MTOW_path1 = "Table/MTOW_name.csv"
-        MTOW_path2 = "Table/MTOW_unit.csv"
-        MTOW_path3 = "Table/MTOW_des.csv"
+        MTOW_path1 = "BlockImage/Table/MTOW_name.csv"
+        MTOW_path2 = "BlockImage/Table/MTOW_unit.csv"
+        MTOW_path3 = "BlockImage/Table/MTOW_des.csv"
         MTOW_Table1 = self.csv_to_table(MTOW_path1)
         MTOW_Table2 = self.csv_to_table(MTOW_path2)
         MTOW_Table3 = self.csv_to_table(MTOW_path3)
@@ -2798,7 +2790,7 @@ class Interface:
         MTOW_box_MTOW = widgets.VBox(children=[self.MTOW_1, self.MTOW_2, self.MTOW_3, self.MTOW_4, self.MTOW_5],
                                      layout=widgets.Layout(border='3px solid black', align_items='center',
                                                            padding='10px', width='100%'))
-        MTOW_file = open("Images/Mission.PNG", "rb")
+        MTOW_file = open("BlockImage/Images/Mission.PNG", "rb")
         MTOW_image = MTOW_file.read()
         MTOW_img = widgets.Image(value=MTOW_image, format="PNG", width="100%", height="50%")
         self.MTOW_box = widgets.VBox(children=[MTOW_title, MTOW_box_MTOW, MTOW_img, MTOW_Button], layout=layout_box)
@@ -2836,9 +2828,9 @@ class Interface:
             status_Size_value5 = True
 
 
-        Size_path1 = "Table/Size_name.csv"
-        Size_path2 = "Table/Size_unit.csv"
-        Size_path3 = "Table/Size_des.csv"
+        Size_path1 = "BlockImage/Table/Size_name.csv"
+        Size_path2 = "BlockImage/Table/Size_unit.csv"
+        Size_path3 = "BlockImage/Table/Size_des.csv"
         Size_Table1 = self.csv_to_table(Size_path1)
         Size_Table2 = self.csv_to_table(Size_path2)
         Size_Table3 = self.csv_to_table(Size_path3)
@@ -2864,7 +2856,7 @@ class Interface:
         Size_box_Size = widgets.VBox(children=[self.Size_1, self.Size_2, self.Size_3, self.Size_4, self.Size_5],
                                      layout=widgets.Layout(border='3px solid black', align_items='center',
                                                            padding='10px', width='100%'))
-        Size_file = open("Images/Mission.PNG", "rb")
+        Size_file = open("BlockImage/Images/Mission.PNG", "rb")
         Size_image = Size_file.read()
         Size_img = widgets.Image(value=Size_image, format="PNG", width="100%", height="50%")
         self.Size_box = widgets.VBox(children=[Size_title, Size_box_Size, Size_img, Size_Button], layout=layout_box)
@@ -2913,9 +2905,9 @@ class Interface:
             status_PR_value6 = True
 
 
-        PR_path1 = "Table/pro_name.csv"
-        PR_path2 = "Table/pro_unit.csv"
-        PR_path3 = "Table/pro_des.csv"
+        PR_path1 = "BlockImage/Table/pro_name.csv"
+        PR_path2 = "BlockImage/Table/pro_unit.csv"
+        PR_path3 = "BlockImage/Table/pro_des.csv"
         PR_Table1 = self.csv_to_table(PR_path1)
         PR_Table2 = self.csv_to_table(PR_path2)
         PR_Table3 = self.csv_to_table(PR_path3)
@@ -2946,7 +2938,7 @@ class Interface:
         PR_box_PR = widgets.VBox(children=[self.PR_1, self.PR_2, self.PR_3, self.PR_4, self.PR_5, self.PR_6],
                                  layout=widgets.Layout(border='3px solid black', align_items='center', padding='10px',
                                                        width='100%'))
-        PR_file = open("Images/Engine.PNG", "rb")
+        PR_file = open("BlockImage/Images/Engine.PNG", "rb")
         PR_image = PR_file.read()
         PR_img = widgets.Image(value=PR_image, format="PNG", width="100%", height="50%")
         self.PR_box = widgets.VBox(children=[PR_title, PR_box_PR, PR_img, PR_Button], layout=layout_box)
@@ -3457,12 +3449,46 @@ class Interface:
         #Also the button SAVE AIRCRAFT DATA is only enabled after the analysis is run, otherwise there is no file to log
         if "performance" in self.module.value:
             self.Button_MD12.disabled = False
+            def update_progress_bar():
+                total_iterations = 100
+                custom_widget = [
+                    'Progress: ', progressbar.Bar(marker='█', left=' ', right='|'),
+                    ' ', progressbar.Percentage()]
+                with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
+                    for i in range(total_iterations):
+                        # Update progress bar
+                        time.sleep(1.8)  # Simulate time for updating progress
+                        bar.update(i + 1)
+        else:
+            def update_progress_bar():
+                total_iterations = 100
+                custom_widget = [
+                    'Progress: ', progressbar.Bar(marker='█', left=' ', right='|'),
+                    ' ', progressbar.Percentage()]
+                with progressbar.ProgressBar(widgets=custom_widget, max_value=total_iterations) as bar:
+                    for i in range(total_iterations):
+                        # Update progress bar
+                        time.sleep(0.05)  # Simulate time for updating progress
+                        bar.update(i + 1)
 
         self.Button_MD21.disabled = False
         self.Button_MD22.disabled = False
         self.Button_MD31.disabled = False
 
-        self.MDA_problem=self.OAD.RUN_OAD() # This runs the MDA problem
+        def EXECUTE_MDA():
+            self.MDA_problem = self.OAD.RUN_OAD()  # This runs the MDA problem
+
+
+        # Create a thread for the simulation
+        simulation_thread = threading.Thread(target=EXECUTE_MDA)
+        print('The problem is being solved: ☕... ')
+        # Start the simulation thread
+        simulation_thread.start()
+        # Start the progress bar thread
+        update_progress_bar()
+        # Wait for the simulation thread to complete
+        simulation_thread.join()
+        print('Problem solved.')
         return self.MDA_problem
 
 
@@ -3471,7 +3497,7 @@ class Interface:
     def View_Ouput_Data(self,event):
         clear_output()
         display(self.BOX_MDA)
-        path="workdir"
+        path="File/workdir"
         file=self.MDA_problem.output_file_path
         self.OUTPUT_FILE=self.OAD.Join_File(path,file)
         self.output_data=self.OAD.View_outputs_data(self.OUTPUT_FILE)
@@ -3496,14 +3522,14 @@ class Interface:
 
     def Save_OUTPUT_FILE(self,event):
         self.out_name=self.OUT_NAME.value
-        self.path_out="OUTPUT_FILE"
-        self.path_miss="MISSION_FILE"
-        self.path_mission_ref="workdir\oad_sizing.csv"
+        self.path_out="OUTPUT\OUTPUT_FILE"
+        self.path_miss="OUTPUT\MISSION_FILE"
+        self.path_mission_ref="File\workdir\oad_sizing.csv"
         self.OAD.Save_File(self.MDA_problem.output_file_path,self.path_out,self.out_name)
         self.OAD.Save_CSV_File(self.path_mission_ref,self.path_miss,self.out_name)
 
         #the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-        self.path_out = "Base Files"
+        self.path_out = "ESP3D\Base Files"
         self.OAD.Save_File(self.MDA_problem.output_file_path, self.path_out, self.out_name)
         print(str(self.OUT_NAME.value)+" OUTPUTS AND MISSION FILES SAVED ")
         print("-------------------------------------------")
@@ -3512,7 +3538,7 @@ class Interface:
     def Mission_Analysis_UI(self,event):
         clear_output()
         display(self.BOX_MDA)
-        path="workdir"
+        path="File\workdir"
         file=self.MDA_problem.output_file_path
         self.OUTPUT_FILE=self.OAD.Join_File(path,file)
 
@@ -3540,9 +3566,9 @@ class Interface:
         layout_box=widgets.Layout(border='6px solid black', padding='10px', align_items='center', width='100%')
         layout_box1=widgets.Layout(justify_content='space-between',width='100%')
 
-        OPM_path1="Table/opm_name.csv"
-        OPM_path2="Table/opm_unit.csv"
-        OPM_path3="Table/opm_des.csv"
+        OPM_path1="BlockImage/Table/opm_name.csv"
+        OPM_path2="BlockImage/Table/opm_unit.csv"
+        OPM_path3="BlockImage/Table/opm_des.csv"
         OPM_Table1=self.csv_to_table(OPM_path1)
         OPM_Table2=self.csv_to_table(OPM_path2)
         OPM_Table3=self.csv_to_table(OPM_path3)
@@ -3581,8 +3607,8 @@ class Interface:
 # RUN THE MISSION ANALYSIS PROBLEM
     def Run_Mission_Aanlysis(self,event):
 
-        path_config="data"
-        path_source="workdir"
+        path_config="File\data"
+        path_source="File\workdir"
         config_file_name="operational_mission_conf.yml"
         source_file_name="oad_sizing_out.xml"
 
@@ -3622,7 +3648,7 @@ class Interface:
         clear_output()
         display(self.BOX_MDA)
         display(self.OPM_box)
-        path="workdir"
+        path="File\workdir"
         file=self.OP_PROBLEM.output_file_path
         self.OP_OUTPUT_FILE=self.OAD.Join_File(path,file)
         self.OP_output_data=self.OAD.View_outputs_data(self.OP_OUTPUT_FILE)
@@ -3649,8 +3675,8 @@ class Interface:
     def Save_OP_OUTPUT_FILE(self,event):
 
         self.OP_out_name=self.OP_OUT_NAME.value
-        self.OP_path_miss="MISSION_FILE"
-        self.OP_path_mission_ref="workdir\operational_mission_study.csv"
+        self.OP_path_miss="OUTPUT\MISSION_FILE"
+        self.OP_path_mission_ref="File\workdir\operational_mission_study.csv"
         self.OAD.Save_CSV_File(self.OP_path_mission_ref,self.OP_path_miss,self.OP_out_name)
         print(str(self.OP_OUT_NAME.value)+" OPERATIONAL  MISSION FILES SAVED IN THE MISSION_FILE FOLDER ")
         print("-------------------------------------------")
@@ -3662,7 +3688,7 @@ class Interface:
         clear_output()
         self.Button_M4.style.button_color="#ebebeb"
         self.Button_M5.style.button_color="#00d600"
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -3693,7 +3719,7 @@ class Interface:
     def Output_aircraft_file(self,event):
         clear_output()
         display(self.BOX_INPUT)
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3711,10 +3737,10 @@ class Interface:
         return self.output_file_name
 
     def delete_output_file(self,change):
-        path_del_in="OUTPUT_FILE/" +str(change.new)
+        path_del_in="OUTPUT\OUTPUT_FILE/" +str(change.new)
         self.OAD.Delete_File(path_del_in)
 
-        print("You have deleted the"+" "+str(change.new)+ " "+ "file from th OUTPUT_FILE FOLD")
+        print("You have deleted the"+" "+str(change.new)+ " "+ "file from the OUTPUT_FILE FOLD")
         print("------------------------------------------------")
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -3783,7 +3809,7 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color='#ebebeb'
         self.Button_M6.style.button_color="#00d600"
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -3808,7 +3834,7 @@ class Interface:
         layout_title= widgets.Layout(display='flex',flex_flow='column',align_items='center',width='50%')
         layout_button=widgets.Layout(width='40%', height='50px', border='4px solid black')
 
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3837,7 +3863,7 @@ class Interface:
 
 
  # MASS BREAK DOWN UI
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3860,7 +3886,7 @@ class Interface:
  # MISSION UI
 
 
-        path_to_target="MISSION_FILE"
+        path_to_target="OUTPUT\MISSION_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3877,7 +3903,7 @@ class Interface:
 
  # PAYLOAD RANGE UI
 
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3894,7 +3920,7 @@ class Interface:
         self.PAY_UI_BOX=widgets.VBox(children=[PAY_box1,PAY_box2,PAY_Button],layout=widgets.Layout(border='6px solid black', padding='10px', align_items='center', width='100%'))
 
 # 3D MODELER
-        path_to_target = "OUTPUT_FILE"
+        path_to_target = "OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -3964,7 +3990,7 @@ class Interface:
         display(self.RES_box)
         display(self.MODEL3D_UI_BOX)
         MODEL3D_liste_design = self.output_file_MODEL3D.value
-        path = "OUTPUT_FILE"
+        path = "OUTPUT\OUTPUT_FILE"
         MODEL3D_Liste_Design = []
         MODEL3D_Liste_Name = []
         i = 0
@@ -3986,7 +4012,7 @@ class Interface:
         display(self.RES_box)
         display(self.GEO_UI_BOX)
         geo_liste_design=self.output_file_geo.value
-        path="OUTPUT_FILE"
+        path="OUTPUT\OUTPUT_FILE"
         Geo_Liste_Design=[]
         Geo_Liste_Name=[]
         i=0
@@ -4013,7 +4039,7 @@ class Interface:
         display(self.RES_box)
         display(self.AERO_UI_BOX)
         aero_liste_design=self.output_file_aero.value
-        path="OUTPUT_FILE"
+        path="OUTPUT\OUTPUT_FILE"
         Aero_Liste_Design=[]
         Aero_Liste_Name=[]
         i=0
@@ -4034,7 +4060,7 @@ class Interface:
         display(self.RES_box)
         display(self.MASS_UI_BOX)
         mass_liste_design=self.output_file_mass.value
-        path="OUTPUT_FILE"
+        path="OUTPUT\OUTPUT_FILE"
         Mass_Liste_Design=[]
         Mass_Liste_Name=[]
         i=0
@@ -4060,7 +4086,7 @@ class Interface:
         display(self.RES_box)
         display(self.MISS_UI_BOX)
         miss_liste_design=self.output_file_miss.value
-        path="MISSION_FILE"
+        path="OUTPUT\MISSION_FILE"
         MISS_Liste_Design=[]
         MISS_Liste_Name=[]
         i=0
@@ -4090,8 +4116,8 @@ class Interface:
             mission_name.append(name)
             i=i+1
 
-        Path1="OUTPUT_FILE"
-        Path2="MISSION_FILE"
+        Path1="OUTPUT\OUTPUT_FILE"
+        Path2="OUTPUT\MISSION_FILE"
         FILE_PATH=[]
         MISSION_PATH=[]
         j=0
@@ -4121,7 +4147,7 @@ class Interface:
  # OPTIMIZATION PROBLEM UI
     def OPT_DESIGN(self,event):
         clear_output()
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -4170,14 +4196,14 @@ class Interface:
 
     def OPT_PROBLEM_UI(self,event):
         # PATH OF THE ARICRAFT TO OPTIMIZE
-        path_source="OUTPUT_FILE"
+        path_source="OUTPUT\OUTPUT_FILE"
         AC_file=self.AC_Opt.value
         self.OPT_Source=pth.join(path_source,AC_file)
 
         clear_output()
 
         # LIST OF INPUT VARIABLE NAMES
-        path="workdir"
+        path="File\workdir"
         file_in="oad_sizing_in.xml"
         File_In=pth.join(path, file_in)
         datafile_in =self.OAD.Input_File(File_In)
@@ -4220,7 +4246,7 @@ class Interface:
                 self.liste_in_MISS.append(self.liste_in[i])
 
         # LIST OF OUTPUT VARIABLE NAME
-        path="workdir"
+        path="File\workdir"
         file_out="oad_sizing_out.xml"
         File_Out=pth.join(path, file_out)
         datafile_out =self.OAD.Input_File(File_Out)
@@ -4428,7 +4454,7 @@ class Interface:
 
         # The configuration file path
         file_name="oad_sizing.yml"
-        path="data"
+        path="File\data"
         file_path=pth.join(path,file_name)
 
          # Optimization problem definiton
@@ -4503,7 +4529,7 @@ class Interface:
         clear_output()
         display(self.OPT_BOX)
         configuration_name="oad_sizing.yml"
-        path_configuration="data"
+        path_configuration="File\data"
         self.configuration=pth.join(path_configuration,configuration_name)
         # INPUT FILE FOR THE OPTIMIZATION PROBLEM
         self.OAD.OPT_INPUTS(self.configuration,self.OPT_Source)
@@ -4547,7 +4573,7 @@ class Interface:
     def View_Opt_Ouput_Data(self,event):
         clear_output()
         display(self.OPT_BOX)
-        path="workdir"
+        path="File\workdir"
         file=self.OPT_problem.output_file_path
         self.OPT_OUTPUT_FILE=self.OAD.Join_File(path,file)
         self.opt_output_data=self.OAD.View_outputs_data(self.OPT_OUTPUT_FILE)
@@ -4574,12 +4600,12 @@ class Interface:
 
     def Save_OPT_FILE(self,event):
         opt_name=self.OPT_NAME.value
-        path_out="OUTPUT_FILE"
-        path_miss="MISSION_FILE"
-        path_mission_ref="workdir\oad_sizing.csv"
+        path_out="OUTPUT\OUTPUT_FILE"
+        path_miss="OUTPUT\MISSION_FILE"
+        path_mission_ref="File\workdir\oad_sizing.csv"
         self.OAD.Save_File(self.OPT_problem.output_file_path,path_out,opt_name)
         self.OAD.Save_CSV_File(path_mission_ref,path_miss,opt_name)
-        path_out = "Final python and .csm files\Base Files"
+        path_out = "ESP3D\Base Files"
         self.OAD.Save_File(self.OPT_problem.output_file_path, path_out, opt_name)
         print(str(opt_name)+" OPTMIZATION OUTPUTS AND MISSION RESULTS SAVED ")
         print("-------------------------------------------")
@@ -4596,7 +4622,7 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color='#ebebeb'
         self.Button_M6.style.button_color='#ebebeb'
-        image_path="Images/Wing.jpg"
+        image_path="BlockImage/Images/Wing.jpg"
         custom_css = f'''
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -4624,13 +4650,13 @@ class Interface:
         self.List_CD=[]
         self.List_finesse=[]
 
-        path_to_target="OUTPUT_FILE"
+        path_to_target="OUTPUT\OUTPUT_FILE"
         path_to_file_list = []
         temp=os.listdir(path_to_target)
         for i in range(0, len(temp)):
             if temp[i][-3:] =='xml':
                 path_to_file_list.append(temp[i])
-        STEP1 = "IncrementalDevelopment_Aircraft_File.xml"
+        STEP1 = "STEP1_AC.xml"
         STEP2 = "STEP2_AC.xml"
         STEP3 = "STEP3_AC.xml"
 
@@ -4662,14 +4688,15 @@ class Interface:
     def PARAMETRIC_UI2(self,event):
         clear_output()
         self.ID_Type = []
+        self.ID_Type_percent = []
         aircraft=self.AC.value
-        path="OUTPUT_FILE"
+        path="OUTPUT\OUTPUT_FILE"
         self.AC_ref=pth.join(path,aircraft)
 
 
 
         mission_name=os.path.splitext(os.path.split(aircraft)[1])[0]+".CSV"
-        path_miss="MISSION_FILE"
+        path_miss="OUTPUT\MISSION_FILE"
         try:
             self.mission_ref=pth.join(path_miss,mission_name)
             SFC=self.OAD.para_sfc(self.mission_ref)
@@ -4677,7 +4704,7 @@ class Interface:
         except:
             print("------------NO MISSION FILE CORRESPONDING TO THE SELECTED AIRCRAFT-------------")
 
-        self.OAD.PARA_AC_FILE(aircraft) #to copy selected ac to "IncrementalDevelopment_Aircraft_File.xml"
+        self.OAD.PARA_AC_FILE(aircraft) #to copy selected AC to "STEP1_AC.xml"
 
 
 
@@ -4780,8 +4807,8 @@ class Interface:
         # ---------------------------------------------------------------------------------------------------------------
         infoHome_box = widgets.HBox(children=[buttonHOME,box4], layout=Layout(border='0px solid black', padding='5px', justify_content='center',align_items='center', width='100%'))
         self.ID2_box=widgets.VBox(children=[accordion_box,title1,box_H,title1_2,box_H2,box_H_Button_Run,infoHome_box],layout=layout_box)
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file_name="STEP1_AC.xml"
         para_path=pth.join(path,file_name)
         self.Para_Data1=self.OAD.Input_File(para_path)
         self.OWE_REF=self.Para_Data1["data:weight:aircraft:OWE"].value[0]
@@ -4789,8 +4816,8 @@ class Interface:
 
 
     def Weight_Saving_UI(self,event):
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file_name="STEP1_AC.xml"
         para_path=pth.join(path,file_name)
         self.Para_Data1=self.OAD.Input_File(para_path)
         self.OWE_REF=self.Para_Data1["data:weight:aircraft:OWE"].value[0]
@@ -4836,6 +4863,7 @@ class Interface:
 
     def Weight_Saving(self,event):
         self.ID_Type= self.ID_Type + ["Weight Saving"]
+        self.ID_Type_percent = self.ID_Type_percent + ["Weight Saving: "+ str(round(self.OWES_3.value, 1)) + "%"]
         delta_OWE=self.OWES_2.value
         OWE_New=self.OWE_REF+delta_OWE
         self.var_owe = OWE_New-self.OWE_REF
@@ -4879,6 +4907,7 @@ class Interface:
         self.SFC_2.value=delta
     def SFC(self,event):
         self.ID_Type = self.ID_Type + ["SFC"]
+        self.ID_Type_percent = self.ID_Type_percent + ["SFC: " + str(round(self.SFC_3.value, 1)) + "%"]
         SFC_NEW=self.List_SFC[0]+self.SFC_2.value
         self.List_SFC.append(SFC_NEW)
         clear_output()
@@ -4890,8 +4919,8 @@ class Interface:
         clear_output()
         display(self.ID2_box)
 
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file_name="STEP1_AC.xml"
         para_path=pth.join(path,file_name)
         self.Para_DataNEO=self.OAD.Input_File(para_path)
         self.EngineMass=self.Para_DataNEO["data:weight:propulsion:engine:mass"].value[0]
@@ -4967,6 +4996,7 @@ class Interface:
 
         # Here we add new SFC, NEW ENGINE MASS, NEW ENGINE NACELLE
         self.ID_Type = self.ID_Type + ["NEO"]
+        self.ID_Type_percent = self.ID_Type_percent + ["NEO// " +"SFC_neo:"+ str(round(self.NEO_1b.value, 1)) + "%"+", EngineMass_neo:"+ str(round(self.NEO_2b.value, 1)) + "%"++", WetArea_neo:"+ str(round(self.NEO_3b.value, 1)) + "%"]
         NEO_NEW = self.NEO_11.value  # +self.List_SFC[0] # new sfc
         self.List_SFC.append(NEO_NEW)
         nacelle_old_wetted_area = self.Para_DataNEO["data:geometry:propulsion:nacelle:wetted_area"].value[0]
@@ -5049,8 +5079,8 @@ class Interface:
         print("--------------------NEW ENGINE MODIFICATIONS SAVED---------------------")
 
     def Drag_Saving_UI(self,event):
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file_name="STEP1_AC.xml"
         para_path=pth.join(path,file_name)
         self.Para_Data2=self.OAD.Input_File(para_path)
         self.CD=self.Para_Data2["data:aerodynamics:aircraft:cruise:CD"].value
@@ -5109,6 +5139,7 @@ class Interface:
 
     def Drag_Saving(self,event):
         self.ID_Type = self.ID_Type + ["Drag Saving"]
+        self.ID_Type_percent = self.ID_Type_percent + ["Drag Cd: " + str(round(self.DRAG_2.value, 1)) + "%"]
         percent=1+self.DRAG_2.value/100
         new_CD=[cd*percent for cd in self.CD]
         new_finesse=self.DRAG_1.value+self.DRAG_3.value
@@ -5120,8 +5151,8 @@ class Interface:
         print("-------------------------------------DRAG MODIFICATIONS SAVED----------------------------------------")
 
     def MTOW_Increase_UI(self,event):
-        path="OUTPUT_FILE"
-        file_name="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file_name="STEP1_AC.xml"
         para_path=pth.join(path,file_name)
         self.Para_Data4=self.OAD.Input_File(para_path)
         self.MTOW_REF=self.Para_Data4["data:weight:aircraft:MTOW"].value[0]
@@ -5161,6 +5192,7 @@ class Interface:
 
     def MTOW_Saving(self,event):
         self.ID_Type = self.ID_Type + ["MTOW Increase"]
+        self.ID_Type_percent = self.ID_Type_percent + ["MTOW: " + str(round(self.MTOW_3.value, 1)) + "%"]
         delta_MTOW=self.MTOW_2.value
         MTOW_New=self.MTOW_REF+delta_MTOW
         self.var_mtow =  delta_MTOW
@@ -5178,8 +5210,8 @@ class Interface:
 
     def Fuselage_Stretch_UI(self,event):
 
-        path="OUTPUT_FILE"
-        file="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file="STEP1_AC.xml"
         para_path=pth.join(path,file)
         para_data=self.OAD.Input_File(para_path)
 
@@ -5444,6 +5476,7 @@ class Interface:
 
     def Fuselage_Stretch(self,event):
         self.ID_Type = self.ID_Type + ["Fuselage Simple Stretch"]
+        self.ID_Type_percent = self.ID_Type_percent + ["Fuselage Simple Stretch: " + str(round(self.FUSE_9.value, 1)) + "%"]
         # new length
         length=self.FUSE_1.value+self.FUSE_8.value
         # new lift_drag ratio
@@ -5466,8 +5499,8 @@ class Interface:
         part_CD_ac=1+self.percent_CD/100
         new_CD_ac=[cd*part_CD_ac for cd in self.CD_ac]
 
-        path="OUTPUT_FILE"
-        file="IncrementalDevelopment_Aircraft_File.xml"
+        path="OUTPUT\OUTPUT_FILE"
+        file="STEP1_AC.xml"
         para_path=pth.join(path,file)
         para_data=self.OAD.Input_File(para_path)
 
@@ -5504,8 +5537,8 @@ class Interface:
         ac_ref=self.AC_ref
         mission_ref=self.mission_ref
 
-        path_ac="OUTPUT_FILE"
-        file_para="IncrementalDevelopment_Aircraft_File.xml"
+        path_ac="OUTPUT\OUTPUT_FILE"
+        file_para="STEP1_AC.xml"
         ac_para=pth.join(path_ac,file_para)
 
         # Compute the new redesigned aircraft performance
@@ -5532,11 +5565,6 @@ class Interface:
         clear_output()
         display(self.ID2_box)
 
-        path_miss="workdir"
-        file_miss="para_perfo.csv"
-        mission_para=pth.join(path_miss,file_miss)
-
-
         # COMPUTE THE  MEAN_SFC
         SFC_ref=float(self.List_SFC[0])
         if (len(self.List_SFC)>1):
@@ -5544,7 +5572,6 @@ class Interface:
         else:
             SFC_para=SFC_ref
 
-        #mass_para=self.OAD.mass(mission_para)
 
         # COMPUTE THE BLOCK FUEL
 
@@ -5556,6 +5583,15 @@ class Interface:
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
+        MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
+        if FUEL_AVAILABLE_ref > MFW_ref:
+            FUEL_AVAILABLE_ref = MFW_ref
+        MAX_BF_MISSION_BF_percent_ref = 100* BF_ref / MFW_ref
+        AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_ref / FUEL_AVAILABLE_ref
+
 
         data_para = self.OAD.Input_File(ac_para)
         OWE_para=data_para["data:weight:aircraft:OWE"].value[0]
@@ -5565,7 +5601,14 @@ class Interface:
         coefficient_para = self.OAD.para_coefficient_range(data_para, SFC_para)
         reserve_para = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para,reserve_para)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para = data_para["data:weight:aircraft:MFW"].value[0]
+        MTOW_para = data_para["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para = MTOW_para- OWE_para - PL_DOC_para
+        if FUEL_AVAILABLE_para > MFW_para:
+            FUEL_AVAILABLE_para = MFW_para
+        MAX_BF_MISSION_BF_percent_para = 100* BF_para / MFW_para
+        AVAILABLE_BF_MISSION_BF_percent_para = 100 * BF_para / FUEL_AVAILABLE_para
 
         # COMPUTE THE SPECIFIC RANGE
         SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
@@ -5580,6 +5623,7 @@ class Interface:
         Percent_Mass = 100 * (mass_para - mass_ref) / mass_ref
         Percent_BFPAX = 100*( (BF_para/Pax_para) - (BF_ref/Pax_ref) ) / (BF_ref/Pax_ref)
 
+
         data = [
             ["<u>Ref A/C</u>",  "<u>STEP 1 A/C</u>", "<u>Variation %</u>"],
             ["<i>Block Fuel = </i>  " + "<b>"+str(round(BF_ref,0))+"</b>" + "  [kg]", "<i>Block Fuel = </i>  " +"<b>" + str(round(BF_para,0)) + "</b>"+"  [kg]", "<b>"+str(round(Percent_BF,2))+"</b>"],
@@ -5593,6 +5637,20 @@ class Interface:
 
         table_widget = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
                                        layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
+
+        data_fuel = [
+            ["<u>MFW_ref [kg]</u>", "<u>Available_ref [kg]</u>","<u>DOC_ref [kg]</u>", "<u>DOC/MFW_ref %</u>", "<u>DOC/Available_ref %</u>"],
+            [str(round(MFW_ref, 0)), str(round(FUEL_AVAILABLE_ref, 0)), str(round(BF_ref, 0)), str(round(MAX_BF_MISSION_BF_percent_ref, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_ref, 2))],
+            ["<u>MFW_S1 [kg]</u>", "<u>Available_S1 [kg]</u>", "<u>DOC_S1 [kg]</u>", "<u>DOC/MFW_S1 %</u>","<u>DOC/Available_S1 %</u>"],
+            [str(round(MFW_para, 0)), str(round(FUEL_AVAILABLE_para, 0)), str(round(BF_para, 0)), str(round(MAX_BF_MISSION_BF_percent_para, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para, 2))],
+        ]
+
+        font_size = "14px"  # Adjust the font size as desired
+        html_data_fuel = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row] for row in data_fuel]
+
+        table_widget_fuel = widgets.GridBox(children=[widgets.HTML(value) for row in html_data_fuel for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(5, auto)", width='100%'))
+
 
         buttonINFO = widgets.Button(description='')
         buttonINFO.icon = 'fa-info-circle'
@@ -5635,7 +5693,7 @@ class Interface:
             C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref],
                 layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
 
-        C_V_PL = widgets.VBox(children=[fig,C_V_PL_info_Pax],
+        C_V_PL = widgets.VBox(children=[C_V_PL_info_Pax,fig,table_widget_fuel],
                                      layout=widgets.Layout(border='0px solid black', align_items='center',
                                                            padding='0px', width='100%'))
 
@@ -5646,7 +5704,7 @@ class Interface:
             layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px', width='100%'))
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
+        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type_percent))
 
         fig3 = self.OAD.WeightBar_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
         fig3 = self.OAD.WeightBar_Diagramm(ac_para,SFC_para,"STEP 1",fig=fig3,Color='red')
@@ -5678,8 +5736,8 @@ class Interface:
         EngineMasses_ref = data_ref["data:weight:propulsion:engine:mass"].value[0]
 
         #DATA AC STEP1
-        path_ac="OUTPUT_FILE"
-        file_para_S1="IncrementalDevelopment_Aircraft_File.xml"
+        path_ac="OUTPUT\OUTPUT_FILE"
+        file_para_S1="STEP1_AC.xml"
         ac_para_S1=pth.join(path_ac,file_para_S1)
         SOURCE = ac_para_S1
         data_para_S1 = self.OAD.Input_File(ac_para_S1)
@@ -5709,6 +5767,8 @@ class Interface:
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
         #DATA SFC or NEO SFC STEP 2
+        #NEO + WEIGHT SAVING ARE NOT COMPATIBLE, BECAUSE K_FACTOR_OWE would be affect
+        # by engine variation + also the tuning k factor of the engine mass. Risk of exagerated results.
         if "NEO" in self.ID_Type:
             SFC_ref = float(self.List_SFC[0])
             SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
@@ -5723,17 +5783,17 @@ class Interface:
 
         #BUILD CONFIG AND INPUTS FOR STEP 2 problem
 
-        path_config="data"
-        file_config="oad_sizing_step2.yml" #"para_performance.yml"
+        path_config="File\data"
+        file_config="oad_sizing_step2.yml"
         CONFIGURATION=pth.join(path_config,file_config)
         oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
 
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_PARA():
             self.OWE_STEP2=oad.evaluate_problem(CONFIGURATION, overwrite=True)
-            self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT_FILE", "STEP2_AC")
+            self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT\OUTPUT_FILE", "STEP2_AC")
             # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-            self.path_out = "Base Files"
+            self.path_out = "ESP3D\Base Files"
             self.OAD.Save_File(self.OWE_STEP2.output_file_path, self.path_out, "STEP2_AC")
 
 
@@ -5767,11 +5827,11 @@ class Interface:
         display(self.ID2_box)
 
         #NEW DATA OF THE STEP 2 AC
-        path_miss="workdir"
+        path_miss="File\workdir"
         file_miss="step2_oad_sizing.csv"
         mission_para_S2=pth.join(path_miss,file_miss) #new aircraft mission after looping
 
-        path_ac="OUTPUT_FILE"
+        path_ac="OUTPUT\OUTPUT_FILE"
         file_para="STEP2_AC.xml"
         ac_para_S2=pth.join(path_ac,file_para)  #new aircraft after ID and looping
 
@@ -5793,7 +5853,14 @@ class Interface:
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
+        MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
+        if FUEL_AVAILABLE_ref > MFW_ref:
+            FUEL_AVAILABLE_ref = MFW_ref
+        MAX_BF_MISSION_BF_percent_ref = 100* BF_ref / MFW_ref
+        AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_ref / FUEL_AVAILABLE_ref
 
         #FOR THE STEP 1 AC
         OWE_para_S1=data_para_S1["data:weight:aircraft:OWE"].value[0]
@@ -5803,7 +5870,14 @@ class Interface:
         coefficient_para_S1 = self.OAD.para_coefficient_range(data_para_S1, SFC_para_S1)
         reserve_para_S1 = data_para_S1["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1,reserve_para_S1)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para_S1 = data_para_S1["data:weight:aircraft:MFW"].value[0]
+        MTOW_para_S1 = data_para_S1["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para_S1 = MTOW_para_S1 - OWE_para_S1 - PL_DOC_para_S1
+        if FUEL_AVAILABLE_para_S1 > MFW_para_S1:
+            FUEL_AVAILABLE_S1_para_S1 = MFW_para_S1
+        MAX_BF_MISSION_BF_percent_para_S1 = 100* BF_para_S1 / MFW_para_S1
+        AVAILABLE_BF_MISSION_BF_percent_para_S1 = 100 * BF_para_S1 / FUEL_AVAILABLE_para_S1
 
         #FOR THE STEP 2 AC
         data_para = self.OAD.Input_File(ac_para_S2)
@@ -5824,7 +5898,7 @@ class Interface:
                 dest_aero_element.append(child)
 
             dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
-            path_ac = "OUTPUT_FILE"
+            path_ac = "OUTPUT\OUTPUT_FILE"
             file_para = "STEP2_AC.xml"
             ac_para_S2 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
             data_para = self.OAD.Input_File(ac_para_S2)
@@ -5837,7 +5911,14 @@ class Interface:
         coefficient_para_S2 = self.OAD.para_coefficient_range(data_para, SFC_para_S2)
         reserve_para_S2 = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2,reserve_para_S2)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para_S2 = data_para["data:weight:aircraft:MFW"].value[0]
+        MTOW_para_S2 = data_para["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para_S2 = MTOW_para_S2 - OWE_para_S2 - PL_DOC_para_S2
+        if FUEL_AVAILABLE_para_S2 > MFW_para_S2:
+            FUEL_AVAILABLE_para_S2 = MFW_para_S2
+        MAX_BF_MISSION_BF_percent_para_S2 = 100* BF_para_S2 / MFW_para_S2
+        AVAILABLE_BF_MISSION_BF_percent_para_S2 = 100 * BF_para_S2 / FUEL_AVAILABLE_para_S2
 
         # COMPUTE THE SPECIFIC RANGE
         SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
@@ -5885,6 +5966,22 @@ class Interface:
                                        layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
 
 
+        data_fuel = [
+            ["<u>MFW_ref [kg]</u>", "<u>Available_ref [kg]</u>","<u>DOC_ref [kg]</u>", "<u>DOC/MFW_ref %</u>", "<u>DOC/Available_ref %</u>"],
+            [str(round(MFW_ref, 0)), str(round(FUEL_AVAILABLE_ref, 0)), str(round(BF_ref, 0)), str(round(MAX_BF_MISSION_BF_percent_ref, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_ref, 2))],
+            ["<u>MFW_S1 [kg]</u>", "<u>Available_S1 [kg]</u>", "<u>DOC_S1 [kg]</u>", "<u>DOC/MFW_S1 %</u>","<u>DOC/Available_S1 %</u>"],
+            [str(round(MFW_para_S1, 0)), str(round(FUEL_AVAILABLE_para_S1, 0)), str(round(BF_para_S1, 0)), str(round(MAX_BF_MISSION_BF_percent_para_S1, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para_S1, 2))],
+            ["<u>MFW_S2 [kg]</u>", "<u>Available_S2 [kg]</u>", "<u>DOC_S2 [kg]</u>", "<u>DOC/MFW_S2 %</u>","<u>DOC/Available_S2 %</u>"],
+            [str(round(MFW_para_S2, 0)), str(round(FUEL_AVAILABLE_para_S2, 0)), str(round(BF_para_S2, 0)),str(round(MAX_BF_MISSION_BF_percent_para_S2, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para_S2, 2))],
+        ]
+
+        font_size = "14px"  # Adjust the font size as desired
+        html_data_fuel = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row] for row in data_fuel]
+
+        table_widget_fuel = widgets.GridBox(children=[widgets.HTML(value) for row in html_data_fuel for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(5, auto)", width='100%'))
+
+
         buttonINFO = widgets.Button(description='')
         buttonINFO.icon = 'fa-info-circle'
         buttonINFO.layout.width = 'auto'
@@ -5926,7 +6023,7 @@ class Interface:
                 layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
 
 
-        C_V_PL = widgets.VBox(children=[fig,C_V_PL_info_Pax],layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
+        C_V_PL = widgets.VBox(children=[C_V_PL_info_Pax,fig,table_widget_fuel],layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
 
         # Plot the BF/NPAX DIAGRAM
         fig2 = self.OAD.Npax_BF_Diagramm(ac_ref,SFC_ref,name="REF AC",Color='blue')
@@ -5941,7 +6038,7 @@ class Interface:
         fig3 = self.OAD.WeightBar_Diagramm(ac_para_S2, SFC_para_S2,name="STEP 2", fig=fig3, Color='green')
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
+        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type_percent))
         self.tab_Analysis_Para = widgets.Tab(children=[C_V_PL,C_V_BlockFuel,fig3],
                                              layout=widgets.Layout(border='0px solid black', align_items='center', padding='2px', width='100%'))
         self.tab_Analysis_Para.set_title(0, 'Payload - Range ')
@@ -5968,14 +6065,14 @@ class Interface:
         CD_ref = data_ref["data:aerodynamics:aircraft:cruise:CD"].value[0]
 
         #DATA AC STEP1
-        path_ac="OUTPUT_FILE"
-        file_para_S1="IncrementalDevelopment_Aircraft_File.xml"
+        path_ac="OUTPUT\OUTPUT_FILE"
+        file_para_S1="STEP1_AC.xml"
         ac_para_S1=pth.join(path_ac,file_para_S1)
         SOURCE = ac_para_S1
         data_para_S1 = self.OAD.Input_File(ac_para_S1)
 
         #DATA AC STEP2
-        path_ac="OUTPUT_FILE"
+        path_ac="OUTPUT\OUTPUT_FILE"
         file_para_S2="STEP2_AC.xml"
         ac_para_S2=pth.join(path_ac,file_para_S2)
         data_para_S2 = self.OAD.Input_File(ac_para_S2)
@@ -6003,15 +6100,13 @@ class Interface:
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
 
+        #NEO + WEIGHT SAVING ARE NOT COMPATIBLE, BECAUSE K_FACTOR_OWE would be affect
+        # by engine variation + also the tuning k factor of the engine mass. Risk of exagerated results.
         if "NEO" in self.ID_Type:
-            #NPAX_cabin_ref = data_ref["data:geometry:cabin:NPAX1"].value[0]
-            #NPAX_cabin_Step1 = data_para["data:geometry:cabin:NPAX1"].value[0]
-            #TLAR_PAX_ref = data_ref["data:TLAR:NPAX"].value[0]
-            #TLAR_PAX_S1= data_ref["data:TLAR:NPAX"].value[0]
-            #data_para["data:TLAR:NPAX"].value = TLAR_PAX_S1
             SFC_ref = float(self.List_SFC[0])
             SFC_para_S1 = float(self.List_SFC[len(self.List_SFC) - 1])
             SFC_percent = (1 - (SFC_ref - SFC_para_S1) / SFC_ref)
+            data_para_S1["data:weight:k_factor_OWE"].value = 1
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_cr"].value = SFC_percent
             data_para_S1["tuning:propulsion:rubber_engine:SFC:k_sl"].value = SFC_percent
 
@@ -6020,17 +6115,17 @@ class Interface:
 
         #BUILD CONFIG AND INPUTS FOR STEP 2 problem
 
-        path_config="data"
-        file_config="oad_sizing_step3.yml" #"para_performance.yml"
+        path_config="File\data"
+        file_config="oad_sizing_step3.yml"
         CONFIGURATION=pth.join(path_config,file_config)
         oad.generate_inputs(CONFIGURATION,SOURCE, overwrite=True)
 
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_PARA():
             self.OWE_STEP3=oad.evaluate_problem(CONFIGURATION, overwrite=True)
-            self.OAD.Save_File(self.OWE_STEP3.output_file_path, "OUTPUT_FILE", "STEP3_AC")
+            self.OAD.Save_File(self.OWE_STEP3.output_file_path, "OUTPUT\OUTPUT_FILE", "STEP3_AC")
             # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-            self.path_out = "Base Files"
+            self.path_out = "ESP3D\Base Files"
             self.OAD.Save_File(self.OWE_STEP3.output_file_path, self.path_out, "STEP3_AC")
 
 
@@ -6064,13 +6159,13 @@ class Interface:
         display(self.ID2_box)
 
         #NEW DATA OF THE STEP 3 AC
-        path_miss="workdir"
+        path_miss="File\workdir"
         file_miss="step2_oad_sizing.csv"
         mission_para_S2=pth.join(path_miss,file_miss) #new aircraft mission after looping
         file_miss="step3_oad_sizing.csv"
         mission_para_S3=pth.join(path_miss,file_miss) #new aircraft mission after looping
 
-        path_ac="OUTPUT_FILE"
+        path_ac="OUTPUT\OUTPUT_FILE"
         file_para="STEP3_AC.xml"
         ac_para_S3=pth.join(path_ac,file_para)  #new aircraft after ID and looping
         data_para_S3 = self.OAD.Input_File(ac_para_S3)
@@ -6093,7 +6188,14 @@ class Interface:
         coefficient_ref = self.OAD.para_coefficient_range(data_ref,SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_ref = self.BlockFuel_ID(OWE_ref,PL_DOC_ref,Range_DOC_ref,coefficient_ref,reserve_ref)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
+        MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
+        if FUEL_AVAILABLE_ref > MFW_ref:
+            FUEL_AVAILABLE_ref = MFW_ref
+        MAX_BF_MISSION_BF_percent_ref = 100* BF_ref / MFW_ref
+        AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_ref / FUEL_AVAILABLE_ref
 
         #FOR THE STEP 1 AC
         OWE_para_S1=data_para_S1["data:weight:aircraft:OWE"].value[0]
@@ -6103,9 +6205,16 @@ class Interface:
         coefficient_para_S1 = self.OAD.para_coefficient_range(data_para_S1, SFC_para_S1)
         reserve_para_S1 = data_para_S1["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Range_DOC_para_S1, coefficient_para_S1,reserve_para_S1)
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para_S1 = data_para_S1["data:weight:aircraft:MFW"].value[0]
+        MTOW_para_S1 = data_para_S1["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para_S1 = MTOW_para_S1 - OWE_para_S1 - PL_DOC_para_S1
+        if FUEL_AVAILABLE_para_S1 > MFW_para_S1:
+            FUEL_AVAILABLE_S1_para_S1 = MFW_para_S1
+        MAX_BF_MISSION_BF_percent_para_S1 = 100* BF_para_S1 / MFW_para_S1
+        AVAILABLE_BF_MISSION_BF_percent_para_S1 = 100 * BF_para_S1 / FUEL_AVAILABLE_para_S1
 
         #FOR THE STEP 2 AC
-
         data_para_S2 = self.OAD.Input_File(ac_para_S2)
         if "Fuselage Simple Stretch" in self.ID_Type:
             # Parse the source XML file
@@ -6124,7 +6233,7 @@ class Interface:
                 dest_aero_element.append(child)
 
             dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
-            path_ac = "OUTPUT_FILE"
+            path_ac = "OUTPUT\OUTPUT_FILE"
             file_para = "STEP2_AC.xml"
             ac_para_S2 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
             data_para_S2 = self.OAD.Input_File(ac_para_S2)
@@ -6136,7 +6245,14 @@ class Interface:
         coefficient_para_S2 = self.OAD.para_coefficient_range(data_para_S2, SFC_para_S2)
         reserve_para_S2 = data_para_S2["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Range_DOC_para_S2, coefficient_para_S2,reserve_para_S2)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para_S2 = data_para_S2["data:weight:aircraft:MFW"].value[0]
+        MTOW_para_S2 = data_para_S2["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para_S2 = MTOW_para_S2 - OWE_para_S2 - PL_DOC_para_S2
+        if FUEL_AVAILABLE_para_S2 > MFW_para_S2:
+            FUEL_AVAILABLE_para_S2 = MFW_para_S2
+        MAX_BF_MISSION_BF_percent_para_S2 = 100* BF_para_S2 / MFW_para_S2
+        AVAILABLE_BF_MISSION_BF_percent_para_S2 = 100 * BF_para_S2 / FUEL_AVAILABLE_para_S2
 
         #FOR THE STEP 3 AC
         OWE_para_S3=data_para_S3["data:weight:aircraft:OWE"].value[0]
@@ -6146,7 +6262,14 @@ class Interface:
         coefficient_para_S3 = self.OAD.para_coefficient_range(data_para_S3, SFC_para_S3)
         reserve_para_S3 = data_para_S3["data:mission:MTOW_mission:reserve:fuel"].value[0]
         BF_para_S3 = self.BlockFuel_ID(OWE_para_S3, PL_DOC_para_S3, Range_DOC_para_S3, coefficient_para_S3,reserve_para_S3)
-
+        # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
+        MFW_para_S3 = data_para_S3["data:weight:aircraft:MFW"].value[0]
+        MTOW_para_S3 = data_para_S3["data:weight:aircraft:MTOW"].value[0]
+        FUEL_AVAILABLE_para_S3 = MTOW_para_S3 - OWE_para_S3 - PL_DOC_para_S3
+        if FUEL_AVAILABLE_para_S3 > MFW_para_S3:
+            FUEL_AVAILABLE_para_S3 = MFW_para_S3
+        MAX_BF_MISSION_BF_percent_para_S3 = 100* BF_para_S3 / MFW_para_S3
+        AVAILABLE_BF_MISSION_BF_percent_para_S3 = 100 * BF_para_S3 / FUEL_AVAILABLE_para_S3
 
         # COMPUTE THE SPECIFIC RANGE
         SR_ref=self.OAD.compute_SR(ac_ref,SFC_ref,BF_ref)[0]
@@ -6214,6 +6337,27 @@ class Interface:
         table_widget_S3 = widgets.GridBox(children=[widgets.HTML(value) for row in html_data for value in row],
                                        layout=widgets.Layout(grid_template_columns="repeat(3, auto)", width='100%'))
 
+
+
+        data_fuel = [
+            ["<u>MFW_ref [kg]</u>", "<u>Available_ref [kg]</u>","<u>DOC_ref [kg]</u>", "<u>DOC/MFW_ref %</u>", "<u>DOC/Available_ref %</u>"],
+            [str(round(MFW_ref, 0)), str(round(FUEL_AVAILABLE_ref, 0)), str(round(BF_ref, 0)), str(round(MAX_BF_MISSION_BF_percent_ref, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_ref, 2))],
+            ["<u>MFW_S1 [kg]</u>", "<u>Available_S1 [kg]</u>", "<u>DOC_S1 [kg]</u>", "<u>DOC/MFW_S1 %</u>","<u>DOC/Available_S1 %</u>"],
+            [str(round(MFW_para_S1, 0)), str(round(FUEL_AVAILABLE_para_S1, 0)), str(round(BF_para_S1, 0)), str(round(MAX_BF_MISSION_BF_percent_para_S1, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para_S1, 2))],
+            ["<u>MFW_S2 [kg]</u>", "<u>Available_S2 [kg]</u>", "<u>DOC_S2 [kg]</u>", "<u>DOC/MFW_S2 %</u>","<u>DOC/Available_S2 %</u>"],
+            [str(round(MFW_para_S2, 0)), str(round(FUEL_AVAILABLE_para_S2, 0)), str(round(BF_para_S2, 0)),str(round(MAX_BF_MISSION_BF_percent_para_S2, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para_S2, 2))],
+            ["<u>MFW_S3 [kg]</u>", "<u>Available_S3 [kg]</u>", "<u>DOC_S3 [kg]</u>", "<u>DOC/MFW_S3 %</u>","<u>DOC/Available_S3 %</u>"],
+            [str(round(MFW_para_S3, 0)), str(round(FUEL_AVAILABLE_para_S3, 0)), str(round(BF_para_S3, 0)),str(round(MAX_BF_MISSION_BF_percent_para_S3, 2)), str(round(AVAILABLE_BF_MISSION_BF_percent_para_S3, 2))],
+        ]
+
+        font_size = "14px"  # Adjust the font size as desired
+        html_data_fuel = [[f'<span style="font-size: {font_size};">{value}</span>' for value in row] for row in data_fuel]
+
+        table_widget_fuel = widgets.GridBox(children=[widgets.HTML(value) for row in html_data_fuel for value in row],
+                                       layout=widgets.Layout(grid_template_columns="repeat(5, auto)", width='100%'))
+
+
+
         buttonINFO = widgets.Button(description='')
         buttonINFO.icon = 'fa-info-circle'
         buttonINFO.layout.width = 'auto'
@@ -6256,7 +6400,7 @@ class Interface:
             C_V_PL_info_Pax = widgets.VBox(children=[C_paraPaxref],
                 layout=widgets.Layout(border='0px solid black', align_items='center',padding='0px', width='100%'))
 
-        C_V_PL = widgets.VBox(children=[fig, C_V_PL_info_Pax],
+        C_V_PL = widgets.VBox(children=[C_V_PL_info_Pax,fig,table_widget_fuel],
                               layout=widgets.Layout(border='0px solid black', align_items='center', padding='0px',
                                                     width='100%'))
 
@@ -6282,7 +6426,7 @@ class Interface:
             layout=widgets.Layout(border='1px solid black', align_items='center', padding='2px', width='100%'))
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type))
+        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>" + "," .join(self.ID_Type_percent))
 
         self.tab_Analysis_Para = widgets.Tab(children=[C_V_PL,C_V_BlockFuel,fig3,fig4,fig5],
                                              layout=widgets.Layout(border='0px solid black', align_items='center', padding='2px', width='100%'))
@@ -6302,9 +6446,8 @@ class Interface:
 
     def GEO3D(self,Model3dFile):
         # -------------------------------------------------------------------------------------------------
-        OuputFolder="OUTPUT_FILE"
-        Base_folder = "Base files"
-        WORK_FOLDER_PATH = "CSMworkdir"
+        Base_folder = "ESP3D\Base files"
+        WORK_FOLDER_PATH = "ESP3D\CSMworkdir"
 
         # Check if the destination folder already exists
         if os.path.exists(WORK_FOLDER_PATH):
@@ -6427,12 +6570,8 @@ class Interface:
         # Make a dict with updated values
         csm_values = {}
         for i, j in variables.items():
-            # print(j)
-            #csm_values[i] = xml_parameters[j]
             if j in xml_parameters:
                  csm_values[i] = xml_parameters[j]
-                 # print(xml_parameters[j])
-
             else:
                 continue
 
@@ -6506,8 +6645,8 @@ class Interface:
             # -------------------------------------------------------------------------------------------------
 
         # %%capture captured_output
-        with open('CSMworkdir\esp_logs.txt', 'w') as outfile:
-            subprocess.run(['CSMworkdir\ESP.bat'], stdout=outfile, text=True)
+        with open('ESP3D\CSMworkdir\esp_logs.txt', 'w') as outfile:
+            subprocess.run(['ESP3D\CSMworkdir\ESP.bat'], stdout=outfile, text=True)
 
 
 
