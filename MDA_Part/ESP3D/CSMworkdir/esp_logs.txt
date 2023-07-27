@@ -29,9 +29,9 @@
 
 (FAST-OAD) C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part>set WV_START="start /b "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" C:\Users\ERIC\Desktop\ESP122\EngSketchPad\wvClient\wv.html" 
 
-(FAST-OAD) C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part>cd /d C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\CSMworkdir 
+(FAST-OAD) C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part>cd /d C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\ESP3D\CSMworkdir 
 
-(FAST-OAD) C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\CSMworkdir>serveCSM "Updated_CsmBaseModel.csm" 
+(FAST-OAD) C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\ESP3D\CSMworkdir>serveCSM "Updated_CsmBaseModel.csm" 
 **********************************************************
 *                                                        *
 *                    Program serveCSM                    *
@@ -383,7 +383,7 @@
     nextline ( 0: 311)[ 165]: DUMP full_model.stp
     nextline ( 0: 312)[ 166]: END
 --> ocsmLoad(Updated_CsmBaseModel.csm) -> status=0 (success)
-==> ocsmLoad CPUtime=    0.071 sec
+==> ocsmLoad CPUtime=    0.016 sec
 --> enter ocsmCheck()
 --> checks passed
 --> ocsmCheck() -> status=0 (success)
@@ -780,25 +780,25 @@
 WARNING:: mark being removed from the stack
 --> Tessellating Body    127     ( 1.29061e+00  3.87182e-01  20.000)
 --> ocsmBuild(buildTo=0) -> status=0 (success), builtTo=165, nbody=0
-==> ocsmBuild CPUtime=     5.317 sec
+==> ocsmBuild CPUtime=     4.988 sec
 ==> Profile information
     Branch type           ncall  time (sec)    pct
-    point                     1       0.000    0.0
-    udprim                   31       0.196    4.4
-    restore                   7       0.030    0.7
-    rule                      6       0.915   20.7
-    union                     5       2.800   63.3
-    translate                33       0.025    0.6
+    point                     1       0.001    0.0
+    udprim                   31       0.131    3.2
+    restore                   7       0.029    0.7
+    rule                      6       0.796   19.2
+    union                     5       2.796   67.4
+    translate                33       0.015    0.4
     rotatex                   1       0.001    0.0
-    rotatey                  19       0.014    0.3
-    rotatez                  12       0.012    0.3
-    scale                    12       0.014    0.3
+    rotatey                  19       0.010    0.2
+    rotatez                  12       0.011    0.3
+    scale                    12       0.008    0.2
     set                      18       0.000    0.0
     store                     7       0.000    0.0
     mark                      7       0.000    0.0
     group                     1       0.000    0.0
-    dump                      5       0.414    9.4
-    Total                   165       4.421
+    dump                      5       0.349    8.4
+    Total                   165       4.147
     ipmtr
         1 [d]  fus:height          [  1,  1]     4.05988     0.00000    >> unbounded  <<  unbounded 
         2 [d]  fus:width           [  1,  1]     3.91988     0.00000    >> unbounded  <<  unbounded 
@@ -1033,89 +1033,89 @@ WARNING:: mark being removed from the stack
       164 (a)  Brch_000164   union              162   163    -1 {0} {0} {0}
       165 (a)  Brch_000165   dump                -1    -1    -1 {$full_model.stp} {0} {0} {0}
     ibody  ibrch brchType  ileft irite ichld group      CPU nnode nedge nface   bodyType     args ...
-        1     20 udprim       -1    -1     2     1    0.043     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
-        2     21 rotatey       1    -1     3     2    0.003     4     4     1 sheet_body   90.000    0.000    0.000 
-        3     22 translate     2    -1     7     3    0.001     4     4     1 sheet_body    6.902    0.000    0.000 
-        4     23 udprim       -1    -1     5     4    0.004     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
+        1     20 udprim       -1    -1     2     1    0.004     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
+        2     21 rotatey       1    -1     3     2    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+        3     22 translate     2    -1     7     3    0.000     4     4     1 sheet_body    6.902    0.000    0.000 
+        4     23 udprim       -1    -1     5     4    0.003     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
         5     24 rotatey       4    -1     6     5    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-        6     25 translate     5    -1     7     6    0.001     4     4     1 sheet_body   22.892    0.000    0.000 
-        7     26 rule          3     6    63     7    0.053     8    12     6 solid_body    0.000    0.000 
-        8     30 point        -1    -1    36     8    0.000     1     0     0  node_body    0.000   -0.647    0.000 
-        9     31 udprim       -1    -1    10     9    0.003     4     4     1 sheet_body   supell       rx    0.382       ry    0.392 
-       10     32 rotatey       9    -1    11    10    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
-       11     33 translate    10    -1    36    11    0.001     4     4     1 sheet_body    0.170   -0.637    0.000 
-       12     34 udprim       -1    -1    13    12    0.005     4     4     1 sheet_body   supell       rx    0.652       ry    0.661 
+        6     25 translate     5    -1     7     6    0.000     4     4     1 sheet_body   22.892    0.000    0.000 
+        7     26 rule          3     6    63     7    0.034     8    12     6 solid_body    0.000    0.000 
+        8     30 point        -1    -1    36     8    0.001     1     0     0  node_body    0.000   -0.647    0.000 
+        9     31 udprim       -1    -1    10     9    0.002     4     4     1 sheet_body   supell       rx    0.382       ry    0.392 
+       10     32 rotatey       9    -1    11    10    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+       11     33 translate    10    -1    36    11    0.000     4     4     1 sheet_body    0.170   -0.637    0.000 
+       12     34 udprim       -1    -1    13    12    0.003     4     4     1 sheet_body   supell       rx    0.652       ry    0.661 
        13     35 rotatey      12    -1    14    13    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-       14     36 translate    13    -1    36    14    0.001     4     4     1 sheet_body    0.490   -0.637    0.000 
+       14     36 translate    13    -1    36    14    0.000     4     4     1 sheet_body    0.490   -0.637    0.000 
        15     37 udprim       -1    -1    16    15    0.003     4     4     1 sheet_body   supell       rx    0.819       ry    0.813 
        16     38 rotatey      15    -1    17    16    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
-       17     39 translate    16    -1    36    17    0.001     4     4     1 sheet_body    0.770   -0.618    0.000 
+       17     39 translate    16    -1    36    17    0.000     4     4     1 sheet_body    0.770   -0.618    0.000 
        18     40 udprim       -1    -1    19    18    0.003     4     4     1 sheet_body   supell       rx    1.074       ry    1.010 
-       19     41 rotatey      18    -1    20    19    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
-       20     42 translate    19    -1    36    20    0.001     4     4     1 sheet_body    1.291   -0.598    0.000 
+       19     41 rotatey      18    -1    20    19    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+       20     42 translate    19    -1    36    20    0.000     4     4     1 sheet_body    1.291   -0.598    0.000 
        21     43 udprim       -1    -1    22    21    0.003     4     4     1 sheet_body   supell       rx    1.407       ry    1.455 
-       22     44 rotatey      21    -1    23    22    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
-       23     45 translate    22    -1    36    23    0.001     4     4     1 sheet_body    2.071   -0.314    0.000 
+       22     44 rotatey      21    -1    23    22    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+       23     45 translate    22    -1    36    23    0.000     4     4     1 sheet_body    2.071   -0.314    0.000 
        24     46 udprim       -1    -1    25    24    0.003     4     4     1 sheet_body   supell       rx    1.692       ry    1.745 
-       25     47 rotatey      24    -1    26    25    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-       26     48 translate    25    -1    36    26    0.000     4     4     1 sheet_body    2.981   -0.157    0.000 
-       27     49 udprim       -1    -1    28    27    0.004     4     4     1 sheet_body   supell       rx    1.883       ry    1.923 
+       25     47 rotatey      24    -1    26    25    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
+       26     48 translate    25    -1    36    26    0.001     4     4     1 sheet_body    2.981   -0.157    0.000 
+       27     49 udprim       -1    -1    28    27    0.003     4     4     1 sheet_body   supell       rx    1.883       ry    1.923 
        28     50 rotatey      27    -1    29    28    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
        29     51 translate    28    -1    36    29    0.001     4     4     1 sheet_body    4.152   -0.067    0.000 
        30     52 udprim       -1    -1    31    30    0.003     4     4     1 sheet_body   supell       rx    1.956       ry    2.004 
-       31     53 rotatey      30    -1    32    31    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+       31     53 rotatey      30    -1    32    31    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
        32     54 translate    31    -1    36    32    0.000     4     4     1 sheet_body    5.312    0.000    0.000 
        33     55 udprim       -1    -1    34    33    0.003     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
        34     56 rotatey      33    -1    35    34    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
        35     57 translate    34    -1    36    35    0.000     4     4     1 sheet_body    6.902    0.000    0.000 
-       36     58 rule          8    35    62    36    0.226    37    76    37 solid_body    0.000    0.000 
+       36     58 rule          8    35    62    36    0.164    37    76    37 solid_body    0.000    0.000 
        37     62 udprim       -1    -1    38    37    0.003     4     4     1 sheet_body   supell       rx    1.960       ry    2.030 
-       38     63 rotatey      37    -1    39    38    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-       39     64 translate    38    -1    61    39    0.000     4     4     1 sheet_body   22.892    0.000    0.000 
-       40     65 udprim       -1    -1    41    40    0.003     4     4     1 sheet_body   supell       rx    1.961       ry    2.009 
+       38     63 rotatey      37    -1    39    38    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
+       39     64 translate    38    -1    61    39    0.001     4     4     1 sheet_body   22.892    0.000    0.000 
+       40     65 udprim       -1    -1    41    40    0.002     4     4     1 sheet_body   supell       rx    1.961       ry    2.009 
        41     66 rotatey      40    -1    42    41    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
        42     67 translate    41    -1    61    42    0.000     4     4     1 sheet_body   25.392    0.020    0.000 
-       43     68 udprim       -1    -1    44    43    0.004     4     4     1 sheet_body   supell       rx    1.961       ry    1.862 
-       44     69 rotatey      43    -1    45    44    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-       45     70 translate    44    -1    61    45    0.000     4     4     1 sheet_body   27.543    0.167    0.000 
-       46     71 udprim       -1    -1    47    46    0.004     4     4     1 sheet_body   supell       rx    1.716       ry    1.617 
-       47     72 rotatey      46    -1    48    47    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
+       43     68 udprim       -1    -1    44    43    0.003     4     4     1 sheet_body   supell       rx    1.961       ry    1.862 
+       44     69 rotatey      43    -1    45    44    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
+       45     70 translate    44    -1    61    45    0.001     4     4     1 sheet_body   27.543    0.167    0.000 
+       46     71 udprim       -1    -1    47    46    0.002     4     4     1 sheet_body   supell       rx    1.716       ry    1.617 
+       47     72 rotatey      46    -1    48    47    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
        48     73 translate    47    -1    61    48    0.000     4     4     1 sheet_body   29.874    0.384    0.000 
        49     74 udprim       -1    -1    50    49    0.003     4     4     1 sheet_body   supell       rx    1.299       ry    1.328 
        50     75 rotatey      49    -1    51    50    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
        51     76 translate    50    -1    61    51    0.001     4     4     1 sheet_body   32.065    0.598    0.000 
-       52     77 udprim       -1    -1    53    52    0.003     4     4     1 sheet_body   supell       rx    0.848       ry    0.882 
+       52     77 udprim       -1    -1    53    52    0.002     4     4     1 sheet_body   supell       rx    0.848       ry    0.882 
        53     78 rotatey      52    -1    54    53    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
        54     79 translate    53    -1    61    54    0.000     4     4     1 sheet_body   35.086    0.922    0.000 
        55     80 udprim       -1    -1    56    55    0.003     4     4     1 sheet_body   supell       rx    0.593       ry    0.573 
-       56     81 rotatey      55    -1    57    56    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
+       56     81 rotatey      55    -1    57    56    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
        57     82 translate    56    -1    61    57    0.000     4     4     1 sheet_body   36.527    1.039    0.000 
-       58     83 udprim       -1    -1    59    58    0.003     4     4     1 sheet_body   supell       rx    0.259       ry    0.250 
-       59     84 rotatey      58    -1    60    59    0.001     4     4     1 sheet_body   90.000    0.000    0.000 
-       60     85 translate    59    -1    61    60    0.000     4     4     1 sheet_body   37.507    1.079    0.000 
-       61     86 rule         39    60    65    61    0.165    32    60    30 solid_body    0.000    0.000 
+       58     83 udprim       -1    -1    59    58    0.002     4     4     1 sheet_body   supell       rx    0.259       ry    0.250 
+       59     84 rotatey      58    -1    60    59    0.000     4     4     1 sheet_body   90.000    0.000    0.000 
+       60     85 translate    59    -1    61    60    0.001     4     4     1 sheet_body   37.507    1.079    0.000 
+       61     86 rule         39    60    65    61    0.172    32    60    30 solid_body    0.000    0.000 
        62     88 restore      36    -1    64    62    0.006    37    76    37 solid_body fus_fron    0.000 
        63     89 restore       7    -1    64    63    0.001     8    12     6 solid_body fus_cyli    0.000 
-       64     90 union        62    63    66    64    0.257    41    84    41 solid_body    0.000    0.000    0.000 
+       64     90 union        62    63    66    64    0.233    41    84    41 solid_body    0.000    0.000    0.000 
        65     91 restore      61    -1    66    65    0.004    32    60    30 solid_body fus_rear    0.000 
-       66     92 union        64    65   121    66    0.352    69   140    69 solid_body    0.000    0.000    0.000 
-       67     96 udprim       -1    -1    68    67    0.009     3     3     1 sheet_body     naca thicknes    0.117   camber    0.000 
+       66     92 union        64    65   121    66    0.375    69   140    69 solid_body    0.000    0.000    0.000 
+       67     96 udprim       -1    -1    68    67    0.008     3     3     1 sheet_body     naca thicknes    0.117   camber    0.000 
        68     97 scale        67    -1    69    68    0.001     3     3     1 sheet_body    1.442    0.000    0.000    0.000 
        69     98 rotatez      68    -1    70    69    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
        70     99 translate    69    -1    95    70    0.000     3     3     1 sheet_body   20.111    0.000  -16.698 
-       71    100 udprim       -1    -1    72    71    0.009     3     3     1 sheet_body     naca thicknes    0.128   camber    0.000 
+       71    100 udprim       -1    -1    72    71    0.007     3     3     1 sheet_body     naca thicknes    0.128   camber    0.000 
        72    101 scale        71    -1    73    72    0.001     3     3     1 sheet_body    3.683    0.000    0.000    0.000 
        73    102 rotatez      72    -1    74    73    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-       74    103 translate    73    -1    95    74    0.001     3     3     1 sheet_body   14.786    0.000   -6.262 
-       75    104 udprim       -1    -1    76    75    0.010     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
-       76    105 scale        75    -1    77    76    0.002     3     3     1 sheet_body    5.878    0.000    0.000    0.000 
+       74    103 translate    73    -1    95    74    0.000     3     3     1 sheet_body   14.786    0.000   -6.262 
+       75    104 udprim       -1    -1    76    75    0.008     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
+       76    105 scale        75    -1    77    76    0.001     3     3     1 sheet_body    5.878    0.000    0.000    0.000 
        77    106 rotatez      76    -1    78    77    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-       78    107 translate    77    -1    95    78    0.002     3     3     1 sheet_body   12.591    0.000   -1.960 
-       79    108 udprim       -1    -1    80    79    0.011     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
-       80    109 scale        79    -1    81    80    0.002     3     3     1 sheet_body    5.878    0.000    0.000    0.000 
+       78    107 translate    77    -1    95    78    0.001     3     3     1 sheet_body   12.591    0.000   -1.960 
+       79    108 udprim       -1    -1    80    79    0.008     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
+       80    109 scale        79    -1    81    80    0.000     3     3     1 sheet_body    5.878    0.000    0.000    0.000 
        81    110 rotatez      80    -1    82    81    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-       82    111 translate    81    -1    95    82    0.002     3     3     1 sheet_body   12.591    0.000    0.000 
-       83    112 udprim       -1    -1    84    83    0.009     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
+       82    111 translate    81    -1    95    82    0.000     3     3     1 sheet_body   12.591    0.000    0.000 
+       83    112 udprim       -1    -1    84    83    0.008     3     3     1 sheet_body     naca thicknes    0.169   camber    0.000 
        84    113 scale        83    -1    85    84    0.001     3     3     1 sheet_body    5.878    0.000    0.000    0.000 
        85    114 rotatez      84    -1    86    85    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
        86    115 translate    85    -1    95    86    0.001     3     3     1 sheet_body   12.591    0.000    1.960 
@@ -1123,44 +1123,44 @@ WARNING:: mark being removed from the stack
        88    117 scale        87    -1    89    88    0.001     3     3     1 sheet_body    3.683    0.000    0.000    0.000 
        89    118 rotatez      88    -1    90    89    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
        90    119 translate    89    -1    95    90    0.001     3     3     1 sheet_body   14.786    0.000    6.262 
-       91    120 udprim       -1    -1    92    91    0.008     3     3     1 sheet_body     naca thicknes    0.117   camber    0.000 
+       91    120 udprim       -1    -1    92    91    0.007     3     3     1 sheet_body     naca thicknes    0.117   camber    0.000 
        92    121 scale        91    -1    93    92    0.001     3     3     1 sheet_body    1.442    0.000    0.000    0.000 
        93    122 rotatez      92    -1    94    93    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-       94    123 translate    93    -1    95    94    0.001     3     3     1 sheet_body   20.111    0.000   16.698 
-       95    124 rule         70    94   122    95    0.304    21    39    20 solid_body    0.000    0.000 
-       96    128 udprim       -1    -1    97    96    0.006     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
-       97    129 scale        96    -1    98    97    0.000     3     3     1 sheet_body    1.229    0.000    0.000    0.000 
+       94    123 translate    93    -1    95    94    0.000     3     3     1 sheet_body   20.111    0.000   16.698 
+       95    124 rule         70    94   122    95    0.277    21    39    20 solid_body    0.000    0.000 
+       96    128 udprim       -1    -1    97    96    0.005     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
+       97    129 scale        96    -1    98    97    0.001     3     3     1 sheet_body    1.229    0.000    0.000    0.000 
        98    130 rotatez      97    -1    99    98    0.000     3     3     1 sheet_body   -0.000    0.000    0.000 
        99    131 translate    98    -1   108    99    0.001     3     3     1 sheet_body   36.345    0.000   -5.711 
       100    132 udprim       -1    -1   101   100    0.005     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
-      101    133 scale       100    -1   102   101    0.001     3     3     1 sheet_body    4.098    0.000    0.000    0.000 
+      101    133 scale       100    -1   102   101    0.000     3     3     1 sheet_body    4.098    0.000    0.000    0.000 
       102    134 rotatez     101    -1   103   102    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-      103    135 translate   102    -1   108   103    0.000     3     3     1 sheet_body   32.592    0.000    0.000 
+      103    135 translate   102    -1   108   103    0.001     3     3     1 sheet_body   32.592    0.000    0.000 
       104    136 udprim       -1    -1   105   104    0.004     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
-      105    137 scale       104    -1   106   105    0.001     3     3     1 sheet_body    1.229    0.000    0.000    0.000 
+      105    137 scale       104    -1   106   105    0.000     3     3     1 sheet_body    1.229    0.000    0.000    0.000 
       106    138 rotatez     105    -1   107   106    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
       107    139 translate   106    -1   108   107    0.001     3     3     1 sheet_body   36.345    0.000    5.711 
-      108    140 rule         99   107   109   108    0.104     9    15     8 solid_body    0.000    0.000 
+      108    140 rule         99   107   109   108    0.095     9    15     8 solid_body    0.000    0.000 
       109    141 translate   108    -1   124   109    0.001     9    15     8 solid_body    0.000    1.100    0.000 
       110    145 udprim       -1    -1   111   110    0.005     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
-      111    146 scale       110    -1   112   111    0.001     3     3     1 sheet_body    1.744    0.000    0.000    0.000 
+      111    146 scale       110    -1   112   111    0.000     3     3     1 sheet_body    1.744    0.000    0.000    0.000 
       112    147 rotatez     111    -1   113   112    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
-      113    148 translate   112    -1   118   113    0.000     3     3     1 sheet_body   36.328    0.000   -6.590 
-      114    149 udprim       -1    -1   115   114    0.008     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
-      115    150 scale       114    -1   116   115    0.002     3     3     1 sheet_body    5.812    0.000    0.000    0.000 
-      116    151 rotatez     115    -1   117   116    0.002     3     3     1 sheet_body   -0.000    0.000    0.000 
-      117    152 translate   116    -1   118   117    0.004     3     3     1 sheet_body   30.696    0.000    0.000 
-      118    153 rule        113   117   119   118    0.063     6     9     5 solid_body    0.000    0.000 
+      113    148 translate   112    -1   118   113    0.001     3     3     1 sheet_body   36.328    0.000   -6.590 
+      114    149 udprim       -1    -1   115   114    0.004     3     3     1 sheet_body     naca thicknes    0.100   camber    0.000 
+      115    150 scale       114    -1   116   115    0.001     3     3     1 sheet_body    5.812    0.000    0.000    0.000 
+      116    151 rotatez     115    -1   117   116    0.001     3     3     1 sheet_body   -0.000    0.000    0.000 
+      117    152 translate   116    -1   118   117    0.001     3     3     1 sheet_body   30.696    0.000    0.000 
+      118    153 rule        113   117   119   118    0.054     6     9     5 solid_body    0.000    0.000 
       119    154 rotatex     118    -1   120   119    0.001     6     9     5 solid_body   90.000    0.000    0.000 
-      120    155 translate   119    -1   126   120    0.001     6     9     5 solid_body    0.000    1.400    0.000 
-      121    158 restore      66    -1   123   121    0.014    69   140    69 solid_body fus_full    0.000 
+      120    155 translate   119    -1   126   120    0.000     6     9     5 solid_body    0.000    1.400    0.000 
+      121    158 restore      66    -1   123   121    0.013    69   140    69 solid_body fus_full    0.000 
       122    159 restore      95    -1   123   122    0.003    21    39    20 solid_body     wing    0.000 
-      123    160 union       121   122   125   123    0.684    93   186    91 solid_body    0.000    0.000    0.000 
+      123    160 union       121   122   125   123    0.669    93   186    91 solid_body    0.000    0.000    0.000 
       124    161 restore     109    -1   125   124    0.001     9    15     8 solid_body      htp    0.000 
-      125    162 union       123   124   127   125    0.810   113   216   101 solid_body    0.000    0.000    0.000 
+      125    162 union       123   124   127   125    0.800   113   216   101 solid_body    0.000    0.000    0.000 
       126    163 restore     120    -1   127   126    0.001     6     9     5 solid_body      vtp    0.000 
-      127*   164 union       125   126     0   127    0.697   123   230   105 solid_body    0.000    0.000    0.000 
-                                             total    4.007
+      127*   164 union       125   126     0   127    0.719   123   230   105 solid_body    0.000    0.000    0.000 
+                                             total    3.798
 
 wv libwebsockets server thread start
 
@@ -1173,7 +1173,7 @@ Received network connect from LAPTOP-R75ILQKU (192.168.88.1)
     Protocol = gprim-binary-protocol
     Upgrade = websocket
     Origin = null
-    Key = YHBwjlYFG85+E9Hz9F0BMQ==
+    Key = qhWY5/xusSnpz15LNu4Gdg==
     Version = 13
     Extensions = permessage-deflate; client_max_window_bits
 callback_gprim_binary: LWS_CALLBACK_ESTABLISHED
@@ -1184,7 +1184,7 @@ Received network connect from LAPTOP-R75ILQKU (192.168.88.1)
     Protocol = ui-text-protocol
     Upgrade = websocket
     Origin = null
-    Key = Y8IAZCY3Te/B0fsurw0NSQ==
+    Key = xBWGp73thJofLpHz4UPYiA==
     Version = 13
     Extensions = permessage-deflate; client_max_window_bits
 callback_ui_text: LWS_CALLBACK_ESTABLISHED
@@ -1218,5 +1218,5 @@ Checking for opportunity for ganged Boolean operations...
 --> ocsmFree() -> status=0 (success)
 --> ocsmFree(NULL) -> status=0 (success)
 --> EG_close() -> status=0
-    Total CPU time = 28.509 sec
+    Total CPU time = 14.810 sec
 ==> serveCSM completed successfully

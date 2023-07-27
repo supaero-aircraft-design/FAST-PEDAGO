@@ -3,8 +3,8 @@
     <TLAR>
       <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
       <approach_speed units="m/s" is_input="True">67.90666666666667<!--top-level requirement: approach speed--></approach_speed>
-      <cruise_mach is_input="True">0.7<!--Input defined by the mission.--></cruise_mach>
-      <range units="nmi" is_input="True">800.0<!--top-level requirement: design range--></range>
+      <cruise_mach is_input="True">0.77<!--Input defined by the mission.--></cruise_mach>
+      <range units="nmi" is_input="True">2500.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -103,7 +103,7 @@
       </taxi>
     </propulsion>
     <weight>
-      <k_factor_OWE is_input="True">0.9600000000000001</k_factor_OWE>
+      <k_factor_OWE is_input="True">0.9700000000000001</k_factor_OWE>
     </weight>
     <load_case>
       <lc1>
@@ -242,8 +242,8 @@
     <propulsion>
       <rubber_engine>
         <SFC>
-          <k_cr is_input="True">0.8999999999999999<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
-          <k_sl is_input="True">0.8999999999999999<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
+          <k_cr is_input="True">1.0<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
+          <k_sl is_input="True">1.0<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
         </SFC>
       </rubber_engine>
     </propulsion>
@@ -304,7 +304,7 @@
         </flight_controls>
         <fuselage>
           <mass>
-            <k is_input="True">1.1<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">1.0<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--fuselage (A2): correction offset to be applied on computed mass--></offset>
           </mass>
         </fuselage>

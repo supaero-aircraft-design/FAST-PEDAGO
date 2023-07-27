@@ -14,6 +14,6 @@ set SLUGS_START="start /b "C:\Program Files (x86)\Microsoft\Edge\Application\mse
 set ESP_START="start /b "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" C:\Users\ERIC\Desktop\ESP122\EngSketchPad\ESP\ESP-localhost7681.html"
 set WV_START="start /b "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" C:\Users\ERIC\Desktop\ESP122\EngSketchPad\wvClient\wv.html"
 
-cd /d C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\CSMworkdir
+cd /d C:\Users\ERIC\Documents\GitHub\FAST-PEDAGO\MDA_Part\ESP3D\CSMworkdir
 
 serveCSM "Updated_CsmBaseModel.csm"
