@@ -1,27 +1,31 @@
 from IPython.display import display, clear_output, HTML
+
 import os.path as pth
 import os
-import fastoad.api as oad
-import openmdao.api as om
-import ipywidgets as widgets
-from ipywidgets import Layout
-from OAD import MDA
-from fastoad.io import VariableIO
-import csv
-import yaml
-import statistics
-import plotly.graph_objects as go
-import json
-import xmltodict
-import os
-import subprocess
-import numpy
-import math
+
 import shutil
+import time
 import subprocess
 import threading
+
+import numpy as np
+
+import csv
+import json
+
+import ipywidgets as widgets
+from ipywidgets import Layout
+import plotly.graph_objects as go
+
+import fastoad.api as oad
+
+from OAD import MDA
+
+import statistics
+
+import xmltodict
 import progressbar
-import time
+
 import webbrowser
 import xml.etree.ElementTree as ET
 
@@ -624,7 +628,7 @@ class Interface:
             width="150px",
         )
 
-        #In update_fus we calculate the outputs based on the equations in FASTOAD CS25 Geometry,Fuselage
+        # In update_fus we calculate the outputs based on the equations in FASTOAD CS25 Geometry,Fuselage
         def update_fus(event):
             front_seat_number_eco = (
                 self.CAB_3.value
@@ -676,7 +680,7 @@ class Interface:
             x_cg_d2 = lav - (front_seat_number_eco - 4) * ls_eco + lpax / 2
 
             # Equivalent diameter of the fuselage
-            fus_dia = math.sqrt(b_f * h_f)
+            fus_dia = np.sqrt(b_f * h_f)
             wet_area_nose = 2.45 * fus_dia * lav
             wet_area_cyl = 3.1416 * fus_dia * l_cyl
             wet_area_tail = 2.3 * fus_dia * lar
@@ -1060,7 +1064,7 @@ class Interface:
             layout=layout,
             width="150px",
         )
-        #Function to compute and display the results (breguet) each time the update button is clicked
+        # Function to compute and display the results (breguet) each time the update button is clicked
         def update_breguet(event):
             finesse = self.Breguet_1.value
             V = self.Breguet_2.value  # velocity km/h
@@ -1068,14 +1072,14 @@ class Interface:
             Wi = self.Breguet_4.value  # kg
             Wf = self.Breguet_5.value  # kg
             g = 9.8066  # m/s^2
-            range = V * finesse * math.log(Wi / Wf) / (g * SFC)  # km
+            range = V * finesse * np.log(Wi / Wf) / (g * SFC)  # km
 
             OWE_MTOW = self.Breguet_6.value  #
             RESERVE_MLW = self.Breguet_7.value  #
             Payload = self.Breguet_8.value  # kg
             Range_2 = self.Breguet_9.value  # km
 
-            ratio_Weight_i_f = math.exp((Range_2 * g * SFC) / (V * finesse))
+            ratio_Weight_i_f = np.exp((Range_2 * g * SFC) / (V * finesse))
 
             MLW = Payload / (1 - RESERVE_MLW - ratio_Weight_i_f * OWE_MTOW)
             MTOW = MLW * ratio_Weight_i_f
@@ -1618,7 +1622,7 @@ class Interface:
             b = self.MassLoop_2_min.value ** (1.2)
             c = self.MassLoop_3_min.value ** (-0.2)
             d = self.MassLoop_4_min.value ** (-0.2)
-            e = math.cos(self.MassLoop_5_min.value * 3.1416 / 180) ** (-1)
+            e = np.cos(self.MassLoop_5_min.value * 3.1416 / 180) ** (-1)
             wing_weight_min = a * b * c * d * e
             fuselage_weight_min = 0.1 * self.MassLoop_1_min.value
             engine_weight_min = self.MassLoop_6_min.value
@@ -1635,11 +1639,11 @@ class Interface:
 
             wing_weight_max = (
                 0.019
-                * math.pow(self.MassLoop_1_max.value, 0.8)
-                * math.pow(self.MassLoop_2_min.value, 1.2)
-                * math.pow(self.MassLoop_3_min.value, -0.2)
-                * math.pow(self.MassLoop_4_min.value, -0.2)
-                * math.pow(math.cos(self.MassLoop_5_min.value * math.pi / 180), -1)
+                * self.MassLoop_1_max.value**0.8
+                * self.MassLoop_2_min.value**1.2
+                * self.MassLoop_3_min.value**-0.2
+                * self.MassLoop_4_min.value**-0.2
+                * np.cos(self.MassLoop_5_min.value * np.pi / 180.0) ** -1
             )
             fuselage_weight_max = 0.1 * self.MassLoop_1_max.value
             engine_weight_max = self.MassLoop_6_min.value
@@ -1656,7 +1660,7 @@ class Interface:
 
             # this computes the aircrafts mass to complete the mission
 
-            exponent = math.exp(
+            exponent = np.exp(
                 (self.Breguet_9.value * 9.8066 * self.Breguet_3.value)
                 / (self.Breguet_2.value * self.Breguet_1.value)
             )
@@ -2035,7 +2039,7 @@ class Interface:
             display(self.BOX_INPUT)
 
             # this computes the aircrafts Vstall
-            Vstall = math.sqrt(
+            Vstall = np.sqrt(
                 2
                 * self.MTOW_opt
                 * 9.8066
@@ -2057,7 +2061,7 @@ class Interface:
                 self.Constraint_4_Density_TO.value / self.Constraint_5_Density_SL.value
             )
             # create vector Wing loading
-            W_S_to = numpy.linspace(0, 9000, num=100)
+            W_S_to = np.linspace(0, 9000, num=100)
             T_W_TakeOff = W_S_to / (
                 self.Constraint_3_TOP.value
                 * density_ratio_sigma
@@ -2069,9 +2073,9 @@ class Interface:
                 0.5 * self.Constraint_9_density_FL.value * self.Breguet_2.value**2
             )  # dynamic pressure
             AR = (self.MassLoop_2_min.value**2) / (self.MassLoop_3_min.value)
-            K = 1 / (math.pi * AR * self.Constraint_8_e.value)
+            K = 1 / (np.pi * AR * self.Constraint_8_e.value)
 
-            W_S = numpy.linspace(300, 9000, num=100)
+            W_S = np.linspace(300, 9000, num=100)
             T_W_LevelFlight = q * self.Constraint_7_Cd0.value / W_S + (K / q) * W_S
 
             # this computes the climbing curve
@@ -2268,16 +2272,20 @@ class Interface:
         self.INPUT_EXO = self.OAD.Input_File(self.INPUT_FILE_EXO)
         # here we can access the values of our input file
 
-        List_StudyName = [] # to log the name of an aircraft
+        List_StudyName = []  # to log the name of an aircraft
 
         self.Variable_Exo_1 = self.INPUT_EXO["data:TLAR:NPAX"].value[0]
         self.Variable_Exo_2 = self.INPUT_EXO["data:TLAR:approach_speed"].value[0]
         self.Variable_Exo_3 = self.INPUT_EXO["data:TLAR:cruise_mach"].value[0]
         self.Variable_Exo_4 = self.INPUT_EXO["data:TLAR:range"].value[0]
-        self.Variable_Exo_5 = self.INPUT_EXO["data:weight:aircraft:max_payload"].value[0]
+        self.Variable_Exo_5 = self.INPUT_EXO["data:weight:aircraft:max_payload"].value[
+            0
+        ]
         self.Variable_Exo_6 = self.INPUT_EXO["data:weight:aircraft:payload"].value[0]
         self.Variable_Exo_7 = self.INPUT_EXO["data:geometry:wing:aspect_ratio"].value[0]
-        self.Variable_Exo_8 = self.INPUT_EXO["data:propulsion:rubber_engine:bypass_ratio"].value[0]
+        self.Variable_Exo_8 = self.INPUT_EXO[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value[0]
         # here we have each varaible of interest stored
 
         self.In_Variable_Exo_1 = widgets.BoundedFloatText(
@@ -2367,7 +2375,7 @@ class Interface:
             layout=layout,
         )
 
-        #This funciton will change the values of the Variables of interest in our InputFile xml
+        # This funciton will change the values of the Variables of interest in our InputFile xml
         def save_variable_interests(event):
 
             self.INPUT_EXO["data:TLAR:NPAX"].value = self.In_Variable_Exo_1.value
@@ -2866,7 +2874,7 @@ class Interface:
         return display(self.Vertical_box3)
 
     # The following part of the code is dedicated to solve a big MDA, MDO. THe code is structured, more or less, in the
-    #same order as the GUI
+    # same order as the GUI
 
     # function to move from the principal menu to the aircraft_reference interface
     def menu_to_reference(self, event):
@@ -2976,7 +2984,6 @@ class Interface:
         print(
             "----------------------------------------------------------------------------------------------------------"
         )
-
 
     # User interface for the reference aircrfat choice step
     def reference_aircraft(self, path_to_target):
@@ -3510,7 +3517,6 @@ class Interface:
         print(
             "----------------------------------------------------------------------------------------------------------"
         )
-
 
     # INTERFCE FOR THE AIRCRAFT INPUT DATA
 
@@ -8572,8 +8578,7 @@ class Interface:
         n_engines = self.Para_DataNEO["data:geometry:propulsion:engine:count"].value[0]
 
         cf_nac = 0.455 / (
-            (1 + 0.144 * mach**2) ** 0.65
-            * (numpy.log10(reynolds * nac_length)) ** 2.58
+            (1 + 0.144 * mach**2) ** 0.65 * (np.log10(reynolds * nac_length)) ** 2.58
         )
         e_fan = 0.22
         kn_cd0_nac = 1 + 0.05 + 5.8 * e_fan / fan_length
@@ -8588,19 +8593,19 @@ class Interface:
             - nacelle_old_wetted_area * n_engines
             + wet_area_nac * n_engines
         )
-        cd0_wing = numpy.array(
+        cd0_wing = np.array(
             self.Para_DataNEO["data:aerodynamics:wing:cruise:CD0"].value[:]
         )
-        cd0_fus = numpy.array(
+        cd0_fus = np.array(
             self.Para_DataNEO["data:aerodynamics:fuselage:cruise:CD0"].value[:]
         )
-        cd0_ht = numpy.array(
+        cd0_ht = np.array(
             self.Para_DataNEO["data:aerodynamics:horizontal_tail:cruise:CD0"].value[:]
         )
-        cd0_vt = numpy.array(
+        cd0_vt = np.array(
             self.Para_DataNEO["data:aerodynamics:vertical_tail:cruise:CD0"].value[:]
         )
-        cd0_pylon = numpy.array(
+        cd0_pylon = np.array(
             self.Para_DataNEO["data:aerodynamics:pylons:cruise:CD0"].value[:]
         )
         k_parasite = (
@@ -8631,19 +8636,19 @@ class Interface:
         offset_winglet_cd = self.Para_DataNEO[
             "tuning:aerodynamics:aircraft:cruise:CD:winglet_effect:offset"
         ].value[0]
-        cl = numpy.array(
+        cl = np.array(
             self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CL"].value[:]
         )
-        cd0_total = numpy.array(cd0_total)
-        cd_trim = numpy.array(
+        cd0_total = np.array(cd0_total)
+        cd_trim = np.array(
             self.Para_DataNEO["data:aerodynamics:aircraft:cruise:CD:trim"].value[:]
         )
-        cd_c = numpy.array(
+        cd_c = np.array(
             self.Para_DataNEO[
                 "data:aerodynamics:aircraft:cruise:CD:compressibility"
             ].value[:]
         )
-        coef_k = numpy.array(
+        coef_k = np.array(
             self.Para_DataNEO[
                 "data:aerodynamics:aircraft:cruise:induced_drag_coefficient"
             ].value[0]
@@ -8663,7 +8668,7 @@ class Interface:
 
         lift_drag_ratio = cl / cd
 
-        optimum_index = numpy.argmax(lift_drag_ratio)
+        optimum_index = np.argmax(lift_drag_ratio)
         optimum_Cz = cl[optimum_index]
         optimum_Cd = cd[optimum_index]
         self.Para_DataNEO["data:aerodynamics:aircraft:cruise:L_D_max"].value = (
@@ -9478,11 +9483,16 @@ class Interface:
         )
 
     def BlockFuel_ID(self, OWE, PL, RANGE, coefficient, reserve):
-        BF_DOC = math.exp((1000 * RANGE * 1.852) / coefficient) * (OWE + PL + reserve) - (OWE + PL + reserve)
+        BF_DOC = np.exp((1000 * RANGE * 1.852) / coefficient) * (OWE + PL + reserve) - (
+            OWE + PL + reserve
+        )
         return BF_DOC
-    def DesingRange_ID(self, OWE, PL, MTOW,MFW, coefficient, reserve):
-        if PL >= (MTOW -OWE-MFW):
-            RANGE_DESIGN = coefficient * math.log(MTOW / (OWE + PL + reserve)) / 1000/ 1.852  # NM
+
+    def DesingRange_ID(self, OWE, PL, MTOW, MFW, coefficient, reserve):
+        if PL >= (MTOW - OWE - MFW):
+            RANGE_DESIGN = (
+                coefficient * np.log(MTOW / (OWE + PL + reserve)) / 1000 / 1.852
+            )  # NM
         else:
             RANGE_DESIGN = 0
 
@@ -9500,7 +9510,7 @@ class Interface:
         file_para = "STEP1_AC.xml"
         ac_para = pth.join(path_ac, file_para)
 
-        #To save the STEP1 into Base Files for the 3Dmodel
+        # To save the STEP1 into Base Files for the 3Dmodel
         self.path_out = "ESP3D\Base Files"
         self.OAD.Save_File(ac_para, self.path_out, "STEP1_AC")
 
@@ -9550,19 +9560,25 @@ class Interface:
         Range_DOC_ref = data_ref["data:TLAR:range"].value[0]
         coefficient_ref = self.OAD.para_coefficient_range(data_ref, SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        BF_ref = self.BlockFuel_ID(OWE_ref, PL_DOC_ref, Range_DOC_ref, coefficient_ref, reserve_ref)
+        BF_ref = self.BlockFuel_ID(
+            OWE_ref, PL_DOC_ref, Range_DOC_ref, coefficient_ref, reserve_ref
+        )
         # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
         MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
         MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
-        #Compute design range at PL design and at MTOW
-        Design_range_ref = self.DesingRange_ID(OWE_ref, PL_DOC_ref, MTOW_ref,MFW_ref, coefficient_ref, reserve_ref)
-        BF_design_ref = self.BlockFuel_ID(OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref)
+        # Compute design range at PL design and at MTOW
+        Design_range_ref = self.DesingRange_ID(
+            OWE_ref, PL_DOC_ref, MTOW_ref, MFW_ref, coefficient_ref, reserve_ref
+        )
+        BF_design_ref = self.BlockFuel_ID(
+            OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref
+        )
         FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
         if FUEL_AVAILABLE_ref > MFW_ref:
             FUEL_AVAILABLE_ref = MFW_ref
         MAX_BF_MISSION_BF_percent_ref = 100 * BF_design_ref / MFW_ref
         AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_design_ref / FUEL_AVAILABLE_ref
-        if Design_range_ref ==0:
+        if Design_range_ref == 0:
             print("Warning: Design PL out of MTOW region")
 
         data_para = self.OAD.Input_File(ac_para)
@@ -9572,19 +9588,27 @@ class Interface:
         Range_DOC_para = data_para["data:TLAR:range"].value[0]
         coefficient_para = self.OAD.para_coefficient_range(data_para, SFC_para)
         reserve_para = data_para["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        BF_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para, reserve_para)
+        BF_para = self.BlockFuel_ID(
+            OWE_para, PL_DOC_para, Range_DOC_para, coefficient_para, reserve_para
+        )
         # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
         MFW_para = data_para["data:weight:aircraft:MFW"].value[0]
         MTOW_para = data_para["data:weight:aircraft:MTOW"].value[0]
-        #Compute design range at PL design and at MTOW
-        Design_range_para = self.DesingRange_ID(OWE_para, PL_DOC_para, MTOW_para,MFW_para, coefficient_para, reserve_para)
-        BF_design_para = self.BlockFuel_ID(OWE_para, PL_DOC_para, Design_range_para, coefficient_para, reserve_para)
+        # Compute design range at PL design and at MTOW
+        Design_range_para = self.DesingRange_ID(
+            OWE_para, PL_DOC_para, MTOW_para, MFW_para, coefficient_para, reserve_para
+        )
+        BF_design_para = self.BlockFuel_ID(
+            OWE_para, PL_DOC_para, Design_range_para, coefficient_para, reserve_para
+        )
         FUEL_AVAILABLE_para = MTOW_para - OWE_para - PL_DOC_para
         if FUEL_AVAILABLE_para > MFW_para:
             FUEL_AVAILABLE_para = MFW_para
         MAX_BF_MISSION_BF_percent_para = 100 * BF_design_para / MFW_para
-        AVAILABLE_BF_MISSION_BF_percent_para = 100 * BF_design_para / FUEL_AVAILABLE_para
-        if Design_range_para ==0:
+        AVAILABLE_BF_MISSION_BF_percent_para = (
+            100 * BF_design_para / FUEL_AVAILABLE_para
+        )
+        if Design_range_para == 0:
             print("Warning: Design PL out of MTOW region")
 
         # COMPUTE THE SPECIFIC RANGE
@@ -9831,7 +9855,10 @@ class Interface:
         )
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>"+ ",".join(self.ID_Type_percent))
+        C_para2 = widgets.HTML(
+            value=" <b>Incremental Developments Applied: </b>"
+            + ",".join(self.ID_Type_percent)
+        )
         C_para3 = widgets.HTML(value=" <b>Aircraft under study: </b>" + self.AC.value)
         fig3 = self.OAD.WeightBar_Diagramm(ac_ref, SFC_ref, name="REF AC", Color="blue")
         fig3 = self.OAD.WeightBar_Diagramm(
@@ -9851,7 +9878,7 @@ class Interface:
         self.tab_Analysis_Para.set_title(1, "BF/Npax & SR")
         self.tab_Analysis_Para.set_title(2, "Mass Breakdown")
         C_Vertical_Para = widgets.VBox(
-            children=[C_para1, C_para2,C_para3, self.tab_Analysis_Para],
+            children=[C_para1, C_para2, C_para3, self.tab_Analysis_Para],
             layout=widgets.Layout(
                 border="2px solid black",
                 align_items="center",
@@ -9934,10 +9961,14 @@ class Interface:
         # here, after this save function, the new values modifies by the user are changed in the input file
         def RUN_MDA_PARA():
             self.OWE_STEP2 = oad.evaluate_problem(CONFIGURATION, overwrite=True)
-            self.OAD.Save_File(self.OWE_STEP2.output_file_path, "OUTPUT\OUTPUT_FILE", "STEP2_AC")
+            self.OAD.Save_File(
+                self.OWE_STEP2.output_file_path, "OUTPUT\OUTPUT_FILE", "STEP2_AC"
+            )
             # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
             self.path_out = "ESP3D\Base Files"
-            self.OAD.Save_File(self.OWE_STEP2.output_file_path, self.path_out, "STEP2_AC")
+            self.OAD.Save_File(
+                self.OWE_STEP2.output_file_path, self.path_out, "STEP2_AC"
+            )
 
         # Function to update the progress bar
         def update_progress_bar():
@@ -10006,8 +10037,12 @@ class Interface:
         MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
         MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_ref = self.DesingRange_ID(OWE_ref, PL_DOC_ref, MTOW_ref, MFW_ref, coefficient_ref, reserve_ref)
-        BF_design_ref = self.BlockFuel_ID(OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref)
+        Design_range_ref = self.DesingRange_ID(
+            OWE_ref, PL_DOC_ref, MTOW_ref, MFW_ref, coefficient_ref, reserve_ref
+        )
+        BF_design_ref = self.BlockFuel_ID(
+            OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref
+        )
         FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
         if FUEL_AVAILABLE_ref > MFW_ref:
             FUEL_AVAILABLE_ref = MFW_ref
@@ -10038,8 +10073,21 @@ class Interface:
         MFW_para_S1 = data_para_S1["data:weight:aircraft:MFW"].value[0]
         MTOW_para_S1 = data_para_S1["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_para_S1 = self.DesingRange_ID(OWE_para_S1, PL_DOC_para_S1, MTOW_para_S1, MFW_para_S1, coefficient_para_S1, reserve_para_S1)
-        BF_design_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Design_range_para_S1, coefficient_para_S1, reserve_para_S1)
+        Design_range_para_S1 = self.DesingRange_ID(
+            OWE_para_S1,
+            PL_DOC_para_S1,
+            MTOW_para_S1,
+            MFW_para_S1,
+            coefficient_para_S1,
+            reserve_para_S1,
+        )
+        BF_design_para_S1 = self.BlockFuel_ID(
+            OWE_para_S1,
+            PL_DOC_para_S1,
+            Design_range_para_S1,
+            coefficient_para_S1,
+            reserve_para_S1,
+        )
         FUEL_AVAILABLE_para_S1 = MTOW_para_S1 - OWE_para_S1 - PL_DOC_para_S1
         if FUEL_AVAILABLE_para_S1 > MFW_para_S1:
             FUEL_AVAILABLE_para_S1 = MFW_para_S1
@@ -10047,7 +10095,7 @@ class Interface:
         AVAILABLE_BF_MISSION_BF_percent_para_S1 = (
             100 * BF_design_para_S1 / FUEL_AVAILABLE_para_S1
         )
-        if Design_range_para_S1 ==0:
+        if Design_range_para_S1 == 0:
             print("Warning: Design PL out of MTOW region")
         # FOR THE STEP 2 AC
         data_para = self.OAD.Input_File(ac_para_S2)
@@ -10094,8 +10142,21 @@ class Interface:
         MFW_para_S2 = data_para["data:weight:aircraft:MFW"].value[0]
         MTOW_para_S2 = data_para["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_para_S2 = self.DesingRange_ID(OWE_para_S2, PL_DOC_para_S2, MTOW_para_S2, MFW_para_S2,coefficient_para_S2, reserve_para_S2)
-        BF_design_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Design_range_para_S2, coefficient_para_S2,reserve_para_S2)
+        Design_range_para_S2 = self.DesingRange_ID(
+            OWE_para_S2,
+            PL_DOC_para_S2,
+            MTOW_para_S2,
+            MFW_para_S2,
+            coefficient_para_S2,
+            reserve_para_S2,
+        )
+        BF_design_para_S2 = self.BlockFuel_ID(
+            OWE_para_S2,
+            PL_DOC_para_S2,
+            Design_range_para_S2,
+            coefficient_para_S2,
+            reserve_para_S2,
+        )
         FUEL_AVAILABLE_para_S2 = MTOW_para_S2 - OWE_para_S2 - PL_DOC_para_S2
         if FUEL_AVAILABLE_para_S2 > MFW_para_S2:
             FUEL_AVAILABLE_para_S2 = MFW_para_S2
@@ -10103,7 +10164,7 @@ class Interface:
         AVAILABLE_BF_MISSION_BF_percent_para_S2 = (
             100 * BF_design_para_S2 / FUEL_AVAILABLE_para_S2
         )
-        if Design_range_para_S2 ==0:
+        if Design_range_para_S2 == 0:
             print("Warning: Design PL out of MTOW region")
         # COMPUTE THE SPECIFIC RANGE
         SR_ref = self.OAD.compute_SR(ac_ref, SFC_ref, BF_ref)[0]
@@ -10454,7 +10515,10 @@ class Interface:
         )
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>"+ ",".join(self.ID_Type_percent))
+        C_para2 = widgets.HTML(
+            value=" <b>Incremental Developments Applied: </b>"
+            + ",".join(self.ID_Type_percent)
+        )
         C_para3 = widgets.HTML(value=" <b>Aircraft under study: </b>" + self.AC.value)
         self.tab_Analysis_Para = widgets.Tab(
             children=[C_V_PL, C_V_BlockFuel, fig3],
@@ -10469,7 +10533,7 @@ class Interface:
         self.tab_Analysis_Para.set_title(1, "BF/Npax & SR")
         self.tab_Analysis_Para.set_title(2, "Mass Breakdown")
         C_Vertical_Para = widgets.VBox(
-            children=[C_para1, C_para2,C_para3, self.tab_Analysis_Para],
+            children=[C_para1, C_para2, C_para3, self.tab_Analysis_Para],
             layout=widgets.Layout(
                 border="5px solid black",
                 align_items="center",
@@ -10624,18 +10688,24 @@ class Interface:
         Range_DOC_ref = data_ref["data:TLAR:range"].value[0]
         coefficient_ref = self.OAD.para_coefficient_range(data_ref, SFC_ref)
         reserve_ref = data_ref["data:mission:MTOW_mission:reserve:fuel"].value[0]
-        BF_ref = self.BlockFuel_ID(OWE_ref, PL_DOC_ref, Range_DOC_ref, coefficient_ref, reserve_ref)
+        BF_ref = self.BlockFuel_ID(
+            OWE_ref, PL_DOC_ref, Range_DOC_ref, coefficient_ref, reserve_ref
+        )
         # To check the amount of  fuel for the mission with respect to the available fuel capacity at DOC and MFW of AC.
         MFW_ref = data_ref["data:weight:aircraft:MFW"].value[0]
         MTOW_ref = data_ref["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_ref = self.DesingRange_ID(OWE_ref, PL_DOC_ref, MTOW_ref, MFW_ref, coefficient_ref, reserve_ref)
-        BF_design_ref = self.BlockFuel_ID(OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref)
+        Design_range_ref = self.DesingRange_ID(
+            OWE_ref, PL_DOC_ref, MTOW_ref, MFW_ref, coefficient_ref, reserve_ref
+        )
+        BF_design_ref = self.BlockFuel_ID(
+            OWE_ref, PL_DOC_ref, Design_range_ref, coefficient_ref, reserve_ref
+        )
         FUEL_AVAILABLE_ref = MTOW_ref - OWE_ref - PL_DOC_ref
         if FUEL_AVAILABLE_ref > MFW_ref:
             FUEL_AVAILABLE_ref = MFW_ref
         MAX_BF_MISSION_BF_percent_ref = 100 * BF_design_ref / MFW_ref
-        AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_design_ref/ FUEL_AVAILABLE_ref
+        AVAILABLE_BF_MISSION_BF_percent_ref = 100 * BF_design_ref / FUEL_AVAILABLE_ref
         if Design_range_ref == 0:
             print("Warning: Design PL out MTOW region")
         # FOR THE STEP 1 AC
@@ -10660,14 +10730,29 @@ class Interface:
         MFW_para_S1 = data_para_S1["data:weight:aircraft:MFW"].value[0]
         MTOW_para_S1 = data_para_S1["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_para_S1 = self.DesingRange_ID(OWE_para_S1, PL_DOC_para_S1, MTOW_para_S1, MFW_para_S1,coefficient_para_S1, reserve_para_S1)
-        BF_design_para_S1 = self.BlockFuel_ID(OWE_para_S1, PL_DOC_para_S1, Design_range_para_S1, coefficient_para_S1,reserve_para_S1)
+        Design_range_para_S1 = self.DesingRange_ID(
+            OWE_para_S1,
+            PL_DOC_para_S1,
+            MTOW_para_S1,
+            MFW_para_S1,
+            coefficient_para_S1,
+            reserve_para_S1,
+        )
+        BF_design_para_S1 = self.BlockFuel_ID(
+            OWE_para_S1,
+            PL_DOC_para_S1,
+            Design_range_para_S1,
+            coefficient_para_S1,
+            reserve_para_S1,
+        )
         FUEL_AVAILABLE_para_S1 = MTOW_para_S1 - OWE_para_S1 - PL_DOC_para_S1
         if FUEL_AVAILABLE_para_S1 > MFW_para_S1:
             FUEL_AVAILABLE_para_S1 = MFW_para_S1
         MAX_BF_MISSION_BF_percent_para_S1 = 100 * BF_design_para_S1 / MFW_para_S1
-        AVAILABLE_BF_MISSION_BF_percent_para_S1 = (100 * BF_design_para_S1 / FUEL_AVAILABLE_para_S1)
-        if Design_range_para_S1 ==0:
+        AVAILABLE_BF_MISSION_BF_percent_para_S1 = (
+            100 * BF_design_para_S1 / FUEL_AVAILABLE_para_S1
+        )
+        if Design_range_para_S1 == 0:
             print("Warning: Design PL out of MTOW region")
 
         # FOR THE STEP 2 AC
@@ -10717,14 +10802,29 @@ class Interface:
         MFW_para_S2 = data_para_S2["data:weight:aircraft:MFW"].value[0]
         MTOW_para_S2 = data_para_S2["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_para_S2 = self.DesingRange_ID(OWE_para_S2, PL_DOC_para_S2, MTOW_para_S2, MFW_para_S2,coefficient_para_S2, reserve_para_S2)
-        BF_design_para_S2 = self.BlockFuel_ID(OWE_para_S2, PL_DOC_para_S2, Design_range_para_S2, coefficient_para_S2,reserve_para_S2)
+        Design_range_para_S2 = self.DesingRange_ID(
+            OWE_para_S2,
+            PL_DOC_para_S2,
+            MTOW_para_S2,
+            MFW_para_S2,
+            coefficient_para_S2,
+            reserve_para_S2,
+        )
+        BF_design_para_S2 = self.BlockFuel_ID(
+            OWE_para_S2,
+            PL_DOC_para_S2,
+            Design_range_para_S2,
+            coefficient_para_S2,
+            reserve_para_S2,
+        )
         FUEL_AVAILABLE_para_S2 = MTOW_para_S2 - OWE_para_S2 - PL_DOC_para_S2
         if FUEL_AVAILABLE_para_S2 > MFW_para_S2:
             FUEL_AVAILABLE_para_S2 = MFW_para_S2
         MAX_BF_MISSION_BF_percent_para_S2 = 100 * BF_design_para_S2 / MFW_para_S2
-        AVAILABLE_BF_MISSION_BF_percent_para_S2 = (100 * BF_design_para_S2 / FUEL_AVAILABLE_para_S2)
-        if Design_range_para_S2 ==0:
+        AVAILABLE_BF_MISSION_BF_percent_para_S2 = (
+            100 * BF_design_para_S2 / FUEL_AVAILABLE_para_S2
+        )
+        if Design_range_para_S2 == 0:
             print("Warning: Design PL out of MTOW region")
         # FOR THE STEP 3 AC
         OWE_para_S3 = data_para_S3["data:weight:aircraft:OWE"].value[0]
@@ -10748,14 +10848,29 @@ class Interface:
         MFW_para_S3 = data_para_S3["data:weight:aircraft:MFW"].value[0]
         MTOW_para_S3 = data_para_S3["data:weight:aircraft:MTOW"].value[0]
         # Compute design range at PL design and at MTOW
-        Design_range_para_S3 = self.DesingRange_ID(OWE_para_S3, PL_DOC_para_S3, MTOW_para_S3, MFW_para_S3,coefficient_para_S3, reserve_para_S3)
-        BF_design_para_S3 = self.BlockFuel_ID(OWE_para_S3, PL_DOC_para_S3, Design_range_para_S3, coefficient_para_S3,reserve_para_S3)
+        Design_range_para_S3 = self.DesingRange_ID(
+            OWE_para_S3,
+            PL_DOC_para_S3,
+            MTOW_para_S3,
+            MFW_para_S3,
+            coefficient_para_S3,
+            reserve_para_S3,
+        )
+        BF_design_para_S3 = self.BlockFuel_ID(
+            OWE_para_S3,
+            PL_DOC_para_S3,
+            Design_range_para_S3,
+            coefficient_para_S3,
+            reserve_para_S3,
+        )
         FUEL_AVAILABLE_para_S3 = MTOW_para_S3 - OWE_para_S3 - PL_DOC_para_S3
         if FUEL_AVAILABLE_para_S3 > MFW_para_S3:
             FUEL_AVAILABLE_para_S3 = MFW_para_S3
         MAX_BF_MISSION_BF_percent_para_S3 = 100 * BF_design_para_S3 / MFW_para_S3
-        AVAILABLE_BF_MISSION_BF_percent_para_S3 = (100 * BF_design_para_S3 / FUEL_AVAILABLE_para_S3)
-        if Design_range_para_S3 ==0:
+        AVAILABLE_BF_MISSION_BF_percent_para_S3 = (
+            100 * BF_design_para_S3 / FUEL_AVAILABLE_para_S3
+        )
+        if Design_range_para_S3 == 0:
             print("Warning: Design PL out of MTOW region")
         # COMPUTE THE SPECIFIC RANGE
         SR_ref = self.OAD.compute_SR(ac_ref, SFC_ref, BF_ref)[0]
@@ -11215,7 +11330,10 @@ class Interface:
         )
 
         C_para1 = widgets.HTML(value=" <b><u>Analysis Toolbox</u></b>")
-        C_para2 = widgets.HTML(value=" <b>Incremental Developments Applied: </b>"+ ",".join(self.ID_Type_percent))
+        C_para2 = widgets.HTML(
+            value=" <b>Incremental Developments Applied: </b>"
+            + ",".join(self.ID_Type_percent)
+        )
         C_para3 = widgets.HTML(value=" <b>Aircraft under study: </b>" + self.AC.value)
 
         self.tab_Analysis_Para = widgets.Tab(
@@ -11233,7 +11351,7 @@ class Interface:
         self.tab_Analysis_Para.set_title(3, "Wing Geometry")
         self.tab_Analysis_Para.set_title(4, "Mass diagram")
         C_Vertical_Para = widgets.VBox(
-            children=[C_para1, C_para2,C_para3, self.tab_Analysis_Para],
+            children=[C_para1, C_para2, C_para3, self.tab_Analysis_Para],
             layout=widgets.Layout(
                 border="5px solid black",
                 align_items="center",
@@ -11272,7 +11390,6 @@ class Interface:
             data_dict_ordered = xmltodict.parse(xml_obj.read())
             # closing the file
             xml_obj.close()
-
 
         # converts nested ordered dict to dict
         data_dict = {}

@@ -1,46 +1,38 @@
-import warnings
-
-warnings.filterwarnings(action="ignore")
 import os.path as pth
 import os
-import openmdao.api as om
-import logging
+import sys
+import warnings
 import shutil
-import fastoad.api as oad
-from fastoad._utils.files import make_parent_dir
-from fastoad.io.configuration import FASTOADProblemConfigurator
+import logging
+
 from typing import Union
+
 import pandas as pd
-import plotly.graph_objects as go
-from fastoad.io import VariableIO
 import numpy as np
-import math
+
+import openmdao.api as om
+
+import plotly.graph_objects as go
+from IPython.display import display, IFrame
+import ipywidgets as widgets
+from ipywidgets import Layout
+
 import csv
 import yaml
-from fastoad.io import DataFile
-from fastoad.io.configuration.configuration import (
-    FASTOADProblemConfigurator,
-    KEY_CONSTRAINTS,
-    KEY_DESIGN_VARIABLES,
-    KEY_OBJECTIVE,
-)
-from fastoad.openmdao.variables import Variable, VariableList
+
+import fastoad.api as oad
+from fastoad._utils.files import make_parent_dir
+from fastoad.io import VariableIO
 from fastoad.cmd.exceptions import FastPathExistsError
 
-
+warnings.filterwarnings(action="ignore")
 pd.set_option("display.max_rows", None)
 
 DEFAULT_WOP_URL = "https://ether.onera.fr/whatsopt"
 _LOGGER = logging.getLogger(__name__)
 _PROBLEM_CONFIGURATOR = None
 
-import sys
-
 sys.path.append(pth.abspath("."))
-
-from IPython.display import display, clear_output, IFrame
-import ipywidgets as widgets
-from ipywidgets import Layout
 
 
 class MDA:
@@ -300,22 +292,20 @@ class MDA:
         n2_file_path: str = None,
         overwrite: bool = False,
     ):
+        """
+        Write the N2 diagram of the problem in file n2.html
+
+        :param configuration_file_path:
+        :param n2_file_path: if None, will default to `n2.html`
+        :param overwrite:
+        :return: path of generated file.
+        :raise FastPathExistsError: if overwrite==False and n2_file_path already exists
+        """
 
         self.configuration_file_path = configuration_file_path
         self.n2_file_path = n2_file_path
         self.overwrite = overwrite
 
-        """
-        Write the N2 diagram of the problem in file n2.html
-
-       :param configuration_file_path:
-       :param n2_file_path: if None, will default to `n2.html`
-       :param overwrite:
-       :return: path of generated file.
-       :raise FastPathExistsError: if overwrite==False and n2_file_path already exists
-       """
-        if not self.n2_file_path:
-            n2_file_path = "n2.html"
         n2_file_path = pth.abspath(self.n2_file_path)
 
         if not overwrite and pth.exists(self.n2_file_path):
@@ -326,7 +316,7 @@ class MDA:
             )
 
         make_parent_dir(self.n2_file_path)
-        conf = FASTOADProblemConfigurator(self.configuration_file_path)
+        conf = oad.FASTOADProblemConfigurator(self.configuration_file_path)
         conf._set_configuration_modifier(_PROBLEM_CONFIGURATOR)
         problem = conf.get_problem()
         problem.setup()
@@ -627,7 +617,6 @@ class MDA:
         MTOW = np.asarray(Data["data:weight:aircraft:MTOW"].value)
         OWE = np.asarray(Data["data:weight:aircraft:OWE"].value)
         MFW = np.asarray(Data["data:weight:aircraft:MFW"].value)
-        MZFW = np.asarray(Data["data:weight:aircraft:MZFW"].value)
         Max_Payload = np.asarray(Data["data:weight:aircraft:max_payload"].value)
         try:
             reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
@@ -668,7 +657,6 @@ class MDA:
         ### Graphic Display ###
         if fig is None:
             fig = go.Figure()
-
 
         scatter_prd = go.Scatter(x=Range, y=List_points, name=name)
         scatter_nominal = go.Scatter(
@@ -980,7 +968,9 @@ class MDA:
         T = 288 - 0.0065 * z
         a = (gamma * R * T) ** (1 / 2)
         M = np.asarray(variables["data:TLAR:cruise_mach"].value)
-        L_over_D = np.asarray(variables["data:aerodynamics:aircraft:cruise:L_D_max"].value)
+        L_over_D = np.asarray(
+            variables["data:aerodynamics:aircraft:cruise:L_D_max"].value
+        )
 
         P = self.Mass * g
         SR = (a * M * L_over_D) / (self.SFC * P)
@@ -1005,7 +995,7 @@ class MDA:
         coefficient = self.para_coefficient_range(Data, self.sfc_bf)  # (aM L_D)/g*SFC
         reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
         BF_DOC = (OWE + PL_DOC + reserve) * (
-                math.exp((1000 * Range_DOC * 1.852) / coefficient) - 1
+            np.exp((1000 * Range_DOC * 1.852) / coefficient) - 1
         )
 
         if fig is None:
@@ -1021,9 +1011,7 @@ class MDA:
         # Set x-axes titles
         fig.update_xaxes(title_text="BF [kg]")
         # Set y-axes titles
-        fig.update_yaxes(
-            title_text="BF/NPAX [kg Fuel/Seat]"
-        )
+        fig.update_yaxes(title_text="BF/NPAX [kg Fuel/Seat]")
         fig.update_layout(title="BF/Npax - BF @ DOC", title_x=0.9)
         fig.update_layout(xaxis_type="log", yaxis_type="log")
         return fig
