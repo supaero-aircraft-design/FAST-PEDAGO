@@ -6,9 +6,11 @@ import ipywidgets as widgets
 
 from IPython.display import display, clear_output, HTML
 
-import webbrowser
-
-from buttons import get_fast_oad_core_git_button, get_fast_oad_cs25_git_button, get_fast_oad_cs23_git_button
+from fast_pedago.buttons.github_links_buttons import (
+    get_fast_oad_core_git_button,
+    get_fast_oad_cs25_git_button,
+    get_fast_oad_cs23_git_button,
+)
 
 
 class SensitivityAnalysisInterface:
@@ -27,7 +29,7 @@ class SensitivityAnalysisInterface:
             align_items="center", justify_content="center", width="65%", height="50%"
         )
 
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
                         .vbox-with-background {{
                             background-image: url("{image_path}");
@@ -56,9 +58,8 @@ class SensitivityAnalysisInterface:
 
                 print(
                     "Welcome to the training branch of FAST-OAD.\n"
-                    "This is the main menu which can lead you to the different activities to be "
-                    "performed. You'll also find some links to the source code of FAST-OAD and "
-                    "its plugins."
+                    "This is the main menu which can lead you to the different activities to be performed. You'll also "
+                    "find some links to the source code of FAST-OAD and its plugins."
                 )
 
         info_button.on_click(info_message)

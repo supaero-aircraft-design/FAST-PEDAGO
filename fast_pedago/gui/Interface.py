@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 
 import fastoad.api as oad
 
-from OAD import MDA
+from fast_pedago.mda.OAD import MDA
 
 import statistics
 
@@ -52,7 +52,7 @@ class Interface:
     def HomeInterface(self, event):
 
         clear_output()
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -149,7 +149,7 @@ class Interface:
         Line_1 = [self.Button_M0, self.Button_M1, self.Button_M2, self.Button_M3]
         Line_2 = [self.Button_M4, self.Button_M5, self.Button_M6, self.Button_M7]
 
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -417,7 +417,7 @@ class Interface:
         # COMPUTE FUSELAGE UI
         # To initialise the input values, we have a .csv file with data, this data stores the last
         # data the the user has input
-        with open("BlockImage/Geometry/Fuselage/Fuselage_IN.csv", "r") as file:
+        with open("../BlockImage/Geometry/Fuselage/Fuselage_IN.csv", "r") as file:
             csvreader = csv.reader(file, delimiter=",")
             Data_Fuselage_IN = []
             for row in csvreader:
@@ -708,7 +708,7 @@ class Interface:
             Data_Fuselage_IN[6] = self.CAB_7.value
 
             # Open the CSV file in write mode to store the inputs of the user
-            with open("BlockImage/Geometry/Fuselage/Fuselage_IN.csv", "w") as file:
+            with open("../BlockImage/Geometry/Fuselage/Fuselage_IN.csv", "w") as file:
                 writer = csv.writer(file, delimiter=",")
                 writer.writerow(Data_Fuselage_IN)
 
@@ -718,7 +718,7 @@ class Interface:
         button_Update_FUS.layout.height = "auto"
         button_Update_FUS.on_click(update_fus)
 
-        C_file = open("BlockImage/Images/cabin.PNG", "rb")
+        C_file = open("../BlockImage/Images/cabin.PNG", "rb")
         C_image = C_file.read()
         C_img = widgets.Image(value=C_image, format="PNG", width="45%", height="100%")
 
@@ -771,9 +771,9 @@ class Interface:
         C_box_inter = widgets.HBox(children=[C_box_C, C_box_Out], layout=layout_box)
 
         # This images are the block diagram
-        C_file1 = open("BlockImage/Geometry/Fuselage/1.PNG", "rb")
-        C_file2 = open("BlockImage/Geometry/Fuselage/2.PNG", "rb")
-        C_file3 = open("BlockImage/Geometry/Fuselage/3.PNG", "rb")
+        C_file1 = open("../BlockImage/Geometry/Fuselage/1.PNG", "rb")
+        C_file2 = open("../BlockImage/Geometry/Fuselage/2.PNG", "rb")
+        C_file3 = open("../BlockImage/Geometry/Fuselage/3.PNG", "rb")
         C_image1 = C_file1.read()
         C_image2 = C_file2.read()
         C_image3 = C_file3.read()
@@ -867,7 +867,7 @@ class Interface:
         # To compute ---------BREGUET ----------------------------------------------------------------------------------
         # To initialise the input values, we have a .csv file with data, this data stores the last
         # data the the user has input
-        with open("BlockImage/Basis/Breguet/Breguet_Range.csv", "r") as file:
+        with open("../BlockImage/Basis/Breguet/Breguet_Range.csv", "r") as file:
             csvreader = csv.reader(file, delimiter=",")
             Data_Breguet_Range_IN = []
             for row in csvreader:
@@ -1112,7 +1112,7 @@ class Interface:
 
             # Open the CSV file in write modea
 
-            with open("BlockImage/Basis/Breguet/Breguet_Range.csv", "w") as file:
+            with open("../BlockImage/Basis/Breguet/Breguet_Range.csv", "w") as file:
                 writer = csv.writer(file, delimiter=",")
                 writer.writerow(Data_Breguet_Range_IN)
 
@@ -1190,7 +1190,7 @@ class Interface:
         C_box_inter = widgets.HBox(children=[C_box_C, C_box_Out], layout=layout_box)
         C_box2_inter = widgets.HBox(children=[C_box2_C, C_box2_Out], layout=layout_box)
 
-        C_file1 = open("BlockImage/Basis/Breguet/1.PNG", "rb")
+        C_file1 = open("../BlockImage/Basis/Breguet/1.PNG", "rb")
         C_image1 = C_file1.read()
         C_img1 = widgets.Image(value=C_image1, format="PNG", width="100%", height="50%")
 
@@ -1219,7 +1219,7 @@ class Interface:
         # END OF BREGUET IMPLEMENTATION --------------------------------------------------------------------------------
 
         # MASS LOOP-----------------------------------------------------------------------------------------------------
-        with open("BlockImage/Basis/MassLoop/Massloop.csv", "r") as file:
+        with open("../BlockImage/Basis/MassLoop/Massloop.csv", "r") as file:
             csvreader = csv.reader(file, delimiter=",")
             Data_Mass_Loop_IN = []
             for row in csvreader:
@@ -1734,7 +1734,7 @@ class Interface:
 
             # Open the CSV file in write mode
 
-            with open("BlockImage/Basis/MassLoop/Massloop.csv", "w") as file:
+            with open("../BlockImage/Basis/MassLoop/Massloop.csv", "w") as file:
                 writer = csv.writer(file, delimiter=",")
                 writer.writerow(Data_Mass_Loop_IN)
 
@@ -1873,7 +1873,7 @@ class Interface:
         )
 
         # Constraint Diagram--------------------------------------------------------------------------------------------
-        with open("BlockImage/Basis/Constraint/Constraint.csv", "r") as file:
+        with open("../BlockImage/Basis/Constraint/Constraint.csv", "r") as file:
             csvreader = csv.reader(file, delimiter=",")
             Data_Constraint_IN = []
             for row in csvreader:
@@ -2109,7 +2109,7 @@ class Interface:
 
             # Open the CSV file in write mode
 
-            with open("BlockImage/Basis/Constraint/Constraint.csv", "w") as file:
+            with open("../BlockImage/Basis/Constraint/Constraint.csv", "w") as file:
                 writer = csv.writer(file, delimiter=",")
                 writer.writerow(Data_Constraint_IN)
 
@@ -2465,7 +2465,7 @@ class Interface:
             button_plots.layout.height = "auto"
             button_plots.on_click(self.UpdatePlots)
 
-            path_to_target = "OUTPUT\OUTPUT_EXO"
+            path_to_target = "../notebook/OUTPUT/OUTPUT_EXO"
             path_to_file_list_xml = []
             temp = os.listdir(path_to_target)
             for i in range(0, len(temp)):
@@ -2546,7 +2546,7 @@ class Interface:
             button_plots.layout.height = "auto"
             button_plots.on_click(self.UpdatePlots)
 
-            path_to_target = "OUTPUT\OUTPUT_EXO"
+            path_to_target = "../notebook/OUTPUT/OUTPUT_EXO"
             path_to_file_list_xml = []
             temp = os.listdir(path_to_target)
             for i in range(0, len(temp)):
@@ -2592,18 +2592,26 @@ class Interface:
         self.button_Run_Exo_Perfo.on_click(RUN_MDA_EXO_PERFO)
 
         # Here we call the analysis tools present in FAST-OAD, they initialy show the reference aircraft data.
-        self.fig1 = oad.wing_geometry_plot("File/workdir/oad_sizing_out_exo.xml")
-        self.fig2 = oad.aircraft_geometry_plot("File/workdir/oad_sizing_out_exo.xml")
-        self.fig3 = oad.drag_polar_plot("File/workdir/oad_sizing_out_exo.xml")
+        self.fig1 = oad.wing_geometry_plot(
+            "../notebook/File/workdir/oad_sizing_out_exo.xml"
+        )
+        self.fig2 = oad.aircraft_geometry_plot(
+            "../notebook/File/workdir/oad_sizing_out_exo.xml"
+        )
+        self.fig3 = oad.drag_polar_plot(
+            "../notebook/File/workdir/oad_sizing_out_exo.xml"
+        )
         self.fig4 = self.OAD.payload_range(
             "File/workdir/oad_sizing_out_exo.xml",
             "File/workdir/oad_sizing_exo.csv",
             name="oad_sizing_exo",
         )
         self.fig5 = oad.mass_breakdown_bar_plot(
-            "File/workdir/oad_sizing_out_exo.xml", name="oad_sizing_exo"
+            "../notebook/File/workdir/oad_sizing_out_exo.xml", name="oad_sizing_exo"
         )
-        self.fig6 = oad.mass_breakdown_sun_plot("File/workdir/oad_sizing_out_exo.xml")
+        self.fig6 = oad.mass_breakdown_sun_plot(
+            "../notebook/File/workdir/oad_sizing_out_exo.xml"
+        )
         self.output_fig5 = widgets.Output()
         with self.output_fig5:
             display(self.fig5)
@@ -2614,7 +2622,7 @@ class Interface:
             display(self.fig6)
         self.output_fig6 = go.FigureWidget(self.fig6)
         self.output_fig7 = widgets.Output()
-        Mission = [pth.join("File/workdir", "oad_sizing_exo.csv")]
+        Mission = [pth.join("../notebook/File/workdir", "oad_sizing_exo.csv")]
         name = ["oad_sizing_exo"]
         with self.output_fig7:
             self.fig7 = self.OAD.MISSION_PLOT(Mission, name)
@@ -2722,7 +2730,7 @@ class Interface:
         display(self.C_select)
 
         liste_exo_xml = self.output_list_exo_xml.value
-        path = "OUTPUT\OUTPUT_EXO"
+        path = "../notebook/OUTPUT/OUTPUT_EXO"
         XML_Liste_Design = []
         XML_Liste_Name = []
         CSV_Liste_Design = []
@@ -2903,7 +2911,7 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color = "#ebebeb"
         self.Button_M4.style.button_color = "#00d600"
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -2968,7 +2976,7 @@ class Interface:
         self.Button_M1.style.button_color = "#ebebeb"
         self.Button_M2.style.button_color = "#00d600"
         self.Button_M2.disabled = False
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -3281,7 +3289,7 @@ class Interface:
         self.Button_M2.style.button_color = "#ebebeb"
         self.Button_M3.style.button_color = "#00d600"
         self.Button_M3.disabled = False
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -3501,7 +3509,7 @@ class Interface:
         clear_output()
         self.Button_M3.style.button_color = "#ebebeb"
         self.Button_M4.style.button_color = "#00d600"
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -3783,7 +3791,7 @@ class Interface:
             layout=layout,
         )
 
-        C_file = open("BlockImage/Images/cabin.PNG", "rb")
+        C_file = open("../BlockImage/Images/cabin.PNG", "rb")
         C_image = C_file.read()
         C_img = widgets.Image(value=C_image, format="PNG", width="45%", height="100%")
         C_box_C = widgets.VBox(
@@ -4030,7 +4038,7 @@ class Interface:
                 width="100%",
             ),
         )
-        W_file = open("BlockImage/Images/Wing.PNG", "rb")
+        W_file = open("../BlockImage/Images/Wing.PNG", "rb")
         W_image = W_file.read()
         W_img = widgets.Image(value=W_image, format="PNG", width="100%", height="50%")
         self.W_box = widgets.VBox(
@@ -4099,7 +4107,7 @@ class Interface:
                 width="100%",
             ),
         )
-        F_file = open("BlockImage/Images/flaps.PNG", "rb")
+        F_file = open("../BlockImage/Images/flaps.PNG", "rb")
         F_image = F_file.read()
         F_img = widgets.Image(value=F_image, format="PNG", width="70%", height="100%")
         self.F_box = widgets.VBox(
@@ -4168,7 +4176,7 @@ class Interface:
                 width="100%",
             ),
         )
-        S_file = open("BlockImage/Images/SLATS.PNG", "rb")
+        S_file = open("../BlockImage/Images/SLATS.PNG", "rb")
         S_image = S_file.read()
         S_img = widgets.Image(value=S_image, format="PNG", width="70%", height="100%")
         self.S_box = widgets.VBox(
@@ -4279,7 +4287,7 @@ class Interface:
                 width="100%",
             ),
         )
-        H_file = open("BlockImage/Images/HT.PNG", "rb")
+        H_file = open("../BlockImage/Images/HT.PNG", "rb")
         H_image = H_file.read()
         H_img = widgets.Image(value=H_image, format="PNG", width="70%", height="100%")
         self.H_box = widgets.VBox(
@@ -4388,7 +4396,7 @@ class Interface:
                 width="100%",
             ),
         )
-        V_file = open("BlockImage/Images/HT.PNG", "rb")
+        V_file = open("../BlockImage/Images/HT.PNG", "rb")
         V_image = V_file.read()
         V_img = widgets.Image(value=V_image, format="PNG", width="70%", height="100%")
         self.V_box = widgets.VBox(
@@ -4476,7 +4484,7 @@ class Interface:
                 width="100%",
             ),
         )
-        P_file = open("BlockImage/Images/Engine.PNG", "rb")
+        P_file = open("../BlockImage/Images/Engine.PNG", "rb")
         P_image = P_file.read()
         P_img = widgets.Image(value=P_image, format="PNG", width="100%", height="100%")
         self.P_box = widgets.VBox(
@@ -4560,7 +4568,7 @@ class Interface:
                 width="100%",
             ),
         )
-        We_file = open("BlockImage/Images/WE.PNG", "rb")
+        We_file = open("../BlockImage/Images/WE.PNG", "rb")
         We_image = We_file.read()
         We_img = widgets.Image(value=We_image, format="PNG", width="100%", height="50%")
         self.We_box = widgets.VBox(
@@ -4634,7 +4642,7 @@ class Interface:
                 width="100%",
             ),
         )
-        A_file = open("BlockImage/Images/aero.PNG", "rb")
+        A_file = open("../BlockImage/Images/aero.PNG", "rb")
         A_image = A_file.read()
         A_img = widgets.Image(value=A_image, format="PNG", width="100%", height="50%")
         self.A_box = widgets.VBox(
@@ -4779,7 +4787,7 @@ class Interface:
                 width="100%",
             ),
         )
-        L_file = open("BlockImage/Images/load.PNG", "rb")
+        L_file = open("../BlockImage/Images/load.PNG", "rb")
         L_image = L_file.read()
         L_img = widgets.Image(value=L_image, format="PNG", width="100%", height="50%")
         self.L_box = widgets.VBox(
@@ -4908,7 +4916,7 @@ class Interface:
                 width="100%",
             ),
         )
-        MTOW_file = open("BlockImage/Images/Mission.PNG", "rb")
+        MTOW_file = open("../BlockImage/Images/Mission.PNG", "rb")
         MTOW_image = MTOW_file.read()
         MTOW_img = widgets.Image(
             value=MTOW_image, format="PNG", width="100%", height="50%"
@@ -5036,7 +5044,7 @@ class Interface:
                 width="100%",
             ),
         )
-        Size_file = open("BlockImage/Images/Mission.PNG", "rb")
+        Size_file = open("../BlockImage/Images/Mission.PNG", "rb")
         Size_image = Size_file.read()
         Size_img = widgets.Image(
             value=Size_image, format="PNG", width="100%", height="50%"
@@ -5190,7 +5198,7 @@ class Interface:
                 width="100%",
             ),
         )
-        PR_file = open("BlockImage/Images/Engine.PNG", "rb")
+        PR_file = open("../BlockImage/Images/Engine.PNG", "rb")
         PR_image = PR_file.read()
         PR_img = widgets.Image(value=PR_image, format="PNG", width="100%", height="50%")
         self.PR_box = widgets.VBox(
@@ -5662,7 +5670,7 @@ class Interface:
 
     def Save_INPUT_FILE(self, event):
         self.in_name = self.IN_NAME.value
-        self.path_in = "INPUT_FILE"
+        self.path_in = "../notebook/INPUT_FILE"
         self.OAD.Save_File(self.INPUT_FILE, self.path_in, self.in_name)
         print(str(self.IN_NAME.value) + " input file saved")
         print("-------------------------------------------")
@@ -5672,7 +5680,7 @@ class Interface:
     def input_aircraft_file(self, event):
         clear_output()
         display(self.BOX_INPUT)
-        self.path_to_target = "INPUT_FILE"
+        self.path_to_target = "../notebook/INPUT_FILE"
         self.path_to_file_list = []
         temp = os.listdir(self.path_to_target)
         for i in range(0, len(temp)):
@@ -5926,7 +5934,7 @@ class Interface:
     def View_Ouput_Data(self, event):
         clear_output()
         display(self.BOX_MDA)
-        path = "File/workdir"
+        path = "../notebook/File/workdir"
         file = self.MDA_problem.output_file_path
         self.OUTPUT_FILE = self.OAD.Join_File(path, file)
         self.output_data = self.OAD.View_outputs_data(self.OUTPUT_FILE)
@@ -5978,16 +5986,16 @@ class Interface:
 
     def Save_OUTPUT_FILE(self, event):
         self.out_name = self.OUT_NAME.value
-        self.path_out = "OUTPUT\OUTPUT_FILE"
-        self.path_miss = "OUTPUT\MISSION_FILE"
-        self.path_mission_ref = "File\workdir\oad_sizing.csv"
+        self.path_out = "../notebook/OUTPUT/OUTPUT_FILE"
+        self.path_miss = "../notebook/OUTPUT/MISSION_FILE"
+        self.path_mission_ref = "../notebook/File/workdir/oad_sizing.csv"
         self.OAD.Save_File(
             self.MDA_problem.output_file_path, self.path_out, self.out_name
         )
         self.OAD.Save_CSV_File(self.path_mission_ref, self.path_miss, self.out_name)
 
         # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-        self.path_out = "ESP3D\Base Files"
+        self.path_out = "../ESP3D/Base files"
         self.OAD.Save_File(
             self.MDA_problem.output_file_path, self.path_out, self.out_name
         )
@@ -5998,7 +6006,7 @@ class Interface:
     def Mission_Analysis_UI(self, event):
         clear_output()
         display(self.BOX_MDA)
-        path = "File\workdir"
+        path = "../notebook/File/workdir"
         file = self.MDA_problem.output_file_path
         self.OUTPUT_FILE = self.OAD.Join_File(path, file)
 
@@ -6223,8 +6231,8 @@ class Interface:
     # RUN THE MISSION ANALYSIS PROBLEM
     def Run_Mission_Aanlysis(self, event):
 
-        path_config = "File/data"
-        path_source = "File/workdir"
+        path_config = "../notebook/File/data"
+        path_source = "../notebook/File/workdir"
         config_file_name = "operational_mission_conf.yml"
         source_file_name = "oad_sizing_out.xml"
 
@@ -6281,7 +6289,7 @@ class Interface:
         clear_output()
         display(self.BOX_MDA)
         display(self.OPM_box)
-        path = "File/workdir"
+        path = "../notebook/File/workdir"
         file = self.OP_PROBLEM.output_file_path
         self.OP_OUTPUT_FILE = self.OAD.Join_File(path, file)
         self.OP_output_data = self.OAD.View_outputs_data(self.OP_OUTPUT_FILE)
@@ -6335,8 +6343,10 @@ class Interface:
     def Save_OP_OUTPUT_FILE(self, event):
 
         self.OP_out_name = self.OP_OUT_NAME.value
-        self.OP_path_miss = "OUTPUT/MISSION_FILE"
-        self.OP_path_mission_ref = "File/workdir/operational_mission_study.csv"
+        self.OP_path_miss = "../notebook/OUTPUT/MISSION_FILE"
+        self.OP_path_mission_ref = (
+            "../notebook/File/workdir/operational_mission_study.csv"
+        )
         self.OAD.Save_CSV_File(
             self.OP_path_mission_ref, self.OP_path_miss, self.OP_out_name
         )
@@ -6351,7 +6361,7 @@ class Interface:
         clear_output()
         self.Button_M4.style.button_color = "#ebebeb"
         self.Button_M5.style.button_color = "#00d600"
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -6384,7 +6394,7 @@ class Interface:
     def Output_aircraft_file(self, event):
         clear_output()
         display(self.BOX_INPUT)
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6556,7 +6566,7 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color = "#ebebeb"
         self.Button_M6.style.button_color = "#00d600"
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -6586,7 +6596,7 @@ class Interface:
             width="40%", height="50px", border="4px solid black"
         )
 
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6661,7 +6671,7 @@ class Interface:
         )
 
         # MASS BREAK DOWN UI
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6708,7 +6718,7 @@ class Interface:
 
         # MISSION UI
 
-        path_to_target = "OUTPUT/MISSION_FILE"
+        path_to_target = "../notebook/OUTPUT/MISSION_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6745,7 +6755,7 @@ class Interface:
 
         # PAYLOAD RANGE UI
 
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6782,7 +6792,7 @@ class Interface:
         )
 
         # 3D MODELER
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -6862,7 +6872,7 @@ class Interface:
         display(self.RES_box)
         display(self.MODEL3D_UI_BOX)
         MODEL3D_liste_design = self.output_file_MODEL3D.value
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         MODEL3D_Liste_Design = []
         MODEL3D_Liste_Name = []
         i = 0
@@ -6883,7 +6893,7 @@ class Interface:
         display(self.RES_box)
         display(self.GEO_UI_BOX)
         geo_liste_design = self.output_file_geo.value
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         Geo_Liste_Design = []
         Geo_Liste_Name = []
         i = 0
@@ -6910,7 +6920,7 @@ class Interface:
         display(self.RES_box)
         display(self.AERO_UI_BOX)
         aero_liste_design = self.output_file_aero.value
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         Aero_Liste_Design = []
         Aero_Liste_Name = []
         i = 0
@@ -6931,7 +6941,7 @@ class Interface:
         display(self.RES_box)
         display(self.MASS_UI_BOX)
         mass_liste_design = self.output_file_mass.value
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         Mass_Liste_Design = []
         Mass_Liste_Name = []
         i = 0
@@ -6956,7 +6966,7 @@ class Interface:
         display(self.RES_box)
         display(self.MISS_UI_BOX)
         miss_liste_design = self.output_file_miss.value
-        path = "OUTPUT/MISSION_FILE"
+        path = "../notebook/OUTPUT/MISSION_FILE"
         MISS_Liste_Design = []
         MISS_Liste_Name = []
         i = 0
@@ -7013,7 +7023,7 @@ class Interface:
     # OPTIMIZATION PROBLEM UI
     def OPT_DESIGN(self, event):
         clear_output()
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -7102,14 +7112,14 @@ class Interface:
 
     def OPT_PROBLEM_UI(self, event):
         # PATH OF THE AIRCRAFT TO OPTIMIZE
-        path_source = "OUTPUT/OUTPUT_FILE"
+        path_source = "../notebook/OUTPUT/OUTPUT_FILE"
         AC_file = self.AC_Opt.value
         self.OPT_Source = pth.join(path_source, AC_file)
 
         clear_output()
 
         # LIST OF INPUT VARIABLE NAMES
-        path = "File/workdir"
+        path = "../notebook/File/workdir"
         file_in = "oad_sizing_in.xml"
         File_In = pth.join(path, file_in)
         datafile_in = self.OAD.Input_File(File_In)
@@ -7152,7 +7162,7 @@ class Interface:
                 self.liste_in_MISS.append(self.liste_in[i])
 
         # LIST OF OUTPUT VARIABLE NAME
-        path = "File/workdir"
+        path = "../notebook/File/workdir"
         file_out = "oad_sizing_out.xml"
         File_Out = pth.join(path, file_out)
         datafile_out = self.OAD.Input_File(File_Out)
@@ -7507,7 +7517,7 @@ class Interface:
 
         # The configuration file path
         file_name = "oad_sizing.yml"
-        path = "File/data"
+        path = "../notebook/File/data"
         file_path = pth.join(path, file_name)
 
         # Optimization problem definition
@@ -7639,7 +7649,7 @@ class Interface:
         clear_output()
         display(self.OPT_BOX)
         configuration_name = "oad_sizing.yml"
-        path_configuration = "File/data"
+        path_configuration = "../notebook/File/data"
         self.configuration = pth.join(path_configuration, configuration_name)
         # INPUT FILE FOR THE OPTIMIZATION PROBLEM
         self.OAD.OPT_INPUTS(self.configuration, self.OPT_Source)
@@ -7695,7 +7705,7 @@ class Interface:
     def View_Opt_Ouput_Data(self, event):
         clear_output()
         display(self.OPT_BOX)
-        path = "File/workdir"
+        path = "../notebook/File/workdir"
         file = self.OPT_problem.output_file_path
         self.OPT_OUTPUT_FILE = self.OAD.Join_File(path, file)
         self.opt_output_data = self.OAD.View_outputs_data(self.OPT_OUTPUT_FILE)
@@ -7739,12 +7749,12 @@ class Interface:
 
     def Save_OPT_FILE(self, event):
         opt_name = self.OPT_NAME.value
-        path_out = "OUTPUT/OUTPUT_FILE"
-        path_miss = "OUTPUT/MISSION_FILE"
-        path_mission_ref = "File/workdir/oad_sizing.csv"
+        path_out = "../notebook/OUTPUT/OUTPUT_FILE"
+        path_miss = "../notebook/OUTPUT/MISSION_FILE"
+        path_mission_ref = "../notebook/File/workdir/oad_sizing.csv"
         self.OAD.Save_File(self.OPT_problem.output_file_path, path_out, opt_name)
         self.OAD.Save_CSV_File(path_mission_ref, path_miss, opt_name)
-        path_out = "ESP3D/Base Files"
+        path_out = "../ESP3D/Base files"
         self.OAD.Save_File(self.OPT_problem.output_file_path, path_out, opt_name)
         print(str(opt_name) + " OPTIMIZATION OUTPUTS AND MISSION RESULTS SAVED ")
         print("-------------------------------------------")
@@ -7761,7 +7771,7 @@ class Interface:
         clear_output()
         self.Button_M5.style.button_color = "#ebebeb"
         self.Button_M6.style.button_color = "#ebebeb"
-        image_path = "BlockImage/Images/Wing.jpg"
+        image_path = "../BlockImage/Images/Wing.jpg"
         custom_css = f"""
         .vbox-with-background {{
             background-image: url("{image_path}");
@@ -7794,7 +7804,7 @@ class Interface:
         self.List_CD = []
         self.List_finesse = []
 
-        path_to_target = "OUTPUT/OUTPUT_FILE"
+        path_to_target = "../notebook/OUTPUT/OUTPUT_FILE"
         path_to_file_list = []
         temp = os.listdir(path_to_target)
         for i in range(0, len(temp)):
@@ -7847,11 +7857,11 @@ class Interface:
         self.ID_Type = []
         self.ID_Type_percent = []
         aircraft = self.AC.value
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         self.AC_ref = pth.join(path, aircraft)
 
         mission_name = os.path.splitext(os.path.split(aircraft)[1])[0] + ".CSV"
-        path_miss = "OUTPUT/MISSION_FILE"
+        path_miss = "../notebook/OUTPUT/MISSION_FILE"
         try:
             self.mission_ref = pth.join(path_miss, mission_name)
             SFC = self.OAD.para_sfc(self.mission_ref)
@@ -7983,9 +7993,9 @@ class Interface:
         self.var_owe = None
         self.var_mtow = None
 
-        C_file1 = open("BlockImage/Parametric/STEP1.PNG", "rb")
-        C_file2 = open("BlockImage/Parametric/STEP2.PNG", "rb")
-        C_file3 = open("BlockImage/Parametric/STEP3.PNG", "rb")
+        C_file1 = open("../BlockImage/Parametric/STEP1.PNG", "rb")
+        C_file2 = open("../BlockImage/Parametric/STEP2.PNG", "rb")
+        C_file3 = open("../BlockImage/Parametric/STEP3.PNG", "rb")
         C_image1 = C_file1.read()
         C_image2 = C_file2.read()
         C_image3 = C_file3.read()
@@ -8068,7 +8078,7 @@ class Interface:
             ],
             layout=layout_box,
         )
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_name = "STEP1_AC.xml"
         para_path = pth.join(path, file_name)
         self.Para_Data1 = self.OAD.Input_File(para_path)
@@ -8076,7 +8086,7 @@ class Interface:
         display(self.ID2_box)
 
     def Weight_Saving_UI(self, event):
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_name = "STEP1_AC.xml"
         para_path = pth.join(path, file_name)
         self.Para_Data1 = self.OAD.Input_File(para_path)
@@ -8278,7 +8288,7 @@ class Interface:
         clear_output()
         display(self.ID2_box)
 
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_name = "STEP1_AC.xml"
         para_path = pth.join(path, file_name)
         self.Para_DataNEO = self.OAD.Input_File(para_path)
@@ -8692,7 +8702,7 @@ class Interface:
         print("--------------------NEW ENGINE MODIFICATIONS SAVED---------------------")
 
     def Drag_Saving_UI(self, event):
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_name = "STEP1_AC.xml"
         para_path = pth.join(path, file_name)
         self.Para_Data2 = self.OAD.Input_File(para_path)
@@ -8826,7 +8836,7 @@ class Interface:
         )
 
     def MTOW_Increase_UI(self, event):
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_name = "STEP1_AC.xml"
         para_path = pth.join(path, file_name)
         self.Para_Data4 = self.OAD.Input_File(para_path)
@@ -8928,7 +8938,7 @@ class Interface:
 
     def Fuselage_Stretch_UI(self, event):
 
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file = "STEP1_AC.xml"
         para_path = pth.join(path, file)
         para_data = self.OAD.Input_File(para_path)
@@ -9453,7 +9463,7 @@ class Interface:
         part_CD_ac = 1 + self.percent_CD / 100
         new_CD_ac = [cd * part_CD_ac for cd in self.CD_ac]
 
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file = "STEP1_AC.xml"
         para_path = pth.join(path, file)
         para_data = self.OAD.Input_File(para_path)
@@ -9506,12 +9516,12 @@ class Interface:
         ac_ref = self.AC_ref
         mission_ref = self.mission_ref
 
-        path_ac = "OUTPUT/OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para = "STEP1_AC.xml"
         ac_para = pth.join(path_ac, file_para)
 
         # To save the STEP1 into Base Files for the 3Dmodel
-        self.path_out = "ESP3D\Base Files"
+        self.path_out = "../ESP3D/Base files"
         self.OAD.Save_File(ac_para, self.path_out, "STEP1_AC")
 
         # Compute the new redesigned aircraft performance
@@ -9905,7 +9915,7 @@ class Interface:
         EngineMasses_ref = data_ref["data:weight:propulsion:engine:mass"].value[0]
 
         # DATA AC STEP1
-        path_ac = "OUTPUT/OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para_S1 = "STEP1_AC.xml"
         ac_para_S1 = pth.join(path_ac, file_para_S1)
         SOURCE = ac_para_S1
@@ -9953,7 +9963,7 @@ class Interface:
 
         # BUILD CONFIG AND INPUTS FOR STEP 2 problem
 
-        path_config = "File\data"
+        path_config = "../notebook/File/data"
         file_config = "oad_sizing_step2.yml"
         CONFIGURATION = pth.join(path_config, file_config)
         oad.generate_inputs(CONFIGURATION, SOURCE, overwrite=True)
@@ -9965,7 +9975,7 @@ class Interface:
                 self.OWE_STEP2.output_file_path, "OUTPUT\OUTPUT_FILE", "STEP2_AC"
             )
             # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-            self.path_out = "ESP3D\Base Files"
+            self.path_out = "../ESP3D/Base files"
             self.OAD.Save_File(
                 self.OWE_STEP2.output_file_path, self.path_out, "STEP2_AC"
             )
@@ -10004,13 +10014,13 @@ class Interface:
         display(self.ID2_box)
 
         # NEW DATA OF THE STEP 2 AC
-        path_miss = "File\workdir"
+        path_miss = "../notebook/File/workdir"
         file_miss = "step2_oad_sizing.csv"
         mission_para_S2 = pth.join(
             path_miss, file_miss
         )  # new aircraft mission after looping
 
-        path_ac = "OUTPUT\OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para = "STEP2_AC.xml"
         ac_para_S2 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
 
@@ -10116,7 +10126,7 @@ class Interface:
                 dest_aero_element.append(child)
 
             dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
-            path_ac = "OUTPUT/OUTPUT_FILE"
+            path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
             file_para = "STEP2_AC.xml"
             ac_para_S2 = pth.join(
                 path_ac, file_para
@@ -10559,14 +10569,14 @@ class Interface:
         CD_ref = data_ref["data:aerodynamics:aircraft:cruise:CD"].value[0]
 
         # DATA AC STEP1
-        path_ac = "OUTPUT/OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para_S1 = "STEP1_AC.xml"
         ac_para_S1 = pth.join(path_ac, file_para_S1)
         SOURCE = ac_para_S1
         data_para_S1 = self.OAD.Input_File(ac_para_S1)
 
         # DATA AC STEP2
-        path_ac = "OUTPUT/OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para_S2 = "STEP2_AC.xml"
         ac_para_S2 = pth.join(path_ac, file_para_S2)
 
@@ -10605,7 +10615,7 @@ class Interface:
 
         # BUILD CONFIG AND INPUTS FOR STEP 2 problem
 
-        path_config = "File/data"
+        path_config = "../notebook/File/data"
         file_config = "oad_sizing_step3.yml"
         CONFIGURATION = pth.join(path_config, file_config)
         oad.generate_inputs(CONFIGURATION, SOURCE, overwrite=True)
@@ -10617,7 +10627,7 @@ class Interface:
                 self.OWE_STEP3.output_file_path, "OUTPUT/OUTPUT_FILE", "STEP3_AC"
             )
             # the following lines are meant to copy th output file into BaseFile folder (geo 3d modeler)
-            self.path_out = "ESP3D/Base Files"
+            self.path_out = "../ESP3D/Base files"
             self.OAD.Save_File(
                 self.OWE_STEP3.output_file_path, self.path_out, "STEP3_AC"
             )
@@ -10656,7 +10666,7 @@ class Interface:
         display(self.ID2_box)
 
         # NEW DATA OF THE STEP 3 AC
-        path_miss = "File/workdir"
+        path_miss = "../notebook/File/workdir"
         file_miss = "step2_oad_sizing.csv"
         mission_para_S2 = pth.join(
             path_miss, file_miss
@@ -10666,7 +10676,7 @@ class Interface:
             path_miss, file_miss
         )  # new aircraft mission after looping
 
-        path_ac = "OUTPUT/OUTPUT_FILE"
+        path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
         file_para = "STEP3_AC.xml"
         ac_para_S3 = pth.join(path_ac, file_para)  # new aircraft after ID and looping
         data_para_S3 = self.OAD.Input_File(ac_para_S3)
@@ -10774,7 +10784,7 @@ class Interface:
                 dest_aero_element.append(child)
 
             dest_tree.write(ac_para_S2, encoding="utf-8", xml_declaration=True)
-            path_ac = "OUTPUT/OUTPUT_FILE"
+            path_ac = "../notebook/OUTPUT/OUTPUT_FILE"
             file_para = "STEP2_AC.xml"
             ac_para_S2 = pth.join(
                 path_ac, file_para
@@ -11367,7 +11377,7 @@ class Interface:
     def GEO3D(self, Model3dFile):
         # -------------------------------------------------------------------------------------------------
         Base_folder = "ESP3D\Base files"
-        WORK_FOLDER_PATH = "ESP3D\CSMworkdir"
+        WORK_FOLDER_PATH = "../ESP3D/CSMworkdir"
 
         # Check if the destination folder already exists
         if os.path.exists(WORK_FOLDER_PATH):
@@ -11564,5 +11574,5 @@ class Interface:
             # -------------------------------------------------------------------------------------------------
 
         # %%capture captured_output
-        with open("ESP3D\CSMworkdir\esp_logs.txt", "w") as outfile:
+        with open("../ESP3D/CSMworkdir/esp_logs.txt", "w") as outfile:
             subprocess.run(["ESP3D\CSMworkdir\ESP.bat"], stdout=outfile, text=True)

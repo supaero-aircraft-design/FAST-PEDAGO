@@ -32,13 +32,13 @@ DEFAULT_WOP_URL = "https://ether.onera.fr/whatsopt"
 _LOGGER = logging.getLogger(__name__)
 _PROBLEM_CONFIGURATOR = None
 
-sys.path.append(pth.abspath("."))
+sys.path.append(pth.abspath(".."))
 
 
 class MDA:
     def __init__(self):
-        self.DATA_FOLDER_PATH = "File/Reference"
-        self.WORK_FOLDER_PATH = "File/workdir"
+        self.DATA_FOLDER_PATH = "../notebook/File/Reference"
+        self.WORK_FOLDER_PATH = "../notebook/File/workdir"
 
     # OAD instruction for the reference file
     def Source_File(self, path, file):
@@ -96,7 +96,7 @@ class MDA:
 
     def write_configuration(self, list_modules):
         self.list_modules = list_modules
-        path = "File/data"
+        path = "../notebook/File/data"
         file = "oad_sizing.yml"
         file_path = pth.join(path, file)
         with open(file_path, "r+") as f:
@@ -350,10 +350,10 @@ class MDA:
         return self.INPUT
 
     def Generate_Input_File_Exo(self):
-        configuration_exo_path = "File/data"
+        configuration_exo_path = "../notebook/File/data"
         file_conf = "oad_sizing_exo.yml"
         file = "Aircraft_reference_data.xml"
-        input_exo_path = "File/Reference"
+        input_exo_path = "../notebook/File/Reference"
         SOURCE_FILE_EXO = pth.join(input_exo_path, file)
         self.CONFIGURATION_FILE_EXO = pth.join(configuration_exo_path, file_conf)
         self.INPUT_EXO = oad.generate_inputs(
@@ -390,7 +390,7 @@ class MDA:
         return self.problem
 
     def RUN_OAD_EXO(self):
-        conf = pth.join("File/data", "oad_sizing_exo_noperfo.yml")
+        conf = pth.join("../notebook/File/data", "oad_sizing_exo_noperfo.yml")
         self.problem_exo = oad.evaluate_problem(conf, overwrite=True)
         return self.problem_exo
 
@@ -729,7 +729,7 @@ class MDA:
     def PARA_AC_FILE(self, AC_ref):
 
         self.AC_ref = AC_ref
-        path = "OUTPUT/OUTPUT_FILE"
+        path = "../notebook/OUTPUT/OUTPUT_FILE"
         file_path = pth.join(path, self.AC_ref)
         file_para = "STEP1_AC.xml"
         para_path = pth.join(path, file_para)
