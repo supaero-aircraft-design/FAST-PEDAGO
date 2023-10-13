@@ -12,6 +12,20 @@ from fast_pedago.buttons.github_links_buttons import (
     get_fast_oad_cs23_git_button,
 )
 
+# Create a custom CSS background to have a nice picture in the main menu
+CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
+                        background-image: url("{"../BlockImage/Images/Wing.jpg"}");
+                        background-size: cover;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        width: 100%;
+                        height: 100%;
+                        }}
+                        """
+
+# Create a withe box behind the info button
+display(widgets.HTML("""<style>.white-vbox {background-color: white;}</style>"""))
+
 
 class SensitivityAnalysisInterface:
     def __init__(self):
@@ -20,27 +34,6 @@ class SensitivityAnalysisInterface:
 
     def init_main_menu(self):
 
-        title = widgets.HTML(
-            value="<h1 style='text-align:center;font-weight:bold;font-family:Arial, "
-            "sans-serif;font-size:28px;color:#003399;text-decoration:underline;'>FAST "
-            "Overall Aircraft Design</h1> "
-        )
-        layout_title = widgets.Layout(
-            align_items="center", justify_content="center", width="65%", height="50%"
-        )
-
-        image_path = "../BlockImage/Images/Wing.jpg"
-        custom_css = f"""
-                        .vbox-with-background {{
-                            background-image: url("{image_path}");
-                            background-size: cover;
-                            background-position: center;
-                            background-repeat: no-repeat;
-                            width: 100%;
-                            height: 100%;
-                        }}
-                        """
-
         # Creating and instantiating an info button
         info_button = widgets.Button(description="")
         info_button.icon = "fa-info-circle"
@@ -48,19 +41,24 @@ class SensitivityAnalysisInterface:
         info_button.layout.height = "auto"
 
         output = widgets.Output()
+        output.add_class("white-vbox")
 
         # Define what happens when you click on the info button
         def info_message(event):
 
             with output:
 
-                clear_output(wait=True)
+                # If the message is displayed, we clear the message
+                if len(output.outputs) > 0:
+                    output.clear_output()
 
-                print(
-                    "Welcome to the training branch of FAST-OAD.\n"
-                    "This is the main menu which can lead you to the different activities to be performed. You'll also "
-                    "find some links to the source code of FAST-OAD and its plugins."
-                )
+                # Else we print the message
+                else:
+                    print(
+                        "Welcome to the training branch of FAST-OAD.\n"
+                        "This is the main menu which can lead you to the different activities to be performed. You'll "
+                        "also find some links to the source code of FAST-OAD and its plugins."
+                    )
 
         info_button.on_click(info_message)
 
@@ -81,8 +79,7 @@ class SensitivityAnalysisInterface:
             ),
         )
 
-        box1 = widgets.HBox(children=[title], layout=layout_title)
-        box4 = widgets.Box(
+        box_info_button = widgets.Box(
             children=[info_button, output],
             layout=widgets.Layout(
                 border="0px solid black",
@@ -94,20 +91,20 @@ class SensitivityAnalysisInterface:
             ),
         )
 
-        display(
-            widgets.HTML(
-                """
-        <style>
-        .custom-vbox {
-            background-color: white;
-        }
-        </style>
-        """
-            )
+        # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
+        filler_box = widgets.Box(
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="100",
+                height="78%",
+            ),
         )
 
         self.main_menu = widgets.VBox(
-            children=[box1, box_buttons_git, box4],
+            children=[filler_box, box_buttons_git, box_info_button],
             layout=widgets.Layout(
                 border="6px solid black",
                 margin="100 20 50 100px",
@@ -118,9 +115,10 @@ class SensitivityAnalysisInterface:
                 justify_content="center",
             ),
         )
-        self.main_menu.add_class("vbox-with-background")
 
-        display(HTML(f"<style>{custom_css}</style>"))
+        # Displays the background picture
+        self.main_menu.add_class("vbox-with-background")
+        display(HTML(f"<style>{CUSTOM_CSS_BACKGROUND}</style>"))
 
         # Returning the menu make it appear on the screen, else nothing happens
         return self.main_menu
