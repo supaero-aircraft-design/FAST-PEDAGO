@@ -91,11 +91,11 @@ class SensitivityAnalysisInterface:
             ),
         )
 
-        info_button, output = get_main_menu_info_button()
+        info_button = get_main_menu_info_button()
 
         # Add a box for the info button
         box_info_button = widgets.Box(
-            children=[info_button, output],
+            children=[info_button],
             layout=widgets.Layout(
                 border="0px solid black",
                 margin="0 0 0 0px",
@@ -138,11 +138,11 @@ class SensitivityAnalysisInterface:
         back_home_button.on_click(self.display_main_menu)
 
         # A small info button
-        info_button, output = get_sensitivity_analysis_info_button()
+        info_button = get_sensitivity_analysis_info_button()
 
         # Create a header with an info button and a button to go back home
         top_layer_box = widgets.Box(
-            children=[back_home_button, info_button, output],
+            children=[back_home_button, info_button],
             layout=widgets.Layout(
                 border="0px solid black",
                 margin="0 0 0 0px",
