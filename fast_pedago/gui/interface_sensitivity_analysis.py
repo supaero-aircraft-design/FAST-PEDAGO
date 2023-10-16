@@ -6,12 +6,13 @@ import ipywidgets as widgets
 
 from IPython.display import display, HTML
 
-from fast_pedago.buttons.github_links_buttons import (
+from fast_pedago.buttons import (
     get_fast_oad_core_git_button,
     get_fast_oad_cs25_git_button,
     get_fast_oad_cs23_git_button,
+    get_info_button,
+    get_start_button,
 )
-from fast_pedago.buttons.info_button import get_info_button
 
 # Create a custom CSS background to have a nice picture in the main menu
 CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
@@ -32,7 +33,31 @@ class SensitivityAnalysisInterface:
 
     def init_main_menu(self):
 
-        info_button, output = get_info_button()
+        # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
+        filler_box = widgets.Box(
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="100",
+                height="68%",
+            ),
+        )
+
+        start_button = get_start_button()
+
+        # Add a box for the start button
+        box_start_button = widgets.Box(
+            children=[start_button],
+            layout=widgets.Layout(
+                display="flex",
+                flex_flow="column",
+                align_items="center",
+                width="100%",
+                height="12%",
+            ),
+        )
 
         fast_core_git_button = get_fast_oad_core_git_button()
         fast_cs25_git_button = get_fast_oad_cs25_git_button()
@@ -52,6 +77,8 @@ class SensitivityAnalysisInterface:
             ),
         )
 
+        info_button, output = get_info_button()
+
         # Add a box for the info button
         box_info_button = widgets.Box(
             children=[info_button, output],
@@ -65,21 +92,9 @@ class SensitivityAnalysisInterface:
             ),
         )
 
-        # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
-        filler_box = widgets.Box(
-            layout=widgets.Layout(
-                border="0px solid black",
-                margin="0 0 0 0px",
-                padding="0px",
-                align_items="center",
-                width="100",
-                height="80%",
-            ),
-        )
-
         # Create the main interface
         self.main_menu = widgets.VBox(
-            children=[filler_box, box_buttons_git, box_info_button],
+            children=[filler_box, box_start_button, box_buttons_git, box_info_button],
             layout=widgets.Layout(
                 border="6px solid black",
                 margin="100 20 50 100px",
