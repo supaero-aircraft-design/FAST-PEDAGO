@@ -4,13 +4,14 @@
 
 import ipywidgets as widgets
 
-from IPython.display import display, clear_output, HTML
+from IPython.display import display, HTML
 
 from fast_pedago.buttons.github_links_buttons import (
     get_fast_oad_core_git_button,
     get_fast_oad_cs25_git_button,
     get_fast_oad_cs23_git_button,
 )
+from fast_pedago.buttons.info_button import get_info_button
 
 # Create a custom CSS background to have a nice picture in the main menu
 CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
@@ -23,9 +24,6 @@ CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
                         }}
                         """
 
-# Create a withe box behind the info button
-display(widgets.HTML("""<style>.white-vbox {background-color: white;}</style>"""))
-
 
 class SensitivityAnalysisInterface:
     def __init__(self):
@@ -34,38 +32,13 @@ class SensitivityAnalysisInterface:
 
     def init_main_menu(self):
 
-        # Creating and instantiating an info button
-        info_button = widgets.Button(description="")
-        info_button.icon = "fa-info-circle"
-        info_button.layout.width = "auto"
-        info_button.layout.height = "auto"
-
-        output = widgets.Output()
-        output.add_class("white-vbox")
-
-        # Define what happens when you click on the info button
-        def info_message(event):
-
-            with output:
-
-                # If the message is displayed, we clear the message
-                if len(output.outputs) > 0:
-                    output.clear_output()
-
-                # Else we print the message
-                else:
-                    print(
-                        "Welcome to the training branch of FAST-OAD.\n"
-                        "This is the main menu which can lead you to the different activities to be performed. You'll "
-                        "also find some links to the source code of FAST-OAD and its plugins."
-                    )
-
-        info_button.on_click(info_message)
+        info_button, output = get_info_button()
 
         fast_core_git_button = get_fast_oad_core_git_button()
         fast_cs25_git_button = get_fast_oad_cs25_git_button()
         fast_cs23_git_button = get_fast_oad_cs23_git_button()
 
+        # Add a box for the GitHub links
         box_buttons_git = widgets.HBox(
             children=[fast_core_git_button, fast_cs25_git_button, fast_cs23_git_button],
             layout=widgets.Layout(
@@ -75,10 +48,11 @@ class SensitivityAnalysisInterface:
                 justify_content="center",
                 align_items="center",
                 width="100%",
-                height="10%",
+                height="8%",
             ),
         )
 
+        # Add a box for the info button
         box_info_button = widgets.Box(
             children=[info_button, output],
             layout=widgets.Layout(
@@ -99,10 +73,11 @@ class SensitivityAnalysisInterface:
                 padding="0px",
                 align_items="center",
                 width="100",
-                height="78%",
+                height="80%",
             ),
         )
 
+        # Create the main interface
         self.main_menu = widgets.VBox(
             children=[filler_box, box_buttons_git, box_info_button],
             layout=widgets.Layout(
