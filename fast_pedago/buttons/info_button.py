@@ -10,7 +10,7 @@ from IPython.display import display
 display(widgets.HTML("""<style>.white-vbox {background-color: white;}</style>"""))
 
 
-def get_info_button():
+def get_main_menu_info_button():
 
     # Creating and instantiating an info button
     info_button = widgets.Button(description="")
@@ -37,6 +37,40 @@ def get_info_button():
                     "Welcome to the training branch of FAST-OAD.\n"
                     "This is the main menu which can lead you to the different activities to be performed. You'll "
                     "also find some links to the source code of FAST-OAD and its plugins."
+                )
+
+    info_button.on_click(info_message)
+
+    return info_button, output
+
+
+def get_sensitivity_analysis_info_button():
+
+    # Creating and instantiating an info button
+    info_button = widgets.Button(description="")
+    info_button.icon = "fa-info-circle"
+    info_button.layout.width = "auto"
+    info_button.layout.height = "auto"
+
+    # Creating a widget to display an info message
+    output = widgets.Output()
+    output.add_class("white-vbox")
+
+    # Define what happens when you click on the info button
+    def info_message(event):
+
+        with output:
+
+            # If the message is displayed, we clear the message
+            if len(output.outputs) > 0:
+                output.clear_output()
+
+            # Else we print the message
+            else:
+                print(
+                    "This is the sensitivity analysis part of the training branch.\n"
+                    "In this part, you'll study the influence of a few select aircraft design "
+                    "parameters on the mass, aerodynamics and performances of the aircraft "
                 )
 
     info_button.on_click(info_message)

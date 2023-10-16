@@ -20,7 +20,7 @@ def get_start_button():
         layout=layout_button,
         style=dict(
             button_color="#33caff99",
-            font_weight='bold',
+            font_weight="bold",
             font_size=20,
         ),
     )
