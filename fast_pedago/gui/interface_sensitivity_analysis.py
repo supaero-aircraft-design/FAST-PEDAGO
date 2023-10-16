@@ -43,6 +43,7 @@ class SensitivityAnalysisInterface:
         start the exercise.
         """
 
+        # Allow to prevent flickering when button is clicked
         clear_output(wait=True)
 
         # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
@@ -107,6 +108,8 @@ class SensitivityAnalysisInterface:
         )
 
         # Create the main interface
+        # TODO: With a wider picture, we could make full use of the 95 % screen width that the command inside the
+        #  notebook allows for.
         self.main_menu = widgets.VBox(
             children=[filler_box, box_start_button, box_buttons_git, box_info_button],
             layout=widgets.Layout(
@@ -126,48 +129,71 @@ class SensitivityAnalysisInterface:
 
     def display_sensitivity_analysis_menu(self, event):
 
+        # Allow to prevent flickering when button is clicked
         clear_output(wait=True)
 
-        # Create a button to go back home
+        # Create a button to go back home, can't externalize because the on-click depends on a function defined here
         back_home_button = widgets.Button(description="")
         back_home_button.icon = "fa-home"
         back_home_button.layout.width = "auto"
         back_home_button.layout.height = "auto"
         # Interestingly enough, if you put parens at the end of display_main_menu it is actually
-        # going to display it regardless of whether or not you clicked on the button
+        # going to display it regardless of whether you clicked on the button or not
         back_home_button.on_click(self.display_main_menu)
 
         # A small info button
         info_button = get_sensitivity_analysis_info_button()
 
-        # Create a header with an info button and a button to go back home
-        top_layer_box = widgets.Box(
-            children=[back_home_button, info_button],
+        # Create a filler bow so that we still see the FAST-OAD logo
+        filler_box = widgets.Box(
             layout=widgets.Layout(
                 border="0px solid black",
                 margin="0 0 0 0px",
                 padding="0px",
-                align_items="flex-start",
+                align_items="center",
                 width="100",
                 height="12%",
             ),
         )
 
         sensitivity_analysis_tab = ParentTab()
+        sensitivity_analysis_tab.layout = widgets.Layout(
+            border="0px solid black",
+            margin="0 0 0 0px",
+            padding="0px",
+            align_items="center",
+            width="98%",
+            height="76%",
+        )
+
+        # Create a header with an info button and a button to go back home. Put it at the bottom to match what is done
+        # on the main menu
+        bottom_layer_box = widgets.Box(
+            children=[back_home_button, info_button],
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="100",
+                height="12%",
+            ),
+        )
 
         # Create the main interface
         self.sensitivity_analysis_menu = widgets.VBox(
-            children=[top_layer_box, sensitivity_analysis_tab],
+            children=[filler_box, sensitivity_analysis_tab, bottom_layer_box],
             layout=widgets.Layout(
                 border="6px solid black",
                 margin="100 20 50 100px",
                 padding="10px",
-                align_items="flex-start",
+                align_items="center",
                 width="940px",
                 height="665px",
-                justify_content="flex-start",
+                justify_content="center",
             ),
         )
+
         self.sensitivity_analysis_menu.add_class("vbox-with-background")
         display(
             HTML(f"<style>{CUSTOM_CSS_BACKGROUND}</style>"),
