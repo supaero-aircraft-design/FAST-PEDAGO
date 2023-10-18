@@ -1,0 +1,51 @@
+title: Sample OAD Process
+
+input_file: ../workdir/inputs/reference_aircraft_input_file.xml
+output_file: ../workdir/outputs/reference_aircraft_output_file.xml
+
+model:
+
+  #  Solvers are defined assuming the OpenMDAO convention "import openmdao.api as om"
+  nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
+  linear_solver: om.DirectSolver()
+
+
+  # Components can be put in sub-groups
+  subgroup:
+
+    # A group can be set with its own solvers.
+    # Uncomment the 2 next lines for using the performance module with "mission_file_path: ::sizing_mission"
+    nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2, iprint=0)
+    linear_solver: om.DirectSolver()
+
+    geometry:
+      # An OpenMDAO component is identified by its "id"
+      id: fastoad.geometry.legacy
+    weight:
+      id: fastoad.weight.legacy
+    mtow:
+      id: fastoad.mass_performances.compute_MTOW
+    hq_tail_sizing:
+      id: fastoad.handling_qualities.tail_sizing
+    hq_static_margin:
+      id: fastoad.handling_qualities.static_margin
+    wing_position:
+      id: fastoad.loop.wing_position
+    aerodynamics_highspeed:
+      id: fastoad.aerodynamics.highspeed.legacy
+    aerodynamics_lowspeed:
+      id: fastoad.aerodynamics.lowspeed.legacy
+    aerodynamics_takeoff:
+      id: fastoad.aerodynamics.takeoff.legacy
+    aerodynamics_landing:
+      id: fastoad.aerodynamics.landing.legacy
+      use_xfoil: false
+  performance:
+    id: fastoad.performances.mission
+    propulsion_id: fastoad.wrapper.propulsion.rubber_engine
+    mission_file_path: ::sizing_mission
+    out_file: ../workdir/outputs/flight_points.csv
+    adjust_fuel: true
+    is_sizing: true
+  wing_area:
+    id: fastoad.loop.wing_area

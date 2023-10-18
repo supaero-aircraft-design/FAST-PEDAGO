@@ -4,30 +4,36 @@
 
 import ipywidgets as widgets
 
+import fastoad.api as oad
 
-class ImpactVariableTab(widgets.VBox):
-    def __init__(self, **kwargs):
+
+class ImpactVariableInputTab(widgets.VBox):
+    def __init__(self, reference_input_file_path: str, **kwargs):
 
         super().__init__(**kwargs)
 
-        self.default_xml_path = None
+        self.reference_input_file_path = reference_input_file_path
 
-        # Define attribute to store variable value
-        self.n_pax = 150.0
+        # Read the reference input file path so that we can give first accurate first value
+        reference_inputs = oad.DataFile(self.reference_input_file_path)
 
-        # Define layout for all the data widgets
+        # Define attribute to store variable value and give them an initial value corresponding to the reference inputs
+        self.n_pax = reference_inputs["data:TLAR:NPAX"].value[0]
+
+        # Define a common layout for all the data widgets
         self.input_widget_layout = widgets.Layout(
             width="75%",
             height="50px",
             justify_content="space-between",
         )
 
+        # Create the widgets to change the value of the parameters in the sensitivity analysis
         self.n_pax_input_widget = widgets.BoundedFloatText(
             min=19.0,
             max=500.0,
-            step=0.1,
+            step=1.0,
             value=self.n_pax,
-            description="Npax",
+            description="N_PAX",
             description_tooltip="Number of Passengers",
             layout=self.input_widget_layout,
         )
