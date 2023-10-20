@@ -55,6 +55,8 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             0
         ]
 
+        self.sizing_process_name = "reference_aircraft"
+
         # Have to put every widget and sub widget in the same class unfortunately or else the widget
         # from the input bow won't modify the launch box :/
 
@@ -213,33 +215,59 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         ############################################################################################
         # Launch box
 
-        self.launch_box_widget = widgets.VBox()
+        self.launch_box_and_visualization_widget = widgets.VBox()
 
-        dummy_button = widgets.Button(description="")
-        dummy_button.icon = "fa-info-circle"
-        dummy_button.layout.width = "auto"
-        dummy_button.layout.height = "auto"
+        self.launch_box = widgets.HBox()
 
-        def info_message(event):
-            print(
-                self.n_pax,
-                self.v_app,
-                self.cruise_mach,
-                self.range,
-                self.payload,
-                self.max_payload,
-                self.wing_aspect_ratio,
-                self.bpr,
-            )
+        # Text box to give a name to the run
+        self.process_name_widget = widgets.Text(
+            description="Sizing name",
+            placeholder="Write a name for your sizing process",
+            tooltip="Name of the sizing process",
+        )
+        self.process_name_widget.layout = widgets.Layout(
+            width="66%",
+            height="auto",
+            justify_content="space-between",
+            align_items="flex-start",
+        )
 
-        dummy_button.on_click(info_message)
+        def update_sizing_process_name(change):
+            self.sizing_process_name = change["new"]
 
-        self.launch_box_widget.children = [dummy_button]
+        self.process_name_widget.observe(update_sizing_process_name, names="value")
 
-        self.launch_box_widget.layout = widgets.Layout(
+        # Create a button to launch the sizing
+        self.launch_button_widget = widgets.Button(description="Launch sizing process")
+        self.launch_button_widget.icon = "fa-plane"
+        self.launch_button_widget.layout = widgets.Layout(width="auto", height="auto")
+
+        def launch_sizing_process(event):
+            print(self.sizing_process_name)
+
+        self.launch_button_widget.on_click(launch_sizing_process)
+
+        self.launch_box.children = [
+            self.process_name_widget,
+            self.launch_button_widget,
+        ]
+
+        self.launch_box.layout = widgets.Layout(
+            width="100%",
+            height="50px",
+            justify_content="center",
+            align_items="center",
+        )
+
+        self.launch_box_and_visualization_widget.children = [self.launch_box]
+
+        self.launch_box_and_visualization_widget.layout = widgets.Layout(
             width="66%",
             justify_content="flex-start",
             border="2px solid black",
         )
 
-        self.children = [self.input_box_widget, self.launch_box_widget]
+        self.children = [
+            self.input_box_widget,
+            self.launch_box_and_visualization_widget,
+        ]
