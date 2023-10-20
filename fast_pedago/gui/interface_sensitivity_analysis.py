@@ -88,7 +88,7 @@ class SensitivityAnalysisInterface:
                 justify_content="center",
                 align_items="center",
                 width="100%",
-                height="8%",
+                height="10%",
             ),
         )
 
@@ -103,13 +103,13 @@ class SensitivityAnalysisInterface:
                 padding="0px",
                 align_items="center",
                 width="100",
-                height="12%",
+                height="10%",
             ),
         )
 
         # Create the main interface
-        # TODO: With a wider picture, we could make full use of the 95 % screen width that the command inside the
-        #  notebook allows for.
+        # TODO: With a wider picture, we could make full use of the 95% screen width that the
+        #  command inside the notebook allows for.
         self.main_menu = widgets.VBox(
             children=[filler_box, box_start_button, box_buttons_git, box_info_button],
             layout=widgets.Layout(
@@ -132,7 +132,8 @@ class SensitivityAnalysisInterface:
         # Allow to prevent flickering when button is clicked
         clear_output(wait=True)
 
-        # Create a button to go back home, can't externalize because the on-click depends on a function defined here
+        # Create a button to go back home, can't externalize because the on-click depends on a
+        # function defined here
         back_home_button = widgets.Button(description="")
         back_home_button.icon = "fa-home"
         back_home_button.layout.width = "auto"
@@ -161,13 +162,13 @@ class SensitivityAnalysisInterface:
             border="0px solid black",
             margin="0 0 0 0px",
             padding="0px",
-            align_items="center",
+            align_items="flex-start",
             width="98%",
-            height="76%",
+            height="78%",
         )
 
-        # Create a header with an info button and a button to go back home. Put it at the bottom to match what is done
-        # on the main menu
+        # Create a header with an info button and a button to go back home. Put it at the bottom
+        # to match what is done on the main menu
         bottom_layer_box = widgets.Box(
             children=[back_home_button, info_button],
             layout=widgets.Layout(
@@ -176,7 +177,7 @@ class SensitivityAnalysisInterface:
                 padding="0px",
                 align_items="center",
                 width="100",
-                height="12%",
+                height="10%",
             ),
         )
 

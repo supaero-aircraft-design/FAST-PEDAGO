@@ -8,13 +8,13 @@ import shutil
 
 import ipywidgets as widgets
 
-from .impact_variable_tab import ImpactVariableInputTab
+from .impact_variable_inputs_tab import ImpactVariableInputLaunchTab
 
 import fastoad.api as oad
 
 from fast_pedago import configuration, source_data_files
 
-TABS_NAME = ["Sensitivity analysis"]
+TABS_NAME = ["Inputs & Launch"]
 
 
 class ParentTab(widgets.Tab):
@@ -22,10 +22,11 @@ class ParentTab(widgets.Tab):
 
         super().__init__(**kwargs)
 
-        # The configuration file path, source file path and input file path will be shared by children tab,
-        # so we will define them there and pass them on. The file for the sensitivity analysis is specific.
-        # Consequently, we won't generate it from fast-oad_cs25. Additionally, to make it simpler to handle relative
-        # path from the configuration file, instead of using this one directly we will make a copy of it in a
+        # The configuration file path, source file path and input file path will be shared by
+        # children tab, so we will define them there and pass them on. The file for the
+        # sensitivity analysis is specific. Consequently, we won't generate it from
+        # fast-oad_cs25. Additionally, to make it simpler to handle relative path from the
+        # configuration file, instead of using this one directly we will make a copy of it in a
         # data directory of the active directory.
 
         self.working_directory_path = pth.join(os.getcwd(), "workdir")
@@ -37,8 +38,8 @@ class ParentTab(widgets.Tab):
         if not pth.exists(self.data_directory_path):
             os.mkdir(self.data_directory_path)
 
-        # Please note here that I'm using a different configuration file from the original one because I wanted to
-        # use the one from fast-oad_cs25 and change some paths
+        # Please note here that I'm using a different configuration file from the original one
+        # because I wanted to use the one from fast-oad_cs25 and change some paths
         self.configuration_file_path = pth.join(
             self.data_directory_path, "oad_sizing_sensitivity_analysis.yml"
         )
@@ -57,8 +58,9 @@ class ParentTab(widgets.Tab):
                 self.configuration_file_path,
             )
 
-        # Technically, we could simply copy the reference file because I already did the input generation but to be
-        # more generic we will do it like this which will make it longer on the first execution.
+        # Technically, we could simply copy the reference file because I already did the input
+        # generation but to be more generic we will do it like this which will make it longer on
+        # the first execution.
         if not pth.exists(self.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=self.configuration_file_path,
@@ -68,7 +70,7 @@ class ParentTab(widgets.Tab):
                 ),
             )
 
-        self.impact_variable_input_tab = ImpactVariableInputTab(
+        self.impact_variable_input_tab = ImpactVariableInputLaunchTab(
             reference_input_file_path=self.reference_input_file_path
         )
 

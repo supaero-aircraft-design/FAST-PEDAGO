@@ -170,6 +170,12 @@
         </takeoff>
       </aircraft>
     </aerodynamics>
+    <weight>
+      <aircraft>
+        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">17000.0<!--_inp_data:weight:aircraft:payload--></payload>
+      </aircraft>
+    </weight>
   </data>
   <settings>
     <geometry>

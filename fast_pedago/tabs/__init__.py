@@ -2,4 +2,4 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-from .senitivity_analysis_parent_tab import ParentTab
+from .sensitivity_analysis_parent_tab import ParentTab

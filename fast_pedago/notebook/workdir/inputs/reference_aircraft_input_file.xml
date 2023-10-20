@@ -160,6 +160,12 @@
         </main_route>
       </sizing>
     </mission>
+    <weight>
+      <aircraft>
+        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">17000.0<!--_inp_data:weight:aircraft:payload--></payload>
+      </aircraft>
+    </weight>
     <aerodynamics>
       <aircraft>
         <landing>
@@ -228,10 +234,6 @@
             </MAC_position>
           </aft>
         </CG>
-        <payload>
-          <design_mass_per_passenger units="kg" is_input="True">90.72<!--Design value of mass per passenger--></design_mass_per_passenger>
-          <max_mass_per_passenger units="kg" is_input="True">130.72<!--Maximum value of mass per passenger--></max_mass_per_passenger>
-        </payload>
       </aircraft>
       <airframe>
         <flight_controls>
