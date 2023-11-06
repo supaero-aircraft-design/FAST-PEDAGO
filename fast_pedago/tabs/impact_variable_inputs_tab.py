@@ -2,6 +2,12 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
+import copy
+import os
+import os.path as pth
+
+import warnings
+
 import ipywidgets as widgets
 
 import openmdao.api as om
@@ -9,51 +15,55 @@ import fastoad.api as oad
 
 
 class ImpactVariableInputLaunchTab(widgets.HBox):
-    def __init__(self, reference_input_file_path: str, **kwargs):
+    def __init__(
+        self, configuration_file_path: str, reference_input_file_path: str, **kwargs
+    ):
 
         # TODO: A bigger HBox should encapsulate this VBox who contains only the inputs to
         #  contain the Launch Screen as well
         super().__init__(**kwargs)
 
         self.reference_input_file_path = reference_input_file_path
+        self.configuration_file_path = configuration_file_path
 
-        # Read the reference input file path so that we can give first accurate first value
-        reference_inputs = oad.DataFile(self.reference_input_file_path)
+        # Read the reference input file path so that we can give first accurate first value. Also
+        # save it as an object attribute that we can copy to modify inputs
+        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
 
         # Define attribute to store variable value and give them an initial value corresponding
         # to the reference inputs. Also, those are gonna be attribute of the parent HBox so that the
         # children can exchange those information
         # No need to convert to alternate units
-        self.n_pax = reference_inputs["data:TLAR:NPAX"].value[0]
+        self.n_pax = self.reference_inputs["data:TLAR:NPAX"].value[0]
         # Convert in kts in case it was not
         self.v_app = om.convert_units(
-            reference_inputs["data:TLAR:approach_speed"].value[0],
-            reference_inputs["data:TLAR:approach_speed"].units,
+            self.reference_inputs["data:TLAR:approach_speed"].value[0],
+            self.reference_inputs["data:TLAR:approach_speed"].units,
             "kn",
         )
-        self.cruise_mach = reference_inputs["data:TLAR:cruise_mach"].value[0]
+        self.cruise_mach = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
         # Convert in nm in case it was not, etc, etc, ...
         self.range = om.convert_units(
-            reference_inputs["data:TLAR:range"].value[0],
-            reference_inputs["data:TLAR:range"].units,
+            self.reference_inputs["data:TLAR:range"].value[0],
+            self.reference_inputs["data:TLAR:range"].units,
             "NM",
         )
         self.payload = om.convert_units(
-            reference_inputs["data:weight:aircraft:payload"].value[0],
-            reference_inputs["data:weight:aircraft:payload"].units,
+            self.reference_inputs["data:weight:aircraft:payload"].value[0],
+            self.reference_inputs["data:weight:aircraft:payload"].units,
             "kg",
         )
         self.max_payload = om.convert_units(
-            reference_inputs["data:weight:aircraft:max_payload"].value[0],
-            reference_inputs["data:weight:aircraft:max_payload"].units,
+            self.reference_inputs["data:weight:aircraft:max_payload"].value[0],
+            self.reference_inputs["data:weight:aircraft:max_payload"].units,
             "kg",
         )
-        self.wing_aspect_ratio = reference_inputs[
+        self.wing_aspect_ratio = self.reference_inputs[
             "data:geometry:wing:aspect_ratio"
         ].value[0]
-        self.bpr = reference_inputs["data:propulsion:rubber_engine:bypass_ratio"].value[
-            0
-        ]
+        self.bpr = self.reference_inputs[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value[0]
 
         self.sizing_process_name = "reference_aircraft"
 
@@ -241,9 +251,122 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.launch_button_widget = widgets.Button(description="Launch sizing process")
         self.launch_button_widget.icon = "fa-plane"
         self.launch_button_widget.layout = widgets.Layout(width="auto", height="auto")
+        self.launch_button_widget.style.button_color = "GreenYellow"
+
+        dummy_output = widgets.Output()
 
         def launch_sizing_process(event):
-            print(self.sizing_process_name)
+
+            self.launch_button_widget.style.button_color = "Red"
+
+            with dummy_output:
+
+                # Create a new FAST-OAD problem based on the reference configuration file
+                configurator = oad.FASTOADProblemConfigurator(
+                    self.configuration_file_path
+                )
+
+                # Save orig file path and name so that we can replace them with the sizing process
+                # name
+                orig_input_file_path = configurator.input_file_path
+                orig_input_file_name = pth.basename(orig_input_file_path)
+                orig_output_file_path = configurator.output_file_path
+                orig_output_file_name = pth.basename(orig_output_file_path)
+
+                new_input_file_path = orig_input_file_path.replace(
+                    orig_input_file_name, self.sizing_process_name + "_input_file.xml"
+                )
+                new_output_file_path = orig_output_file_path.replace(
+                    orig_output_file_name, self.sizing_process_name + "_output_file.xml"
+                )
+
+                # Change the input and output file path in the configurator
+                configurator.input_file_path = new_input_file_path
+                configurator.output_file_path = new_output_file_path
+
+                # Create the input file with the current value
+                new_inputs = copy.deepcopy(self.reference_inputs)
+
+                # No need to provide list or numpy array for scalar values.
+                new_inputs["data:TLAR:NPAX"].value = self.n_pax
+
+                new_inputs["data:TLAR:approach_speed"].value = self.v_app
+                new_inputs[
+                    "data:TLAR:approach_speed"
+                ].units = "kn"  # Unit from the widget
+
+                new_inputs["data:TLAR:cruise_mach"].value = self.cruise_mach
+
+                new_inputs["data:TLAR:range"].value = self.range
+                new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
+
+                new_inputs["data:weight:aircraft:payload"].value = self.payload
+                new_inputs[
+                    "data:weight:aircraft:payload"
+                ].units = "kg"  # Unit from the widget
+
+                new_inputs["data:weight:aircraft:max_payload"].value = self.max_payload
+                new_inputs[
+                    "data:weight:aircraft:max_payload"
+                ].units = "kg"  # Unit from the widget
+
+                new_inputs[
+                    "data:geometry:wing:aspect_ratio"
+                ].value = self.wing_aspect_ratio
+
+                new_inputs[
+                    "data:propulsion:rubber_engine:bypass_ratio"
+                ].value = self.bpr
+                # Save as the new input file. We overwrite always, may need to put a warning for
+                # students
+                new_inputs.save_as(new_input_file_path, overwrite=True)
+
+                # Get the problem, no need to write inputs. The fact that the reference was created
+                # based on the same configuration we will always use should ensure the completion of
+                # the input file
+                problem = configurator.get_problem(read_inputs=True)
+                problem.setup()
+
+                model = problem.model
+                recorder_database_file_path = orig_output_file_path.replace(
+                    orig_output_file_name,
+                    self.sizing_process_name + "_cases.sql",
+                )
+                recorder = om.SqliteRecorder(recorder_database_file_path)
+                model.nonlinear_solver.add_recorder(recorder)
+                model.nonlinear_solver.recording_options[
+                    "record_solver_residuals"
+                ] = True
+
+                # Run the problem and write output. Catch warning for cleaner interface
+                with warnings.catch_warnings():
+                    warnings.simplefilter(action="ignore", category=FutureWarning)
+                    problem.run_model()
+
+                problem.write_outputs()
+
+                # We also need to rename the .csv file which contains the mission data. I don't
+                # see a proper way to do it other than that since it is something INSIDE the
+                # configuration file which we can't overwrite like the input and output file
+                # path. There may be a way to do it by modifying the options of the performances
+                # components of the problem but it seems too much
+
+                old_mission_data_file_path = orig_output_file_path.replace(
+                    orig_output_file_name, "flight_points.csv"
+                )
+                new_mission_data_file_path = orig_output_file_path.replace(
+                    orig_output_file_name,
+                    self.sizing_process_name + "_flight_points.csv",
+                )
+
+                # You can't rename to a file which already exists, so if one already exists we
+                # delete it before renaming.
+                if pth.exists(new_mission_data_file_path):
+                    os.remove(new_mission_data_file_path)
+
+                os.rename(old_mission_data_file_path, new_mission_data_file_path)
+
+                self.launch_button_widget.style.button_color = "LimeGreen"
 
         self.launch_button_widget.on_click(launch_sizing_process)
 

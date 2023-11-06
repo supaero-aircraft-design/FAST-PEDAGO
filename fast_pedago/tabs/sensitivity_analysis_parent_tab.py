@@ -71,7 +71,8 @@ class ParentTab(widgets.Tab):
             )
 
         self.impact_variable_input_tab = ImpactVariableInputLaunchTab(
-            reference_input_file_path=self.reference_input_file_path
+            configuration_file_path=self.configuration_file_path,
+            reference_input_file_path=self.reference_input_file_path,
         )
 
         self.children = [self.impact_variable_input_tab]
