@@ -6,7 +6,7 @@ output_file: ../workdir/outputs/reference_aircraft_output_file.xml
 model:
 
   #  Solvers are defined assuming the OpenMDAO convention "import openmdao.api as om"
-  nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
+  nonlinear_solver: om.NonlinearBlockGS(maxiter=100, rtol=1e-8)
   linear_solver: om.DirectSolver()
 
 

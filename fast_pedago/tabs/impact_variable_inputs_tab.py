@@ -10,6 +10,10 @@ import warnings
 
 import ipywidgets as widgets
 
+import plotly.graph_objects as go
+
+import numpy as np
+
 import openmdao.api as om
 import fastoad.api as oad
 
@@ -223,6 +227,36 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         ############################################################################################
+        # Residuals visualization box
+
+        # This value for the height will only work for that particular definition of the back
+        # image. Which means it is not generic enough. If no height is specified however the
+        # widget will be too big for its container which is not very pretty.
+        residuals_visualization_layout = go.Layout(
+            height=380,
+        )
+
+        base_scatter = go.Scatter(x=[], y=[], name="Relative error")
+        residuals_norm_scatter = go.Scatter(x=[], y=[], mode="lines", name="Threshold")
+
+        residuals_visualization_figure = go.Figure(
+            data=[base_scatter, residuals_norm_scatter],
+            layout=residuals_visualization_layout,
+        )
+        residuals_visualization_figure.update_yaxes(
+            title_text="Relative value of residuals", type="log", range=[-10.0, 1.0]
+        )
+        residuals_visualization_figure.update_xaxes(title_text="Number of iteration")
+        residuals_visualization_figure.update_layout(
+            title_text="Evolution of the residuals",
+            title_x=0.5,
+        )
+
+        self.residuals_visualization_widget = go.FigureWidget(
+            residuals_visualization_figure
+        )
+
+        ############################################################################################
         # Launch box
 
         self.launch_box_and_visualization_widget = widgets.VBox()
@@ -260,6 +294,17 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.launch_button_widget.style.button_color = "Red"
 
             with dummy_output:
+
+                # Clear the residuals visualization to make it apparent that a computation is
+                # underway.
+
+                residuals_graph = self.residuals_visualization_widget.data[0]
+                residuals_graph.x = []
+                residuals_graph.y = []
+
+                threshold_graph = self.residuals_visualization_widget.data[1]
+                threshold_graph.x = []
+                threshold_graph.y = []
 
                 # Create a new FAST-OAD problem based on the reference configuration file
                 configurator = oad.FASTOADProblemConfigurator(
@@ -327,6 +372,9 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
                 problem = configurator.get_problem(read_inputs=True)
                 problem.setup()
 
+                # Save target residuals
+                target_residuals = problem.model.nonlinear_solver.options["rtol"]
+
                 model = problem.model
                 recorder_database_file_path = orig_output_file_path.replace(
                     orig_output_file_name,
@@ -366,6 +414,22 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
 
                 os.rename(old_mission_data_file_path, new_mission_data_file_path)
 
+                # Extract the residuals, build a scatter based on them and plot them along with the
+                # threshold set in the configuration file
+                relative_error = np.array(
+                    extract_residuals(
+                        recorder_database_file_path=recorder_database_file_path
+                    )
+                )
+                # For the display, hte iteration will start at 1 :)
+                iteration_numbers = np.arange(len(relative_error)) + 1
+
+                residuals_graph.x = iteration_numbers
+                residuals_graph.y = relative_error
+
+                threshold_graph.x = [1, len(relative_error)]
+                threshold_graph.y = [target_residuals, target_residuals]
+
                 self.launch_button_widget.style.button_color = "LimeGreen"
 
         self.launch_button_widget.on_click(launch_sizing_process)
@@ -382,7 +446,10 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             align_items="center",
         )
 
-        self.launch_box_and_visualization_widget.children = [self.launch_box]
+        self.launch_box_and_visualization_widget.children = [
+            self.launch_box,
+            self.residuals_visualization_widget,
+        ]
 
         self.launch_box_and_visualization_widget.layout = widgets.Layout(
             width="66%",
@@ -394,3 +461,26 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.input_box_widget,
             self.launch_box_and_visualization_widget,
         ]
+
+
+def extract_residuals(recorder_database_file_path: str) -> list:
+    """
+    From the file path to a recorder data base, extract the value of the relative error of the
+    residuals at each iteration.
+
+    :param recorder_database_file_path: absolute path to the recorder database
+    :return: an array containing the value of the relative error at each iteration
+    """
+
+    case_reader = om.CaseReader(recorder_database_file_path)
+
+    # Will only work if the recorder was attached to the base solver
+    solver_cases = case_reader.get_cases("root.nonlinear_solver")
+
+    relative_error = []
+
+    for _, case in enumerate(solver_cases):
+
+        relative_error.append(case.rel_err)
+
+    return relative_error
