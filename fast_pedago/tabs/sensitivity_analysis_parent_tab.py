@@ -14,7 +14,7 @@ import fastoad.api as oad
 
 from fast_pedago import configuration, source_data_files
 
-TABS_NAME = ["Inputs & Launch"]
+TABS_NAME = ["Inputs & Launch", "Outputs"]
 
 
 class ParentTab(widgets.Tab):
@@ -74,8 +74,21 @@ class ParentTab(widgets.Tab):
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )
+        dummy_tab = widgets.HBox()
 
-        self.children = [self.impact_variable_input_tab]
+        def test_observe(change=None):
+
+            # On tab change, we browse the output folder of the workdir to check all completed
+            # sizing processes. Additionally instead of doing it on all tab change, we will only
+            # do it if the old tab was the tab from which we can launch a sizing process, i.e the
+            # first tab
+            if change["name"] == "selected_index":
+                if change["old"] == 0:
+                    print("Plop")
+
+        self.observe(test_observe)
+
+        self.children = [self.impact_variable_input_tab, dummy_tab]
 
         # Add a title for each tab
         for i, tab_name in enumerate(TABS_NAME):

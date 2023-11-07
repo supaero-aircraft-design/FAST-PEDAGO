@@ -23,8 +23,6 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self, configuration_file_path: str, reference_input_file_path: str, **kwargs
     ):
 
-        # TODO: A bigger HBox should encapsulate this VBox who contains only the inputs to
-        #  contain the Launch Screen as well
         super().__init__(**kwargs)
 
         self.reference_input_file_path = reference_input_file_path
