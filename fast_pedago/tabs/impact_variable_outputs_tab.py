@@ -12,6 +12,7 @@ import fastoad.api as oad
 
 from fast_pedago.tabs.impact_variable_inputs_tab import OUTPUT_FILE_SUFFIX
 from fast_pedago.dropdowns import get_select_single_sizing_process_dropdown
+from fast_pedago.buttons import get_single_process_selection_info_button
 
 
 class ImpactVariableOutputTab(widgets.VBox):
@@ -24,6 +25,20 @@ class ImpactVariableOutputTab(widgets.VBox):
         # Initialize it with fake values that we will overwrite as we scan through available
         # processes in the launch tab
         self.output_file_selection_widget = get_select_single_sizing_process_dropdown()
+        self.info_button = get_single_process_selection_info_button()
+
+        self.selection_and_info_box = widgets.HBox()
+        self.selection_and_info_box.children = [
+            self.output_file_selection_widget,
+            self.info_button,
+        ]
+
+        self.selection_and_info_box.layout = widgets.Layout(
+            width="98%",
+            height="5%",
+            justify_content="space-between",
+            align_items="flex-start",
+        )
 
         self.output_display = widgets.Output()
 
@@ -46,4 +61,4 @@ class ImpactVariableOutputTab(widgets.VBox):
 
         self.output_file_selection_widget.observe(display_outputs, names="value")
 
-        self.children = [self.output_file_selection_widget, self.output_display]
+        self.children = [self.selection_and_info_box, self.output_display]

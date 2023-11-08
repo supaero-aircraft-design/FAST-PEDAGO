@@ -40,3 +40,33 @@ def get_sensitivity_analysis_info_button():
     )
 
     return info_button
+
+
+def get_single_process_selection_info_button():
+    # Creating and instantiating an info button
+    info_button = widgets.Button(description="")
+    info_button.icon = "fa-info-circle"
+    info_button.layout.width = "auto"
+    info_button.layout.height = "auto"
+    info_button.tooltip = (
+        "- Select a sizing process in the dropdown menu to make the corresponding display appear \n"
+        '- Select "None" to clear the display'
+    )
+
+    return info_button
+
+
+def get_multiple_process_selection_info_button():
+
+    # Creating and instantiating an info button
+    info_button = widgets.Button(description="")
+    info_button.icon = "fa-info-circle"
+    info_button.layout.width = "auto"
+    info_button.layout.height = "auto"
+    info_button.tooltip = (
+        "- Select a sizing process in the dropdown menu to add the corresponding aircraft to the "
+        "display  \n"
+        '- Select "None" to clear the display'
+    )
+
+    return info_button
