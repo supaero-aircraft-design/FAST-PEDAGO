@@ -18,12 +18,19 @@ from .impact_variable_inputs_tab import (
 from .impact_variable_outputs_tab import ImpactVariableOutputTab
 from .impact_variable_wing_geometry_tab import ImpactVariableWingGeometryTab
 from .impact_variable_aircraft_geometry_tab import ImpactVariableAircraftGeometryTab
+from .impact_variable_drag_polar_tab import ImpactVariableDragPolarTab
 
 import fastoad.api as oad
 
 from fast_pedago import configuration, source_data_files
 
-TABS_NAME = ["Inputs & Launch", "Outputs", "Geometry - Wing", "Geometry - Aircraft"]
+TABS_NAME = [
+    "Inputs & Launch",
+    "Outputs",
+    "Geometry - Wing",
+    "Geometry - Aircraft",
+    "Aerodynamics - Polar",
+]
 
 
 class ParentTab(widgets.Tab):
@@ -96,6 +103,9 @@ class ParentTab(widgets.Tab):
         self.impact_variable_aircraft_geometry_tab = ImpactVariableAircraftGeometryTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_drag_polar_tab = ImpactVariableDragPolarTab(
+            working_directory_path=self.working_directory_path
+        )
 
         def browse_available_sizing_process(change=None):
 
@@ -133,6 +143,7 @@ class ParentTab(widgets.Tab):
             self.impact_variable_output_tab,
             self.impact_variable_wing_geometry_tab,
             self.impact_variable_aircraft_geometry_tab,
+            self.impact_variable_drag_polar_tab,
         ]
 
         # Add a title for each tab
