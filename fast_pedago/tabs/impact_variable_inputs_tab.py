@@ -17,6 +17,9 @@ import numpy as np
 import openmdao.api as om
 import fastoad.api as oad
 
+OUTPUT_FILE_SUFFIX = "_output_file.xml"
+FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
+
 
 class ImpactVariableInputLaunchTab(widgets.HBox):
     def __init__(
@@ -320,7 +323,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
                     orig_input_file_name, self.sizing_process_name + "_input_file.xml"
                 )
                 new_output_file_path = orig_output_file_path.replace(
-                    orig_output_file_name, self.sizing_process_name + "_output_file.xml"
+                    orig_output_file_name, self.sizing_process_name + OUTPUT_FILE_SUFFIX
                 )
 
                 # Change the input and output file path in the configurator
@@ -402,7 +405,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
                 )
                 new_mission_data_file_path = orig_output_file_path.replace(
                     orig_output_file_name,
-                    self.sizing_process_name + "_flight_points.csv",
+                    self.sizing_process_name + FLIGHT_DATA_FILE_SUFFIX,
                 )
 
                 # You can't rename to a file which already exists, so if one already exists we
