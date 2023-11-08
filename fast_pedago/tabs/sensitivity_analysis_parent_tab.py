@@ -19,6 +19,8 @@ from .impact_variable_outputs_tab import ImpactVariableOutputTab
 from .impact_variable_wing_geometry_tab import ImpactVariableWingGeometryTab
 from .impact_variable_aircraft_geometry_tab import ImpactVariableAircraftGeometryTab
 from .impact_variable_drag_polar_tab import ImpactVariableDragPolarTab
+from .impact_variable_mass_bar_plot_tab import ImpactVariableMassBarBreakdownTab
+from .impact_variable_mass_sun_plot_tab import ImpactVariableMassSunBreakdownTab
 
 import fastoad.api as oad
 
@@ -30,6 +32,8 @@ TABS_NAME = [
     "Geometry - Wing",
     "Geometry - Aircraft",
     "Aerodynamics - Polar",
+    "Mass - Bar breakdown",
+    "Mass - Sun breakdown",
 ]
 
 
@@ -106,6 +110,12 @@ class ParentTab(widgets.Tab):
         self.impact_variable_drag_polar_tab = ImpactVariableDragPolarTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_mass_bar_breakdown_tab = ImpactVariableMassBarBreakdownTab(
+            working_directory_path=self.working_directory_path
+        )
+        self.impact_variable_mass_sun_breakdown_tab = ImpactVariableMassSunBreakdownTab(
+            working_directory_path=self.working_directory_path
+        )
 
         def browse_available_sizing_process(change=None):
 
@@ -144,6 +154,8 @@ class ParentTab(widgets.Tab):
             self.impact_variable_wing_geometry_tab,
             self.impact_variable_aircraft_geometry_tab,
             self.impact_variable_drag_polar_tab,
+            self.impact_variable_mass_bar_breakdown_tab,
+            self.impact_variable_mass_sun_breakdown_tab,
         ]
 
         # Add a title for each tab
