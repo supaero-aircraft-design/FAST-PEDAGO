@@ -15,6 +15,7 @@ from .impact_variable_inputs_tab import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )
+from .impact_variable_outputs_tab import ImpactVariableOutputTab
 
 import fastoad.api as oad
 
@@ -84,7 +85,9 @@ class ParentTab(widgets.Tab):
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )
-        dummy_tab = widgets.HBox()
+        self.impact_variable_output_tab = ImpactVariableOutputTab(
+            working_directory_path=self.working_directory_path
+        )
 
         def browse_available_sizing_process(change=None):
 
@@ -100,9 +103,27 @@ class ParentTab(widgets.Tab):
                         )
                     )
 
+                    # Update the available value for each tab while making sure to leave the None
+                    # option as it will always be the selected value
+                    for tab_index, _ in enumerate(TABS_NAME):
+
+                        # Nothing to update in the first tab (the launch tab)
+                        if tab_index != 0:
+
+                            # This assumes that all tabs except the first will have an attribute
+                            # named "output_file_selection_widget"
+                            self.children[
+                                tab_index
+                            ].output_file_selection_widget.options = [
+                                "None"
+                            ] + self.available_sizing_process
+
         self.observe(browse_available_sizing_process)
 
-        self.children = [self.impact_variable_input_tab, dummy_tab]
+        self.children = [
+            self.impact_variable_input_tab,
+            self.impact_variable_output_tab,
+        ]
 
         # Add a title for each tab
         for i, tab_name in enumerate(TABS_NAME):
