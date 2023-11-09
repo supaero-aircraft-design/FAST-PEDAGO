@@ -4,16 +4,13 @@
 
 import os.path as pth
 
-from IPython.display import clear_output, display
+from IPython.display import clear_output
 
 import ipywidgets as widgets
-
-import plotly.graph_objects as go
 
 import fastoad.api as oad
 
 from fast_pedago.tabs.impact_variable_inputs_tab import (
-    OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )
 from fast_pedago.dropdowns import get_select_multiple_sizing_process_dropdown
@@ -64,7 +61,6 @@ class ImpactVariableMissionTab(widgets.VBox):
 
                 clear_output()
 
-                fig = None
                 mission_viewer = oad.MissionViewer()
 
                 for sizing_process_to_add in self.sizing_process_to_display:
