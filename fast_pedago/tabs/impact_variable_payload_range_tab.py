@@ -10,14 +10,16 @@ import ipywidgets as widgets
 
 import plotly.graph_objects as go
 
-import fastoad.api as oad
-
-from fast_pedago.tabs.impact_variable_inputs_tab import OUTPUT_FILE_SUFFIX
+from fast_pedago.tabs.impact_variable_inputs_tab import (
+    OUTPUT_FILE_SUFFIX,
+    FLIGHT_DATA_FILE_SUFFIX,
+)
 from fast_pedago.dropdowns import get_select_multiple_sizing_process_dropdown
 from fast_pedago.buttons import get_multiple_process_selection_info_button
+from fast_pedago.gui.analysis_and_plots import simplified_payload_range_plot
 
 
-class ImpactVariableAircraftGeometryTab(widgets.VBox):
+class ImpactVariablePayloadRangeTab(widgets.VBox):
     def __init__(self, working_directory_path: str, **kwargs):
 
         super().__init__(**kwargs)
@@ -72,12 +74,17 @@ class ImpactVariableAircraftGeometryTab(widgets.VBox):
                         path_to_output_folder,
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                     )
-
-                    fig = oad.aircraft_geometry_plot(
-                        path_to_output_file, sizing_process_to_add, fig=fig
+                    path_to_flight_data_file = pth.join(
+                        path_to_output_folder,
+                        sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                     )
-                    # TODO: oad.aircraft_geometry_plot already returns a FigureWidget, check that
-                    #  deleting these lines (in all files) do not cause an issue
+
+                    fig = simplified_payload_range_plot(
+                        path_to_output_file,
+                        path_to_flight_data_file,
+                        sizing_process_to_add,
+                        fig=fig,
+                    )
                     fig = go.FigureWidget(fig)
 
                 if self.sizing_process_to_display:
