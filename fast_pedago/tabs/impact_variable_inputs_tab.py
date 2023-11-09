@@ -210,15 +210,36 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.bpr = change["new"]
 
         self.bpr_input_widget.observe(update_bpr, names="value")
+        self.text_box_layout = widgets.Layout(align_items="center")
+
+        self.text_box_TLAR = widgets.VBox()
+        self.text_box_TLAR.children = [widgets.HTML(value="<u>TLARs</u>")]
+        self.text_box_TLAR.layout = self.text_box_layout
+
+        self.text_box_weight = widgets.VBox()
+        self.text_box_weight.children = [widgets.HTML(value="<u>Weight</u>")]
+        self.text_box_weight.layout = self.text_box_layout
+
+        self.text_box_geometry = widgets.VBox()
+        self.text_box_geometry.children = [widgets.HTML(value="<u>Geometry</u>")]
+        self.text_box_geometry.layout = self.text_box_layout
+
+        self.text_box_propulsion = widgets.VBox()
+        self.text_box_propulsion.children = [widgets.HTML(value="<u>Propulsion</u>")]
+        self.text_box_propulsion.layout = self.text_box_layout
 
         self.input_box_widget.children = [
+            self.text_box_TLAR,
             self.n_pax_input_widget,
             self.v_app_input_widget,
             self.cruise_mach_input_widget,
             self.range_input_widget,
+            self.text_box_weight,
             self.payload_input_widget,
             self.max_payload_input_widget,
+            self.text_box_geometry,
             self.wing_aspect_ratio_input_widget,
+            self.text_box_propulsion,
             self.bpr_input_widget,
         ]
         self.input_box_widget.layout = widgets.Layout(

@@ -108,8 +108,6 @@ class SensitivityAnalysisInterface:
         )
 
         # Create the main interface
-        # TODO: With a wider picture, we could make full use of the 95% screen width that the
-        #  command inside the notebook allows for.
         self.main_menu = widgets.VBox(
             children=[filler_box, box_start_button, box_buttons_git, box_info_button],
             layout=widgets.Layout(
@@ -117,8 +115,8 @@ class SensitivityAnalysisInterface:
                 margin="100 20 50 100px",
                 padding="10px",
                 align_items="center",
-                width="940px",
-                height="665px",
+                width="1302px",
+                height="920px",
                 justify_content="center",
             ),
         )
@@ -189,8 +187,8 @@ class SensitivityAnalysisInterface:
                 margin="100 20 50 100px",
                 padding="10px",
                 align_items="center",
-                width="940px",
-                height="665px",
+                width="1302px",
+                height="920px",
                 justify_content="center",
             ),
         )

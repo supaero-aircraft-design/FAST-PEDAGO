@@ -22,6 +22,7 @@ from .impact_variable_drag_polar_tab import ImpactVariableDragPolarTab
 from .impact_variable_mass_bar_plot_tab import ImpactVariableMassBarBreakdownTab
 from .impact_variable_mass_sun_plot_tab import ImpactVariableMassSunBreakdownTab
 from .impact_variable_payload_range_tab import ImpactVariablePayloadRangeTab
+from .impact_variable_mission_tab import ImpactVariableMissionTab
 
 import fastoad.api as oad
 
@@ -36,6 +37,7 @@ TABS_NAME = [
     "Mass - Bar breakdown",
     "Mass - Sun breakdown",
     "Performances - Payload/Range",
+    "Performances - Mission",
 ]
 
 
@@ -121,6 +123,9 @@ class ParentTab(widgets.Tab):
         self.impact_variable_payload_range_tab = ImpactVariablePayloadRangeTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_mission_tab = ImpactVariableMissionTab(
+            working_directory_path=self.working_directory_path
+        )
 
         def browse_available_sizing_process(change=None):
 
@@ -162,6 +167,7 @@ class ParentTab(widgets.Tab):
             self.impact_variable_mass_bar_breakdown_tab,
             self.impact_variable_mass_sun_breakdown_tab,
             self.impact_variable_payload_range_tab,
+            self.impact_variable_mission_tab,
         ]
 
         # Add a title for each tab
