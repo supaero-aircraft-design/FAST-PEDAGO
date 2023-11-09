@@ -20,8 +20,8 @@ def get_select_multiple_sizing_process_dropdown():
     )
 
     select_multiple_sizing_process_dropdown.layout = widgets.Layout(
-        width="98%",
-        height="5%",
+        width="95%",
+        height="auto",
         justify_content="space-between",
         align_items="flex-start",
     )

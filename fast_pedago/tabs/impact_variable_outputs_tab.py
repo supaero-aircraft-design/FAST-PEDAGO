@@ -35,7 +35,7 @@ class ImpactVariableOutputTab(widgets.VBox):
 
         self.selection_and_info_box.layout = widgets.Layout(
             width="98%",
-            height="5%",
+            height="6%",
             justify_content="space-between",
             align_items="flex-start",
         )

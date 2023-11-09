@@ -102,30 +102,53 @@ class ParentTab(widgets.Tab):
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )
+        self.impact_variable_input_tab.layout = widgets.Layout(height="600px")
+
         self.impact_variable_output_tab = ImpactVariableOutputTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_output_tab.layout = widgets.Layout(height="600px")
+
         self.impact_variable_wing_geometry_tab = ImpactVariableWingGeometryTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_wing_geometry_tab.layout = widgets.Layout(height="600px")
+
         self.impact_variable_aircraft_geometry_tab = ImpactVariableAircraftGeometryTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_aircraft_geometry_tab.layout = widgets.Layout(
+            height="600px"
+        )
+
         self.impact_variable_drag_polar_tab = ImpactVariableDragPolarTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_drag_polar_tab.layout = widgets.Layout(height="600px")
+
         self.impact_variable_mass_bar_breakdown_tab = ImpactVariableMassBarBreakdownTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_mass_bar_breakdown_tab.layout = widgets.Layout(
+            height="600px"
+        )
+
         self.impact_variable_mass_sun_breakdown_tab = ImpactVariableMassSunBreakdownTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_mass_sun_breakdown_tab.layout = widgets.Layout(
+            height="600px"
+        )
+
         self.impact_variable_payload_range_tab = ImpactVariablePayloadRangeTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_payload_range_tab.layout = widgets.Layout(height="600px")
+
         self.impact_variable_mission_tab = ImpactVariableMissionTab(
             working_directory_path=self.working_directory_path
         )
+        self.impact_variable_mission_tab.layout = widgets.Layout(height="600px")
 
         def browse_available_sizing_process(change=None):
 
