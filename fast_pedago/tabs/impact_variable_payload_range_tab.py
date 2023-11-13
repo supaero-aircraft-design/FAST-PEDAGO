@@ -53,7 +53,7 @@ class ImpactVariablePayloadRangeTab(widgets.VBox):
 
             # First check if there are any sizing process to add to the display of if we need to
             # clear them
-            if change["new"] is "None":
+            if change["new"] == "None":
                 self.sizing_process_to_display = []
 
             elif change["new"] not in self.sizing_process_to_display:
@@ -85,7 +85,7 @@ class ImpactVariablePayloadRangeTab(widgets.VBox):
                         sizing_process_to_add,
                         fig=fig,
                     )
-                    fig = go.FigureWidget(fig)
+                    fig.update_layout(height=550)
 
                 if self.sizing_process_to_display:
 

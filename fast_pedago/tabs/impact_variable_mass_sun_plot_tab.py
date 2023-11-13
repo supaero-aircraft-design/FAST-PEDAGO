@@ -60,7 +60,8 @@ class ImpactVariableMassSunBreakdownTab(widgets.VBox):
                         path_to_output_folder, change["new"] + OUTPUT_FILE_SUFFIX
                     )
                     fig = oad.mass_breakdown_sun_plot(path_to_output_file)
-                    fig = go.FigureWidget(fig)
+                    fig.update_layout(height=550)
+
                     display(fig)
 
         self.output_file_selection_widget.observe(display_outputs, names="value")
