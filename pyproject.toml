@@ -42,7 +42,9 @@ classifiers = [
 # the commit fail because "files were modified by this hook". In that case,
 # doing again the commit including changes in docs/requirements.txt will succeed.
 python = "^3.7"
-fast-oad-cs25 = "0.1.1"
+fast-oad-cs25 = "0.3.0"
+fast-oad-core = "1.5.2"
+ipywidgets = "7.7.2"
 xmltodict = "0.13.0"
 progressbar2 = "4.2.0"
 appmode = "0.9.0"
