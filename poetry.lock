@@ -1804,14 +1804,14 @@ files = [
 
 [[package]]
 name = "mistune"
-version = "3.0.2"
-description = "A sane and fast Markdown parser with useful plugins and renderers"
+version = "0.8.4"
+description = "The fastest markdown parser in pure Python"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = "*"
 files = [
-    {file = "mistune-3.0.2-py3-none-any.whl", hash = "sha256:71481854c30fdbc938963d3605b72501f5c10a9320ecd412c121c163a1c7d205"},
-    {file = "mistune-3.0.2.tar.gz", hash = "sha256:fc7f93ded930c92394ef2cb6f04a8aabab4117a91449e72dcc8dfa646a508be8"},
+    {file = "mistune-0.8.4-py2.py3-none-any.whl", hash = "sha256:88a1051873018da288eee8538d476dffe1262495144b33ecb586c4ab266bb8d4"},
+    {file = "mistune-0.8.4.tar.gz", hash = "sha256:59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e"},
 ]
 
 [[package]]
@@ -1876,64 +1876,62 @@ test = ["coverage", "nbval", "pytest", "pytest-cov", "pytest-jupyter", "pytest-p
 
 [[package]]
 name = "nbclient"
-version = "0.7.4"
+version = "0.5.13"
 description = "A client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor."
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "nbclient-0.7.4-py3-none-any.whl", hash = "sha256:c817c0768c5ff0d60e468e017613e6eae27b6fa31e43f905addd2d24df60c125"},
-    {file = "nbclient-0.7.4.tar.gz", hash = "sha256:d447f0e5a4cfe79d462459aec1b3dc5c2e9152597262be8ee27f7d4c02566a0d"},
+    {file = "nbclient-0.5.13-py3-none-any.whl", hash = "sha256:47ac905af59379913c1f8f541098d2550153cf8dc58553cbe18c702b181518b0"},
+    {file = "nbclient-0.5.13.tar.gz", hash = "sha256:40c52c9b5e3c31faecaee69f202b3f53e38d7c1c563de0fadde9d7eda0fdafe8"},
 ]
 
 [package.dependencies]
-jupyter-client = ">=6.1.12"
-jupyter-core = ">=4.12,<5.0.0 || >=5.1.0"
-nbformat = ">=5.1"
-traitlets = ">=5.3"
+jupyter-client = ">=6.1.5"
+nbformat = ">=5.0"
+nest-asyncio = "*"
+traitlets = ">=5.0.0"
 
 [package.extras]
-dev = ["pre-commit"]
-docs = ["autodoc-traits", "mock", "moto", "myst-parser", "nbclient[test]", "sphinx (>=1.7)", "sphinx-book-theme", "sphinxcontrib-spelling"]
-test = ["flaky", "ipykernel", "ipython", "ipywidgets", "nbconvert (>=7.0.0)", "pytest (>=7.0)", "pytest-asyncio", "pytest-cov (>=4.0)", "testpath", "xmltodict"]
+sphinx = ["Sphinx (>=1.7)", "mock", "moto", "myst-parser", "sphinx-book-theme"]
+test = ["black", "check-manifest", "flake8", "ipykernel", "ipython (<8.0.0)", "ipywidgets (<8.0.0)", "mypy", "pip (>=18.1)", "pytest (>=4.1)", "pytest-asyncio", "pytest-cov (>=2.6.1)", "setuptools (>=38.6.0)", "twine (>=1.11.0)", "wheel (>=0.31.0)", "xmltodict"]
 
 [[package]]
 name = "nbconvert"
-version = "7.6.0"
+version = "6.5.4"
 description = "Converting Jupyter Notebooks"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "nbconvert-7.6.0-py3-none-any.whl", hash = "sha256:5a445c6794b0791984bc5436608fe2c066cb43c83920c7bc91bde3b765e9a264"},
-    {file = "nbconvert-7.6.0.tar.gz", hash = "sha256:24fcf27efdef2b51d7f090cc5ce5a9b178766a55be513c4ebab08c91899ab550"},
+    {file = "nbconvert-6.5.4-py3-none-any.whl", hash = "sha256:d679a947f849a966cbbd0bf6e7fedcfdb64be3b20ce7cef11ad55c13f5820e19"},
+    {file = "nbconvert-6.5.4.tar.gz", hash = "sha256:9e3c7c6d491374cbdd5f35d268c05809357716d346f4573186bbeab32ee50bc1"},
 ]
 
 [package.dependencies]
 beautifulsoup4 = "*"
-bleach = "!=5.0.0"
+bleach = "*"
 defusedxml = "*"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
+entrypoints = ">=0.2.2"
 jinja2 = ">=3.0"
 jupyter-core = ">=4.7"
 jupyterlab-pygments = "*"
-markupsafe = ">=2.0"
-mistune = ">=2.0.3,<4"
+lxml = "*"
+MarkupSafe = ">=2.0"
+mistune = ">=0.8.1,<2"
 nbclient = ">=0.5.0"
-nbformat = ">=5.7"
+nbformat = ">=5.1"
 packaging = "*"
 pandocfilters = ">=1.4.1"
 pygments = ">=2.4.1"
 tinycss2 = "*"
-traitlets = ">=5.1"
+traitlets = ">=5.0"
 
 [package.extras]
-all = ["nbconvert[docs,qtpdf,serve,test,webpdf]"]
-docs = ["ipykernel", "ipython", "myst-parser", "nbsphinx (>=0.2.12)", "pydata-sphinx-theme", "sphinx (==5.0.2)", "sphinxcontrib-spelling"]
-qtpdf = ["nbconvert[qtpng]"]
-qtpng = ["pyqtwebengine (>=5.15)"]
+all = ["ipykernel", "ipython", "ipywidgets (>=7)", "nbsphinx (>=0.2.12)", "pre-commit", "pyppeteer (>=1,<1.1)", "pytest", "pytest-cov", "pytest-dependency", "sphinx (>=1.5.1)", "sphinx-rtd-theme", "tornado (>=6.1)"]
+docs = ["ipython", "nbsphinx (>=0.2.12)", "sphinx (>=1.5.1)", "sphinx-rtd-theme"]
 serve = ["tornado (>=6.1)"]
-test = ["ipykernel", "ipywidgets (>=7)", "pre-commit", "pytest", "pytest-dependency"]
+test = ["ipykernel", "ipywidgets (>=7)", "pre-commit", "pyppeteer (>=1,<1.1)", "pytest", "pytest-cov", "pytest-dependency"]
 webpdf = ["pyppeteer (>=1,<1.1)"]
 
 [[package]]
@@ -3779,29 +3777,30 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 
 [[package]]
 name = "voila"
-version = "0.4.0"
+version = "0.3.7"
 description = "Voilà turns Jupyter notebooks into standalone web applications"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "voila-0.4.0-py3-none-any.whl", hash = "sha256:b7ed46d2a593f5ad3808577ceec93136779b7e960f8b221441130cda6f8e8fa8"},
-    {file = "voila-0.4.0.tar.gz", hash = "sha256:5c91fb969bffa3fc28846d8a3eeae804d71577ff49f2cab6b663ad325ae69ad0"},
+    {file = "voila-0.3.7-py3-none-any.whl", hash = "sha256:8694e6cdbbd2d3f215e62bfde22ca5a7975379159fdaa351539aa32d347e5e55"},
+    {file = "voila-0.3.7.tar.gz", hash = "sha256:d6fadb9f68894b355d2f66d7880d6a6064b7d2b57978e015ab36ed704bd079c9"},
 ]
 
 [package.dependencies]
-jupyter-client = ">=6.1.3,<=7.4.1"
+jupyter-client = ">=6.1.3,<8"
 jupyter-core = ">=4.11.0"
 jupyter-server = ">=1.18,<2.0.0"
 jupyterlab-server = ">=2.3.0,<3"
-nbclient = ">=0.4.0,<0.8"
-nbconvert = ">=6.4.5,<8"
+nbclient = ">=0.4.0,<0.6"
+nbconvert = ">=6.4.5,<7"
 traitlets = ">=5.0.3,<6"
 websockets = ">=9.0"
 
 [package.extras]
-dev = ["black", "hatch", "jupyter-releaser"]
-test = ["ipywidgets", "matplotlib", "mock", "numpy", "pandas", "papermill", "pytest", "pytest-rerunfailures", "pytest-tornasync"]
+dev = ["black", "bump2version", "jupyter-releaser (>=0.6,<1.0)"]
+test = ["ipywidgets (==7.6.0)", "matplotlib (>=3.5.3,<=3.6.0)", "mock", "numpy", "pandas", "papermill", "pytest", "pytest-rerunfailures", "pytest-tornasync"]
+visual-test = ["bqplot (==0.12.36)", "ipympl (==0.8.8)", "ipyvolume (==0.5.2)", "jupyterlab (>=3.0,<4.0)", "jupyterlab-miami-nights (==0.3.2)", "scipy (==1.9.1)"]
 
 [[package]]
 name = "wcwidth"
@@ -4224,4 +4223,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "7b0793a4e241eeec5c392112ac4aedc63eae67f0cb8e9f51e57c3d6b1424be4d"
+content-hash = "2f418cf7da0c44cd204274183bcb33eb3b9424b47a03755e6a31846bfe9b989e"
