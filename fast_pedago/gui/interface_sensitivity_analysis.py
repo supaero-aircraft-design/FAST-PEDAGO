@@ -16,7 +16,7 @@ from fast_pedago.tabs import ParentTab
 
 # Create a custom CSS background to have a nice picture in the main menu
 CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
-                        background-image: url("{"../BlockImage/Images/Wing.jpg"}");
+                        background-image: url("{"../gui/resources/background.jpg"}");
                         background-size: cover;
                         background-position: center;
                         background-repeat: no-repeat;
