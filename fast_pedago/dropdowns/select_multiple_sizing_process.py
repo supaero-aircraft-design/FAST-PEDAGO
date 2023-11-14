@@ -23,7 +23,7 @@ def get_select_multiple_sizing_process_dropdown():
         width="95%",
         height="auto",
         justify_content="space-between",
-        align_items="flex-start",
+        align_items="center",
     )
 
     return select_multiple_sizing_process_dropdown
