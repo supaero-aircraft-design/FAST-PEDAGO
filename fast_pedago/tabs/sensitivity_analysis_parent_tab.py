@@ -92,7 +92,7 @@ class ParentTab(widgets.Tab):
         if not pth.exists(self.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=self.configuration_file_path,
-                source_path=pth.join(
+                source_data_path=pth.join(
                     pth.dirname(source_data_files.__file__),
                     "reference_aircraft_source_data_file.xml",
                 ),

@@ -8,8 +8,6 @@ from IPython.display import clear_output, display
 
 import ipywidgets as widgets
 
-import plotly.graph_objects as go
-
 from fast_pedago.tabs.impact_variable_inputs_tab import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
