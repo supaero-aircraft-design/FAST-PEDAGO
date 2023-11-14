@@ -50,6 +50,7 @@ progressbar2 = "4.2.0"
 appmode = "0.9.0"
 openmdao = "3.25.0"
 voila = "0.3.7"
+click = "8.0.3"
 
 [tool.poetry.group.dev.dependencies]
 wheel = "*"
@@ -73,3 +74,6 @@ pylint = "*"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.poetry.scripts]
+    fast-pedago = "fast_pedago.app:main"
