@@ -121,8 +121,47 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             layout=self.input_widget_layout,
         )
 
+        self.cruise_mach_input_box = widgets.HBox()
+        self.cruise_mach_input_box.children = [self.cruise_mach_input_widget]
+        self.cruise_mach_input_box.layout = widgets.Layout(
+            width="100%",
+            height="53px",
+            align_items="center",
+        )
+
+        # As can be seen in the parent tab, there is an issue when cruise mach gets too high,
+        # we will display a warning when that value is reached, informing students of what is
+        # done behind the scene
+        self.cruise_mach_warning_button = widgets.Button(
+            description="",
+            icon="fa-info-circle",
+            button_style="warning",
+            tooltip="The sweep angle of the wing has been adjusted to avoid having compressibility "
+            "drag coefficient too high ",
+        )
+        self.cruise_mach_warning_button.layout = widgets.Layout(
+            height="28px", width="36px"
+        )
+
+        self.cruise_mach_filler_box = widgets.Box(
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="17px",
+                height="28px",
+            ),
+        )
+
         def update_cruise_mach(change):
             self.cruise_mach = change["new"]
+
+            self.cruise_mach_input_box.children = [
+                self.cruise_mach_input_widget,
+                self.cruise_mach_warning_button,
+                self.cruise_mach_filler_box,
+            ]
 
         self.cruise_mach_input_widget.observe(update_cruise_mach, names="value")
 
@@ -224,7 +263,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.text_box_TLAR,
             self.n_pax_input_widget,
             self.v_app_input_widget,
-            self.cruise_mach_input_widget,
+            self.cruise_mach_input_box,
             self.range_input_widget,
             self.text_box_weight,
             self.payload_input_widget,

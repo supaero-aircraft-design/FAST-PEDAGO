@@ -196,6 +196,22 @@ class ParentTab(widgets.Tab):
                     "data:TLAR:approach_speed"
                 ].units = "kn"  # Unit from the widget
 
+                # If the Mach get too high and because we originally didn't plan on changing sweep,
+                # the compressibility drag might get too high causing the code to not converge ! We
+                # will thus adapt the sweep based on the mach number with a message to let the
+                # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
+                # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
+                if self.impact_variable_input_tab.cruise_mach > 0.78:
+
+                    cos_phi_25 = (
+                        0.78
+                        / self.impact_variable_input_tab.cruise_mach
+                        * np.cos(np.deg2rad(24.54))
+                    )
+                    phi_25 = np.arccos(cos_phi_25)
+                    new_inputs["data:geometry:wing:sweep_25"].value = phi_25
+                    new_inputs["data:geometry:wing:sweep_25"].units = "rad"
+
                 new_inputs[
                     "data:TLAR:cruise_mach"
                 ].value = self.impact_variable_input_tab.cruise_mach

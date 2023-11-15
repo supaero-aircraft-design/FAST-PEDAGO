@@ -1,10 +1,10 @@
 <FASTOAD_model>
   <data>
     <TLAR>
-      <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
-      <approach_speed units="m/s" is_input="True">67.90666666666667<!--top-level requirement: approach speed--></approach_speed>
-      <cruise_mach is_input="True">0.78<!--top-level requirement: cruise Mach number--></cruise_mach>
-      <range units="NM" is_input="True">2500.0<!--top-level requirement: design range--></range>
+      <NPAX is_input="True">200.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
+      <approach_speed units="kn" is_input="True">132.0<!--top-level requirement: approach speed--></approach_speed>
+      <cruise_mach is_input="True">0.75<!--top-level requirement: cruise Mach number--></cruise_mach>
+      <range units="NM" is_input="True">3000.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -53,7 +53,7 @@
         <thickness_ratio is_input="True">0.1<!--thickness ratio of vertical tail--></thickness_ratio>
       </vertical_tail>
       <wing>
-        <aspect_ratio is_input="True">9.48<!--wing aspect ratio--></aspect_ratio>
+        <aspect_ratio is_input="True">10.5<!--wing aspect ratio--></aspect_ratio>
         <sweep_25 units="deg" is_input="True">24.54<!--sweep angle at 25% chord of wing--></sweep_25>
         <virtual_taper_ratio is_input="True">0.313<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
         <kink>
@@ -76,7 +76,7 @@
     <propulsion>
       <MTO_thrust units="N" is_input="True">117880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
       <rubber_engine>
-        <bypass_ratio is_input="True">4.9<!--bypass ratio for rubber engine model--></bypass_ratio>
+        <bypass_ratio is_input="True">5.5<!--bypass ratio for rubber engine model--></bypass_ratio>
         <delta_t4_climb is_input="True">-50.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_climb>
         <delta_t4_cruise is_input="True">-100.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_cruise>
         <design_altitude units="m" is_input="True">10058.4<!--design altitude for rubber engine model--></design_altitude>
@@ -109,7 +109,7 @@
         <climb>
           <thrust_rate is_input="True">0.93<!--Input defined by the mission.--></thrust_rate>
           <first_segment>
-            <CAS units="knot" is_input="True">250<!--Input defined by the mission.--></CAS>
+            <CAS units="knot" is_input="True">250.0<!--Input defined by the mission.--></CAS>
           </first_segment>
           <second_segment>
             <CAS units="knot" is_input="True">300.0<!--Input defined by the mission.--></CAS>
@@ -140,7 +140,7 @@
           <duration units="s" is_input="True">0.0<!--Input defined by the mission.--></duration>
           <flap_angle units="deg" is_input="True">10.0<!--flap angle during takeoff phase in sizing mission--></flap_angle>
           <fuel units="kg" is_input="True">82.4<!--mass of consumed fuel during takeoff phase in sizing mission--></fuel>
-          <safety_altitude units="ft" is_input="True">35<!--Input defined by the mission.--></safety_altitude>
+          <safety_altitude units="ft" is_input="True">35.0<!--Input defined by the mission.--></safety_altitude>
           <slat_angle units="deg" is_input="True">18.0<!--slat angle during takeoff phase in sizing mission--></slat_angle>
         </takeoff>
         <taxi_in>
@@ -160,6 +160,12 @@
         </main_route>
       </sizing>
     </mission>
+    <weight>
+      <aircraft>
+        <max_payload units="kg" is_input="True">20000.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">18000.0<!--_inp_data:weight:aircraft:payload--></payload>
+      </aircraft>
+    </weight>
     <aerodynamics>
       <aircraft>
         <landing>
@@ -170,12 +176,6 @@
         </takeoff>
       </aircraft>
     </aerodynamics>
-    <weight>
-      <aircraft>
-        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">17000.0<!--_inp_data:weight:aircraft:payload--></payload>
-      </aircraft>
-    </weight>
   </data>
   <settings>
     <geometry>
@@ -220,7 +220,7 @@
           <time_step units="s" is_input="True">60.0<!--Input defined by the mission.--></time_step>
         </taxi_in>
         <taxi_out>
-          <time_step units="s" is_input="True">60<!--Input defined by the mission.--></time_step>
+          <time_step units="s" is_input="True">60.0<!--Input defined by the mission.--></time_step>
         </taxi_out>
       </sizing>
     </mission>
@@ -234,10 +234,6 @@
             </MAC_position>
           </aft>
         </CG>
-        <payload>
-          <design_mass_per_passenger units="kg" is_input="True">90.72<!--Design value of mass per passenger--></design_mass_per_passenger>
-          <max_mass_per_passenger units="kg" is_input="True">130.72<!--Maximum value of mass per passenger--></max_mass_per_passenger>
-        </payload>
       </aircraft>
       <airframe>
         <flight_controls>

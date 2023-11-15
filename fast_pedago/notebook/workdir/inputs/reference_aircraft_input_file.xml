@@ -1,10 +1,10 @@
 <FASTOAD_model>
   <data>
     <TLAR>
-      <NPAX is_input="True">150.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
+      <NPAX is_input="True">200.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
       <approach_speed units="kn" is_input="True">132.0<!--top-level requirement: approach speed--></approach_speed>
-      <cruise_mach is_input="True">0.78<!--top-level requirement: cruise Mach number--></cruise_mach>
-      <range units="NM" is_input="True">2500.0<!--top-level requirement: design range--></range>
+      <cruise_mach is_input="True">0.75<!--top-level requirement: cruise Mach number--></cruise_mach>
+      <range units="NM" is_input="True">3000.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -53,7 +53,7 @@
         <thickness_ratio is_input="True">0.1<!--thickness ratio of vertical tail--></thickness_ratio>
       </vertical_tail>
       <wing>
-        <aspect_ratio is_input="True">9.48<!--wing aspect ratio--></aspect_ratio>
+        <aspect_ratio is_input="True">10.5<!--wing aspect ratio--></aspect_ratio>
         <sweep_25 units="deg" is_input="True">24.54<!--sweep angle at 25% chord of wing--></sweep_25>
         <virtual_taper_ratio is_input="True">0.313<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
         <kink>
@@ -76,7 +76,7 @@
     <propulsion>
       <MTO_thrust units="N" is_input="True">117880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
       <rubber_engine>
-        <bypass_ratio is_input="True">4.9<!--bypass ratio for rubber engine model--></bypass_ratio>
+        <bypass_ratio is_input="True">5.5<!--bypass ratio for rubber engine model--></bypass_ratio>
         <delta_t4_climb is_input="True">-50.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_climb>
         <delta_t4_cruise is_input="True">-100.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_cruise>
         <design_altitude units="m" is_input="True">10058.4<!--design altitude for rubber engine model--></design_altitude>
@@ -162,15 +162,21 @@
     </mission>
     <weight>
       <aircraft>
-        <max_payload units="kg" is_input="True">19608.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">17000.0<!--_inp_data:weight:aircraft:payload--></payload>
+        <max_payload units="kg" is_input="True">20000.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">18000.0<!--_inp_data:weight:aircraft:payload--></payload>
       </aircraft>
     </weight>
     <aerodynamics>
       <aircraft>
+        <cruise>
+          <CL0 is_input="True">0.1</CL0>
+        </cruise>
         <landing>
           <CL_max_clean_2D is_input="True">1.94<!--maximum lift coefficient of 2D average profile in landing conditions without high-lift devices--></CL_max_clean_2D>
         </landing>
+        <low_speed>
+          <CL0 is_input="True">0.2</CL0>
+        </low_speed>
         <takeoff>
           <mach is_input="True">0.2<!--considered Mach number for takeoff phase--></mach>
         </takeoff>
