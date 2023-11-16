@@ -2,6 +2,10 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
+import os.path as pth
+
+import webbrowser
+
 import ipywidgets as widgets
 
 import plotly.graph_objects as go
@@ -26,6 +30,23 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         # Read the reference input file path so that we can give first accurate first value. Also
         # save it as an object attribute that we can copy to modify inputs
         self.reference_inputs = oad.DataFile(self.reference_input_file_path)
+
+        # Generate the N2 diagram and the XDSM. We will locate them near the configuration file
+        # as in this case there are more data than actual results. Also, since the take a lot of
+        # time to generate, before actually generating them, we check if they exist
+        configuration_file_name = pth.basename(self.configuration_file_path)
+        self.n2_image_path = self.configuration_file_path.replace(
+            configuration_file_name, "n2.png"
+        )
+        self.n2_file_path = self.configuration_file_path.replace(
+            configuration_file_name, "n2.html"
+        )
+        self.xdsm_image_path = self.configuration_file_path.replace(
+            configuration_file_name, "xdsm.png"
+        )
+        self.xdsm_file_path = self.configuration_file_path.replace(
+            configuration_file_name, "xdsm.html"
+        )
 
         # Define attribute to store variable value and give them an initial value corresponding
         # to the reference inputs. Also, those are gonna be attribute of the parent HBox so that the
@@ -281,32 +302,50 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
 
         ############################################################################################
         # Residuals visualization box
+        self.graph_visualization_box = widgets.VBox(
+            layout=widgets.Layout(
+                height="550px", justify_content="center", align_items="center"
+            )
+        )
 
         # This value for the height will only work for that particular definition of the back
         # image. Which means it is not generic enough. If no height is specified however the
         # widget will be too big for its container which is not very pretty.
-        residuals_visualization_layout = go.Layout(
-            height=380,
-        )
+        residuals_visualization_layout = go.Layout(height=550)
 
         base_scatter = go.Scatter(x=[], y=[], name="Relative error")
         residuals_norm_scatter = go.Scatter(x=[], y=[], mode="lines", name="Threshold")
 
-        residuals_visualization_figure = go.Figure(
+        self.residuals_visualization_figure = go.Figure(
             data=[base_scatter, residuals_norm_scatter],
             layout=residuals_visualization_layout,
         )
-        residuals_visualization_figure.update_yaxes(
+        self.residuals_visualization_figure.update_yaxes(
             title_text="Relative value of residuals", type="log", range=[-10.0, 1.0]
         )
-        residuals_visualization_figure.update_xaxes(title_text="Number of iterations")
-        residuals_visualization_figure.update_layout(
-            title_text="Evolution of the residuals", title_x=0.5, height=550
+        self.residuals_visualization_figure.update_xaxes(
+            title_text="Number of iterations"
+        )
+        self.residuals_visualization_figure.update_layout(
+            title_text="Evolution of the residuals", title_x=0.5
         )
 
         self.residuals_visualization_widget = go.FigureWidget(
-            residuals_visualization_figure
+            self.residuals_visualization_figure
         )
+        self.graph_visualization_box.children = [self.residuals_visualization_widget]
+
+        ############################################################################################
+        n2_image_file = open(self.n2_image_path, "rb")
+        n2_image = n2_image_file.read()
+        self.n2_visualization_widget = widgets.Image(value=n2_image, format="png")
+        self.n2_visualization_widget.layout = widgets.Layout(width="95%")
+
+        ############################################################################################
+        xdsm_image_file = open(self.xdsm_image_path, "rb")
+        xdsm_image = xdsm_image_file.read()
+        self.xdsm_visualization_widget = widgets.Image(value=xdsm_image, format="png")
+        self.xdsm_visualization_widget.layout = widgets.Layout(width="95%")
 
         ############################################################################################
         # Launch box
@@ -348,9 +387,64 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             align_items="center",
         )
 
+        self.display_selection_widget = widgets.ToggleButtons(
+            options=["Residuals", "N2", "N2 (browser)", "XDSM", "XDSM (browser)"],
+            disabled=False,
+            button_style="",  # 'success', 'info', 'warning', 'danger' or ''
+            tooltips=[
+                "Displays a graph of the evolution of residulas with the number of iterations",
+                "Displays the N2 diagram of the sizing process",
+                "Displays the N2 diagram of the sizing process in a new browser tab",
+                "Displays the XDSM diagram of the sizing process",
+                "Displays the XDSM diagram of the sizing process in a new browser tab",
+            ],
+            style={"button_width": "120px"},
+        )
+
+        self.display_selection_widget.layout = widgets.Layout(
+            width="98%",
+            height="50px",
+            justify_content="center",
+            align_items="center",
+        )
+
+        def display_graph(change):
+
+            if change["new"] == "Residuals":
+
+                # It looks like the fact that we switch back and forth between image
+                # automatically resizes this FigureWidget so we'll ensure that the layout remains
+                # consistent. Additionally, we have to resize before displaying or else,
+                # for some reasons, the figure is suddenly too big every other time ...
+                self.residuals_visualization_widget.update_layout(
+                    dict(height=550, autosize=None)
+                )
+                self.graph_visualization_box.children = [
+                    self.residuals_visualization_widget
+                ]
+
+            elif change["new"] == "N2":
+
+                self.graph_visualization_box.children = [self.n2_visualization_widget]
+
+            elif change["new"] == "N2 (browser)":
+
+                webbrowser.open_new_tab(self.n2_file_path)
+
+            elif change["new"] == "XDSM":
+
+                self.graph_visualization_box.children = [self.xdsm_visualization_widget]
+
+            else:
+
+                webbrowser.open_new_tab(self.xdsm_file_path)
+
+        self.display_selection_widget.observe(display_graph, names="value")
+
         self.launch_box_and_visualization_widget.children = [
             self.launch_box,
-            self.residuals_visualization_widget,
+            self.graph_visualization_box,
+            self.display_selection_widget,
         ]
 
         self.launch_box_and_visualization_widget.layout = widgets.Layout(
