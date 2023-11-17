@@ -178,11 +178,19 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         def update_cruise_mach(change):
             self.cruise_mach = change["new"]
 
-            self.cruise_mach_input_box.children = [
-                self.cruise_mach_input_widget,
-                self.cruise_mach_warning_button,
-                self.cruise_mach_filler_box,
-            ]
+            if self.cruise_mach > 0.78:
+
+                self.cruise_mach_input_box.children = [
+                    self.cruise_mach_input_widget,
+                    self.cruise_mach_warning_button,
+                    self.cruise_mach_filler_box,
+                ]
+
+            else:
+
+                self.cruise_mach_input_box.children = [
+                    self.cruise_mach_input_widget,
+                ]
 
         self.cruise_mach_input_widget.observe(update_cruise_mach, names="value")
 
