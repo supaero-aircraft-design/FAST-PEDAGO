@@ -12,8 +12,6 @@ from argparse import (
     RawDescriptionHelpFormatter,
 )
 
-import webbrowser
-
 
 MAIN_NOTEBOOK_NAME = pth.join(
     pth.join(pth.dirname(__file__), "notebook"), "FAST_OAD_app.ipynb"
@@ -43,29 +41,19 @@ class Main:
         print(MAIN_NOTEBOOK_NAME)
         if machine == "server":
             command = (
-                "jupyter notebook "
+                "voila "
                 "--port=8080 "
                 "--no-browser "
                 "--MappingKernelManager.cull_idle_timeout=7200 "
+                """--VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|xlsx|ico|pdf|json)']" """
             )
         else:
-            command = "jupyter notebook --no-browser --port=8888 "
+            command = (
+                "voila "
+                """--VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|xlsx|ico|pdf|json)']" """
+            )
 
-        # It shouldn't, it really shouldn't but it works ^^' It looks like because of the custom
-        # CSS background (the only thing not working), I can't launch voila directly in the
-        # command line. However, when launching from a notebook (with the small button on top) it
-        # displays well. This can be replicated, once the jupyter command is launched by going to
-        # the url listed below. So the plan is simple, launch notebook and open the URL.
-        # Unfortunately, if we launch notebooks, the terminal is put on hold and the browser
-        # never open. For some reasons however, if we launch the browser first and then launch the
-        # notebooks it works ^^'
-        webbrowser.open(
-            "http://localhost:8888/voila/render/fast_pedago/notebook/FAST_OAD_app.ipynb"
-        )
-        try:
-            os.system(command)
-        except KeyboardInterrupt:
-            exit()
+        os.system(command + str(MAIN_NOTEBOOK_NAME))
 
     # ENTRY POINT ==================================================================================
     def run(self):

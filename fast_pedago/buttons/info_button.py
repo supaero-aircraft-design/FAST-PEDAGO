@@ -16,7 +16,6 @@ def get_main_menu_info_button():
     info_button = widgets.Button(description="")
     info_button.icon = "fa-info-circle"
     info_button.layout.width = "auto"
-    info_button.layout.height = "auto"
     info_button.tooltip = (
         "Welcome to the training branch of FAST-OAD.\n This is the main menu which can lead you "
         "to the different activities to be performed. You'll also find some links to the source "
@@ -32,7 +31,6 @@ def get_sensitivity_analysis_info_button():
     info_button = widgets.Button(description="")
     info_button.icon = "fa-info-circle"
     info_button.layout.width = "auto"
-    info_button.layout.height = "auto"
     info_button.tooltip = (
         "This is the sensitivity analysis part of the training branch.\n"
         "In this part, you'll study the influence of a few select aircraft design "

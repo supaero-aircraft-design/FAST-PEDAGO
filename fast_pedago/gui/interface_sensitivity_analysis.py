@@ -2,6 +2,8 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
+import os.path as pth
+
 import ipywidgets as widgets
 
 from fast_pedago.buttons import (
@@ -13,17 +15,6 @@ from fast_pedago.buttons import (
     get_start_button,
 )
 from fast_pedago.tabs import ParentTab
-
-# Create a custom CSS background to have a nice picture in the main menu
-CUSTOM_CSS_BACKGROUND = f""" .vbox-with-background {{
-                        background-image: url("{"../gui/resources/background.jpg"}");
-                        background-size: cover;
-                        background-position: center;
-                        background-repeat: no-repeat;
-                        width: 100%;
-                        height: 100%;
-                        }}
-                        """
 
 
 class FASTOADInterface(widgets.VBox):
@@ -37,7 +28,7 @@ class FASTOADInterface(widgets.VBox):
             padding="10px",
             align_items="center",
             width="1302px",
-            height="920px",
+            height="900px",
             justify_content="center",
         )
 
@@ -55,8 +46,25 @@ class FASTOADInterface(widgets.VBox):
                 padding="0px",
                 align_items="center",
                 width="100",
-                height="68%",
+                height="18%",
             ),
+        )
+
+        fast_oad_logo_main_menu_file_path = pth.join(
+            pth.dirname(__file__), "resources", "logo_fast_oad_main_menu.jpg"
+        )
+        fast_oad_logo_main_menu_file = open(fast_oad_logo_main_menu_file_path, "rb")
+        fast_oad_logo_main_menu_image = fast_oad_logo_main_menu_file.read()
+        self.fast_oad_main_menu_logo_widget = widgets.Image(
+            value=fast_oad_logo_main_menu_image, format="jpg"
+        )
+        self.fast_oad_main_menu_logo_widget.layout = widgets.Layout(
+            border="0px solid black",
+            margin="0 0 0 0px",
+            padding="0px",
+            align_items="center",
+            width="100",
+            height="50%",
         )
 
         self.start_button = get_start_button()
@@ -94,15 +102,91 @@ class FASTOADInterface(widgets.VBox):
 
         info_button = get_main_menu_info_button()
 
-        # Add a box for the info button
-        self.main_menu_box_info_button = widgets.Box(
+        # Create a bottom layer for the main menu it will be consisting of box of size 40%/20%/40% which will allow
+        # me to center the info button in the middle box AND justify the logo to the right. The same distribution
+        # will be used everywhere
+        self.bottom_layer_info_box = widgets.widgets.Box(
             children=[info_button],
             layout=widgets.Layout(
                 border="0px solid black",
                 margin="0 0 0 0px",
                 padding="0px",
+                justify_content="center",
                 align_items="center",
-                width="100",
+                width="20%",
+                height="100%",
+            ),
+        )
+
+        isae_logo_file_path = pth.join(
+            pth.dirname(__file__), "resources", "logo_supaero.png"
+        )
+        isae_logo_file = open(isae_logo_file_path, "rb")
+        isae_logo_image = isae_logo_file.read()
+        self.isae_logo_widget = widgets.Image(value=isae_logo_image, format="png")
+        self.isae_logo_widget.layout = widgets.Layout(
+            border="0px solid black",
+            margin="0 0 0 0px",
+            padding="0px",
+            width="100",
+            height="100%",
+        )
+
+        airbus_logo_file_path = pth.join(
+            pth.dirname(__file__), "resources", "logo_airbus.png"
+        )
+        airbus_logo_file = open(airbus_logo_file_path, "rb")
+        airbus_logo_image = airbus_logo_file.read()
+        self.airbus_logo_widget = widgets.Image(value=airbus_logo_image, format="png")
+        self.airbus_logo_widget.layout = widgets.Layout(
+            border="0px solid black",
+            margin="0 0 0 0px",
+            padding="0px",
+            width="100",
+            height="100%",
+        )
+
+        # The idea is to be able to have the logos in the same place and the buttons center. Thus, we will save the
+        # logo box and the filler box to reuse them later
+        self.logo_box = widgets.HBox(
+            children=[
+                self.isae_logo_widget,
+                self.airbus_logo_widget,
+            ],
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                justify_content="flex-end",
+                width="40%",
+                height="100%",
+            ),
+        )
+
+        self.bottom_layer_filler_box = widgets.Box(
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                justify_content="flex-start",
+                width="40%",
+                height="100%",
+            ),
+        )
+
+        # Add a box for the info button and the logos
+        self.main_menu_box_bottom_layer = widgets.Box(
+            children=[
+                self.bottom_layer_filler_box,
+                self.bottom_layer_info_box,
+                self.logo_box,
+            ],
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="100%",
                 height="10%",
             ),
         )
@@ -110,9 +194,10 @@ class FASTOADInterface(widgets.VBox):
         # The default appearance of the box should be the main menu hence the following line
         self.children = [
             self.main_menu_filler_box,
+            self.fast_oad_main_menu_logo_widget,
             self.main_menu_box_start_button,
             self.main_menu_box_buttons_git,
-            self.main_menu_box_info_button,
+            self.main_menu_box_bottom_layer,
         ]
 
         # Create a button to go back home, can't externalize because the on-click depends on a
@@ -128,15 +213,22 @@ class FASTOADInterface(widgets.VBox):
         self.analysis_info_button = get_sensitivity_analysis_info_button()
 
         # Create a filler bow so that we still see the FAST-OAD logo
-        self.sensitivity_filler_box = widgets.Box(
-            layout=widgets.Layout(
-                border="0px solid black",
-                margin="0 0 0 0px",
-                padding="0px",
-                align_items="center",
-                width="100",
-                height="12%",
-            ),
+
+        fast_oad_logo_top_layer_file_path = pth.join(
+            pth.dirname(__file__), "resources", "logo_fast_oad_top_layer.jpg"
+        )
+        fast_oad_logo_top_layer_file = open(fast_oad_logo_top_layer_file_path, "rb")
+        fast_oad_logo_top_layer_image = fast_oad_logo_top_layer_file.read()
+        self.fast_oad_top_layer_logo_widget = widgets.Image(
+            value=fast_oad_logo_top_layer_image, format="jpg"
+        )
+        self.fast_oad_top_layer_logo_widget.layout = widgets.Layout(
+            border="0px solid black",
+            margin="0 0 0 0px",
+            padding="0px",
+            align_items="center",
+            width="100",
+            height="12%",
         )
 
         self.sensitivity_analysis_tab = ParentTab()
@@ -151,32 +243,48 @@ class FASTOADInterface(widgets.VBox):
 
         # Create a header with an info button and a button to go back home. Put it at the bottom
         # to match what is done on the main menu
-        self.sensitivity_bottom_layer_box = widgets.Box(
+        self.sensitivity_bottom_layer_button_box = widgets.Box(
             children=[self.analysis_back_home_button, self.analysis_info_button],
             layout=widgets.Layout(
                 border="0px solid black",
                 margin="0 0 0 0px",
                 padding="0px",
+                justify_content="center",
                 align_items="center",
-                width="100",
-                height="10%",
+                width="20%",
+                height="100%",
             ),
         )
 
-        self.add_class("vbox-with-background")
+        self.sensitivity_bottom_layer_box = widgets.Box(
+            children=[
+                self.bottom_layer_filler_box,
+                self.sensitivity_bottom_layer_button_box,
+                self.logo_box,
+            ],
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                align_items="center",
+                width="100%",
+                height="10%",
+            ),
+        )
 
     def display_main_menu(self, event):
 
         self.children = [
             self.main_menu_filler_box,
+            self.fast_oad_main_menu_logo_widget,
             self.main_menu_box_start_button,
             self.main_menu_box_buttons_git,
-            self.main_menu_box_info_button,
+            self.main_menu_box_bottom_layer,
         ]
 
     def display_sensitivity_analysis_menu(self, event):
         self.children = [
-            self.sensitivity_filler_box,
+            self.fast_oad_top_layer_logo_widget,
             self.sensitivity_analysis_tab,
             self.sensitivity_bottom_layer_box,
         ]
