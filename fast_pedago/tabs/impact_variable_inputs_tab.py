@@ -148,7 +148,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.cruise_mach_input_box.children = [self.cruise_mach_input_widget]
         self.cruise_mach_input_box.layout = widgets.Layout(
             width="100%",
-            height="53px",
+            height="54px",
             align_items="center",
         )
 
