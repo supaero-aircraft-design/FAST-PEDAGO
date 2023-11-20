@@ -13,8 +13,19 @@ from fast_pedago.buttons import (
     get_main_menu_info_button,
     get_sensitivity_analysis_info_button,
     get_start_button,
+    get_back_home_button,
 )
 from fast_pedago.tabs import ParentTab
+from fast_pedago.utils.functions import _image_from_path  # noqa
+
+BOTTOM_BOX_LAYOUT = widgets.Layout(
+    border="0px solid black",
+    margin="0 0 0 0px",
+    padding="0px",
+    align_items="center",
+    width="100%",
+    height="10%",
+)
 
 
 class FASTOADInterface(widgets.VBox):
@@ -53,18 +64,8 @@ class FASTOADInterface(widgets.VBox):
         fast_oad_logo_main_menu_file_path = pth.join(
             pth.dirname(__file__), "resources", "logo_fast_oad_main_menu.jpg"
         )
-        fast_oad_logo_main_menu_file = open(fast_oad_logo_main_menu_file_path, "rb")
-        fast_oad_logo_main_menu_image = fast_oad_logo_main_menu_file.read()
-        self.fast_oad_main_menu_logo_widget = widgets.Image(
-            value=fast_oad_logo_main_menu_image, format="jpg"
-        )
-        self.fast_oad_main_menu_logo_widget.layout = widgets.Layout(
-            border="0px solid black",
-            margin="0 0 0 0px",
-            padding="0px",
-            align_items="center",
-            width="100",
-            height="50%",
+        self.fast_oad_main_menu_logo_widget = _image_from_path(
+            fast_oad_logo_main_menu_file_path, height="50%", width="100"
         )
 
         self.start_button = get_start_button()
@@ -121,29 +122,15 @@ class FASTOADInterface(widgets.VBox):
         isae_logo_file_path = pth.join(
             pth.dirname(__file__), "resources", "logo_supaero.png"
         )
-        isae_logo_file = open(isae_logo_file_path, "rb")
-        isae_logo_image = isae_logo_file.read()
-        self.isae_logo_widget = widgets.Image(value=isae_logo_image, format="png")
-        self.isae_logo_widget.layout = widgets.Layout(
-            border="0px solid black",
-            margin="0 0 0 0px",
-            padding="0px",
-            width="100",
-            height="100%",
+        self.isae_logo_widget = _image_from_path(
+            isae_logo_file_path, height="100%", width="100"
         )
 
         airbus_logo_file_path = pth.join(
             pth.dirname(__file__), "resources", "logo_airbus.png"
         )
-        airbus_logo_file = open(airbus_logo_file_path, "rb")
-        airbus_logo_image = airbus_logo_file.read()
-        self.airbus_logo_widget = widgets.Image(value=airbus_logo_image, format="png")
-        self.airbus_logo_widget.layout = widgets.Layout(
-            border="0px solid black",
-            margin="0 0 0 0px",
-            padding="0px",
-            width="100",
-            height="100%",
+        self.airbus_logo_widget = _image_from_path(
+            airbus_logo_file_path, height="100%", width="100"
         )
 
         # The idea is to be able to have the logos in the same place and the buttons center. Thus, we will save the
@@ -181,14 +168,7 @@ class FASTOADInterface(widgets.VBox):
                 self.bottom_layer_info_box,
                 self.logo_box,
             ],
-            layout=widgets.Layout(
-                border="0px solid black",
-                margin="0 0 0 0px",
-                padding="0px",
-                align_items="center",
-                width="100%",
-                height="10%",
-            ),
+            layout=BOTTOM_BOX_LAYOUT,
         )
 
         # The default appearance of the box should be the main menu hence the following line
@@ -200,35 +180,20 @@ class FASTOADInterface(widgets.VBox):
             self.main_menu_box_bottom_layer,
         ]
 
-        # Create a button to go back home, can't externalize because the on-click depends on a
-        # function defined here
-        self.analysis_back_home_button = widgets.Button(description="")
-        self.analysis_back_home_button.icon = "fa-home"
-        self.analysis_back_home_button.layout.width = "auto"
-        self.analysis_back_home_button.layout.height = "auto"
-
+        # Create a button to go back home
+        self.analysis_back_home_button = get_back_home_button()
         self.analysis_back_home_button.on_click(self.display_main_menu)
 
         # A small info button
         self.analysis_info_button = get_sensitivity_analysis_info_button()
 
-        # Create a filler bow so that we still see the FAST-OAD logo
-
         fast_oad_logo_top_layer_file_path = pth.join(
             pth.dirname(__file__), "resources", "logo_fast_oad_top_layer.jpg"
         )
-        fast_oad_logo_top_layer_file = open(fast_oad_logo_top_layer_file_path, "rb")
-        fast_oad_logo_top_layer_image = fast_oad_logo_top_layer_file.read()
-        self.fast_oad_top_layer_logo_widget = widgets.Image(
-            value=fast_oad_logo_top_layer_image, format="jpg"
-        )
-        self.fast_oad_top_layer_logo_widget.layout = widgets.Layout(
-            border="0px solid black",
-            margin="0 0 0 0px",
-            padding="0px",
-            align_items="center",
-            width="100",
+        self.fast_oad_top_layer_logo_widget = _image_from_path(
+            file_path=fast_oad_logo_top_layer_file_path,
             height="12%",
+            width="100",
         )
 
         self.sensitivity_analysis_tab = ParentTab()
@@ -262,14 +227,7 @@ class FASTOADInterface(widgets.VBox):
                 self.sensitivity_bottom_layer_button_box,
                 self.logo_box,
             ],
-            layout=widgets.Layout(
-                border="0px solid black",
-                margin="0 0 0 0px",
-                padding="0px",
-                align_items="center",
-                width="100%",
-                height="10%",
-            ),
+            layout=BOTTOM_BOX_LAYOUT,
         )
 
     def display_main_menu(self, event):
@@ -283,6 +241,7 @@ class FASTOADInterface(widgets.VBox):
         ]
 
     def display_sensitivity_analysis_menu(self, event):
+
         self.children = [
             self.fast_oad_top_layer_logo_widget,
             self.sensitivity_analysis_tab,

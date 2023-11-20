@@ -13,6 +13,8 @@ import plotly.graph_objects as go
 import openmdao.api as om
 import fastoad.api as oad
 
+from fast_pedago.utils.functions import _image_from_path  # noqa
+
 OUTPUT_FILE_SUFFIX = "_output_file.xml"
 FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
 
@@ -344,16 +346,14 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.graph_visualization_box.children = [self.residuals_visualization_widget]
 
         ############################################################################################
-        n2_image_file = open(self.n2_image_path, "rb")
-        n2_image = n2_image_file.read()
-        self.n2_visualization_widget = widgets.Image(value=n2_image, format="png")
-        self.n2_visualization_widget.layout = widgets.Layout(width="95%")
+        self.n2_visualization_widget = _image_from_path(
+            self.n2_image_path, height="", width="95%"
+        )
 
         ############################################################################################
-        xdsm_image_file = open(self.xdsm_image_path, "rb")
-        xdsm_image = xdsm_image_file.read()
-        self.xdsm_visualization_widget = widgets.Image(value=xdsm_image, format="png")
-        self.xdsm_visualization_widget.layout = widgets.Layout(width="95%")
+        self.xdsm_visualization_widget = _image_from_path(
+            self.xdsm_image_path, height="", width="95%"
+        )
 
         ############################################################################################
         # Launch box

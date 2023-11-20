@@ -5,7 +5,8 @@ readme = "README.md"
 description = ""
 authors = [
     "Ousmane SY <Ousmane.SY@isae-supaero.fr>",
-    "Eric MONTSERRAT ROBLES <Eric.MONTSERRAT-ROBLES@student.isae-supaero.fr>"
+    "Eric MONTSERRAT ROBLES <Eric.MONTSERRAT-ROBLES@student.isae-supaero.fr>",
+    "Florent LUTZ <Florent.LUTZ2@isae-supaero.fr>"
 ]
 exclude = ["**/tests/**"]
 

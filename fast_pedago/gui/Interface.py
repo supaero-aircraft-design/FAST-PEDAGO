@@ -1639,10 +1639,10 @@ class Interface:
 
             wing_weight_max = (
                 0.019
-                * self.MassLoop_1_max.value**0.8
-                * self.MassLoop_2_min.value**1.2
-                * self.MassLoop_3_min.value**-0.2
-                * self.MassLoop_4_min.value**-0.2
+                * self.MassLoop_1_max.value ** 0.8
+                * self.MassLoop_2_min.value ** 1.2
+                * self.MassLoop_3_min.value ** -0.2
+                * self.MassLoop_4_min.value ** -0.2
                 * np.cos(self.MassLoop_5_min.value * np.pi / 180.0) ** -1
             )
             fuselage_weight_max = 0.1 * self.MassLoop_1_max.value
@@ -2053,7 +2053,7 @@ class Interface:
                 0.5
                 * self.Constraint_1_Density.value
                 * self.Constraint_2_Clmax.value
-                * Vstall**2
+                * Vstall ** 2
             )
 
             # this computes the take off curve
@@ -2070,9 +2070,9 @@ class Interface:
 
             # this computes the straight level flight curve
             q = (
-                0.5 * self.Constraint_9_density_FL.value * self.Breguet_2.value**2
+                0.5 * self.Constraint_9_density_FL.value * self.Breguet_2.value ** 2
             )  # dynamic pressure
-            AR = (self.MassLoop_2_min.value**2) / (self.MassLoop_3_min.value)
+            AR = (self.MassLoop_2_min.value ** 2) / (self.MassLoop_3_min.value)
             K = 1 / (np.pi * AR * self.Constraint_8_e.value)
 
             W_S = np.linspace(300, 9000, num=100)
@@ -2082,12 +2082,12 @@ class Interface:
             q = (
                 0.5
                 * self.Constraint_12_density_CL.value
-                * self.Constraint_11_climb_velocity.value**2
+                * self.Constraint_11_climb_velocity.value ** 2
             )
 
             T_W_Climbing = (
                 q * self.Constraint_7_Cd0.value / W_S
-                + (K * self.Constraint_13_n.value**2 / q) * W_S
+                + (K * self.Constraint_13_n.value ** 2 / q) * W_S
                 + (1 / self.Constraint_11_climb_velocity.value)
                 * self.Constraint_10_climb_rate.value
             )
@@ -8588,7 +8588,7 @@ class Interface:
         n_engines = self.Para_DataNEO["data:geometry:propulsion:engine:count"].value[0]
 
         cf_nac = 0.455 / (
-            (1 + 0.144 * mach**2) ** 0.65 * (np.log10(reynolds * nac_length)) ** 2.58
+            (1 + 0.144 * mach ** 2) ** 0.65 * (np.log10(reynolds * nac_length)) ** 2.58
         )
         e_fan = 0.22
         kn_cd0_nac = 1 + 0.05 + 5.8 * e_fan / fan_length
@@ -8619,8 +8619,8 @@ class Interface:
             self.Para_DataNEO["data:aerodynamics:pylons:cruise:CD0"].value[:]
         )
         k_parasite = (
-            -2.39 * pow(10, -12) * wet_area_total**3
-            + 2.58 * pow(10, -8) * wet_area_total**2
+            -2.39 * pow(10, -12) * wet_area_total ** 3
+            + 2.58 * pow(10, -8) * wet_area_total ** 2
             - 0.89 * pow(10, -4) * wet_area_total
             + 0.163
         )
@@ -8671,7 +8671,7 @@ class Interface:
             cd0_total
             + cd_c
             + cd_trim
-            + coef_k * cl**2 * k_winglet_cd
+            + coef_k * cl ** 2 * k_winglet_cd
             + offset_winglet_cd
             + delta_cd_hl
         ) * k_cd + offset_cd
@@ -9317,8 +9317,8 @@ class Interface:
             WettedArea_Aircraft_ref - self.WettedArea_Fuse_ref + WettedArea_Fuse_new
         )
         k_parasite = (
-            -2.39 * pow(10, -12) * WettedArea_Aircraft_new**3
-            + 2.58 * pow(10, -8) * WettedArea_Aircraft_new**2
+            -2.39 * pow(10, -12) * WettedArea_Aircraft_new ** 3
+            + 2.58 * pow(10, -8) * WettedArea_Aircraft_new ** 2
             - 0.89 * pow(10, -4) * WettedArea_Aircraft_new
             + 0.163
         )
@@ -9403,8 +9403,8 @@ class Interface:
             + self.WettedArea_Fuse_new
         )
         k_parasite = (
-            -2.39 * pow(10, -12) * self.WettedArea_Aircraft_new**3
-            + 2.58 * pow(10, -8) * self.WettedArea_Aircraft_new**2
+            -2.39 * pow(10, -12) * self.WettedArea_Aircraft_new ** 3
+            + 2.58 * pow(10, -8) * self.WettedArea_Aircraft_new ** 2
             - 0.89 * pow(10, -4) * self.WettedArea_Aircraft_new
             + 0.163
         )
