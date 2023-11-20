@@ -121,7 +121,7 @@ class ParentTab(widgets.Tab):
         # Create a button to launch the sizing
         self.launch_button_widget = widgets.Button(description="Launch sizing process")
         self.launch_button_widget.icon = "fa-plane"
-        self.launch_button_widget.layout = widgets.Layout(width="auto", height="auto")
+        self.launch_button_widget.layout = widgets.Layout(width="25%", height="auto")
         self.launch_button_widget.style.button_color = "GreenYellow"
 
         dummy_output = widgets.Output()
@@ -325,11 +325,16 @@ class ParentTab(widgets.Tab):
                     self.impact_variable_mission_tab,
                 ]
 
+        # TODO: It is possible to define the button in the children tab and define the on_click here. We will do it
+        #  as it will allow us to change the description of the laucnh button in the tab
         self.launch_button_widget.on_click(launch_sizing_process)
 
         self.impact_variable_input_tab.launch_box.children = [
+            self.impact_variable_input_tab.filler_box,
             self.impact_variable_input_tab.process_name_widget,
             self.launch_button_widget,
+            self.impact_variable_input_tab.filler_box,
+            self.impact_variable_input_tab.mdo_selection_widget,
         ]
 
         ############################################################################################

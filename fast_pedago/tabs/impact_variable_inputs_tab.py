@@ -311,6 +311,17 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         ############################################################################################
+        # We also create a bow specific for launching an MDO which will only consists of selecting
+        # the objectives and the bounds for the design variables
+        # Input box
+        self.mdo_input_box_widget = widgets.VBox()
+        self.mdo_input_box_widget.layout = widgets.Layout(
+            width="33%",
+            justify_content="flex-start",
+            border="2px solid black",
+        )
+
+        ############################################################################################
         # Residuals visualization box
         self.graph_visualization_box = widgets.VBox(
             layout=widgets.Layout(
@@ -369,7 +380,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             tooltip="Name of the sizing process",
         )
         self.process_name_widget.layout = widgets.Layout(
-            width="66%",
+            width="56%",
             height="auto",
             justify_content="space-between",
             align_items="flex-start",
@@ -383,9 +394,32 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         # Create a dummy button, it will be over-writen by a button from the parent tab
         self.dummy_button = widgets.Button()
 
+        # Create a button to trigger the MDO "mode"
+        self.mdo_selection_widget = widgets.ToggleButton(
+            value=False,
+            description="MDO",
+            icon="check",
+            tooltip="Check that box to swap in optimization mode",
+        )
+        self.mdo_selection_widget.layout = widgets.Layout(
+            width="10%",
+            height="auto",
+        )
+
+        # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
+        self.filler_box = widgets.Box(
+            layout=widgets.Layout(
+                width="3%",
+                height="auto",
+            ),
+        )
+
         self.launch_box.children = [
+            self.filler_box,
             self.process_name_widget,
             self.dummy_button,
+            self.filler_box,
+            self.mdo_selection_widget,
         ]
 
         self.launch_box.layout = widgets.Layout(
@@ -465,3 +499,20 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.input_box_widget,
             self.launch_box_and_visualization_widget,
         ]
+
+        def update_input_box(event):
+
+            # We are in MDO mode
+            if event["new"]:
+                self.children = [
+                    self.mdo_input_box_widget,
+                    self.launch_box_and_visualization_widget,
+                ]
+
+            else:
+                self.children = [
+                    self.input_box_widget,
+                    self.launch_box_and_visualization_widget,
+                ]
+
+        self.mdo_selection_widget.observe(update_input_box, names="value")
