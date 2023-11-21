@@ -128,176 +128,25 @@ class ParentTab(widgets.Tab):
             )
             self.children = [self.impact_variable_input_tab]
 
+            # Clear the residuals visualization to make it apparent that a computation is
+            # underway.
+
+            residuals_graph = (
+                self.impact_variable_input_tab.residuals_visualization_widget.data[0]
+            )
+            residuals_graph.x = []
+            residuals_graph.y = []
+
+            threshold_graph = (
+                self.impact_variable_input_tab.residuals_visualization_widget.data[1]
+            )
+            threshold_graph.x = []
+            threshold_graph.y = []
+
             with dummy_output:
-                # Clear the residuals visualization to make it apparent that a computation is
-                # underway.
 
-                residuals_graph = (
-                    self.impact_variable_input_tab.residuals_visualization_widget.data[
-                        0
-                    ]
-                )
-                residuals_graph.x = []
-                residuals_graph.y = []
+                relative_error, target_residuals = self._launch_mda()
 
-                threshold_graph = (
-                    self.impact_variable_input_tab.residuals_visualization_widget.data[
-                        1
-                    ]
-                )
-                threshold_graph.x = []
-                threshold_graph.y = []
-
-                # Create a new FAST-OAD problem based on the reference configuration file
-                configurator = oad.FASTOADProblemConfigurator(
-                    self.configuration_file_path
-                )
-
-                # Save orig file path and name so that we can replace them with the sizing process
-                # name
-                orig_input_file_path = configurator.input_file_path
-                orig_input_file_name = pth.basename(orig_input_file_path)
-                orig_output_file_path = configurator.output_file_path
-                orig_output_file_name = pth.basename(orig_output_file_path)
-
-                new_input_file_path = orig_input_file_path.replace(
-                    orig_input_file_name,
-                    self.impact_variable_input_tab.sizing_process_name
-                    + "_input_file.xml",
-                )
-                new_output_file_path = orig_output_file_path.replace(
-                    orig_output_file_name,
-                    self.impact_variable_input_tab.sizing_process_name
-                    + OUTPUT_FILE_SUFFIX,
-                )
-
-                # Change the input and output file path in the configurator
-                configurator.input_file_path = new_input_file_path
-                configurator.output_file_path = new_output_file_path
-
-                # Create the input file with the current value
-                new_inputs = copy.deepcopy(
-                    self.impact_variable_input_tab.reference_inputs
-                )
-
-                # No need to provide list or numpy array for scalar values.
-                new_inputs[
-                    "data:TLAR:NPAX"
-                ].value = self.impact_variable_input_tab.n_pax
-
-                new_inputs[
-                    "data:TLAR:approach_speed"
-                ].value = self.impact_variable_input_tab.v_app
-                new_inputs[
-                    "data:TLAR:approach_speed"
-                ].units = "kn"  # Unit from the widget
-
-                # If the Mach get too high and because we originally didn't plan on changing sweep,
-                # the compressibility drag might get too high causing the code to not converge ! We
-                # will thus adapt the sweep based on the mach number with a message to let the
-                # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
-                # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-                if self.impact_variable_input_tab.cruise_mach > 0.78:
-
-                    cos_phi_25 = (
-                        0.78
-                        / self.impact_variable_input_tab.cruise_mach
-                        * np.cos(np.deg2rad(24.54))
-                    )
-                    phi_25 = np.arccos(cos_phi_25)
-                    new_inputs["data:geometry:wing:sweep_25"].value = phi_25
-                    new_inputs["data:geometry:wing:sweep_25"].units = "rad"
-
-                new_inputs[
-                    "data:TLAR:cruise_mach"
-                ].value = self.impact_variable_input_tab.cruise_mach
-
-                new_inputs[
-                    "data:TLAR:range"
-                ].value = self.impact_variable_input_tab.range
-                new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
-
-                new_inputs[
-                    "data:weight:aircraft:payload"
-                ].value = self.impact_variable_input_tab.payload
-                new_inputs[
-                    "data:weight:aircraft:payload"
-                ].units = "kg"  # Unit from the widget
-
-                new_inputs[
-                    "data:weight:aircraft:max_payload"
-                ].value = self.impact_variable_input_tab.max_payload
-                new_inputs[
-                    "data:weight:aircraft:max_payload"
-                ].units = "kg"  # Unit from the widget
-
-                new_inputs[
-                    "data:geometry:wing:aspect_ratio"
-                ].value = self.impact_variable_input_tab.wing_aspect_ratio
-
-                new_inputs[
-                    "data:propulsion:rubber_engine:bypass_ratio"
-                ].value = self.impact_variable_input_tab.bpr
-                # Save as the new input file. We overwrite always, may need to put a warning for
-                # students
-                new_inputs.save_as(new_input_file_path, overwrite=True)
-
-                # Get the problem, no need to write inputs. The fact that the reference was created
-                # based on the same configuration we will always use should ensure the completion of
-                # the input file
-                problem = configurator.get_problem(read_inputs=True)
-                problem.setup()
-
-                # Save target residuals
-                target_residuals = problem.model.nonlinear_solver.options["rtol"]
-
-                model = problem.model
-                recorder_database_file_path = orig_output_file_path.replace(
-                    orig_output_file_name,
-                    self.impact_variable_input_tab.sizing_process_name + "_cases.sql",
-                )
-                recorder = om.SqliteRecorder(recorder_database_file_path)
-                model.nonlinear_solver.add_recorder(recorder)
-                model.nonlinear_solver.recording_options[
-                    "record_solver_residuals"
-                ] = True
-
-                # Run the problem and write output. Catch warning for cleaner interface
-                with warnings.catch_warnings():
-                    warnings.simplefilter(action="ignore", category=FutureWarning)
-                    problem.run_model()
-
-                problem.write_outputs()
-
-                # We also need to rename the .csv file which contains the mission data. I don't
-                # see a proper way to do it other than that since it is something INSIDE the
-                # configuration file which we can't overwrite like the input and output file
-                # path. There may be a way to do it by modifying the options of the performances
-                # components of the problem but it seems too much
-
-                old_mission_data_file_path = orig_output_file_path.replace(
-                    orig_output_file_name, "flight_points.csv"
-                )
-                new_mission_data_file_path = orig_output_file_path.replace(
-                    orig_output_file_name,
-                    self.impact_variable_input_tab.sizing_process_name
-                    + FLIGHT_DATA_FILE_SUFFIX,
-                )
-
-                # You can't rename to a file which already exists, so if one already exists we
-                # delete it before renaming.
-                if pth.exists(new_mission_data_file_path):
-                    os.remove(new_mission_data_file_path)
-
-                os.rename(old_mission_data_file_path, new_mission_data_file_path)
-
-                # Extract the residuals, build a scatter based on them and plot them along with the
-                # threshold set in the configuration file
-                relative_error = np.array(
-                    extract_residuals(
-                        recorder_database_file_path=recorder_database_file_path
-                    )
-                )
                 # For the display, hte iteration will start at 1 :)
                 iteration_numbers = np.arange(len(relative_error)) + 1
 
@@ -421,6 +270,148 @@ class ParentTab(widgets.Tab):
         # Add a title for each tab
         for i, tab_name in enumerate(TABS_NAME):
             self.set_title(i, tab_name)
+
+    def _launch_mda(self):
+        """
+        Launches the mda by reading the inputs from the proper tab and extract the value for the
+        graph of interest (in this case the residuals and the target residuals)
+
+        :return: the residuals at each iterations
+        """
+
+        # Create a new FAST-OAD problem based on the reference configuration file
+        configurator = oad.FASTOADProblemConfigurator(self.configuration_file_path)
+
+        # Save orig file path and name so that we can replace them with the sizing process
+        # name
+        orig_input_file_path = configurator.input_file_path
+        orig_input_file_name = pth.basename(orig_input_file_path)
+        orig_output_file_path = configurator.output_file_path
+        orig_output_file_name = pth.basename(orig_output_file_path)
+
+        new_input_file_path = orig_input_file_path.replace(
+            orig_input_file_name,
+            self.impact_variable_input_tab.sizing_process_name + "_input_file.xml",
+        )
+        new_output_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name + OUTPUT_FILE_SUFFIX,
+        )
+
+        # Change the input and output file path in the configurator
+        configurator.input_file_path = new_input_file_path
+        configurator.output_file_path = new_output_file_path
+
+        # Create the input file with the current value
+        new_inputs = copy.deepcopy(self.impact_variable_input_tab.reference_inputs)
+
+        # No need to provide list or numpy array for scalar values.
+        new_inputs["data:TLAR:NPAX"].value = self.impact_variable_input_tab.n_pax
+
+        new_inputs[
+            "data:TLAR:approach_speed"
+        ].value = self.impact_variable_input_tab.v_app
+        new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
+
+        # If the Mach get too high and because we originally didn't plan on changing sweep,
+        # the compressibility drag might get too high causing the code to not converge ! We
+        # will thus adapt the sweep based on the mach number with a message to let the
+        # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
+        # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
+        if self.impact_variable_input_tab.cruise_mach > 0.78:
+            cos_phi_25 = (
+                0.78
+                / self.impact_variable_input_tab.cruise_mach
+                * np.cos(np.deg2rad(24.54))
+            )
+            phi_25 = np.arccos(cos_phi_25)
+            new_inputs["data:geometry:wing:sweep_25"].value = phi_25
+            new_inputs["data:geometry:wing:sweep_25"].units = "rad"
+
+        new_inputs[
+            "data:TLAR:cruise_mach"
+        ].value = self.impact_variable_input_tab.cruise_mach
+
+        new_inputs["data:TLAR:range"].value = self.impact_variable_input_tab.range
+        new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
+
+        new_inputs[
+            "data:weight:aircraft:payload"
+        ].value = self.impact_variable_input_tab.payload
+        new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
+
+        new_inputs[
+            "data:weight:aircraft:max_payload"
+        ].value = self.impact_variable_input_tab.max_payload
+        new_inputs[
+            "data:weight:aircraft:max_payload"
+        ].units = "kg"  # Unit from the widget
+
+        new_inputs[
+            "data:geometry:wing:aspect_ratio"
+        ].value = self.impact_variable_input_tab.wing_aspect_ratio
+
+        new_inputs[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value = self.impact_variable_input_tab.bpr
+        # Save as the new input file. We overwrite always, may need to put a warning for
+        # students
+        new_inputs.save_as(new_input_file_path, overwrite=True)
+
+        # Get the problem, no need to write inputs. The fact that the reference was created
+        # based on the same configuration we will always use should ensure the completion of
+        # the input file
+        problem = configurator.get_problem(read_inputs=True)
+        problem.setup()
+
+        # Save target residuals
+        target_residuals = problem.model.nonlinear_solver.options["rtol"]
+
+        model = problem.model
+        recorder_database_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name + "_cases.sql",
+        )
+        recorder = om.SqliteRecorder(recorder_database_file_path)
+        model.nonlinear_solver.add_recorder(recorder)
+        model.nonlinear_solver.recording_options["record_solver_residuals"] = True
+
+        # Run the problem and write output. Catch warning for cleaner interface
+        with warnings.catch_warnings():
+            warnings.simplefilter(action="ignore", category=FutureWarning)
+            problem.run_model()
+
+        problem.write_outputs()
+
+        # We also need to rename the .csv file which contains the mission data. I don't
+        # see a proper way to do it other than that since it is something INSIDE the
+        # configuration file which we can't overwrite like the input and output file
+        # path. There may be a way to do it by modifying the options of the performances
+        # components of the problem but it seems too much
+
+        old_mission_data_file_path = orig_output_file_path.replace(
+            orig_output_file_name, "flight_points.csv"
+        )
+        new_mission_data_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name
+            + FLIGHT_DATA_FILE_SUFFIX,
+        )
+
+        # You can't rename to a file which already exists, so if one already exists we
+        # delete it before renaming.
+        if pth.exists(new_mission_data_file_path):
+            os.remove(new_mission_data_file_path)
+
+        os.rename(old_mission_data_file_path, new_mission_data_file_path)
+
+        # Extract the residuals, build a scatter based on them and plot them along with the
+        # threshold set in the configuration file
+        relative_error = np.array(
+            extract_residuals(recorder_database_file_path=recorder_database_file_path)
+        )
+
+        return relative_error, target_residuals
 
 
 def list_available_sizing_process_results(path_to_scan: str) -> List[str]:
