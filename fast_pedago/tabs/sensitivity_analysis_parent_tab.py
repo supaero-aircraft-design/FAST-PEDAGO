@@ -118,18 +118,14 @@ class ParentTab(widgets.Tab):
         # attributes of the parent tab, this is the reason why it was moved here. It understandably
         # make things a bit more complicated but is seems like it's working.
 
-        # Create a button to launch the sizing
-        self.launch_button_widget = widgets.Button(description="Launch sizing process")
-        self.launch_button_widget.icon = "fa-plane"
-        self.launch_button_widget.layout = widgets.Layout(width="25%", height="auto")
-        self.launch_button_widget.style.button_color = "GreenYellow"
-
         dummy_output = widgets.Output()
 
         def launch_sizing_process(event):
 
             # "Hide" the output tabs !
-            self.launch_button_widget.style.button_color = "Red"
+            self.impact_variable_input_tab.launch_button_widget.style.button_color = (
+                "Red"
+            )
             self.children = [self.impact_variable_input_tab]
 
             with dummy_output:
@@ -311,7 +307,9 @@ class ParentTab(widgets.Tab):
                 threshold_graph.x = [1, len(relative_error)]
                 threshold_graph.y = [target_residuals, target_residuals]
 
-                self.launch_button_widget.style.button_color = "LimeGreen"
+                self.impact_variable_input_tab.launch_button_widget.style.button_color = (
+                    "LimeGreen"
+                )
 
                 self.children = [
                     self.impact_variable_input_tab,
@@ -325,17 +323,9 @@ class ParentTab(widgets.Tab):
                     self.impact_variable_mission_tab,
                 ]
 
-        # TODO: It is possible to define the button in the children tab and define the on_click here. We will do it
-        #  as it will allow us to change the description of the laucnh button in the tab
-        self.launch_button_widget.on_click(launch_sizing_process)
-
-        self.impact_variable_input_tab.launch_box.children = [
-            self.impact_variable_input_tab.filler_box,
-            self.impact_variable_input_tab.process_name_widget,
-            self.launch_button_widget,
-            self.impact_variable_input_tab.filler_box,
-            self.impact_variable_input_tab.mdo_selection_widget,
-        ]
+        self.impact_variable_input_tab.launch_button_widget.on_click(
+            launch_sizing_process
+        )
 
         ############################################################################################
 

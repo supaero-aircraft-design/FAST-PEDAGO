@@ -53,7 +53,11 @@ class Main:
                 """--VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|xlsx|ico|pdf|json)']" """
             )
 
-        os.system(command + str(MAIN_NOTEBOOK_NAME))
+        # To not get an ugly error message when you ctrl+c
+        try:
+            os.system(command + str(MAIN_NOTEBOOK_NAME))
+        except KeyboardInterrupt:
+            exit()
 
     # ENTRY POINT ==================================================================================
     def run(self):

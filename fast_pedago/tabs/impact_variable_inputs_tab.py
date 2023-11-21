@@ -87,6 +87,14 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
 
         self.sizing_process_name = "reference_aircraft"
 
+        self.opt_ar_min = 5.0
+        self.opt_ar_max = 15.0
+
+        self.opt_m_cr_min = 0.7
+        self.opt_m_cr_max = 0.8
+
+        self.opt_wing_span_max = 40.0
+
         # Have to put every widget and sub widget in the same class unfortunately or else the widget
         # from the input bow won't modify the launch box :/
 
@@ -317,9 +325,183 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.mdo_input_box_widget = widgets.VBox()
         self.mdo_input_box_widget.layout = widgets.Layout(
             width="33%",
-            justify_content="flex-start",
+            align_items="center",
             border="2px solid black",
         )
+
+        self.text_box_objectives = widgets.VBox()
+        self.text_box_objectives.children = [widgets.HTML(value="<u>Objective</u>")]
+        self.text_box_objectives.layout = self.text_box_layout
+
+        self.objective_selection_widget = widgets.ToggleButtons(
+            options=["Fuel sizing", "MTOW"],
+            disabled=False,
+            tooltips=[
+                "Minimize the aircraft fuel consumption on the design mission",
+                "Minimize the aircraft MTOW",
+            ],
+            style=widgets.ToggleButtonsStyle(button_width="160px"),
+        )
+        self.objective_selection_widget.layout = widgets.Layout(
+            width="95%", height="50px", justify_content="center"
+        )
+
+        self.text_box_design_var = widgets.VBox()
+        self.text_box_design_var.children = [
+            widgets.HTML(value="<u>Design variables</u>")
+        ]
+        self.text_box_design_var.layout = self.text_box_layout
+
+        self.ar_design_var_checkbox = widgets.Checkbox(
+            value=True,
+            description="Wing AR as design variable",
+            disabled=False,
+            indent=False,
+            style={"description_width": "initial"},
+        )
+        self.ar_design_var_checkbox.layout = widgets.Layout(
+            width="95%",
+            height="50px",
+            align_items="center",
+        )
+
+        self.ar_design_var_min_widget = widgets.BoundedFloatText(
+            min=0.0,
+            max=30.0,
+            step=0.1,
+            value=self.opt_ar_min,
+            description="Min AR_w",
+            description_tooltip="Minimum aspect ratio for the optimisation [-]",
+            layout=self.input_widget_layout,
+        )
+
+        def update_ar_min(change):
+            self.opt_ar_min = change["new"]
+
+        self.ar_design_var_min_widget.observe(update_ar_min, names="value")
+
+        self.ar_design_var_max_widget = widgets.BoundedFloatText(
+            min=0.0,
+            max=30.0,
+            step=0.1,
+            value=self.opt_ar_max,
+            description="Max AR_w",
+            description_tooltip="Maximum aspect ratio for the optimisation [-]",
+            layout=self.input_widget_layout,
+        )
+
+        def update_ar_max(change):
+            self.opt_ar_max = change["new"]
+
+        self.ar_design_var_max_widget.observe(update_ar_max, names="value")
+
+        self.m_cr_design_var_checkbox = widgets.Checkbox(
+            value=False,
+            description="Cruise Mach as design variable",
+            disabled=False,
+            indent=False,
+            style={"description_width": "initial"},
+        )
+        self.m_cr_design_var_checkbox.layout = widgets.Layout(
+            width="95%",
+            height="50px",
+            align_items="center",
+        )
+
+        def ensure_one_design_var_m_cr(change):
+            # If we un-tick the bow and the other box is un-ticked, we force the other box to be
+            # ticked
+            if not change["new"] and not self.ar_design_var_checkbox.value:
+                self.ar_design_var_checkbox.value = True
+
+        self.m_cr_design_var_checkbox.observe(ensure_one_design_var_m_cr, names="value")
+
+        def ensure_one_design_var_ar_w(change):
+            # If we un-tick the bow and the other box is un-ticked, we force the other box to be
+            # ticked
+            if not change["new"] and not self.m_cr_design_var_checkbox.value:
+                self.m_cr_design_var_checkbox.value = True
+
+        self.ar_design_var_checkbox.observe(ensure_one_design_var_ar_w, names="value")
+
+        self.m_cr_design_var_min_widget = widgets.BoundedFloatText(
+            min=0.5,
+            max=0.95,
+            step=0.01,
+            value=self.opt_m_cr_min,
+            description="Min M_cr",
+            description_tooltip="Minimum cruise Mach for the optimisation [-]",
+            layout=self.input_widget_layout,
+        )
+
+        def update_m_cr_min(change):
+            self.opt_m_cr_min = change["new"]
+
+        self.m_cr_design_var_min_widget.observe(update_m_cr_min, names="value")
+
+        self.m_cr_design_var_max_widget = widgets.BoundedFloatText(
+            min=0.5,
+            max=0.95,
+            step=0.01,
+            value=self.opt_m_cr_max,
+            description="Max M_cr",
+            description_tooltip="Maximum cruise Mach for the optimisation [-]",
+            layout=self.input_widget_layout,
+        )
+
+        def update_m_cr_max(change):
+            self.opt_m_cr_max = change["new"]
+
+        self.m_cr_design_var_max_widget.observe(update_m_cr_max, names="value")
+
+        self.text_box_constraints = widgets.VBox()
+        self.text_box_constraints.children = [widgets.HTML(value="<u>Constraints</u>")]
+        self.text_box_constraints.layout = self.text_box_layout
+
+        self.wing_span_constraints_checkbox = widgets.Checkbox(
+            value=False,
+            description="Wing span as a constraint",
+            disabled=False,
+            indent=False,
+            style={"description_width": "initial"},
+        )
+        self.wing_span_constraints_checkbox.layout = widgets.Layout(
+            width="95%",
+            height="50px",
+            align_items="center",
+        )
+
+        self.wing_span_constraint_max_widget = widgets.BoundedFloatText(
+            min=0.5,
+            max=0.95,
+            step=0.01,
+            value=self.opt_wing_span_max,
+            description="Max b_w",
+            description_tooltip="Maximum wing span allowed for the optimisation [m]",
+            layout=self.input_widget_layout,
+        )
+
+        def update_wing_span_max(change):
+            self.opt_wing_span_max = change["new"]
+
+        self.wing_span_constraint_max_widget.observe(
+            update_wing_span_max, names="value"
+        )
+
+        self.mdo_input_box_widget.children = [
+            self.text_box_objectives,
+            self.objective_selection_widget,
+            self.text_box_design_var,
+            self.ar_design_var_checkbox,
+            self.ar_design_var_min_widget,
+            self.ar_design_var_max_widget,
+            self.m_cr_design_var_checkbox,
+            self.m_cr_design_var_min_widget,
+            self.m_cr_design_var_max_widget,
+            self.text_box_constraints,
+            self.wing_span_constraints_checkbox,
+            self.wing_span_constraint_max_widget,
+        ]
 
         ############################################################################################
         # Residuals visualization box
@@ -380,7 +562,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             tooltip="Name of the sizing process",
         )
         self.process_name_widget.layout = widgets.Layout(
-            width="56%",
+            width="50%",
             height="auto",
             justify_content="space-between",
             align_items="flex-start",
@@ -391,8 +573,11 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
 
         self.process_name_widget.observe(update_sizing_process_name, names="value")
 
-        # Create a dummy button, it will be over-writen by a button from the parent tab
-        self.dummy_button = widgets.Button()
+        # Create a button to launch the sizing
+        self.launch_button_widget = widgets.Button(description="Launch sizing process")
+        self.launch_button_widget.icon = "fa-plane"
+        self.launch_button_widget.layout = widgets.Layout(width="31%", height="auto")
+        self.launch_button_widget.style.button_color = "GreenYellow"
 
         # Create a button to trigger the MDO "mode"
         self.mdo_selection_widget = widgets.ToggleButton(
@@ -417,7 +602,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.launch_box.children = [
             self.filler_box,
             self.process_name_widget,
-            self.dummy_button,
+            self.launch_button_widget,
             self.filler_box,
             self.mdo_selection_widget,
         ]
@@ -508,11 +693,13 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
                     self.mdo_input_box_widget,
                     self.launch_box_and_visualization_widget,
                 ]
+                self.launch_button_widget.description = "Launch optimization process"
 
             else:
                 self.children = [
                     self.input_box_widget,
                     self.launch_box_and_visualization_widget,
                 ]
+                self.launch_button_widget.description = "Launch sizing process"
 
         self.mdo_selection_widget.observe(update_input_box, names="value")
