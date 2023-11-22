@@ -325,9 +325,6 @@ class ParentTab(widgets.Tab):
         # Create the input file with the reference value, except for sweep
         new_inputs = copy.deepcopy(self.impact_variable_input_tab.reference_inputs)
 
-        new_inputs["data:geometry:wing:sweep_25"].value = 30.0
-        new_inputs["data:geometry:wing:sweep_25"].units = "deg"
-
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
         new_inputs.save_as(new_input_file_path, overwrite=True)
@@ -359,7 +356,9 @@ class ParentTab(widgets.Tab):
             == "Fuel sizing"
         ):
             problem.model.add_objective(
-                name="data:mission:sizing:needed_block_fuel", units="kg", scaler=1e-4
+                name="data:mission:sizing:block_fuel",
+                units="kg",
+                scaler=1e-4,
             )
         elif self.impact_variable_input_tab.objective_selection_widget.value == "MTOW":
             problem.model.add_objective(
@@ -376,6 +375,18 @@ class ParentTab(widgets.Tab):
 
         problem.model.approx_totals()
         problem.setup()
+
+        # Ran the case with the proper mission and go those coefficient
+        problem.set_val(
+            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975
+        )
+        problem.set_val(
+            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993
+        )
+        problem.set_val(
+            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055
+        )
+
         problem.run_driver()
 
         problem.write_outputs()

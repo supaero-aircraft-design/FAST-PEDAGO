@@ -541,7 +541,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             layout=residuals_visualization_layout,
         )
         self.residuals_visualization_figure.update_yaxes(
-            title_text="Relative value of residuals", type="log", range=[-10.0, 1.0]
+            title_text="Relative value of residuals", type="log", range=[-7.0, 1.0]
         )
         self.residuals_visualization_figure.update_xaxes(
             title_text="Number of iterations"
