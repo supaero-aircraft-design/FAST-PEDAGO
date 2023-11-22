@@ -78,6 +78,10 @@ class ParentTab(widgets.Tab):
         self.configuration_file_path = pth.join(
             self.data_directory_path, "oad_sizing_sensitivity_analysis.yml"
         )
+        self.mdo_configuration_file_path = pth.join(
+            self.data_directory_path, "oad_optim_sensitivity_analysis.yml"
+        )
+
         self.reference_input_file_path = pth.join(
             self.working_directory_path,
             "inputs/reference_aircraft_input_file.xml",
@@ -91,6 +95,15 @@ class ParentTab(widgets.Tab):
                     "oad_sizing_sensitivity_analysis.yml",
                 ),
                 self.configuration_file_path,
+            )
+
+        if not pth.exists(self.mdo_configuration_file_path):
+            shutil.copy(
+                pth.join(
+                    pth.dirname(configuration.__file__),
+                    "oad_optim_sensitivity_analysis.yml",
+                ),
+                self.mdo_configuration_file_path,
             )
 
         # Technically, we could simply copy the reference file because I already did the input
@@ -145,16 +158,20 @@ class ParentTab(widgets.Tab):
 
             with dummy_output:
 
-                relative_error, target_residuals = self._launch_mda()
+                if not self.impact_variable_input_tab.mdo_selection_widget.value:
+                    relative_error, target_residuals = self._launch_mda()
 
-                # For the display, hte iteration will start at 1 :)
-                iteration_numbers = np.arange(len(relative_error)) + 1
+                    # For the display, hte iteration will start at 1 :)
+                    iteration_numbers = np.arange(len(relative_error)) + 1
 
-                residuals_graph.x = iteration_numbers
-                residuals_graph.y = relative_error
+                    residuals_graph.x = iteration_numbers
+                    residuals_graph.y = relative_error
 
-                threshold_graph.x = [1, len(relative_error)]
-                threshold_graph.y = [target_residuals, target_residuals]
+                    threshold_graph.x = [1, len(relative_error)]
+                    threshold_graph.y = [target_residuals, target_residuals]
+
+                else:
+                    _, _ = self._launch_mdo()
 
                 self.impact_variable_input_tab.launch_button_widget.style.button_color = (
                     "LimeGreen"
@@ -270,6 +287,123 @@ class ParentTab(widgets.Tab):
         # Add a title for each tab
         for i, tab_name in enumerate(TABS_NAME):
             self.set_title(i, tab_name)
+
+    def _launch_mdo(self):
+        """
+        Launches the mdo by reading the design vars, the objective and the constraints from the tab
+        and the rest of the input from the reference file except for the sweep which we will fix
+        at 30° (M=0.82 which is the max you can enter as the upper bound).
+
+        :return: the residuals at each iterations
+        """
+
+        # Create a new FAST-OAD problem based on the reference configuration file
+        configurator = oad.FASTOADProblemConfigurator(self.mdo_configuration_file_path)
+
+        # Save orig file path and name so that we can replace them with the sizing process
+        # name
+        orig_input_file_path = configurator.input_file_path
+        orig_input_file_name = pth.basename(orig_input_file_path)
+        orig_output_file_path = configurator.output_file_path
+        orig_output_file_name = pth.basename(orig_output_file_path)
+
+        new_input_file_path = orig_input_file_path.replace(
+            orig_input_file_name,
+            self.impact_variable_input_tab.sizing_process_name + "_mdo_input_file.xml",
+        )
+        new_output_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name
+            + "_mdo"
+            + OUTPUT_FILE_SUFFIX,
+        )
+
+        # Change the input and output file path in the configurator
+        configurator.input_file_path = new_input_file_path
+        configurator.output_file_path = new_output_file_path
+
+        # Create the input file with the reference value, except for sweep
+        new_inputs = copy.deepcopy(self.impact_variable_input_tab.reference_inputs)
+
+        new_inputs["data:geometry:wing:sweep_25"].value = 30.0
+        new_inputs["data:geometry:wing:sweep_25"].units = "deg"
+
+        # Save as the new input file. We overwrite always, may need to put a warning for
+        # students
+        new_inputs.save_as(new_input_file_path, overwrite=True)
+
+        # Get the problem, no need to write inputs. The fact that the reference was created
+        # based on the same configuration we will always use should ensure the completion of
+        # the input file
+        problem = configurator.get_problem(read_inputs=True)
+
+        if self.impact_variable_input_tab.ar_design_var_checkbox.value:
+
+            problem.model.add_design_var(
+                name="data:geometry:wing:aspect_ratio",
+                lower=self.impact_variable_input_tab.opt_ar_min,
+                upper=self.impact_variable_input_tab.opt_ar_max,
+            )
+
+        if self.impact_variable_input_tab.sweep_w_design_var_checkbox.value:
+
+            problem.model.add_design_var(
+                name="data:geometry:wing:sweep_25",
+                units="deg",
+                lower=self.impact_variable_input_tab.opt_sweep_w_min,
+                upper=self.impact_variable_input_tab.opt_sweep_w_max,
+            )
+
+        if (
+            self.impact_variable_input_tab.objective_selection_widget.value
+            == "Fuel sizing"
+        ):
+            problem.model.add_objective(
+                name="data:mission:sizing:needed_block_fuel", units="kg", scaler=1e-4
+            )
+        elif self.impact_variable_input_tab.objective_selection_widget.value == "MTOW":
+            problem.model.add_objective(
+                name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
+            )
+
+        if self.impact_variable_input_tab.wing_span_constraints_checkbox.value:
+            problem.model.add_constraint(
+                name="data:geometry:wing:span",
+                units="m",
+                lower=0.0,
+                upper=self.impact_variable_input_tab.opt_wing_span_max,
+            )
+
+        problem.model.approx_totals()
+        problem.setup()
+        problem.run_driver()
+
+        problem.write_outputs()
+
+        # We also need to rename the .csv file which contains the mission data. I don't
+        # see a proper way to do it other than that since it is something INSIDE the
+        # configuration file which we can't overwrite like the input and output file
+        # path. There may be a way to do it by modifying the options of the performances
+        # components of the problem but it seems too much
+
+        old_mission_data_file_path = orig_output_file_path.replace(
+            orig_output_file_name, "flight_points.csv"
+        )
+        new_mission_data_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name
+            + "_mdo"
+            + FLIGHT_DATA_FILE_SUFFIX,
+        )
+
+        # You can't rename to a file which already exists, so if one already exists we
+        # delete it before renaming.
+        if pth.exists(new_mission_data_file_path):
+            os.remove(new_mission_data_file_path)
+
+        os.rename(old_mission_data_file_path, new_mission_data_file_path)
+
+        return [0.0, 0.0], [1.0, 1.0]
 
     def _launch_mda(self):
         """

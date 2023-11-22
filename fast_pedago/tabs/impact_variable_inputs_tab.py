@@ -87,13 +87,13 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
 
         self.sizing_process_name = "reference_aircraft"
 
-        self.opt_ar_min = 5.0
-        self.opt_ar_max = 15.0
+        self.opt_ar_min = 9.0
+        self.opt_ar_max = 18.0
 
-        self.opt_m_cr_min = 0.7
-        self.opt_m_cr_max = 0.8
+        self.opt_sweep_w_min = 10.0
+        self.opt_sweep_w_max = 45.0
 
-        self.opt_wing_span_max = 40.0
+        self.opt_wing_span_max = 60.0
 
         # Have to put every widget and sub widget in the same class unfortunately or else the widget
         # from the input bow won't modify the launch box :/
@@ -366,7 +366,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         self.ar_design_var_min_widget = widgets.BoundedFloatText(
-            min=0.0,
+            min=5.0,
             max=30.0,
             step=0.1,
             value=self.opt_ar_min,
@@ -376,12 +376,16 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         def update_ar_min(change):
-            self.opt_ar_min = change["new"]
+
+            if change["new"] > self.opt_ar_max:
+                self.ar_design_var_min_widget.value = self.opt_ar_max
+            else:
+                self.opt_ar_min = change["new"]
 
         self.ar_design_var_min_widget.observe(update_ar_min, names="value")
 
         self.ar_design_var_max_widget = widgets.BoundedFloatText(
-            min=0.0,
+            min=5.0,
             max=30.0,
             step=0.1,
             value=self.opt_ar_max,
@@ -391,68 +395,81 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         def update_ar_max(change):
-            self.opt_ar_max = change["new"]
+
+            if change["new"] < self.opt_ar_min:
+                self.ar_design_var_max_widget.value = self.opt_ar_min
+            else:
+                self.opt_ar_max = change["new"]
 
         self.ar_design_var_max_widget.observe(update_ar_max, names="value")
 
-        self.m_cr_design_var_checkbox = widgets.Checkbox(
+        self.sweep_w_design_var_checkbox = widgets.Checkbox(
             value=False,
-            description="Cruise Mach as design variable",
+            description="Wing sweep as design variable",
             disabled=False,
             indent=False,
             style={"description_width": "initial"},
         )
-        self.m_cr_design_var_checkbox.layout = widgets.Layout(
+        self.sweep_w_design_var_checkbox.layout = widgets.Layout(
             width="95%",
             height="50px",
             align_items="center",
         )
 
-        def ensure_one_design_var_m_cr(change):
+        def ensure_one_design_var_sweep_w(change):
             # If we un-tick the bow and the other box is un-ticked, we force the other box to be
             # ticked
             if not change["new"] and not self.ar_design_var_checkbox.value:
                 self.ar_design_var_checkbox.value = True
 
-        self.m_cr_design_var_checkbox.observe(ensure_one_design_var_m_cr, names="value")
+        self.sweep_w_design_var_checkbox.observe(
+            ensure_one_design_var_sweep_w, names="value"
+        )
 
         def ensure_one_design_var_ar_w(change):
             # If we un-tick the bow and the other box is un-ticked, we force the other box to be
             # ticked
-            if not change["new"] and not self.m_cr_design_var_checkbox.value:
-                self.m_cr_design_var_checkbox.value = True
+            if not change["new"] and not self.sweep_w_design_var_checkbox.value:
+                self.sweep_w_design_var_checkbox.value = True
 
         self.ar_design_var_checkbox.observe(ensure_one_design_var_ar_w, names="value")
 
-        self.m_cr_design_var_min_widget = widgets.BoundedFloatText(
-            min=0.5,
-            max=0.95,
+        self.sweep_w_design_var_min_widget = widgets.BoundedFloatText(
+            min=5.0,
+            max=50.0,
             step=0.01,
-            value=self.opt_m_cr_min,
-            description="Min M_cr",
-            description_tooltip="Minimum cruise Mach for the optimisation [-]",
+            value=self.opt_sweep_w_min,
+            description="Min Sweep",
+            description_tooltip="Minimum wing sweep angle for the optimisation [-]",
             layout=self.input_widget_layout,
         )
 
-        def update_m_cr_min(change):
-            self.opt_m_cr_min = change["new"]
+        def update_sweep_w_min(change):
 
-        self.m_cr_design_var_min_widget.observe(update_m_cr_min, names="value")
+            if change["new"] > self.opt_sweep_w_max:
+                self.sweep_w_design_var_min_widget.value = self.opt_sweep_w_max
+            else:
+                self.opt_sweep_w_min = change["new"]
 
-        self.m_cr_design_var_max_widget = widgets.BoundedFloatText(
-            min=0.5,
-            max=0.95,
+        self.sweep_w_design_var_min_widget.observe(update_sweep_w_min, names="value")
+
+        self.sweep_w_design_var_max_widget = widgets.BoundedFloatText(
+            min=5.0,
+            max=50.0,
             step=0.01,
-            value=self.opt_m_cr_max,
-            description="Max M_cr",
-            description_tooltip="Maximum cruise Mach for the optimisation [-]",
+            value=self.opt_sweep_w_max,
+            description="Max Sweep",
+            description_tooltip="Maximum wing sweep angle for the optimisation [-]",
             layout=self.input_widget_layout,
         )
 
-        def update_m_cr_max(change):
-            self.opt_m_cr_max = change["new"]
+        def update_sweep_w_max(change):
+            if change["new"] < self.opt_sweep_w_min:
+                self.sweep_w_design_var_max_widget.value = self.opt_sweep_w_min
+            else:
+                self.opt_sweep_w_max = change["new"]
 
-        self.m_cr_design_var_max_widget.observe(update_m_cr_max, names="value")
+        self.sweep_w_design_var_max_widget.observe(update_sweep_w_max, names="value")
 
         self.text_box_constraints = widgets.VBox()
         self.text_box_constraints.children = [widgets.HTML(value="<u>Constraints</u>")]
@@ -472,8 +489,8 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
 
         self.wing_span_constraint_max_widget = widgets.BoundedFloatText(
-            min=0.5,
-            max=0.95,
+            min=20.0,
+            max=100.0,
             step=0.01,
             value=self.opt_wing_span_max,
             description="Max b_w",
@@ -495,9 +512,9 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.ar_design_var_checkbox,
             self.ar_design_var_min_widget,
             self.ar_design_var_max_widget,
-            self.m_cr_design_var_checkbox,
-            self.m_cr_design_var_min_widget,
-            self.m_cr_design_var_max_widget,
+            self.sweep_w_design_var_checkbox,
+            self.sweep_w_design_var_min_widget,
+            self.sweep_w_design_var_max_widget,
             self.text_box_constraints,
             self.wing_span_constraints_checkbox,
             self.wing_span_constraint_max_widget,

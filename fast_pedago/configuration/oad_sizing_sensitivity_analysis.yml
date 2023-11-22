@@ -23,9 +23,9 @@ model:
       id: fastoad.geometry.legacy
     weight:
       id: fastoad.weight.legacy
+      payload_from_npax: false
     mtow:
       id: fastoad.mass_performances.compute_MTOW
-      payload_from_npax: false
     hq_tail_sizing:
       id: fastoad.handling_qualities.tail_sizing
     hq_static_margin:
