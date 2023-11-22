@@ -464,6 +464,9 @@ class ParentTab(widgets.Tab):
         )
         min_objective = min(objective)
 
+        # Shut down the recorder so we can delete the .sql file later
+        recorder.shutdown()
+
         return objective, min_objective
 
     def _launch_mda(self):
@@ -605,6 +608,9 @@ class ParentTab(widgets.Tab):
         relative_error = np.array(
             extract_residuals(recorder_database_file_path=recorder_database_file_path)
         )
+
+        # Shut down the recorder so we can delete the .sql file later
+        recorder.shutdown()
 
         return relative_error, target_residuals
 

@@ -11,3 +11,4 @@ from .info_button import (
 )
 from .start_button import get_start_button
 from .back_home_button import get_back_home_button
+from .clear_files_button import get_clear_all_button
