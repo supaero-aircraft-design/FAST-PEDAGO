@@ -156,6 +156,18 @@ class ParentTab(widgets.Tab):
             threshold_graph.x = []
             threshold_graph.y = []
 
+            objective_graph = (
+                self.impact_variable_input_tab.objectives_visualization_widget.data[0]
+            )
+            objective_graph.x = []
+            objective_graph.y = []
+
+            min_objective_graph = (
+                self.impact_variable_input_tab.objectives_visualization_widget.data[1]
+            )
+            min_objective_graph.x = []
+            min_objective_graph.y = []
+
             with dummy_output:
 
                 if not self.impact_variable_input_tab.mdo_selection_widget.value:
@@ -170,8 +182,25 @@ class ParentTab(widgets.Tab):
                     threshold_graph.x = [1, len(relative_error)]
                     threshold_graph.y = [target_residuals, target_residuals]
 
+                    self.impact_variable_input_tab.graph_visualization_box.children = [
+                        self.impact_variable_input_tab.residuals_visualization_widget
+                    ]
+
                 else:
-                    _, _ = self._launch_mdo()
+                    objective, min_objective = self._launch_mdo()
+
+                    # For the display, hte iteration will start at 1 :)
+                    iteration_numbers = np.arange(len(objective)) + 1
+
+                    objective_graph.x = iteration_numbers
+                    objective_graph.y = objective
+
+                    min_objective_graph.x = [1, len(objective)]
+                    min_objective_graph.y = [min_objective, min_objective]
+
+                    self.impact_variable_input_tab.graph_visualization_box.children = [
+                        self.impact_variable_input_tab.objectives_visualization_widget
+                    ]
 
                 self.impact_variable_input_tab.launch_button_widget.style.button_color = (
                     "LimeGreen"
@@ -387,6 +416,15 @@ class ParentTab(widgets.Tab):
             name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055
         )
 
+        driver = problem.driver
+        recorder_database_file_path = orig_output_file_path.replace(
+            orig_output_file_name,
+            self.impact_variable_input_tab.sizing_process_name + "_mdo_cases.sql",
+        )
+        recorder = om.SqliteRecorder(recorder_database_file_path)
+        driver.add_recorder(recorder)
+        driver.recording_options["record_objectives"] = True
+
         problem.run_driver()
 
         problem.write_outputs()
@@ -414,7 +452,14 @@ class ParentTab(widgets.Tab):
 
         os.rename(old_mission_data_file_path, new_mission_data_file_path)
 
-        return [0.0, 0.0], [1.0, 1.0]
+        # Extract the residuals, build a scatter based on them and plot them along with the
+        # threshold set in the configuration file
+        objective = np.array(
+            extract_objective(recorder_database_file_path=recorder_database_file_path)
+        )
+        min_objective = min(objective)
+
+        return objective, min_objective
 
     def _launch_mda(self):
         """
@@ -609,5 +654,28 @@ def extract_residuals(recorder_database_file_path: str) -> list:
     for _, case in enumerate(solver_cases):
 
         relative_error.append(case.rel_err)
+
+    return relative_error
+
+
+def extract_objective(recorder_database_file_path: str) -> list:
+    """
+    From the file path to a recorder data base, extract the value of the objective at each
+    iteration of the driver.
+
+    :param recorder_database_file_path: absolute path to the recorder database
+    :return: an array containing the value of the objective at each iteration
+    """
+
+    case_reader = om.CaseReader(recorder_database_file_path)
+
+    # Will only work if the recorder was attached to the base solver
+    solver_cases = case_reader.get_cases("driver")
+
+    relative_error = []
+
+    for _, case in enumerate(solver_cases):
+
+        relative_error.append(float(list(case.get_objectives().values())[0]))
 
     return relative_error

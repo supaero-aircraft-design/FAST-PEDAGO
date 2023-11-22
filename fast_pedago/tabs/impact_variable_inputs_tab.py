@@ -404,7 +404,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.ar_design_var_max_widget.observe(update_ar_max, names="value")
 
         self.sweep_w_design_var_checkbox = widgets.Checkbox(
-            value=False,
+            value=True,
             description="Wing sweep as design variable",
             disabled=False,
             indent=False,
@@ -555,6 +555,31 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         )
         self.graph_visualization_box.children = [self.residuals_visualization_widget]
 
+        objective_visualization_layout = go.Layout(height=550)
+
+        objective_scatter = go.Scatter(x=[], y=[], name="Objective")
+        optimized_value_scatter = go.Scatter(
+            x=[], y=[], mode="lines", name="Optimized value"
+        )
+
+        self.objectives_visualization_figure = go.Figure(
+            data=[objective_scatter, optimized_value_scatter],
+            layout=residuals_visualization_layout,
+        )
+        self.objectives_visualization_figure.update_yaxes(
+            title_text="Objective value",
+        )
+        self.objectives_visualization_figure.update_xaxes(
+            title_text="Number of function calls"
+        )
+        self.objectives_visualization_figure.update_layout(
+            title_text="Evolution of the objective", title_x=0.5
+        )
+
+        self.objectives_visualization_widget = go.FigureWidget(
+            self.objectives_visualization_figure
+        )
+
         ############################################################################################
         self.n2_visualization_widget = _image_from_path(
             self.n2_image_path, height="", width="95%"
@@ -703,6 +728,19 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         ]
 
         def update_input_box(event):
+
+            # For some reason checking the box resizes the residuals graph, this should prevent
+            # it Additionally, we have to resize before displaying or else, for some reasons,
+            # the figure is suddenly too big every other time ...
+            self.residuals_visualization_widget.update_layout(
+                dict(height=550, autosize=None)
+            )
+            self.objectives_visualization_widget.update_layout(
+                dict(height=550, autosize=None)
+            )
+
+            current_children = self.graph_visualization_box.children[0]
+            self.graph_visualization_box.children = [current_children]
 
             # We are in MDO mode
             if event["new"]:
