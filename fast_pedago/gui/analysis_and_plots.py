@@ -47,7 +47,13 @@ def simplified_payload_range_plot(
     owe = variables["data:weight:aircraft:OWE"].value[0]
     mfw = variables["data:weight:aircraft:MFW"].value[0]
     max_payload = variables["data:weight:aircraft:max_payload"].value[0]
-    reserve = variables["data:mission:sizing:reserve:fuel"].value[0]
+
+    # When running an MD0, since we are using breguet we don't have access to
+    # "data:mission:sizing:reserve:fuel" hence why we approximate it like that
+    reserve = (
+        variables["data:mission:sizing:needed_block_fuel"].value[0]
+        - variables["data:mission:sizing:main_route:fuel"].value[0]
+    )
 
     nominal_range = variables["data:TLAR:range"].value[0]
     nominal_payload = variables["data:weight:aircraft:payload"].value[0]

@@ -334,13 +334,14 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.text_box_objectives.layout = self.text_box_layout
 
         self.objective_selection_widget = widgets.ToggleButtons(
-            options=["Fuel sizing", "MTOW"],
+            options=["Fuel sizing", "MTOW", "OWE"],
             disabled=False,
             tooltips=[
                 "Minimize the aircraft fuel consumption on the design mission",
                 "Minimize the aircraft MTOW",
+                "Minimize the aircraft OWE",
             ],
-            style=widgets.ToggleButtonsStyle(button_width="160px"),
+            style=widgets.ToggleButtonsStyle(button_width="100px"),
         )
         self.objective_selection_widget.layout = widgets.Layout(
             width="95%", height="50px", justify_content="center"
@@ -554,8 +555,6 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             self.residuals_visualization_figure
         )
         self.graph_visualization_box.children = [self.residuals_visualization_widget]
-
-        objective_visualization_layout = go.Layout(height=550)
 
         objective_scatter = go.Scatter(x=[], y=[], name="Objective")
         optimized_value_scatter = go.Scatter(

@@ -393,6 +393,11 @@ class ParentTab(widgets.Tab):
             problem.model.add_objective(
                 name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
             )
+        else:
+            # Selected objective is the OWE
+            problem.model.add_objective(
+                name="data:weight:aircraft:OWE", units="kg", scaler=1e-4
+            )
 
         if self.impact_variable_input_tab.wing_span_constraints_checkbox.value:
             problem.model.add_constraint(
