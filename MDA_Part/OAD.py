@@ -669,7 +669,6 @@ class MDA:
         if fig is None:
             fig = go.Figure()
 
-
         scatter_prd = go.Scatter(x=Range, y=List_points, name=name)
         scatter_nominal = go.Scatter(
             x=(np.asarray(Data["data:TLAR:range"].value)),
@@ -980,7 +979,9 @@ class MDA:
         T = 288 - 0.0065 * z
         a = (gamma * R * T) ** (1 / 2)
         M = np.asarray(variables["data:TLAR:cruise_mach"].value)
-        L_over_D = np.asarray(variables["data:aerodynamics:aircraft:cruise:L_D_max"].value)
+        L_over_D = np.asarray(
+            variables["data:aerodynamics:aircraft:cruise:L_D_max"].value
+        )
 
         P = self.Mass * g
         SR = (a * M * L_over_D) / (self.SFC * P)
@@ -1005,7 +1006,7 @@ class MDA:
         coefficient = self.para_coefficient_range(Data, self.sfc_bf)  # (aM L_D)/g*SFC
         reserve = np.asarray(Data["data:mission:MTOW_mission:reserve:fuel"].value)
         BF_DOC = (OWE + PL_DOC + reserve) * (
-                math.exp((1000 * Range_DOC * 1.852) / coefficient) - 1
+            math.exp((1000 * Range_DOC * 1.852) / coefficient) - 1
         )
 
         if fig is None:
@@ -1021,9 +1022,7 @@ class MDA:
         # Set x-axes titles
         fig.update_xaxes(title_text="BF [kg]")
         # Set y-axes titles
-        fig.update_yaxes(
-            title_text="BF/NPAX [kg Fuel/Seat]"
-        )
+        fig.update_yaxes(title_text="BF/NPAX [kg Fuel/Seat]")
         fig.update_layout(title="BF/Npax - BF @ DOC", title_x=0.9)
         fig.update_layout(xaxis_type="log", yaxis_type="log")
         return fig

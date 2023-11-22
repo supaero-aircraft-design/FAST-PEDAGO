@@ -24,15 +24,18 @@ from fastoad_cs25.models.weight.mass_breakdown.constants import (
     SERVICE_PROPULSION_MASS,
     SERVICE_SYSTEMS_MASS,
 )
-from fastoad_cs25.models.weight.mass_breakdown.update_mlw_and_mzfw import UpdateMLWandMZFW
+from fastoad_cs25.models.weight.mass_breakdown.update_mlw_and_mzfw import (
+    UpdateMLWandMZFW,
+)
 from fastoad_cs25.models.weight.constants import SERVICE_MASS_BREAKDOWN
 from fastoad_cs25.models.constants import PAYLOAD_FROM_NPAX
 
 
-@RegisterSubmodel(SERVICE_MASS_BREAKDOWN, "fastoad.submodel.weight.mass.with_k_factor_owe")
+@RegisterSubmodel(
+    SERVICE_MASS_BREAKDOWN, "fastoad.submodel.weight.mass.with_k_factor_owe"
+)
 class MassBreakdown(om.Group):
-    """
-    """
+    """ """
 
     def initialize(self):
         self.options.declare(PAYLOAD_FROM_NPAX, types=bool, default=True)
@@ -40,7 +43,9 @@ class MassBreakdown(om.Group):
     def setup(self):
         if self.options[PAYLOAD_FROM_NPAX]:
             self.add_subsystem(
-                "payload", RegisterSubmodel.get_submodel(SERVICE_PAYLOAD_MASS), promotes=["*"]
+                "payload",
+                RegisterSubmodel.get_submodel(SERVICE_PAYLOAD_MASS),
+                promotes=["*"],
             )
         self.add_subsystem("owe", OperatingWeightEmpty(), promotes=["*"])
         self.add_subsystem("update_mzfw_and_mlw", UpdateMLWandMZFW(), promotes=["*"])
@@ -68,10 +73,14 @@ class OperatingWeightEmpty(om.Group):
             promotes=["*"],
         )
         self.add_subsystem(
-            "airframe_weight", RegisterSubmodel.get_submodel(SERVICE_AIRFRAME_MASS), promotes=["*"]
+            "airframe_weight",
+            RegisterSubmodel.get_submodel(SERVICE_AIRFRAME_MASS),
+            promotes=["*"],
         )
         self.add_subsystem(
-            "systems_weight", RegisterSubmodel.get_submodel(SERVICE_SYSTEMS_MASS), promotes=["*"]
+            "systems_weight",
+            RegisterSubmodel.get_submodel(SERVICE_SYSTEMS_MASS),
+            promotes=["*"],
         )
         self.add_subsystem(
             "furniture_weight",
@@ -79,14 +88,15 @@ class OperatingWeightEmpty(om.Group):
             promotes=["*"],
         )
         self.add_subsystem(
-            "crew_weight", RegisterSubmodel.get_submodel(SERVICE_CREW_MASS), promotes=["*"]
+            "crew_weight",
+            RegisterSubmodel.get_submodel(SERVICE_CREW_MASS),
+            promotes=["*"],
         )
 
         self.add_subsystem("OWE_sum", OperatingWeightEmptyWithKFactor(), promotes=["*"])
 
 
 class OperatingWeightEmptyWithKFactor(om.ExplicitComponent):
-
     def setup(self):
 
         self.add_input("data:weight:airframe:mass", units="kg", val=1.0)
