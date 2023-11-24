@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "FAST-PEDAGO"
-version = "0.0.1" 
+version = "0.1.0"
 readme = "README.md"
 description = ""
 authors = [
@@ -10,7 +10,7 @@ authors = [
 ]
 exclude = ["**/tests/**"]
 
-homepage = "https://github.com/florentLutz/FAST-PEDAGO"
+homepage = "https://github.com/supaero-aircraft-design/FAST-PEDAGO"
 keywords = [
     "aircraft",
     "design",
