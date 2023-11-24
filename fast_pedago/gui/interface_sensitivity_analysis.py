@@ -128,11 +128,22 @@ class FASTOADInterface(widgets.VBox):
             isae_logo_file_path, height="100%", width="100"
         )
 
+        self.bottom_layer_logo_filler_box = widgets.Box(
+            layout=widgets.Layout(
+                border="0px solid black",
+                margin="0 0 0 0px",
+                padding="0px",
+                justify_content="flex-start",
+                width="5%",
+                height="100%",
+            ),
+        )
+
         airbus_logo_file_path = pth.join(
             pth.dirname(__file__), "resources", "logo_airbus.png"
         )
         self.airbus_logo_widget = _image_from_path(
-            airbus_logo_file_path, height="100%", width="100"
+            airbus_logo_file_path, height="50%", width="100"
         )
 
         # The idea is to be able to have the logos in the same place and the buttons center. Thus, we will save the
@@ -140,6 +151,7 @@ class FASTOADInterface(widgets.VBox):
         self.logo_box = widgets.HBox(
             children=[
                 self.isae_logo_widget,
+                self.bottom_layer_logo_filler_box,
                 self.airbus_logo_widget,
             ],
             layout=widgets.Layout(
@@ -147,6 +159,7 @@ class FASTOADInterface(widgets.VBox):
                 margin="0 0 0 0px",
                 padding="0px",
                 justify_content="flex-end",
+                align_items="center",
                 width="40%",
                 height="100%",
             ),
