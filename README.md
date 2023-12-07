@@ -1,6 +1,13 @@
 # FAST-OAD TRAINING AND INCREMENTAL DEVELOPMENT BRANCH
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/supaero-aircraft-design/FAST-PEDAGO/HEAD?labpath=fast_pedago%2Fnotebook%2FFAST_OAD_app.ipynb)
+
 This package offers a lightweight interface to perform simplified OAD analysis using FAST-OAD (https://github.com/fast-aircraft-design/FAST-OAD).
+
+Want to try quickly ?
+-------
+
+You can open the app on a [Binder-hosted Jupyter notebook](https://mybinder.org/v2/gh/supaero-aircraft-design/FAST-PEDAGO/HEAD?labpath=fast_pedago%2Fnotebook%2FFAST_OAD_app.ipynb)
 
 Install
 -------
