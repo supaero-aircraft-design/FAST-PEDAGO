@@ -660,7 +660,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             disabled=False,
             button_style="",  # 'success', 'info', 'warning', 'danger' or ''
             tooltips=[
-                "Displays a graph of the evolution of residulas with the number of iterations",
+                "Displays a graph of the evolution of residuals with the number of iterations",
                 "Displays the N2 diagram of the sizing process",
                 "Displays the N2 diagram of the sizing process in a new browser tab",
                 "Displays the XDSM diagram of the sizing process",
