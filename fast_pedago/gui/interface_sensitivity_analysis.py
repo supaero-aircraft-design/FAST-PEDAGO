@@ -107,7 +107,6 @@ class FASTOADInterface(widgets.VBox):
             self.sensitivity_analysis_tab.impact_variable_input_tab.reference_inputs = (
                 oad.DataFile(path_to_reference_file)
             )
-            self.sensitivity_analysis_tab.impact_variable_input_tab.set_initial_value_mda()
 
         self.reference_file_selector_widget.observe(
             reference_file_setter, names="value"
