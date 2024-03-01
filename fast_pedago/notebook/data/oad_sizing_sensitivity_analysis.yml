@@ -15,8 +15,8 @@ model:
 
     # A group can be set with its own solvers.
     # Uncomment the 2 next lines for using the performance module with "mission_file_path: ::sizing_mission"
-    nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2, iprint=0)
-    linear_solver: om.DirectSolver()
+    # nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2, iprint=0)
+    # linear_solver: om.DirectSolver()
 
     geometry:
       # An OpenMDAO component is identified by its "id"
@@ -44,7 +44,7 @@ model:
   performance:
     id: fastoad.performances.mission
     propulsion_id: fastoad.wrapper.propulsion.rubber_engine
-    mission_file_path: ::sizing_mission
+    mission_file_path: ::sizing_breguet
     out_file: ../workdir/outputs/flight_points.csv
     adjust_fuel: true
     is_sizing: true

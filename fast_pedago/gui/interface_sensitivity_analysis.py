@@ -9,6 +9,8 @@ import ipywidgets as widgets
 
 from typing import List
 
+import fastoad.api as oad
+
 from fast_pedago import source_data_files
 from fast_pedago.buttons import (
     get_fast_oad_core_git_button,
@@ -94,6 +96,21 @@ class FASTOADInterface(widgets.VBox):
         self.reference_file_selector_widget.layout = widgets.Layout(
             width="80%",
             height="auto",
+        )
+
+        def reference_file_setter(change):
+
+            new_file_name = change["new"] + ".xml"
+            path_to_reference_file = pth.join(
+                pth.dirname(source_data_files.__file__), new_file_name
+            )
+            self.sensitivity_analysis_tab.impact_variable_input_tab.reference_inputs = (
+                oad.DataFile(path_to_reference_file)
+            )
+            self.sensitivity_analysis_tab.impact_variable_input_tab.set_initial_value_mda()
+
+        self.reference_file_selector_widget.observe(
+            reference_file_setter, names="value"
         )
 
         self.reference_file_selector_box = widgets.VBox()
@@ -303,6 +320,8 @@ class FASTOADInterface(widgets.VBox):
         ]
 
     def display_sensitivity_analysis_menu(self, event):
+
+        self.sensitivity_analysis_tab.selected_index = 0
 
         self.children = [
             self.fast_oad_top_layer_logo_widget,
