@@ -29,10 +29,6 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.reference_input_file_path = reference_input_file_path
         self.configuration_file_path = configuration_file_path
 
-        # Read the reference input file path so that we can give first accurate first value. Also
-        # save it as an object attribute that we can copy to modify inputs
-        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
-
         # Generate the N2 diagram and the XDSM. We will locate them near the configuration file
         # as in this case there are more data than actual results. Also, since the take a lot of
         # time to generate, before actually generating them, we check if they exist
@@ -49,6 +45,10 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.xdsm_file_path = self.configuration_file_path.replace(
             configuration_file_name, "xdsm.html"
         )
+
+        # Read the reference input file path so that we can give first accurate first value. Also
+        # save it as an object attribute that we can copy to modify inputs
+        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
 
         # Define attribute to store variable value and give them an initial value corresponding
         # to the reference inputs. Also, those are gonna be attribute of the parent HBox so that the

@@ -7,6 +7,9 @@ import os.path as pth
 
 import ipywidgets as widgets
 
+from typing import List
+
+from fast_pedago import source_data_files
 from fast_pedago.buttons import (
     get_fast_oad_core_git_button,
     get_fast_oad_cs25_git_button,
@@ -51,6 +54,10 @@ class FASTOADInterface(widgets.VBox):
         # -output which suggests having a VBox as the main interface and change the children of
         # that VBox based on which button we use
 
+        self.reference_file_list = list_available_reference_file(
+            pth.dirname(source_data_files.__file__)
+        )
+
         # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
         self.main_menu_filler_box = widgets.Box(
             layout=widgets.Layout(
@@ -59,7 +66,7 @@ class FASTOADInterface(widgets.VBox):
                 padding="0px",
                 align_items="center",
                 width="100",
-                height="18%",
+                height="10%",
             ),
         )
 
@@ -68,6 +75,33 @@ class FASTOADInterface(widgets.VBox):
         )
         self.fast_oad_main_menu_logo_widget = _image_from_path(
             fast_oad_logo_main_menu_file_path, height="50%", width="100"
+        )
+
+        self.reference_file_text_box = widgets.VBox()
+        self.reference_file_text_box.children = [
+            widgets.HTML(value=f"<u><b><font size=3>Select a reference file</b></u>")
+        ]
+        self.reference_file_text_box.layout = widgets.Layout(
+            align_items="center", width="100%", height="4%"
+        )
+
+        self.reference_file_selector_widget = widgets.Dropdown(
+            options=self.reference_file_list,
+            value=self.reference_file_list[0],
+            disabled=False,
+            style={"description_width": "initial"},
+        )
+        self.reference_file_selector_widget.layout = widgets.Layout(
+            width="80%",
+            height="auto",
+        )
+
+        self.reference_file_selector_box = widgets.VBox()
+        self.reference_file_selector_box.children = [
+            self.reference_file_selector_widget
+        ]
+        self.reference_file_selector_box.layout = widgets.Layout(
+            align_items="center", width="100%", height="4%"
         )
 
         self.start_button = get_start_button()
@@ -190,6 +224,8 @@ class FASTOADInterface(widgets.VBox):
         self.children = [
             self.main_menu_filler_box,
             self.fast_oad_main_menu_logo_widget,
+            self.reference_file_text_box,
+            self.reference_file_selector_box,
             self.main_menu_box_start_button,
             self.main_menu_box_buttons_git,
             self.main_menu_box_bottom_layer,
@@ -259,6 +295,8 @@ class FASTOADInterface(widgets.VBox):
         self.children = [
             self.main_menu_filler_box,
             self.fast_oad_main_menu_logo_widget,
+            self.reference_file_text_box,
+            self.reference_file_selector_box,
             self.main_menu_box_start_button,
             self.main_menu_box_buttons_git,
             self.main_menu_box_bottom_layer,
@@ -306,3 +344,25 @@ class FASTOADInterface(widgets.VBox):
                 and not pth.isdir(file_path)
             ):
                 os.remove(file_path)
+
+
+def list_available_reference_file(path_to_scan: str) -> List[str]:
+    """
+    Parses the name of all the file in the provided path and scan for reference file that can be
+    selected for the rest of the analysis
+
+    :param path_to_scan: path to look for reference file in
+    :return: a list of available reference files
+    """
+
+    list_files = os.listdir(path_to_scan)
+    available_reference_files = []
+
+    for file in list_files:
+
+        if file.endswith(".xml"):
+
+            associated_sizing_process_name = file.replace(".xml", "")
+            available_reference_files.append(associated_sizing_process_name)
+
+    return available_reference_files
