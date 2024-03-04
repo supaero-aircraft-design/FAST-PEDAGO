@@ -87,9 +87,10 @@ class FASTOADInterface(widgets.VBox):
             align_items="center", width="100%", height="4%"
         )
 
+        # This reference file should always be there and is always taken as reference
         self.reference_file_selector_widget = widgets.Dropdown(
             options=self.reference_file_list,
-            value=self.reference_file_list[0],
+            value="reference_aircraft_source_data_file",
             disabled=False,
             style={"description_width": "initial"},
         )
