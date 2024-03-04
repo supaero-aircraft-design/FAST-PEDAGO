@@ -29,10 +29,6 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
         self.reference_input_file_path = reference_input_file_path
         self.configuration_file_path = configuration_file_path
 
-        # Read the reference input file path so that we can give first accurate first value. Also
-        # save it as an object attribute that we can copy to modify inputs
-        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
-
         # Generate the N2 diagram and the XDSM. We will locate them near the configuration file
         # as in this case there are more data than actual results. Also, since the take a lot of
         # time to generate, before actually generating them, we check if they exist
@@ -50,40 +46,24 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             configuration_file_name, "xdsm.html"
         )
 
-        # Define attribute to store variable value and give them an initial value corresponding
-        # to the reference inputs. Also, those are gonna be attribute of the parent HBox so that the
-        # children can exchange those information
+        # Read the reference input file path so that we can give first accurate first value. Also
+        # save it as an object attribute that we can copy to modify inputs
+        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
+
+        # Define attribute to store variable value. Also, those are gonna be attribute of the
+        # parent HBox so that the children can exchange those information.
         # No need to convert to alternate units
-        self.n_pax = self.reference_inputs["data:TLAR:NPAX"].value[0]
-        # Convert in kts in case it was not
-        self.v_app = om.convert_units(
-            self.reference_inputs["data:TLAR:approach_speed"].value[0],
-            self.reference_inputs["data:TLAR:approach_speed"].units,
-            "kn",
-        )
-        self.cruise_mach = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
-        # Convert in nm in case it was not, etc, etc, ...
-        self.range = om.convert_units(
-            self.reference_inputs["data:TLAR:range"].value[0],
-            self.reference_inputs["data:TLAR:range"].units,
-            "NM",
-        )
-        self.payload = om.convert_units(
-            self.reference_inputs["data:weight:aircraft:payload"].value[0],
-            self.reference_inputs["data:weight:aircraft:payload"].units,
-            "kg",
-        )
-        self.max_payload = om.convert_units(
-            self.reference_inputs["data:weight:aircraft:max_payload"].value[0],
-            self.reference_inputs["data:weight:aircraft:max_payload"].units,
-            "kg",
-        )
-        self.wing_aspect_ratio = self.reference_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value[0]
-        self.bpr = self.reference_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value[0]
+        self.n_pax = None
+        self.v_app = None
+        self.cruise_mach = None
+        self.range = None
+        self.payload = None
+        self.max_payload = None
+        self.wing_aspect_ratio = None
+        self.bpr = None
+
+        # Could be done much more cleanly with a setter of the reference file attribute !
+        self.set_initial_value_mda()
 
         self.sizing_process_name = "reference_aircraft"
 
@@ -660,7 +640,7 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
             disabled=False,
             button_style="",  # 'success', 'info', 'warning', 'danger' or ''
             tooltips=[
-                "Displays a graph of the evolution of residulas with the number of iterations",
+                "Displays a graph of the evolution of residuals with the number of iterations",
                 "Displays the N2 diagram of the sizing process",
                 "Displays the N2 diagram of the sizing process in a new browser tab",
                 "Displays the XDSM diagram of the sizing process",
@@ -757,3 +737,43 @@ class ImpactVariableInputLaunchTab(widgets.HBox):
                 self.launch_button_widget.description = "Launch sizing process"
 
         self.mdo_selection_widget.observe(update_input_box, names="value")
+
+    def set_initial_value_mda(self):
+        """
+        Set the value of the attributes that store the variable for the MDA based on their value
+        in the reference inputs.
+        """
+
+        # Should also recreate the widget so that they appear with the proper initial value ?
+
+        # No need to convert to alternate units
+        self.n_pax = self.reference_inputs["data:TLAR:NPAX"].value[0]
+        # Convert in kts in case it was not
+        self.v_app = om.convert_units(
+            self.reference_inputs["data:TLAR:approach_speed"].value[0],
+            self.reference_inputs["data:TLAR:approach_speed"].units,
+            "kn",
+        )
+        self.cruise_mach = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
+        # Convert in nm in case it was not, etc, etc, ...
+        self.range = om.convert_units(
+            self.reference_inputs["data:TLAR:range"].value[0],
+            self.reference_inputs["data:TLAR:range"].units,
+            "NM",
+        )
+        self.payload = om.convert_units(
+            self.reference_inputs["data:weight:aircraft:payload"].value[0],
+            self.reference_inputs["data:weight:aircraft:payload"].units,
+            "kg",
+        )
+        self.max_payload = om.convert_units(
+            self.reference_inputs["data:weight:aircraft:max_payload"].value[0],
+            self.reference_inputs["data:weight:aircraft:max_payload"].units,
+            "kg",
+        )
+        self.wing_aspect_ratio = self.reference_inputs[
+            "data:geometry:wing:aspect_ratio"
+        ].value[0]
+        self.bpr = self.reference_inputs[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value[0]
