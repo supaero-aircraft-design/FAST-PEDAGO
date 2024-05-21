@@ -12,7 +12,7 @@ from typing import List
 import fastoad.api as oad
 
 from fast_pedago import source_data_files
-from fast_pedago.buttons import (
+from fast_pedago.gui.buttons import (
     get_fast_oad_core_git_button,
     get_fast_oad_cs25_git_button,
     get_fast_oad_cs23_git_button,
@@ -22,7 +22,7 @@ from fast_pedago.buttons import (
     get_back_home_button,
     get_clear_all_button,
 )
-from fast_pedago.tabs import ParentTab
+from fast_pedago.gui.tabs import ParentTab
 from fast_pedago.utils.functions import _image_from_path  # noqa
 
 BOTTOM_BOX_LAYOUT = widgets.Layout(
