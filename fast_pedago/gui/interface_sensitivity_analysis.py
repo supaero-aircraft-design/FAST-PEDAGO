@@ -25,7 +25,12 @@ class FASTOADInterface(widgets.VBox):
             HomePage(self.pages),
         ]
 
-        
+    
+    # With Voila it seems impossible to clear and re-display contrarily to Jupyter Notebook.
+        # Instead, we'll use the workaround from
+        # https://stackoverflow.com/questions/73972010/voila-not-clearing-output-dispalying-new
+        # -output which suggests having a VBox as the main interface and change the children of
+        # that VBox based on which button we use
 
 
     def display_home_page(self, event):
