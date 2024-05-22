@@ -13,7 +13,7 @@ from fast_pedago.gui.tabs.impact_variable_inputs_tab import (
     FLIGHT_DATA_FILE_SUFFIX,
 )
 from fast_pedago.gui.dropdowns import get_select_multiple_sizing_process_dropdown
-from fast_pedago.gui.buttons import get_multiple_process_selection_info_button
+from fast_pedago.gui.buttons import MultipleProcessSelectionInfoButton
 from fast_pedago.gui.analysis_and_plots import simplified_payload_range_plot
 
 
@@ -30,7 +30,7 @@ class ImpactVariablePayloadRangeTab(widgets.VBox):
         self.output_file_selection_widget = (
             get_select_multiple_sizing_process_dropdown()
         )
-        self.info_button = get_multiple_process_selection_info_button()
+        self.info_button = MultipleProcessSelectionInfoButton()
 
         self.selection_and_info_box = widgets.HBox()
         self.selection_and_info_box.children = [

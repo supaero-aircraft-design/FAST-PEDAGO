@@ -13,13 +13,15 @@ import fastoad.api as oad
 
 from fast_pedago import source_data_files
 from fast_pedago import gui
+
 from fast_pedago.gui.buttons import (
-    get_fast_oad_core_git_button,
-    get_fast_oad_cs25_git_button,
-    get_fast_oad_cs23_git_button,
-    get_main_menu_info_button,
-    get_start_button,
+    FastOadCoreGitButton,
+    FastOadCS25GitButton,
+    FastOadCS23GitButton,
+    MainMenuInfoButton,
+    StartButton,
 )
+
 from fast_pedago.gui.tabs import ParentTab
 from fast_pedago.utils.functions import _image_from_path  # noqa
 
@@ -121,7 +123,7 @@ class HomePage(BasePage):
             align_items="center", width="100%", height="4%"
         )
 
-        self.start_button = get_start_button(self.pages["analysis"])
+        self.start_button = StartButton(self.pages["analysis"])
 
         # Add a box for the start button
         self.main_menu_box_start_button = widgets.Box(
@@ -135,9 +137,9 @@ class HomePage(BasePage):
             ),
         )
 
-        fast_core_git_button = get_fast_oad_core_git_button()
-        fast_cs25_git_button = get_fast_oad_cs25_git_button()
-        fast_cs23_git_button = get_fast_oad_cs23_git_button()
+        fast_core_git_button = FastOadCoreGitButton()
+        fast_cs25_git_button = FastOadCS25GitButton()
+        fast_cs23_git_button = FastOadCS23GitButton()
 
         # Add a box for the GitHub links
         self.main_menu_box_buttons_git = widgets.HBox(
@@ -153,7 +155,7 @@ class HomePage(BasePage):
             ),
         )
 
-        info_button = get_main_menu_info_button()
+        info_button = MainMenuInfoButton()
 
         # Create a bottom layer for the main menu it will be consisting of box of size 40%/20%/40% which will allow
         # me to center the info button in the middle box AND justify the logo to the right. The same distribution

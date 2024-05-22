@@ -6,26 +6,24 @@ import ipywidgets as widgets
 
 
 
-def get_start_button(display_sensitivity_analysis_menu):
+class StartButton(widgets.Button):
 
-    # Create a green button which spans almost the full width of the interface
-    layout_button = widgets.Layout(
-        width="80%",
-        height="95%",
-        border="4px solid black",
-    )
+    def __init__(self, display_sensitivity_analysis_menu, **kwargs):
+        super().__init__(**kwargs)    
 
-    # Slight note, if you add two numbers after the hexadecimal code, you can make it transparent
-    start_button = widgets.Button(
-        description="Get started!",
-        layout=layout_button,
-        style=dict(
-            button_color="#33caff99",
-            font_weight="bold",
-            font_size="20px",
-        ),
-    )
+        # Create a green button which spans almost the full width of the interface
+        self.layout = widgets.Layout(
+            width="80%",
+            height="95%",
+            border="4px solid black",
+        )
 
-    start_button.on_click(display_sensitivity_analysis_menu)
+        # Slight note, if you add two numbers after the hexadecimal code, you can make it transparent
+        self.description="Get started!"
+        self.style=dict(
+                button_color="#33caff99",
+                font_weight="bold",
+                font_size="20px",
+        )
 
-    return start_button
+        self.on_click(display_sensitivity_analysis_menu)

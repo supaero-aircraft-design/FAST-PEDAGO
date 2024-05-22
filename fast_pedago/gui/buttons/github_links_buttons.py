@@ -11,48 +11,36 @@ GITHUB_FAST_CS25 = "https://github.com/fast-aircraft-design/FAST-OAD_CS25"
 GITHUB_FAST_CS23 = "https://github.com/supaero-aircraft-design/FAST-GA"
 
 
-def get_fast_oad_core_git_button():
+class BaseGitButton(widgets.Button):
+    
+    def __init__(self, link, **kwargs):
+        super().__init__(**kwargs)
 
-    fast_core_git_button = widgets.Button(description="FAST-OAD_core")
-    fast_core_git_button.icon = "fa-github"
-    fast_core_git_button.layout.width = "auto"
-    fast_core_git_button.layout.height = "auto"
+        self.link = link
 
-    def open_github_fast_core(event):
-        webbrowser.open_new_tab(GITHUB_FAST_CORE)
+        self.icon = "fa-github"
+        self.layout.width = "auto"
+        self.layout.height = "auto"
 
-    fast_core_git_button.on_click(open_github_fast_core)
+        self.on_click(self.open_github)
 
-    return fast_core_git_button
+    def open_github(self, event):
+            webbrowser.open_new_tab(self.link)
 
+class FastOadCoreGitButton(BaseGitButton):
+    def __init__(self, **kwargs):
+        super().__init__(GITHUB_FAST_CORE, **kwargs)
 
-def get_fast_oad_cs25_git_button():
+        self.description = "FAST-OAD_core"
 
-    # TODO: Refactor those functions ?
-    fast_cs25_git_button = widgets.Button(description="FAST-OAD_CS25")
-    fast_cs25_git_button.icon = "fa-github"
-    fast_cs25_git_button.layout.width = "auto"
-    fast_cs25_git_button.layout.height = "auto"
+class FastOadCS25GitButton(BaseGitButton):
+    def __init__(self, **kwargs):
+        super().__init__(GITHUB_FAST_CS25, **kwargs)
 
-    def open_github_fast_cs25(event):
-        webbrowser.open_new_tab(GITHUB_FAST_CS25)
+        self.description = "FAST-OAD_cs25"
 
-    fast_cs25_git_button.on_click(open_github_fast_cs25)
+class FastOadCS23GitButton(BaseGitButton):
+    def __init__(self, **kwargs):
+        super().__init__(GITHUB_FAST_CS23, **kwargs)
 
-    return fast_cs25_git_button
-
-
-def get_fast_oad_cs23_git_button():
-
-    fast_cs23_git_button = widgets.Button(description="FAST-OAD_CS23")
-    fast_cs23_git_button.icon = "fa-github"
-    fast_cs23_git_button.layout.width = "auto"
-    fast_cs23_git_button.layout.height = "auto"
-
-    # Button to redirect to github repositories
-    def open_github_fast_cs23(event):
-        webbrowser.open_new_tab(GITHUB_FAST_CS23)
-
-    fast_cs23_git_button.on_click(open_github_fast_cs23)
-
-    return fast_cs23_git_button
+        self.description = "FAST-OAD_cs23"
