@@ -8,7 +8,7 @@ import ipywidgets as widgets
 
 class StartButton(widgets.Button):
 
-    def __init__(self, display_sensitivity_analysis_menu, **kwargs):
+    def __init__(self, next_page, **kwargs):
         super().__init__(**kwargs)    
 
         # Create a green button which spans almost the full width of the interface
@@ -26,4 +26,4 @@ class StartButton(widgets.Button):
                 font_size="20px",
         )
 
-        self.on_click(display_sensitivity_analysis_menu)
+        self.on_click(next_page)

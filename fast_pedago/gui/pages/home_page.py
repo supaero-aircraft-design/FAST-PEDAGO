@@ -2,12 +2,9 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os
 import os.path as pth
 
 import ipywidgets as widgets
-
-from typing import List
 
 import fastoad.api as oad
 
@@ -23,7 +20,7 @@ from fast_pedago.gui.buttons import (
 )
 
 from fast_pedago.gui.tabs import ParentTab
-from fast_pedago.utils.functions import _image_from_path  # noqa
+from fast_pedago.utils.functions import _image_from_path, _list_available_reference_file  # noqa
 
 from fast_pedago.gui.pages.base_page import BasePage
 
@@ -58,7 +55,7 @@ class HomePage(BasePage):
         # -output which suggests having a VBox as the main interface and change the children of
         # that VBox based on which button we use
 
-        self.reference_file_list = list_available_reference_file(
+        self.reference_file_list = _list_available_reference_file(
             pth.dirname(source_data_files.__file__)
         )
 
@@ -248,28 +245,3 @@ class HomePage(BasePage):
             self.main_menu_box_buttons_git,
             self.main_menu_box_bottom_layer,
         ]
-
-    
-
-
-
-def list_available_reference_file(path_to_scan: str) -> List[str]:
-    """
-    Parses the name of all the file in the provided path and scan for reference file that can be
-    selected for the rest of the analysis
-
-    :param path_to_scan: path to look for reference file in
-    :return: a list of available reference files
-    """
-
-    list_files = os.listdir(path_to_scan)
-    available_reference_files = []
-
-    for file in list_files:
-
-        if file.endswith(".xml"):
-
-            associated_sizing_process_name = file.replace(".xml", "")
-            available_reference_files.append(associated_sizing_process_name)
-
-    return available_reference_files
