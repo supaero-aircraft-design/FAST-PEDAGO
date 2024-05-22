@@ -32,14 +32,13 @@ class FASTOADInterface(widgets.VBox):
         # -output which suggests having a VBox as the main interface and change the children of
         # that VBox based on which button we use
 
-
-    def display_home_page(self, event):
+    def display_home_page(self, widget, event, data):
 
         self.children = [
             HomePage(self.pages),
         ]
 
-    def display_sensitivity_analysis_menu(self, event):
+    def display_sensitivity_analysis_menu(self, widget, event, data):
         
         self.children = [
             WorkPage(self.pages),

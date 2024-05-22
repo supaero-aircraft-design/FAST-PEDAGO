@@ -2,28 +2,22 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import ipywidgets as widgets
+import ipyvuetify as v
 
 
+class StartButton(v.Btn):
+    """
+    A button that opens the sensitivity analysis page
 
-class StartButton(widgets.Button):
+    :arg analysis_page: The function that changes the current children
+        of the app to display the sensitivity analysis page
+    """
 
-    def __init__(self, next_page, **kwargs):
-        super().__init__(**kwargs)    
+    def __init__(self, analysis_page, **kwargs):
+        super().__init__(**kwargs)  
 
-        # Create a green button which spans almost the full width of the interface
-        self.layout = widgets.Layout(
-            width="80%",
-            height="95%",
-            border="4px solid black",
-        )
-
-        # Slight note, if you add two numbers after the hexadecimal code, you can make it transparent
-        self.description="Get started!"
-        self.style=dict(
-                button_color="#33caff99",
-                font_weight="bold",
-                font_size="20px",
-        )
-
-        self.on_click(next_page)
+        self.block = True
+        self.color = "#33caff99" # Slight note, if you add two numbers after the hexadecimal code, you can make it transparent
+        self.children = ["Get started!"]
+        
+        self.on_event("click", analysis_page)

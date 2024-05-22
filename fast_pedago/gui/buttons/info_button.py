@@ -2,7 +2,7 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import ipywidgets as widgets
+import ipyvuetify as v
 
 MAIN_MENU_TOOLTIP = (
             "Welcome to the training branch of FAST-OAD.\n This is the main menu which can lead you "
@@ -27,15 +27,37 @@ MULTIPLE_PROCESS_SELECTION_TOOLTIP = (
         '- Select "None" to clear the display'
     )
 
-class BaseInfoButton(widgets.Button):
+class BaseInfoButton(v.Tooltip):
+    """
+    An information "button" that is not clickable but shows custom informations when hovered
+
+    :arg tooltip: The tooltip that is displayed when the button is hovered
+    """
     
     def __init__(self, tooltip, **kwargs):
         super().__init__(**kwargs)
+
+        self.button = v.Btn(
+            children = [v.Icon(children=["fa-info-circle"])],
+            icon = True,
+            disabled = True
+        )
         
-        # Creating and instantiating an info button
-        self.icon = "fa-info-circle"
-        self.layout.width = "auto"
-        self.tooltip = tooltip
+        self.top = True
+        self.max_width = "50%"
+
+        # The button has to be encapsulated by the tooltip 
+        self.v_slots = [{
+            'name': 'activator',
+            'variable': 'tooltip',
+            'children': v.Html(
+                tag="div", 
+                v_on = 'tooltip.on',
+                class_ = "d-inline-block",
+                children=[self.button]
+            ),
+        }]
+        self.children = [tooltip]
         
 
 class MainMenuInfoButton(BaseInfoButton):

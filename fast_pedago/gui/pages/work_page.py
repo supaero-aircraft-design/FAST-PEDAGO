@@ -42,7 +42,7 @@ class WorkPage(BasePage):
         self.set_footer([
             BackHomeButton(self.pages["home"]),
             SensitivityAnalysisInfoButton(),
-            ClearAllButton(self.pages["analysis"]),
+            ClearAllButton(),
         ])
         
 
