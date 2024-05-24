@@ -16,32 +16,27 @@ class BaseGitButton(v.Btn):
     :arg href: The url to the web page to open
     """
     
-    def __init__(self, href, **kwargs):
+    def __init__(self, href, text, **kwargs):
         super().__init__(**kwargs)
 
         self.href = href
-        
+
         self.children = [
             v.Icon(
                 class_ = "me-2",
-                children = ["fa-github"])
+                children = ["fa-github"]
+            ),
+            text,
         ]
 
 class FastOadCoreGitButton(BaseGitButton):
     def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CORE, **kwargs)
-
-        # This line adds a text next to the git icon from the base class
-        self.children.append("FAST-OAD_core")
+        super().__init__(GITHUB_FAST_CORE, "FAST-OAD_core", **kwargs)
 
 class FastOadCS25GitButton(BaseGitButton):
     def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CS25, **kwargs)
-
-        self.children.append("FAST-OAD_cs25")
+        super().__init__(GITHUB_FAST_CS25, "FAST-OAD_cs25", **kwargs)
 
 class FastOadCS23GitButton(BaseGitButton):
     def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CS23, **kwargs)
-
-        self.children.append("FAST-OAD_cs23")
+        super().__init__(GITHUB_FAST_CS23, "FAST-OAD_cs23", **kwargs)

@@ -2,16 +2,13 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os
-import os.path as pth
-
-import ipywidgets as widgets
+import ipyvuetify as v
 
 from fast_pedago.gui.pages.home_page import HomePage
 from fast_pedago.gui.pages.work_page import WorkPage
 
 
-class FASTOADInterface(widgets.VBox):
+class FASTOADInterface(v.App):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)

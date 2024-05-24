@@ -18,6 +18,7 @@ class StartButton(v.Btn):
 
         self.block = True
         self.color = "#33caff99" # Slight note, if you add two numbers after the hexadecimal code, you can make it transparent
+        self.height = "54px"
         self.children = ["Get started!"]
         
         self.on_event("click", analysis_page)
