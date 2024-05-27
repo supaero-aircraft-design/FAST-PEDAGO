@@ -17,11 +17,8 @@ from fast_pedago.gui.buttons import SingleProcessSelectionInfoButton
 from fast_pedago.gui.tabs import BaseTab
 
 class ImpactVariableOutputTab(BaseTab):
-    def __init__(self, working_directory_path: str, **kwargs):
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.working_directory_path = working_directory_path
 
         # Initialize it with fake values that we will overwrite as we scan through available
         # processes in the launch tab

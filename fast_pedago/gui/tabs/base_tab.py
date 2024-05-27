@@ -5,5 +5,15 @@
 import ipyvuetify as v
 
 class BaseTab(v.TabItem):
-    def __init__(self, **kwargs):
+    def __init__(
+        self, 
+        configuration_file_path: str=None, 
+        reference_input_file_path: str=None,
+        working_directory_path: str=None,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
+        
+        self.reference_input_file_path = reference_input_file_path
+        self.configuration_file_path = configuration_file_path
+        self.working_directory_path = working_directory_path

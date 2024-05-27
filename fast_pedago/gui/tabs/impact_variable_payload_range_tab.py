@@ -19,11 +19,9 @@ from fast_pedago.gui.analysis_and_plots import simplified_payload_range_plot
 from fast_pedago.gui.tabs import BaseTab
 
 class ImpactVariablePayloadRangeTab(BaseTab):
-    def __init__(self, working_directory_path: str, **kwargs):
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.working_directory_path = working_directory_path
         self.sizing_process_to_display = []
 
         # Initialize it with fake values that we will overwrite as we scan through available

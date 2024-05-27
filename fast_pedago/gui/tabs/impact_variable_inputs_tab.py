@@ -24,14 +24,8 @@ FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
 
 
 class ImpactVariableInputLaunchTab(BaseTab):
-    def __init__(
-        self, configuration_file_path: str, reference_input_file_path: str, **kwargs
-    ):
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.reference_input_file_path = reference_input_file_path
-        self.configuration_file_path = configuration_file_path
 
         # Generate the N2 diagram and the XDSM. We will locate them near the configuration file
         # as in this case there are more data than actual results. Also, since the take a lot of
