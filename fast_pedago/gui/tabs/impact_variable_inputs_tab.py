@@ -7,6 +7,8 @@ import os.path as pth
 import webbrowser
 
 import ipywidgets as widgets
+import ipyvuetify as v
+import traitlets
 
 import plotly.graph_objects as go
 
@@ -82,47 +84,80 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         ############################################################################################
         # Input box
-        self.input_box_widget = widgets.VBox()
-
-        self.input_widget_layout = widgets.Layout(
-            width="95%",
-            height="50px",
-            justify_content="space-between",
-            align_items="center",
+        self.input_box = v.Col(
+            cols=12,
+            md=4,
         )
+        
+        ########################################
+        #TODO
+        # Implement tooltip
+        class SliderInput(v.VuetifyTemplate):
+            min = traitlets.Float(default_value=0).tag(sync=True)
+            max = traitlets.Float(default_value=100).tag(sync=True)
+            step = traitlets.Float(default_value=10).tag(sync=True)
+            label = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
+            tooltip = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
+            value = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
+            @traitlets.default('template')
+            def _template(self):
+                return f'''
+                <template>
+                    <v-slider
+                        v-model="value"
+                        class="align-center"
+                        label={self.label}
+                        :max="max"
+                        :min="min"
+                        :step="step"
+                        hide-details
+                    >
+                        <template v-slot:append>
+                            <v-text-field
+                                v-model="value"
+                                class="mt-0 pt-0"
+                                variant="outlined"
+                                density="compact"
+                                hide-details
+                                single-line
+                                type="number"
+                                style="width: 60px"
+                            >
+                            </v-text-field>
+                        </template>
+                    </v-slider>
+                </template>
+                ''' + '''
+                <script>
+                    export default {
+                        methods: {
+                            decrement () {
+                                this.value--
+                            },
+                            increment () {
+                                this.value++
+                            },
+                        },
+                    }
+                </script>
+                '''
+
+        self.n_pax_input = SliderInput(min=19,max=500, step=1, label="N_PAX", tooltip="Number of passengers")
+        self.v_app_input = SliderInput(min=45., max=200., step=0.1, label="V_app", tooltip="Approach speed [kts]")
+        self.cruise_mach_input = SliderInput(min=0., max=1., step=0.01, label="M_cruise", tooltip="Cruise mach")
+        self.range_input = SliderInput(min=0, max=10000, step=100, label="Range", tooltip="Aircraft range [NM]")
+        self.payload_input = SliderInput(min=0, max=100000, step=10, label="Payload", tooltip="Aircraft payload [kg]")
+        self.max_payload_input = SliderInput(min=0, max=100000, step=10, label="Max Payload", tooltip="Aircraft max payload [kg]")
+        self.wing_aspect_ratio_input = SliderInput(min=4., max=25., step=0.1, label="AR_w", tooltip="Aspect Ratio of the wing")
+        self.bpr_input = SliderInput(min=0, max=25., step=0.1, label="BPR", tooltip="ByPass Ratio of the engine")
+
+
+
+        ########################################
 
         # Create the widgets to change the value of the parameters in the sensitivity analysis,
         # which entails: create the widget, create the function to update the input and on_click
         # that function
-        self.n_pax_input_widget = widgets.BoundedFloatText(
-            min=19.0,
-            max=500.0,
-            step=1.0,
-            value=self.n_pax,
-            description="N_PAX",
-            description_tooltip="Number of Passengers",
-            layout=self.input_widget_layout,
-        )
-
-        def update_n_pax(change):
-            self.n_pax = change["new"]
-
-        self.n_pax_input_widget.observe(update_n_pax, names="value")
-
-        self.v_app_input_widget = widgets.BoundedFloatText(
-            min=45.0,
-            max=200.0,
-            step=0.1,
-            value=self.v_app,
-            description="V_app",
-            description_tooltip="Approach speed [kts]",
-            layout=self.input_widget_layout,
-        )
-
-        def update_v_app(change):
-            self.v_app = change["new"]
-
-        self.v_app_input_widget.observe(update_v_app, names="value")
 
         self.cruise_mach_input_widget = widgets.BoundedFloatText(
             min=0.0,
@@ -131,9 +166,8 @@ class ImpactVariableInputLaunchTab(BaseTab):
             value=self.cruise_mach,
             description="M_cruise",
             description_tooltip="Cruise mach",
-            layout=self.input_widget_layout,
         )
-
+        
         self.cruise_mach_input_box = widgets.HBox()
         self.cruise_mach_input_box.children = [self.cruise_mach_input_widget]
         self.cruise_mach_input_box.layout = widgets.Layout(
@@ -186,119 +220,40 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         self.cruise_mach_input_widget.observe(update_cruise_mach, names="value")
 
-        self.range_input_widget = widgets.BoundedFloatText(
-            min=0.0,
-            max=10000.0,
-            step=100.0,
-            value=self.range,
-            description="Range",
-            description_tooltip="Aircraft range [nm]",
-            layout=self.input_widget_layout,
-        )
+        ###########################
+        class Inputs(v.Card):
+            def __init__(self, name, inputs=[], **kwargs):
+                super().__init__(**kwargs)
+                
+                self.children=[
+                    v.CardTitle(
+                        children=[name]
+                    ),
+                ] + inputs
+            
+        self.TLAR_inputs = Inputs("TLARs", [
+            self.n_pax_input,
+            self.v_app_input,
+            self.cruise_mach_input,
+            self.range_input,
+        ])
+        self.weight_inputs = Inputs("Weight", [
+            self.payload_input,
+            self.max_payload_input,
+        ])
+        self.geometry_inputs = Inputs("Geometry", [
+            self.wing_aspect_ratio_input,
+        ])
+        self.propulsion_inputs = Inputs("Propulsion", [
+            self.bpr_input,
+        ])
 
-        def update_range(change):
-            self.range = change["new"]
-
-        self.range_input_widget.observe(update_range, names="value")
-
-        self.payload_input_widget = widgets.BoundedFloatText(
-            min=0.0,
-            max=100000.0,
-            step=10.0,
-            value=self.payload,
-            description="Payload",
-            description_tooltip="Aircraft payload [kg]",
-            layout=self.input_widget_layout,
-        )
-
-        def update_payload(change):
-            self.payload = change["new"]
-
-        self.payload_input_widget.observe(update_payload, names="value")
-
-        self.max_payload_input_widget = widgets.BoundedFloatText(
-            min=0.0,
-            max=100000.0,
-            step=10.0,
-            value=self.max_payload,
-            description="Max Payload",
-            description_tooltip="Aircraft max payload [kg]",
-            layout=self.input_widget_layout,
-        )
-
-        def update_max_payload(change):
-            self.max_payload = change["new"]
-
-        self.max_payload_input_widget.observe(update_max_payload, names="value")
-
-        self.wing_aspect_ratio_input_widget = widgets.BoundedFloatText(
-            min=4.0,
-            max=25.0,
-            step=0.1,
-            value=self.wing_aspect_ratio,
-            description="AR_w",
-            description_tooltip="Aspect Ratio of the wing",
-            layout=self.input_widget_layout,
-        )
-
-        def update_wing_aspect_ratio(change):
-            self.wing_aspect_ratio = change["new"]
-
-        self.wing_aspect_ratio_input_widget.observe(
-            update_wing_aspect_ratio, names="value"
-        )
-
-        self.bpr_input_widget = widgets.BoundedFloatText(
-            min=0.0,
-            max=25.0,
-            step=0.1,
-            value=self.bpr,
-            description="BPR",
-            description_tooltip="ByPass Ratio of the engine",
-            layout=self.input_widget_layout,
-        )
-
-        def update_bpr(change):
-            self.bpr = change["new"]
-
-        self.bpr_input_widget.observe(update_bpr, names="value")
-        self.text_box_layout = widgets.Layout(align_items="center")
-
-        self.text_box_TLAR = widgets.VBox()
-        self.text_box_TLAR.children = [widgets.HTML(value="<u>TLARs</u>")]
-        self.text_box_TLAR.layout = self.text_box_layout
-
-        self.text_box_weight = widgets.VBox()
-        self.text_box_weight.children = [widgets.HTML(value="<u>Weight</u>")]
-        self.text_box_weight.layout = self.text_box_layout
-
-        self.text_box_geometry = widgets.VBox()
-        self.text_box_geometry.children = [widgets.HTML(value="<u>Geometry</u>")]
-        self.text_box_geometry.layout = self.text_box_layout
-
-        self.text_box_propulsion = widgets.VBox()
-        self.text_box_propulsion.children = [widgets.HTML(value="<u>Propulsion</u>")]
-        self.text_box_propulsion.layout = self.text_box_layout
-
-        self.input_box_widget.children = [
-            self.text_box_TLAR,
-            self.n_pax_input_widget,
-            self.v_app_input_widget,
-            self.cruise_mach_input_box,
-            self.range_input_widget,
-            self.text_box_weight,
-            self.payload_input_widget,
-            self.max_payload_input_widget,
-            self.text_box_geometry,
-            self.wing_aspect_ratio_input_widget,
-            self.text_box_propulsion,
-            self.bpr_input_widget,
+        self.input_box.children = [
+            self.TLAR_inputs,
+            self.weight_inputs,
+            self.geometry_inputs,
+            self.propulsion_inputs,
         ]
-        self.input_box_widget.layout = widgets.Layout(
-            width="33%",
-            justify_content="flex-start",
-            border="2px solid black",
-        )
 
         ############################################################################################
         # We also create a bow specific for launching an MDO which will only consists of selecting
@@ -310,95 +265,57 @@ class ImpactVariableInputLaunchTab(BaseTab):
             align_items="center",
             border="2px solid black",
         )
+        
+        # FIXME 
+        # Tooltip doesn't work
+        class SelectionButton(v.Btn):
+            def __init__(self, name, tooltip, **kwargs):
+                super().__init__(**kwargs)
 
-        self.text_box_objectives = widgets.VBox()
-        self.text_box_objectives.children = [widgets.HTML(value="<u>Objective</u>")]
-        self.text_box_objectives.layout = self.text_box_layout
+                self.children=[
+                    name,
+                    v.Tooltip(
+                        activator="parent",
+                        location="top",
+                        children=tooltip,
+                    ),
+                ]
+        
 
-        self.objective_selection_widget = widgets.ToggleButtons(
-            options=["Fuel sizing", "MTOW", "OWE"],
-            disabled=False,
-            tooltips=[
-                "Minimize the aircraft fuel consumption on the design mission",
-                "Minimize the aircraft MTOW",
-                "Minimize the aircraft OWE",
+        self.objective_selection = v.BtnToggle(
+            v_model="toggle_exclusive",
+            children=[
+                SelectionButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"), 
+                SelectionButton("MTOW", tooltip="Minimize the aircraft MTOW"),
+                SelectionButton("OWE", tooltip="Minimize the aircraft OWE"),
             ],
-            style=widgets.ToggleButtonsStyle(button_width="100px"),
         )
-        self.objective_selection_widget.layout = widgets.Layout(
-            width="95%", height="50px", justify_content="center"
-        )
+        
+        self.objectives_inputs = Inputs("Objective", [self.objective_selection])
 
-        self.text_box_design_var = widgets.VBox()
-        self.text_box_design_var.children = [
-            widgets.HTML(value="<u>Design variables</u>")
-        ]
-        self.text_box_design_var.layout = self.text_box_layout
 
-        self.ar_design_var_checkbox = widgets.Checkbox(
-            value=True,
-            description="Wing AR as design variable",
-            disabled=False,
-            indent=False,
-            style={"description_width": "initial"},
+        self.ar_design_var_checkbox = v.Checkbox(
+            input_value=True,
+            label="Wing AR as design variable",
         )
-        self.ar_design_var_checkbox.layout = widgets.Layout(
-            width="95%",
-            height="50px",
-            align_items="center",
-        )
-
-        self.ar_design_var_min_widget = widgets.BoundedFloatText(
+        
+        self.ar_design_var_slider = v.RangeSlider(
             min=5.0,
             max=30.0,
             step=0.1,
-            value=self.opt_ar_min,
-            description="Min AR_w",
-            description_tooltip="Minimum aspect ratio for the optimisation [-]",
-            layout=self.input_widget_layout,
+            thumb_label="always",
+            label="Min/Max AR_w",
+            tooltip="Range of aspect ratio for the optimisation [-]",
         )
 
-        def update_ar_min(change):
-
-            if change["new"] > self.opt_ar_max:
-                self.ar_design_var_min_widget.value = self.opt_ar_max
-            else:
-                self.opt_ar_min = change["new"]
-
-        self.ar_design_var_min_widget.observe(update_ar_min, names="value")
-
-        self.ar_design_var_max_widget = widgets.BoundedFloatText(
-            min=5.0,
-            max=30.0,
-            step=0.1,
-            value=self.opt_ar_max,
-            description="Max AR_w",
-            description_tooltip="Maximum aspect ratio for the optimisation [-]",
-            layout=self.input_widget_layout,
+        self.sweep_w_design_var_checkbox = v.Checkbox(
+            input_value=True,
+            label="Wing sweep as design variable",
         )
 
-        def update_ar_max(change):
-
-            if change["new"] < self.opt_ar_min:
-                self.ar_design_var_max_widget.value = self.opt_ar_min
-            else:
-                self.opt_ar_max = change["new"]
-
-        self.ar_design_var_max_widget.observe(update_ar_max, names="value")
-
-        self.sweep_w_design_var_checkbox = widgets.Checkbox(
-            value=True,
-            description="Wing sweep as design variable",
-            disabled=False,
-            indent=False,
-            style={"description_width": "initial"},
-        )
-        self.sweep_w_design_var_checkbox.layout = widgets.Layout(
-            width="95%",
-            height="50px",
-            align_items="center",
-        )
-
+        # TODO
+        # Implement following functions with new widgets
+        
         def ensure_one_design_var_sweep_w(change):
             # If we un-tick the bow and the other box is un-ticked, we force the other box to be
             # ticked
@@ -417,90 +334,46 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         self.ar_design_var_checkbox.observe(ensure_one_design_var_ar_w, names="value")
 
-        self.sweep_w_design_var_min_widget = widgets.BoundedFloatText(
+
+        self.sweep_w_design_var_slider = v.RangeSlider(
             min=5.0,
             max=50.0,
             step=0.01,
-            value=self.opt_sweep_w_min,
-            description="Min Sweep",
-            description_tooltip="Minimum wing sweep angle for the optimisation [-]",
-            layout=self.input_widget_layout,
+            thumb_label="always",
+            label="Sweep Range",
+            tooltip="range of wing sweep angle for the optimisation [-]",
+        )
+        
+        self.design_var_inputs = Inputs("Design variables", [
+            self.ar_design_var_checkbox,
+            self.ar_design_var_slider,
+            self.sweep_w_design_var_checkbox,
+            self.sweep_w_design_var_slider,
+        ])
+
+
+        self.wing_span_constraints_checkbox = v.Checkbox(
+            input_value=False,
+            label="Wing span as a constraint",
         )
 
-        def update_sweep_w_min(change):
-
-            if change["new"] > self.opt_sweep_w_max:
-                self.sweep_w_design_var_min_widget.value = self.opt_sweep_w_max
-            else:
-                self.opt_sweep_w_min = change["new"]
-
-        self.sweep_w_design_var_min_widget.observe(update_sweep_w_min, names="value")
-
-        self.sweep_w_design_var_max_widget = widgets.BoundedFloatText(
-            min=5.0,
-            max=50.0,
-            step=0.01,
-            value=self.opt_sweep_w_max,
-            description="Max Sweep",
-            description_tooltip="Maximum wing sweep angle for the optimisation [-]",
-            layout=self.input_widget_layout,
+        self.wing_span_constraint_max = SliderInput(
+            min=20., 
+            max=100., 
+            step=0.01, 
+            label="Max b_w", 
+            tooltip="Maximum wing span allowed for the optimisation [m]"
         )
 
-        def update_sweep_w_max(change):
-            if change["new"] < self.opt_sweep_w_min:
-                self.sweep_w_design_var_max_widget.value = self.opt_sweep_w_min
-            else:
-                self.opt_sweep_w_max = change["new"]
-
-        self.sweep_w_design_var_max_widget.observe(update_sweep_w_max, names="value")
-
-        self.text_box_constraints = widgets.VBox()
-        self.text_box_constraints.children = [widgets.HTML(value="<u>Constraints</u>")]
-        self.text_box_constraints.layout = self.text_box_layout
-
-        self.wing_span_constraints_checkbox = widgets.Checkbox(
-            value=False,
-            description="Wing span as a constraint",
-            disabled=False,
-            indent=False,
-            style={"description_width": "initial"},
-        )
-        self.wing_span_constraints_checkbox.layout = widgets.Layout(
-            width="95%",
-            height="50px",
-            align_items="center",
-        )
-
-        self.wing_span_constraint_max_widget = widgets.BoundedFloatText(
-            min=20.0,
-            max=100.0,
-            step=0.01,
-            value=self.opt_wing_span_max,
-            description="Max b_w",
-            description_tooltip="Maximum wing span allowed for the optimisation [m]",
-            layout=self.input_widget_layout,
-        )
-
-        def update_wing_span_max(change):
-            self.opt_wing_span_max = change["new"]
-
-        self.wing_span_constraint_max_widget.observe(
-            update_wing_span_max, names="value"
-        )
+        self.constraints_inputs = Inputs("Constraints", [
+            self.wing_span_constraint_max,
+        ])
+        
 
         self.mdo_input_box_widget.children = [
-            self.text_box_objectives,
-            self.objective_selection_widget,
-            self.text_box_design_var,
-            self.ar_design_var_checkbox,
-            self.ar_design_var_min_widget,
-            self.ar_design_var_max_widget,
-            self.sweep_w_design_var_checkbox,
-            self.sweep_w_design_var_min_widget,
-            self.sweep_w_design_var_max_widget,
-            self.text_box_constraints,
-            self.wing_span_constraints_checkbox,
-            self.wing_span_constraint_max_widget,
+            self.objectives_inputs,
+            self.design_var_inputs,
+            self.constraints_inputs,
         ]
 
         ############################################################################################
@@ -704,7 +577,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
         )
 
         self.children = [
-            self.input_box_widget,
+            self.input_box,
             self.launch_box_and_visualization_widget,
         ]
 
