@@ -2,4 +2,8 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-from .base_tab import  BaseTab
+import ipyvuetify as v
+
+class BaseTab(v.TabItem):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

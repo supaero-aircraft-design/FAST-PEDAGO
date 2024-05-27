@@ -11,7 +11,7 @@ from fast_pedago.gui.buttons import (
     SensitivityAnalysisInfoButton,
 )
 
-from fast_pedago.gui.tabs import ParentTab
+from fast_pedago.gui.tabs.sensitivity_analysis_parent_tab import ParentTab
 
 from fast_pedago.gui.pages.base_page import BasePage
 
@@ -36,31 +36,14 @@ class WorkPage(BasePage):
             ],
         )
 
-        self.sensitivity_analysis_tab = ParentTab()
-        self.sensitivity_analysis_tab.layout = widgets.Layout(
-            border="0px solid black",
-            margin="0 0 0 0px",
-            padding="0px",
-            align_items="flex-start",
-            width="80%",
-            height="60%",
+        self.sensitivity_analysis_tabs = v.Row(
+            align="top",
+            justify="center",
+            children=[
+                ParentTab()
+            ]
         )
 
-        #TODO
-        # self.sensitivity_analysis_tab = v.Tabs(
-        #     fixed_tabs = True,
-        #     children = [
-        #         v.Tab(children=[name]) for name in TABS_NAME
-        #     ]
-        # )
-
-        # self.sensitivity_analysis_tab_items = v.TabsItems(
-        #     children = [
-        #         ParentTab()
-        #     ]
-        # )
-
-        self.sensitivity_analysis_tab.selected_index = 0
 
         self.children = [
             v.Container(
@@ -68,7 +51,7 @@ class WorkPage(BasePage):
                 class_="fill-height pt-0",
                 children=[
                     self.header,
-                    self.sensitivity_analysis_tab,
+                    self.sensitivity_analysis_tabs,
                     self.footer,
                 ],
             ),

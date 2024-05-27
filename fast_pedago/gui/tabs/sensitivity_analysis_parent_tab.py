@@ -15,7 +15,7 @@ import openmdao.api as om
 
 from typing import List
 
-import ipywidgets as widgets
+import ipyvuetify as v
 
 from .impact_variable_inputs_tab import (
     ImpactVariableInputLaunchTab,
@@ -47,8 +47,16 @@ TABS_NAME = [
     "Performances - Mission",
 ]
 
+def show_tabs(tabs: v.Tabs):
+    for child in tabs.children:
+        child.disabled = False
 
-class ParentTab(widgets.Tab):
+def hide_tabs(tabs: v.Tabs):
+    for child in tabs.children:
+        child.disabled = True
+
+
+class ParentTab(v.Card):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
@@ -118,59 +126,58 @@ class ParentTab(widgets.Tab):
                 ),
             )
 
-        self.impact_variable_input_tab = ImpactVariableInputLaunchTab(
+        self.input_tab = ImpactVariableInputLaunchTab(
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )
-        self.impact_variable_input_tab.layout = widgets.Layout(height="600px")
 
         ############################################################################################
-        # Originally the launch button was created inside the impact_variable_input_tab (but is
+        # Originally the launch button was created inside the input_tab (but is
         # still displayed there). The reason we moved it here is that we want to "disable" the
         # output tabs when the process is running, so that button will have to interact with
         # attributes of the parent tab, this is the reason why it was moved here. It understandably
         # make things a bit more complicated but is seems like it's working.
 
-        dummy_output = widgets.Output()
+        dummy_output = v.Card()
 
         def launch_sizing_process(event):
 
             # "Hide" the output tabs !
-            self.impact_variable_input_tab.launch_button_widget.style.button_color = (
+            self.input_tab.launch_button_widget.style.button_color = (
                 "Red"
             )
-            self.children = [self.impact_variable_input_tab]
+            hide_tabs(self.tabs)
 
             # Clear the residuals visualization to make it apparent that a computation is
             # underway.
 
             residuals_graph = (
-                self.impact_variable_input_tab.residuals_visualization_widget.data[0]
+                self.input_tab.residuals_visualization_widget.data[0]
             )
             residuals_graph.x = []
             residuals_graph.y = []
 
             threshold_graph = (
-                self.impact_variable_input_tab.residuals_visualization_widget.data[1]
+                self.input_tab.residuals_visualization_widget.data[1]
             )
             threshold_graph.x = []
             threshold_graph.y = []
 
             objective_graph = (
-                self.impact_variable_input_tab.objectives_visualization_widget.data[0]
+                self.input_tab.objectives_visualization_widget.data[0]
             )
             objective_graph.x = []
             objective_graph.y = []
 
             min_objective_graph = (
-                self.impact_variable_input_tab.objectives_visualization_widget.data[1]
+                self.input_tab.objectives_visualization_widget.data[1]
             )
             min_objective_graph.x = []
             min_objective_graph.y = []
 
             with dummy_output:
 
-                if not self.impact_variable_input_tab.mdo_selection_widget.value:
+                if not self.input_tab.mdo_selection_widget.value:
                     relative_error, target_residuals = self._launch_mda()
 
                     # For the display, hte iteration will start at 1 :)
@@ -182,8 +189,8 @@ class ParentTab(widgets.Tab):
                     threshold_graph.x = [1, len(relative_error)]
                     threshold_graph.y = [target_residuals, target_residuals]
 
-                    self.impact_variable_input_tab.graph_visualization_box.children = [
-                        self.impact_variable_input_tab.residuals_visualization_widget
+                    self.input_tab.graph_visualization_box.children = [
+                        self.input_tab.residuals_visualization_widget
                     ]
 
                 else:
@@ -198,124 +205,84 @@ class ParentTab(widgets.Tab):
                     min_objective_graph.x = [1, len(objective)]
                     min_objective_graph.y = [min_objective, min_objective]
 
-                    self.impact_variable_input_tab.graph_visualization_box.children = [
-                        self.impact_variable_input_tab.objectives_visualization_widget
+                    self.input_tab.graph_visualization_box.children = [
+                        self.input_tab.objectives_visualization_widget
                     ]
 
-                self.impact_variable_input_tab.launch_button_widget.style.button_color = (
+                self.input_tab.launch_button_widget.style.button_color = (
                     "LimeGreen"
                 )
 
-                self.children = [
-                    self.impact_variable_input_tab,
-                    self.impact_variable_output_tab,
-                    self.impact_variable_wing_geometry_tab,
-                    self.impact_variable_aircraft_geometry_tab,
-                    self.impact_variable_drag_polar_tab,
-                    self.impact_variable_mass_bar_breakdown_tab,
-                    self.impact_variable_mass_sun_breakdown_tab,
-                    self.impact_variable_payload_range_tab,
-                    self.impact_variable_mission_tab,
-                ]
+                show_tabs(self.tabs)
 
-        self.impact_variable_input_tab.launch_button_widget.on_click(
+        self.input_tab.launch_button_widget.on_click(
             launch_sizing_process
         )
 
         ############################################################################################
 
-        self.impact_variable_output_tab = ImpactVariableOutputTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_output_tab.layout = widgets.Layout(height="600px")
-
-        self.impact_variable_wing_geometry_tab = ImpactVariableWingGeometryTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_wing_geometry_tab.layout = widgets.Layout(height="600px")
-
-        self.impact_variable_aircraft_geometry_tab = ImpactVariableAircraftGeometryTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_aircraft_geometry_tab.layout = widgets.Layout(
-            height="600px"
-        )
-
-        self.impact_variable_drag_polar_tab = ImpactVariableDragPolarTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_drag_polar_tab.layout = widgets.Layout(height="600px")
-
-        self.impact_variable_mass_bar_breakdown_tab = ImpactVariableMassBarBreakdownTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_mass_bar_breakdown_tab.layout = widgets.Layout(
-            height="600px"
-        )
-
-        self.impact_variable_mass_sun_breakdown_tab = ImpactVariableMassSunBreakdownTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_mass_sun_breakdown_tab.layout = widgets.Layout(
-            height="600px"
-        )
-
-        self.impact_variable_payload_range_tab = ImpactVariablePayloadRangeTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_payload_range_tab.layout = widgets.Layout(height="600px")
-
-        self.impact_variable_mission_tab = ImpactVariableMissionTab(
-            working_directory_path=self.working_directory_path
-        )
-        self.impact_variable_mission_tab.layout = widgets.Layout(height="600px")
-
-        def browse_available_sizing_process(change=None):
-
+        def browse_available_sizing_process(widget, event, data):
             # On tab change, we browse the output folder of the workdir to check all completed
             # sizing processes. Additionally instead of doing it on all tab change, we will only
             # do it if the old tab was the tab from which we can launch a sizing process, i.e the
             # first tab
-            if change["name"] == "selected_index":
-                if change["old"] == 0:
-                    self.available_sizing_process = (
-                        list_available_sizing_process_results(
-                            pth.join(self.working_directory_path, "outputs")
-                        )
-                    )
+            
+            # if change["name"] == "selected_index":
+            #     if change["old"] == 0:
+            
+            self.available_sizing_process = (
+                list_available_sizing_process_results(
+                    pth.join(self.working_directory_path, "outputs")
+                )
+            )
 
-                    # Update the available value for each tab while making sure to leave the None
-                    # option as it will always be the selected value
-                    for tab_index, _ in enumerate(TABS_NAME):
+            # Update the available value for each tab while making sure to leave the None
+            # option as it will always be the selected value
+            for tab_index, _ in enumerate(TABS_NAME):
 
-                        # Nothing to update in the first tab (the launch tab)
-                        if tab_index != 0:
+                # Nothing to update in the first tab (the launch tab)
+                if tab_index != 0:
 
-                            # This assumes that all tabs except the first will have an attribute
-                            # named "output_file_selection_widget"
-                            self.children[
-                                tab_index
-                            ].output_file_selection_widget.options = [
-                                "None"
-                            ] + self.available_sizing_process
+                    # This assumes that all tabs except the first will have an attribute
+                    # named "output_file_selection_widget"
+                    self.tabs_items[
+                        tab_index
+                    ].output_file_selection_widget.options = [
+                        "None"
+                    ] + self.available_sizing_process
 
-        self.observe(browse_available_sizing_process)
-
-        self.children = [
-            self.impact_variable_input_tab,
-            self.impact_variable_output_tab,
-            self.impact_variable_wing_geometry_tab,
-            self.impact_variable_aircraft_geometry_tab,
-            self.impact_variable_drag_polar_tab,
-            self.impact_variable_mass_bar_breakdown_tab,
-            self.impact_variable_mass_sun_breakdown_tab,
-            self.impact_variable_payload_range_tab,
-            self.impact_variable_mission_tab,
-        ]
 
         # Add a title for each tab
-        for i, tab_name in enumerate(TABS_NAME):
-            self.set_title(i, tab_name)
+        self.tabs_titles = [
+            v.Tab(children=[tab_name]) for tab_name in TABS_NAME
+        ]
+
+        self.tabs_items = [
+            self.input_tab,
+            ImpactVariableOutputTab(working_directory_path=self.working_directory_path),
+            ImpactVariableWingGeometryTab(working_directory_path=self.working_directory_path),
+            ImpactVariableAircraftGeometryTab(working_directory_path=self.working_directory_path),
+            ImpactVariableDragPolarTab(working_directory_path=self.working_directory_path),
+            ImpactVariableMassBarBreakdownTab(working_directory_path=self.working_directory_path),
+            ImpactVariableMassSunBreakdownTab(working_directory_path=self.working_directory_path),
+            ImpactVariablePayloadRangeTab(working_directory_path=self.working_directory_path),
+            ImpactVariableMissionTab(working_directory_path=self.working_directory_path),
+        ]
+
+        self.tabs = v.Tabs(
+            children=
+                self.tabs_titles
+                + self.tabs_items
+                + [
+                    v.TabsSlider(),
+                ]
+        )
+
+        self.tabs.on_event("change", browse_available_sizing_process)
+
+        self.children = [
+            self.tabs,
+        ]
 
     def _launch_mdo(self):
         """
@@ -338,11 +305,11 @@ class ParentTab(widgets.Tab):
 
         new_input_file_path = orig_input_file_path.replace(
             orig_input_file_name,
-            self.impact_variable_input_tab.sizing_process_name + "_mdo_input_file.xml",
+            self.input_tab.sizing_process_name + "_mdo_input_file.xml",
         )
         new_output_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name
+            self.input_tab.sizing_process_name
             + "_mdo"
             + OUTPUT_FILE_SUFFIX,
         )
@@ -352,7 +319,7 @@ class ParentTab(widgets.Tab):
         configurator.output_file_path = new_output_file_path
 
         # Create the input file with the reference value, except for sweep
-        new_inputs = copy.deepcopy(self.impact_variable_input_tab.reference_inputs)
+        new_inputs = copy.deepcopy(self.input_tab.reference_inputs)
 
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
@@ -363,25 +330,25 @@ class ParentTab(widgets.Tab):
         # the input file
         problem = configurator.get_problem(read_inputs=True)
 
-        if self.impact_variable_input_tab.ar_design_var_checkbox.value:
+        if self.input_tab.ar_design_var_checkbox.value:
 
             problem.model.add_design_var(
                 name="data:geometry:wing:aspect_ratio",
-                lower=self.impact_variable_input_tab.opt_ar_min,
-                upper=self.impact_variable_input_tab.opt_ar_max,
+                lower=self.input_tab.opt_ar_min,
+                upper=self.input_tab.opt_ar_max,
             )
 
-        if self.impact_variable_input_tab.sweep_w_design_var_checkbox.value:
+        if self.input_tab.sweep_w_design_var_checkbox.value:
 
             problem.model.add_design_var(
                 name="data:geometry:wing:sweep_25",
                 units="deg",
-                lower=self.impact_variable_input_tab.opt_sweep_w_min,
-                upper=self.impact_variable_input_tab.opt_sweep_w_max,
+                lower=self.input_tab.opt_sweep_w_min,
+                upper=self.input_tab.opt_sweep_w_max,
             )
 
         if (
-            self.impact_variable_input_tab.objective_selection_widget.value
+            self.input_tab.objective_selection_widget.value
             == "Fuel sizing"
         ):
             problem.model.add_objective(
@@ -389,7 +356,7 @@ class ParentTab(widgets.Tab):
                 units="kg",
                 scaler=1e-4,
             )
-        elif self.impact_variable_input_tab.objective_selection_widget.value == "MTOW":
+        elif self.input_tab.objective_selection_widget.value == "MTOW":
             problem.model.add_objective(
                 name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
             )
@@ -399,12 +366,12 @@ class ParentTab(widgets.Tab):
                 name="data:weight:aircraft:OWE", units="kg", scaler=1e-4
             )
 
-        if self.impact_variable_input_tab.wing_span_constraints_checkbox.value:
+        if self.input_tab.wing_span_constraints_checkbox.value:
             problem.model.add_constraint(
                 name="data:geometry:wing:span",
                 units="m",
                 lower=0.0,
-                upper=self.impact_variable_input_tab.opt_wing_span_max,
+                upper=self.input_tab.opt_wing_span_max,
             )
 
         problem.model.approx_totals()
@@ -424,7 +391,7 @@ class ParentTab(widgets.Tab):
         driver = problem.driver
         recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name + "_mdo_cases.sql",
+            self.input_tab.sizing_process_name + "_mdo_cases.sql",
         )
         recorder = om.SqliteRecorder(recorder_database_file_path)
         driver.add_recorder(recorder)
@@ -445,7 +412,7 @@ class ParentTab(widgets.Tab):
         )
         new_mission_data_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name
+            self.input_tab.sizing_process_name
             + "_mdo"
             + FLIGHT_DATA_FILE_SUFFIX,
         )
@@ -489,11 +456,11 @@ class ParentTab(widgets.Tab):
 
         new_input_file_path = orig_input_file_path.replace(
             orig_input_file_name,
-            self.impact_variable_input_tab.sizing_process_name + "_input_file.xml",
+            self.input_tab.sizing_process_name + "_input_file.xml",
         )
         new_output_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name + OUTPUT_FILE_SUFFIX,
+            self.input_tab.sizing_process_name + OUTPUT_FILE_SUFFIX,
         )
 
         # Change the input and output file path in the configurator
@@ -501,14 +468,14 @@ class ParentTab(widgets.Tab):
         configurator.output_file_path = new_output_file_path
 
         # Create the input file with the current value
-        new_inputs = copy.deepcopy(self.impact_variable_input_tab.reference_inputs)
+        new_inputs = copy.deepcopy(self.input_tab.reference_inputs)
 
         # No need to provide list or numpy array for scalar values.
-        new_inputs["data:TLAR:NPAX"].value = self.impact_variable_input_tab.n_pax
+        new_inputs["data:TLAR:NPAX"].value = self.input_tab.n_pax
 
         new_inputs[
             "data:TLAR:approach_speed"
-        ].value = self.impact_variable_input_tab.v_app
+        ].value = self.input_tab.v_app
         new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
 
         # If the Mach get too high and because we originally didn't plan on changing sweep,
@@ -516,10 +483,10 @@ class ParentTab(widgets.Tab):
         # will thus adapt the sweep based on the mach number with a message to let the
         # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
         # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.impact_variable_input_tab.cruise_mach > 0.78:
+        if self.input_tab.cruise_mach > 0.78:
             cos_phi_25 = (
                 0.78
-                / self.impact_variable_input_tab.cruise_mach
+                / self.input_tab.cruise_mach
                 * np.cos(np.deg2rad(24.54))
             )
             phi_25 = np.arccos(cos_phi_25)
@@ -528,30 +495,30 @@ class ParentTab(widgets.Tab):
 
         new_inputs[
             "data:TLAR:cruise_mach"
-        ].value = self.impact_variable_input_tab.cruise_mach
+        ].value = self.input_tab.cruise_mach
 
-        new_inputs["data:TLAR:range"].value = self.impact_variable_input_tab.range
+        new_inputs["data:TLAR:range"].value = self.input_tab.range
         new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:payload"
-        ].value = self.impact_variable_input_tab.payload
+        ].value = self.input_tab.payload
         new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:max_payload"
-        ].value = self.impact_variable_input_tab.max_payload
+        ].value = self.input_tab.max_payload
         new_inputs[
             "data:weight:aircraft:max_payload"
         ].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:geometry:wing:aspect_ratio"
-        ].value = self.impact_variable_input_tab.wing_aspect_ratio
+        ].value = self.input_tab.wing_aspect_ratio
 
         new_inputs[
             "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.impact_variable_input_tab.bpr
+        ].value = self.input_tab.bpr
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
         new_inputs.save_as(new_input_file_path, overwrite=True)
@@ -568,7 +535,7 @@ class ParentTab(widgets.Tab):
         model = problem.model
         recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name + "_cases.sql",
+            self.input_tab.sizing_process_name + "_cases.sql",
         )
         recorder = om.SqliteRecorder(recorder_database_file_path)
         model.nonlinear_solver.add_recorder(recorder)
@@ -592,7 +559,7 @@ class ParentTab(widgets.Tab):
         )
         new_mission_data_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.impact_variable_input_tab.sizing_process_name
+            self.input_tab.sizing_process_name
             + FLIGHT_DATA_FILE_SUFFIX,
         )
 

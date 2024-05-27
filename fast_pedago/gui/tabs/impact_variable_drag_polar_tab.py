@@ -14,8 +14,9 @@ from fast_pedago.gui.tabs.impact_variable_inputs_tab import OUTPUT_FILE_SUFFIX
 from fast_pedago.gui.dropdowns import get_select_multiple_sizing_process_dropdown
 from fast_pedago.gui.buttons import MultipleProcessSelectionInfoButton
 
+from fast_pedago.gui.tabs import BaseTab
 
-class ImpactVariableDragPolarTab(widgets.VBox):
+class ImpactVariableDragPolarTab(BaseTab):
     def __init__(self, working_directory_path: str, **kwargs):
 
         super().__init__(**kwargs)

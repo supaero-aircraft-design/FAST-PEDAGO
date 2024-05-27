@@ -15,11 +15,13 @@ import fastoad.api as oad
 
 from fast_pedago.utils.functions import _image_from_path  # noqa
 
+from fast_pedago.gui.tabs import BaseTab
+
 OUTPUT_FILE_SUFFIX = "_output_file.xml"
 FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
 
 
-class ImpactVariableInputLaunchTab(widgets.HBox):
+class ImpactVariableInputLaunchTab(BaseTab):
     def __init__(
         self, configuration_file_path: str, reference_input_file_path: str, **kwargs
     ):
