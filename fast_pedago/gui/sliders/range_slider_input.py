@@ -21,7 +21,7 @@ class RangeSliderInput(v.VuetifyTemplate):
             >
                 <v-col
                     class="ps-8 pe-0 py-1"
-                    cols=3
+                    cols=4
                 >
                     <p>{self.label}</p>
                 </v-col>

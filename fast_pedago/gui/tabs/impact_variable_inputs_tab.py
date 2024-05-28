@@ -84,7 +84,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
         ############################################################################################
         # Input box
         self.input_box = v.Col(
-            cols=5,
+            cols=3,
         )
         
         ########################################
@@ -167,15 +167,29 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.cruise_mach_input_widget.observe(update_cruise_mach, names="value")
 
         ###########################
-        class Inputs(v.Card):
+        class Inputs(v.Container):
             def __init__(self, name, inputs=[], **kwargs):
                 super().__init__(**kwargs)
                 
+                self.class_="ps-6 pb-0 pt-2" 
+                
                 self.children=[
-                    v.CardTitle(
-                        children=[name]
+                    v.Row(
+                        children=[
+                            v.Html(
+                                tag="div",
+                                style_="font-weight: bold;",
+                                children=[name],
+                            ),
+                        ],
                     ),
-                ] + inputs
+                    v.Row(
+                        children=inputs,
+                    ),
+                    v.Divider(
+                        class_="pb-2 mt-1",
+                    ),
+                ]
             
         self.TLAR_inputs = Inputs("TLARs", [
             self.n_pax_input,
@@ -195,10 +209,14 @@ class ImpactVariableInputLaunchTab(BaseTab):
         ])
 
         self.input_box.children = [
-            self.TLAR_inputs,
-            self.weight_inputs,
-            self.geometry_inputs,
-            self.propulsion_inputs,
+            v.Card(
+                children=[
+                    self.TLAR_inputs,
+                    self.weight_inputs,
+                    self.geometry_inputs,
+                    self.propulsion_inputs,
+                ],
+            ),
         ]
 
         ############################################################################################
@@ -206,7 +224,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
         # the objectives and the bounds for the design variables
         # Input box
         self.mdo_input_box_widget = v.Col(
-            cols=5,
+            cols=3,
         )
         
         # FIXME 
@@ -226,7 +244,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
         
 
         self.objective_selection = v.Row(
-            class_="pb-4 pt-0",
+            class_="pb-4 pt-2",
             justify="center",
             children=[
                 v.BtnToggle(
@@ -322,18 +340,18 @@ class ImpactVariableInputLaunchTab(BaseTab):
         
 
         self.mdo_input_box_widget.children = [
-            self.objectives_inputs,
-            self.design_var_inputs,
-            self.constraints_inputs,
+            v.Card(
+                children=[
+                    self.objectives_inputs,
+                    self.design_var_inputs,
+                    self.constraints_inputs,    
+                ],
+            ),
         ]
 
         ############################################################################################
         # Residuals visualization box
-        self.graph_visualization_box = widgets.VBox(
-            layout=widgets.Layout(
-                height="550px", justify_content="center", align_items="center"
-            )
-        )
+        self.graph_visualization_box = v.Col()
 
         # This value for the height will only work for that particular definition of the back
         # image. Which means it is not generic enough. If no height is specified however the
@@ -557,7 +575,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
             else:
                 self.children = [
-                    self.input_box_widget,
+                    self.input_box,
                     self.launch_box_and_visualization_widget,
                 ]
                 self.launch_button_widget.description = "Launch sizing process"

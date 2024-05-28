@@ -14,7 +14,8 @@ class BasePage(v.Container):
 
         super().__init__(**kwargs)
         
-        self.class_ = "pa-0"
+        self.fluid = True
+        self.class_ = "pa-0 ma-0"
 
         self.pages = pages
 
