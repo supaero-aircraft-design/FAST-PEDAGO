@@ -19,6 +19,11 @@ from fast_pedago.utils.functions import _image_from_path  # noqa
 
 from fast_pedago.gui.tabs import BaseTab
 
+from fast_pedago.gui.sliders import (
+    SliderInput,
+    RangeSliderInput,
+)
+
 OUTPUT_FILE_SUFFIX = "_output_file.xml"
 FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
 
@@ -79,63 +84,11 @@ class ImpactVariableInputLaunchTab(BaseTab):
         ############################################################################################
         # Input box
         self.input_box = v.Col(
-            cols=12,
-            md=4,
+            cols=5,
         )
         
         ########################################
-        #TODO
-        # Implement tooltip
-        class SliderInput(v.VuetifyTemplate):
-            min = traitlets.Float(default_value=0).tag(sync=True)
-            max = traitlets.Float(default_value=100).tag(sync=True)
-            step = traitlets.Float(default_value=10).tag(sync=True)
-            label = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-            tooltip = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-            value = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-            @traitlets.default('template')
-            def _template(self):
-                return f'''
-                <template>
-                    <v-slider
-                        v-model="value"
-                        class="align-center"
-                        label={self.label}
-                        :max="max"
-                        :min="min"
-                        :step="step"
-                        hide-details
-                    >
-                        <template v-slot:append>
-                            <v-text-field
-                                v-model="value"
-                                class="mt-0 pt-0"
-                                variant="outlined"
-                                density="compact"
-                                hide-details
-                                single-line
-                                type="number"
-                                style="width: 60px"
-                            >
-                            </v-text-field>
-                        </template>
-                    </v-slider>
-                </template>
-                ''' + '''
-                <script>
-                    export default {
-                        methods: {
-                            decrement () {
-                                this.value--
-                            },
-                            increment () {
-                                this.value++
-                            },
-                        },
-                    }
-                </script>
-                '''
-
+        
         self.n_pax_input = SliderInput(min=19,max=500, step=1, label="N_PAX", tooltip="Number of passengers")
         self.v_app_input = SliderInput(min=45., max=200., step=0.1, label="V_app", tooltip="Approach speed [kts]")
         self.cruise_mach_input = SliderInput(min=0., max=1., step=0.01, label="M_cruise", tooltip="Cruise mach")
@@ -144,7 +97,6 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.max_payload_input = SliderInput(min=0, max=100000, step=10, label="Max Payload", tooltip="Aircraft max payload [kg]")
         self.wing_aspect_ratio_input = SliderInput(min=4., max=25., step=0.1, label="AR_w", tooltip="Aspect Ratio of the wing")
         self.bpr_input = SliderInput(min=0, max=25., step=0.1, label="BPR", tooltip="ByPass Ratio of the engine")
-
 
 
         ########################################
@@ -253,11 +205,8 @@ class ImpactVariableInputLaunchTab(BaseTab):
         # We also create a bow specific for launching an MDO which will only consists of selecting
         # the objectives and the bounds for the design variables
         # Input box
-        self.mdo_input_box_widget = widgets.VBox()
-        self.mdo_input_box_widget.layout = widgets.Layout(
-            width="33%",
-            align_items="center",
-            border="2px solid black",
+        self.mdo_input_box_widget = v.Col(
+            cols=5,
         )
         
         # FIXME 
@@ -276,12 +225,18 @@ class ImpactVariableInputLaunchTab(BaseTab):
                 ]
         
 
-        self.objective_selection = v.BtnToggle(
-            v_model="toggle_exclusive",
+        self.objective_selection = v.Row(
+            class_="pb-4 pt-0",
+            justify="center",
             children=[
-                SelectionButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"), 
-                SelectionButton("MTOW", tooltip="Minimize the aircraft MTOW"),
-                SelectionButton("OWE", tooltip="Minimize the aircraft OWE"),
+                v.BtnToggle(
+                    v_model="toggle_exclusive",
+                    children=[
+                        SelectionButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"), 
+                        SelectionButton("MTOW", tooltip="Minimize the aircraft MTOW"),
+                        SelectionButton("OWE", tooltip="Minimize the aircraft OWE"),
+                    ],
+                ),
             ],
         )
         
@@ -289,20 +244,22 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
 
         self.ar_design_var_checkbox = v.Checkbox(
+            class_="ms-4",
             input_value=True,
             label="Wing AR as design variable",
         )
         
-        self.ar_design_var_slider = v.RangeSlider(
-            min=5.0,
-            max=30.0,
-            step=0.1,
-            thumb_label="always",
+        self.ar_design_var_slider = RangeSliderInput(
+            min=5,
+            max=30,
+            step=1,
+            range=[10, 25],
             label="Min/Max AR_w",
             tooltip="Range of aspect ratio for the optimisation [-]",
         )
 
         self.sweep_w_design_var_checkbox = v.Checkbox(
+            class_="ms-4",
             input_value=True,
             label="Wing sweep as design variable",
         )
@@ -329,11 +286,11 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.ar_design_var_checkbox.observe(ensure_one_design_var_ar_w, names="value")
 
 
-        self.sweep_w_design_var_slider = v.RangeSlider(
-            min=5.0,
-            max=50.0,
-            step=0.01,
-            thumb_label="always",
+        self.sweep_w_design_var_slider = RangeSliderInput(
+            min=5,
+            max=50,
+            step=1,
+            range=[15, 40],
             label="Sweep Range",
             tooltip="range of wing sweep angle for the optimisation [-]",
         )
