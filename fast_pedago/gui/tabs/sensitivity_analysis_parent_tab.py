@@ -215,7 +215,8 @@ class ParentTab(v.Card):
 
                 show_tabs(self.tabs)
 
-        self.input_tab.launch_button_widget.on_click(
+        self.input_tab.launch_button_widget.on_event(
+            "click",
             launch_sizing_process
         )
 

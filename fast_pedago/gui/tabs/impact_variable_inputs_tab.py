@@ -350,8 +350,6 @@ class ImpactVariableInputLaunchTab(BaseTab):
         ]
 
         ############################################################################################
-        # Residuals visualization box
-        self.graph_visualization_box = v.Col()
 
         # This value for the height will only work for that particular definition of the back
         # image. Which means it is not generic enough. If no height is specified however the
@@ -378,7 +376,14 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.residuals_visualization_widget = go.FigureWidget(
             self.residuals_visualization_figure
         )
-        self.graph_visualization_box.children = [self.residuals_visualization_widget]
+        
+        # Residuals visualization box
+        self.graph_visualization_box = v.Row(
+            justify="center",
+            children=[
+                self.residuals_visualization_widget,
+            ],
+        )
 
         objective_scatter = go.Scatter(x=[], y=[], name="Objective")
         optimized_value_scatter = go.Scatter(
@@ -405,32 +410,26 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         ############################################################################################
         self.n2_visualization_widget = _image_from_path(
-            self.n2_image_path, height="", width="95%"
+            self.n2_image_path, height="100vh", width="100"
         )
 
         ############################################################################################
         self.xdsm_visualization_widget = _image_from_path(
-            self.xdsm_image_path, height="", width="95%"
+            self.xdsm_image_path, height="100vh", width="100"
         )
 
         ############################################################################################
         # Launch box
 
-        self.launch_box_and_visualization_widget = widgets.VBox()
-
-        self.launch_box = widgets.HBox()
+        self.launch_box_and_visualization_widget = v.Col()
 
         # Text box to give a name to the run
-        self.process_name_widget = widgets.Text(
-            description="Sizing name",
+        self.process_name_widget = v.TextField(
+            outlined=True,
+            hide_details=True,
+            label="Sizing name",
             placeholder="Write a name for your sizing process",
             tooltip="Name of the sizing process",
-        )
-        self.process_name_widget.layout = widgets.Layout(
-            width="50%",
-            height="auto",
-            justify_content="space-between",
-            align_items="flex-start",
         )
 
         def update_sizing_process_name(change):
@@ -439,66 +438,56 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.process_name_widget.observe(update_sizing_process_name, names="value")
 
         # Create a button to launch the sizing
-        self.launch_button_widget = widgets.Button(description="Launch sizing process")
-        self.launch_button_widget.icon = "fa-plane"
-        self.launch_button_widget.layout = widgets.Layout(width="31%", height="auto")
-        self.launch_button_widget.style.button_color = "GreenYellow"
+        self.launch_button_widget = v.Btn(
+            block=True,
+            color="#32cd32",
+            width="31%",
+            children=[
+                v.Icon(class_="px-3", children=["fa-plane"]),
+                "Launch sizing process",
+            ],
+        )
 
         # Create a button to trigger the MDO "mode"
-        self.mdo_selection_widget = widgets.ToggleButton(
-            value=False,
-            description="MDO",
-            icon="check",
+        self.mdo_selection_widget = v.Checkbox(
+            class_="mt-0 pt-2",
+            input_value=False,
+            label="MDO",
             tooltip="Check that box to swap in optimization mode",
         )
-        self.mdo_selection_widget.layout = widgets.Layout(
-            width="10%",
-            height="auto",
-        )
 
-        # Add a filler box to force the buttons on the bottom and so that the picture appear clearly
-        self.filler_box = widgets.Box(
-            layout=widgets.Layout(
-                width="3%",
-                height="auto",
-            ),
-        )
-
-        self.launch_box.children = [
-            self.filler_box,
-            self.process_name_widget,
-            self.launch_button_widget,
-            self.filler_box,
-            self.mdo_selection_widget,
-        ]
-
-        self.launch_box.layout = widgets.Layout(
-            width="100%",
-            height="50px",
-            justify_content="center",
-            align_items="center",
-        )
-
-        self.display_selection_widget = widgets.ToggleButtons(
-            options=["Residuals", "N2", "N2 (browser)", "XDSM", "XDSM (browser)"],
-            disabled=False,
-            button_style="",  # 'success', 'info', 'warning', 'danger' or ''
-            tooltips=[
-                "Displays a graph of the evolution of residuals with the number of iterations",
-                "Displays the N2 diagram of the sizing process",
-                "Displays the N2 diagram of the sizing process in a new browser tab",
-                "Displays the XDSM diagram of the sizing process",
-                "Displays the XDSM diagram of the sizing process in a new browser tab",
+        self.launch_box = v.Container(
+            fluid=True,
+            class_="pe-7",
+            children=[
+                v.Row(children=[self.process_name_widget]),
+                v.Row(
+                    children=[
+                        v.Col(children=[self.mdo_selection_widget]),
+                        v.Col(class_="px-0", cols=10, children=[self.launch_button_widget]),
+                    ],
+                ),
             ],
-            style={"button_width": "120px"},
+        )
+        
+        self.display_selection_widget = v.Row(
+            class_="pb-4 pt-2",
+            justify="center",
+            children=[
+                v.BtnToggle(
+                    v_model="toggle_one",
+                    mandatory=True,
+                    children=[
+                        SelectionButton("Residuals", tooltip="Displays a graph of the evolution of residuals with the number of iterations"), 
+                        SelectionButton("N2", tooltip="Displays the N2 diagram of the sizing process"),
+                        SelectionButton("N2 (browser)", tooltip="Displays the N2 diagram of the sizing process in a new browser tab"),
+                        SelectionButton("XDSM", tooltip="Displays the XDSM diagram of the sizing process"),
+                        SelectionButton("XDSM (browser)", tooltip="Displays the XDSM diagram of the sizing process in a new browser tab"),
+                    ],
+                ),
+            ],
         )
 
-        self.display_selection_widget.layout = widgets.Layout(
-            width="98%",
-            height="50px",
-            justify_content="center",
-            align_items="center",
-        )
 
         def display_graph(change):
 
@@ -539,15 +528,13 @@ class ImpactVariableInputLaunchTab(BaseTab):
             self.display_selection_widget,
         ]
 
-        self.launch_box_and_visualization_widget.layout = widgets.Layout(
-            width="66%",
-            justify_content="flex-start",
-            border="2px solid black",
-        )
-
         self.children = [
-            self.input_box,
-            self.launch_box_and_visualization_widget,
+            v.Row(
+                children=[
+                    self.input_box,
+                    self.launch_box_and_visualization_widget,
+                ]
+            )
         ]
 
         def update_input_box(event):
@@ -575,8 +562,12 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
             else:
                 self.children = [
-                    self.input_box,
-                    self.launch_box_and_visualization_widget,
+                    v.Row(
+                        childern=[
+                            self.input_box,
+                            self.launch_box_and_visualization_widget,
+                        ],
+                    ),
                 ]
                 self.launch_button_widget.description = "Launch sizing process"
 
