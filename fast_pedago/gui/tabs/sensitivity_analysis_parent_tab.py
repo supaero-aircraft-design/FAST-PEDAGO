@@ -18,11 +18,7 @@ from typing import List
 import ipywidgets as widgets
 import ipyvuetify as v
 
-from .impact_variable_inputs_tab import (
-    ImpactVariableInputLaunchTab,
-    OUTPUT_FILE_SUFFIX,
-    FLIGHT_DATA_FILE_SUFFIX,
-)
+from .impact_variable_inputs_tab import ImpactVariableInputLaunchTab
 from .impact_variable_outputs_tab import ImpactVariableOutputTab
 from .impact_variable_wing_geometry_tab import ImpactVariableWingGeometryTab
 from .impact_variable_aircraft_geometry_tab import ImpactVariableAircraftGeometryTab
@@ -35,6 +31,14 @@ from .impact_variable_mission_tab import ImpactVariableMissionTab
 import fastoad.api as oad
 
 from fast_pedago import configuration, source_data_files
+
+from fast_pedago.utils import (
+    _list_available_sizing_process_results,
+    _extract_residuals,
+    _extract_objective,
+    OUTPUT_FILE_SUFFIX,
+    FLIGHT_DATA_FILE_SUFFIX,
+)
 
 TABS_NAME = [
     "Inputs & Launch",
@@ -236,7 +240,7 @@ class ParentTab(v.Card):
             #     if change["old"] == 0:
             
             self.available_sizing_process = (
-                list_available_sizing_process_results(
+                _list_available_sizing_process_results(
                     pth.join(self.working_directory_path, "outputs")
                 )
             )
@@ -435,7 +439,7 @@ class ParentTab(v.Card):
         # Extract the residuals, build a scatter based on them and plot them along with the
         # threshold set in the configuration file
         objective = np.array(
-            extract_objective(recorder_database_file_path=recorder_database_file_path)
+            _extract_objective(recorder_database_file_path=recorder_database_file_path)
         )
         min_objective = min(objective)
 
@@ -581,87 +585,10 @@ class ParentTab(v.Card):
         # Extract the residuals, build a scatter based on them and plot them along with the
         # threshold set in the configuration file
         relative_error = np.array(
-            extract_residuals(recorder_database_file_path=recorder_database_file_path)
+            _extract_residuals(recorder_database_file_path=recorder_database_file_path)
         )
 
         # Shut down the recorder so we can delete the .sql file later
         recorder.shutdown()
 
         return relative_error, target_residuals
-
-
-def list_available_sizing_process_results(path_to_scan: str) -> List[str]:
-    """
-    Parses the name of all the file in the provided path and scan for the one that would match the
-    results of an OAD sizing process. Is meant to work only on a path containing both the output
-    file and flight data file
-
-    :param path_to_scan: path to look for the results of sizing process in
-    :return: a list of available process names
-    """
-
-    list_files = os.listdir(path_to_scan)
-    available_sizing_process = []
-
-    for file in list_files:
-
-        # Delete the suffix corresponding to the output file and flight data file because that's
-        # how they were built. Also, we will ignore the .sql file
-
-        if file.endswith(".sql"):
-            continue
-
-        associated_sizing_process_name = file.replace(OUTPUT_FILE_SUFFIX, "").replace(
-            FLIGHT_DATA_FILE_SUFFIX, ""
-        )
-
-        if associated_sizing_process_name not in available_sizing_process:
-            available_sizing_process.append(associated_sizing_process_name)
-
-    return available_sizing_process
-
-
-def extract_residuals(recorder_database_file_path: str) -> list:
-    """
-    From the file path to a recorder data base, extract the value of the relative error of the
-    residuals at each iteration.
-
-    :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the value of the relative error at each iteration
-    """
-
-    case_reader = om.CaseReader(recorder_database_file_path)
-
-    # Will only work if the recorder was attached to the base solver
-    solver_cases = case_reader.get_cases("root.nonlinear_solver")
-
-    relative_error = []
-
-    for _, case in enumerate(solver_cases):
-
-        relative_error.append(case.rel_err)
-
-    return relative_error
-
-
-def extract_objective(recorder_database_file_path: str) -> list:
-    """
-    From the file path to a recorder data base, extract the value of the objective at each
-    iteration of the driver.
-
-    :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the value of the objective at each iteration
-    """
-
-    case_reader = om.CaseReader(recorder_database_file_path)
-
-    # Will only work if the recorder was attached to the base solver
-    solver_cases = case_reader.get_cases("driver")
-
-    relative_error = []
-
-    for _, case in enumerate(solver_cases):
-
-        relative_error.append(float(list(case.get_objectives().values())[0]))
-
-    return relative_error
