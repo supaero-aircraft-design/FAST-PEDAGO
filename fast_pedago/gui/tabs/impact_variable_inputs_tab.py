@@ -89,14 +89,14 @@ class ImpactVariableInputLaunchTab(BaseTab):
         
         ########################################
         
-        self.n_pax_input = SliderInput(min=19,max=500, step=1, label="N_PAX", tooltip="Number of passengers")
-        self.v_app_input = SliderInput(min=45., max=200., step=0.1, label="V_app", tooltip="Approach speed [kts]")
-        self.cruise_mach_input = SliderInput(min=0., max=1., step=0.01, label="M_cruise", tooltip="Cruise mach")
-        self.range_input = SliderInput(min=0, max=10000, step=100, label="Range", tooltip="Aircraft range [NM]")
-        self.payload_input = SliderInput(min=0, max=100000, step=10, label="Payload", tooltip="Aircraft payload [kg]")
-        self.max_payload_input = SliderInput(min=0, max=100000, step=10, label="Max Payload", tooltip="Aircraft max payload [kg]")
-        self.wing_aspect_ratio_input = SliderInput(min=4., max=25., step=0.1, label="AR_w", tooltip="Aspect Ratio of the wing")
-        self.bpr_input = SliderInput(min=0, max=25., step=0.1, label="BPR", tooltip="ByPass Ratio of the engine")
+        self.n_pax_input = SliderInput(min=19,max=500, step=1, value=self.n_pax, label="N_PAX", tooltip="Number of passengers")
+        self.v_app_input = SliderInput(min=45., max=200., step=0.1, value=self.v_app, label="V_app", tooltip="Approach speed [kts]")
+        self.cruise_mach_input = SliderInput(min=0., max=1., step=0.01, value=self.cruise_mach, label="M_cruise", tooltip="Cruise mach")
+        self.range_input = SliderInput(min=0, max=10000, step=100, value=self.range, label="Range", tooltip="Aircraft range [NM]")
+        self.payload_input = SliderInput(min=0, max=100000, step=10, value=self.payload, label="Payload", tooltip="Aircraft payload [kg]")
+        self.max_payload_input = SliderInput(min=0, max=100000, step=10, value=self.max_payload, label="Max Payload", tooltip="Aircraft max payload [kg]")
+        self.wing_aspect_ratio_input = SliderInput(min=4., max=25., step=0.1, value=self.wing_aspect_ratio, label="AR_w", tooltip="Aspect Ratio of the wing")
+        self.bpr_input = SliderInput(min=0, max=25., step=0.1, label="BPR", value=self.bpr, tooltip="ByPass Ratio of the engine")
 
 
         ########################################
@@ -233,7 +233,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
             def __init__(self, name, tooltip, **kwargs):
                 super().__init__(**kwargs)
 
-                self.children=[
+                self.children = [
                     name,
                     v.Tooltip(
                         activator="parent",
@@ -242,23 +242,31 @@ class ImpactVariableInputLaunchTab(BaseTab):
                     ),
                 ]
         
-
-        self.objective_selection = v.Row(
-            class_="pb-4 pt-2",
-            justify="center",
-            children=[
-                v.BtnToggle(
-                    v_model="toggle_exclusive",
-                    children=[
-                        SelectionButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"), 
-                        SelectionButton("MTOW", tooltip="Minimize the aircraft MTOW"),
-                        SelectionButton("OWE", tooltip="Minimize the aircraft OWE"),
-                    ],
-                ),
-            ],
-        )
+        self.debug = v.Html(tag="div", children=["test"])
+        def print_debug(widget, event, data):
+            self.debug.children = str(widget.v_model)
         
-        self.objectives_inputs = Inputs("Objective", [self.objective_selection])
+        self.objective_selection = v.BtnToggle(
+            v_model="toggle_exclusive",
+            mandatory=True,
+            children=[
+                SelectionButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"),
+                SelectionButton("MTOW", tooltip="Minimize the aircraft MTOW"),
+                SelectionButton("OWE", tooltip="Minimize the aircraft OWE"),
+            ],
+        ) 
+        
+        self.objective_selection.on_event("change", print_debug)
+        
+        self.objectives_inputs = Inputs("Objective", [
+            v.Row(
+                class_="pb-4 pt-2",
+                justify="center",
+                children=[
+                    self.objective_selection
+                ],
+            )
+        ])
 
 
         self.ar_design_var_checkbox = v.Checkbox(
@@ -267,11 +275,11 @@ class ImpactVariableInputLaunchTab(BaseTab):
             label="Wing AR as design variable",
         )
         
-        self.ar_design_var_slider = RangeSliderInput(
+        self.ar_design_var_input = RangeSliderInput(
             min=5,
             max=30,
             step=1,
-            range=[10, 25],
+            range=[self.opt_ar_min, self.opt_ar_max],
             label="Min/Max AR_w",
             tooltip="Range of aspect ratio for the optimisation [-]",
         )
@@ -300,20 +308,20 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.ar_design_var_checkbox.on_event("change", ensure_one_design_var)
 
 
-        self.sweep_w_design_var_slider = RangeSliderInput(
+        self.sweep_w_design_var_input = RangeSliderInput(
             min=5,
             max=50,
             step=1,
-            range=[15, 40],
+            range=[self.opt_sweep_w_min, self.opt_sweep_w_max],
             label="Sweep Range",
             tooltip="range of wing sweep angle for the optimisation [-]",
         )
         
         self.design_var_inputs = Inputs("Design variables", [
             self.ar_design_var_checkbox,
-            self.ar_design_var_slider,
+            self.ar_design_var_input,
             self.sweep_w_design_var_checkbox,
-            self.sweep_w_design_var_slider,
+            self.sweep_w_design_var_input,
         ])
 
 
@@ -326,6 +334,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
             min=20., 
             max=100., 
             step=0.01, 
+            value=self.opt_wing_span_max,
             label="Max b_w", 
             tooltip="Maximum wing span allowed for the optimisation [m]"
         )
@@ -338,6 +347,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
         self.mdo_input_box_widget.children = [
             v.Card(
                 children=[
+                    self.debug,
                     self.objectives_inputs,
                     self.design_var_inputs,
                     self.constraints_inputs,    
@@ -427,10 +437,10 @@ class ImpactVariableInputLaunchTab(BaseTab):
             placeholder="Write a name for your sizing process",
         )
 
-        def update_sizing_process_name(change):
-            self.sizing_process_name = change["new"]
+        def update_sizing_process_name(widget, event, data):
+            self.sizing_process_name = data
 
-        self.process_name_widget.observe(update_sizing_process_name, names="value")
+        self.process_name_widget.on_event("change", update_sizing_process_name)
 
         # Create a button to launch the sizing
         self.launch_button_widget = v.Btn(
@@ -445,8 +455,8 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         # Create a button to trigger the MDO "mode"
         self.mdo_selection_widget = v.Switch(
+            v_model=False,
             class_="mt-0 pt-2",
-            input_value=False,
             label="MDO",
             tooltip="Check that box to swap in optimization mode",
         )

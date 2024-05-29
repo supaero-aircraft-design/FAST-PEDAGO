@@ -11,7 +11,7 @@ class SliderInput(v.VuetifyTemplate):
     step = traitlets.Float(default_value=10).tag(sync=True)
     label = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
     tooltip = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-    value = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
+    value = traitlets.Float(default_value=None, allow_none=True).tag(sync=True)
     
     @traitlets.default('template')
     def _template(self):

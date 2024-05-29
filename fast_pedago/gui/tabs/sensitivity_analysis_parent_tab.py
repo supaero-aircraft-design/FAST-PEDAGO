@@ -15,6 +15,7 @@ import openmdao.api as om
 
 from typing import List
 
+import ipywidgets as widgets
 import ipyvuetify as v
 
 from .impact_variable_inputs_tab import (
@@ -138,15 +139,18 @@ class ParentTab(v.Card):
         # attributes of the parent tab, this is the reason why it was moved here. It understandably
         # make things a bit more complicated but is seems like it's working.
 
-        dummy_output = v.Card()
+        dummy_output = widgets.Output()
 
-        def launch_sizing_process(event):
+        def launch_sizing_process(widget, event, data):
 
             # "Hide" the output tabs !
-            self.input_tab.launch_button_widget.style.button_color = (
-                "Red"
+            self.input_tab.launch_button_widget.color = (
+                "#FF0000"
             )
             hide_tabs(self.tabs)
+            # TODO
+            # Disable the sliders and inputs while process is running
+            # Make the launch button a cancel button to stop the process
 
             # Clear the residuals visualization to make it apparent that a computation is
             # underway.
@@ -177,7 +181,7 @@ class ParentTab(v.Card):
 
             with dummy_output:
 
-                if not self.input_tab.mdo_selection_widget.value:
+                if not self.input_tab.mdo_selection_widget.v_model:
                     relative_error, target_residuals = self._launch_mda()
 
                     # For the display, hte iteration will start at 1 :)
@@ -209,8 +213,8 @@ class ParentTab(v.Card):
                         self.input_tab.objectives_visualization_widget
                     ]
 
-                self.input_tab.launch_button_widget.style.button_color = (
-                    "LimeGreen"
+                self.input_tab.launch_button_widget.color = (
+                    "#32cd32"
                 )
 
                 show_tabs(self.tabs)
@@ -331,25 +335,28 @@ class ParentTab(v.Card):
         # the input file
         problem = configurator.get_problem(read_inputs=True)
 
-        if self.input_tab.ar_design_var_checkbox.value:
+        if self.input_tab.ar_design_var_checkbox.v_model:
 
             problem.model.add_design_var(
                 name="data:geometry:wing:aspect_ratio",
-                lower=self.input_tab.opt_ar_min,
-                upper=self.input_tab.opt_ar_max,
+                lower=self.input_tab.ar_design_var_input.range[0],
+                upper=self.input_tab.ar_design_var_input.range[1],
             )
 
-        if self.input_tab.sweep_w_design_var_checkbox.value:
+        if self.input_tab.sweep_w_design_var_checkbox.v_model:
 
             problem.model.add_design_var(
                 name="data:geometry:wing:sweep_25",
                 units="deg",
-                lower=self.input_tab.opt_sweep_w_min,
-                upper=self.input_tab.opt_sweep_w_max,
+                lower=self.input_tab.sweep_w_design_var_input.range[0],
+                upper=self.input_tab.sweep_w_design_var_input.range[1],
             )
 
+        
+        # The objective is found using the v-model of the button group
+        # 0: fuel sizing, 1: MTOW, 2: OWE
         if (
-            self.input_tab.objective_selection_widget.value
+            self.input_tab.objective_selection.v_model==0
             == "Fuel sizing"
         ):
             problem.model.add_objective(
@@ -357,7 +364,7 @@ class ParentTab(v.Card):
                 units="kg",
                 scaler=1e-4,
             )
-        elif self.input_tab.objective_selection_widget.value == "MTOW":
+        elif self.input_tab.objective_selection.v_model == 1:
             problem.model.add_objective(
                 name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
             )
@@ -367,12 +374,12 @@ class ParentTab(v.Card):
                 name="data:weight:aircraft:OWE", units="kg", scaler=1e-4
             )
 
-        if self.input_tab.wing_span_constraints_checkbox.value:
+        if self.input_tab.wing_span_constraints_checkbox.v_model:
             problem.model.add_constraint(
                 name="data:geometry:wing:span",
                 units="m",
                 lower=0.0,
-                upper=self.input_tab.opt_wing_span_max,
+                upper=self.input_tab.wing_span_constraint_max.value
             )
 
         problem.model.approx_totals()
@@ -472,11 +479,11 @@ class ParentTab(v.Card):
         new_inputs = copy.deepcopy(self.input_tab.reference_inputs)
 
         # No need to provide list or numpy array for scalar values.
-        new_inputs["data:TLAR:NPAX"].value = self.input_tab.n_pax
+        new_inputs["data:TLAR:NPAX"].value = self.input_tab.n_pax_input.value
 
         new_inputs[
             "data:TLAR:approach_speed"
-        ].value = self.input_tab.v_app
+        ].value = self.input_tab.v_app_input.value
         new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
 
         # If the Mach get too high and because we originally didn't plan on changing sweep,
@@ -484,10 +491,10 @@ class ParentTab(v.Card):
         # will thus adapt the sweep based on the mach number with a message to let the
         # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
         # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.input_tab.cruise_mach > 0.78:
+        if self.input_tab.cruise_mach_input.value > 0.78:
             cos_phi_25 = (
                 0.78
-                / self.input_tab.cruise_mach
+                / self.input_tab.cruise_mach_input.value
                 * np.cos(np.deg2rad(24.54))
             )
             phi_25 = np.arccos(cos_phi_25)
@@ -496,30 +503,30 @@ class ParentTab(v.Card):
 
         new_inputs[
             "data:TLAR:cruise_mach"
-        ].value = self.input_tab.cruise_mach
+        ].value = self.input_tab.cruise_mach_input.value
 
-        new_inputs["data:TLAR:range"].value = self.input_tab.range
+        new_inputs["data:TLAR:range"].value = self.input_tab.range_input.value
         new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:payload"
-        ].value = self.input_tab.payload
+        ].value = self.input_tab.payload_input.value
         new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:max_payload"
-        ].value = self.input_tab.max_payload
+        ].value = self.input_tab.max_payload_input.value
         new_inputs[
             "data:weight:aircraft:max_payload"
         ].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:geometry:wing:aspect_ratio"
-        ].value = self.input_tab.wing_aspect_ratio
+        ].value = self.input_tab.wing_aspect_ratio_input.value
 
         new_inputs[
             "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.input_tab.bpr
+        ].value = self.input_tab.bpr_input.value
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
         new_inputs.save_as(new_input_file_path, overwrite=True)
