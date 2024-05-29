@@ -8,7 +8,7 @@ from IPython.display import clear_output, display
 
 import ipywidgets as widgets
 
-from fast_pedago.gui.tabs.impact_variable_inputs_tab import (
+from fast_pedago.utils import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )

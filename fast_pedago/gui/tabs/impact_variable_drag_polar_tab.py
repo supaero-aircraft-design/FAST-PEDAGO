@@ -10,7 +10,9 @@ import ipywidgets as widgets
 
 import fastoad.api as oad
 
-from fast_pedago.gui.tabs.impact_variable_inputs_tab import OUTPUT_FILE_SUFFIX
+from fast_pedago.utils import (
+    OUTPUT_FILE_SUFFIX,
+)
 from fast_pedago.gui.dropdowns import get_select_multiple_sizing_process_dropdown
 from fast_pedago.gui.buttons import MultipleProcessSelectionInfoButton
 

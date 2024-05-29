@@ -24,9 +24,6 @@ from fast_pedago.gui.sliders import (
     RangeSliderInput,
 )
 
-OUTPUT_FILE_SUFFIX = "_output_file.xml"
-FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
-
 
 class ImpactVariableInputLaunchTab(BaseTab):
     def __init__(self, **kwargs):
