@@ -263,7 +263,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         self.ar_design_var_checkbox = v.Checkbox(
             class_="ms-4",
-            input_value=True,
+            v_model=True,
             label="Wing AR as design variable",
         )
         
@@ -278,30 +278,26 @@ class ImpactVariableInputLaunchTab(BaseTab):
 
         self.sweep_w_design_var_checkbox = v.Checkbox(
             class_="ms-4",
-            input_value=True,
+            v_model=True,
             label="Wing sweep as design variable",
         )
 
         # TODO
         # Implement following functions with new widgets
         
-        def ensure_one_design_var_sweep_w(change):
+        def ensure_one_design_var(widget, event, data):
             # If we un-tick the bow and the other box is un-ticked, we force the other box to be
             # ticked
-            if not change["new"] and not self.ar_design_var_checkbox.value:
-                self.ar_design_var_checkbox.value = True
+            if not data:
+                if widget == self.sweep_w_design_var_checkbox:
+                    if not self.ar_design_var_checkbox.v_model:
+                        self.ar_design_var_checkbox.v_model = True
+                else:
+                    if not self.sweep_w_design_var_checkbox.v_model:
+                        self.sweep_w_design_var_checkbox.v_model = True
 
-        self.sweep_w_design_var_checkbox.observe(
-            ensure_one_design_var_sweep_w, names="value"
-        )
-
-        def ensure_one_design_var_ar_w(change):
-            # If we un-tick the bow and the other box is un-ticked, we force the other box to be
-            # ticked
-            if not change["new"] and not self.sweep_w_design_var_checkbox.value:
-                self.sweep_w_design_var_checkbox.value = True
-
-        self.ar_design_var_checkbox.observe(ensure_one_design_var_ar_w, names="value")
+        self.sweep_w_design_var_checkbox.on_event("change", ensure_one_design_var)
+        self.ar_design_var_checkbox.on_event("change", ensure_one_design_var)
 
 
         self.sweep_w_design_var_slider = RangeSliderInput(
@@ -429,7 +425,6 @@ class ImpactVariableInputLaunchTab(BaseTab):
             hide_details=True,
             label="Sizing name",
             placeholder="Write a name for your sizing process",
-            tooltip="Name of the sizing process",
         )
 
         def update_sizing_process_name(change):
@@ -444,12 +439,12 @@ class ImpactVariableInputLaunchTab(BaseTab):
             width="31%",
             children=[
                 v.Icon(class_="px-3", children=["fa-plane"]),
-                "Launch sizing process",
+                "Launch sizing process"
             ],
         )
 
         # Create a button to trigger the MDO "mode"
-        self.mdo_selection_widget = v.Checkbox(
+        self.mdo_selection_widget = v.Switch(
             class_="mt-0 pt-2",
             input_value=False,
             label="MDO",
@@ -537,7 +532,7 @@ class ImpactVariableInputLaunchTab(BaseTab):
             )
         ]
 
-        def update_input_box(event):
+        def update_input_box(widget, event, data):
 
             # For some reason checking the box resizes the residuals graph, this should prevent
             # it Additionally, we have to resize before displaying or else, for some reasons,
@@ -553,25 +548,33 @@ class ImpactVariableInputLaunchTab(BaseTab):
             self.graph_visualization_box.children = [current_children]
 
             # We are in MDO mode
-            if event["new"]:
-                self.children = [
-                    self.mdo_input_box_widget,
-                    self.launch_box_and_visualization_widget,
+            if data:
+                # Unfortunately the getter of the "children" attribute returns 
+                # a copy of the children list, so a new one has to be given
+                self.children[0].children = [
+                    self.mdo_input_box_widget, 
+                    self.launch_box_and_visualization_widget
                 ]
-                self.launch_button_widget.description = "Launch optimization process"
+                self.launch_button_widget.children =[
+                    v.Icon(class_="px-3", children=["fa-plane"]),
+                    "Launch optimization process",
+                ]
+                self.process_name_widget.label = "Opimization name"
+                self.process_name_widget.placeholder = "Write a name for your optimization process"
 
             else:
-                self.children = [
-                    v.Row(
-                        childern=[
-                            self.input_box,
-                            self.launch_box_and_visualization_widget,
-                        ],
-                    ),
+                self.children[0].children = [
+                    self.input_box, 
+                    self.launch_box_and_visualization_widget
                 ]
-                self.launch_button_widget.description = "Launch sizing process"
+                self.launch_button_widget.children =[
+                    v.Icon(class_="px-3", children=["fa-plane"]),
+                    "Launch sizing process",
+                ]
+                self.process_name_widget.label = "Sizing name"
+                self.process_name_widget.placeholder = "Write a name for your sizing process"
 
-        self.mdo_selection_widget.observe(update_input_box, names="value")
+        self.mdo_selection_widget.on_event("change", update_input_box)
 
     def set_initial_value_mda(self):
         """
