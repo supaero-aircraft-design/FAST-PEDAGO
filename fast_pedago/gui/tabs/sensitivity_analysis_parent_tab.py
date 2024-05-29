@@ -256,7 +256,7 @@ class ParentTab(v.Card):
                     # named "output_file_selection_widget"
                     self.tabs_items[
                         tab_index
-                    ].output_file_selection_widget.options = [
+                    ].output_file_selection_widget.items = [
                         "None"
                     ] + self.available_sizing_process
 
