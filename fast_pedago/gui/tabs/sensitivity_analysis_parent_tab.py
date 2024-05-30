@@ -1,7 +1,7 @@
 # This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
-
+from IPython.display import clear_output, display
 import os
 import os.path as pth
 import shutil
@@ -62,7 +62,7 @@ def hide_tabs(tabs: v.Tabs):
 
 
 class ParentTab(v.Card):
-    def __init__(self, **kwargs):
+    def __init__(self, source_data_file: str, **kwargs):
 
         super().__init__(**kwargs)
 
@@ -97,7 +97,7 @@ class ParentTab(v.Card):
 
         self.reference_input_file_path = pth.join(
             self.working_directory_path,
-            "inputs/reference_aircraft_input_file.xml",
+            pth.join("inputs", "reference_aircraft_input_file.xml"),
         )
 
         # Avoid operation if we don't have to
@@ -132,6 +132,7 @@ class ParentTab(v.Card):
             )
 
         self.input_tab = ImpactVariableInputLaunchTab(
+            source_data_file=source_data_file,
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )

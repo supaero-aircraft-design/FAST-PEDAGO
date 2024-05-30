@@ -10,6 +10,10 @@ from fast_pedago.utils.functions import _image_from_path
 from fast_pedago import gui
 
 class BasePage(v.Container):
+    
+    # Sets the default source file to use in all pages
+    source_data_file = "reference aircraft"
+        
     def __init__(self, pages, **kwargs):
 
         super().__init__(**kwargs)

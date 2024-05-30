@@ -40,7 +40,7 @@ class WorkPage(BasePage):
             align="top",
             justify="center",
             children=[
-                ParentTab()
+                ParentTab(BasePage.source_data_file)
             ]
         )
 

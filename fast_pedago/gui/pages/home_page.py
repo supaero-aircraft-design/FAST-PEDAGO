@@ -40,23 +40,21 @@ class HomePage(BasePage):
         )
 
         
-        self.reference_file_list = _list_available_reference_file(
+        self.reference_file_list = [
+            file.replace("_source_data_file", "").replace("_", " ") for file in _list_available_reference_file(
             pth.dirname(source_data_files.__file__)
-        )
+            )
+        ]
 
         # This reference file should always be there and is always taken as reference
-        self.reference_file_selector = v.Col(
-            cols=12,
-            md=10,
-            children=[
-                v.Select(
-                outlined=True,
-                hide_details=True,
-                label="Select a reference file",
-                items=self.reference_file_list,
-                ),
-            ],
+        self.source_data_file_selector = v.Select(
+            outlined=True,
+            hide_details=True,
+            label="Select a reference file",
+            items=self.reference_file_list,
         )
+    
+        self.source_data_file_selector.on_event("change", HomePage.set_source_data_file)
 
         self.start_button = v.Col(
             cols=12,
@@ -72,7 +70,13 @@ class HomePage(BasePage):
             align="top",
             justify="center",
             children=[
-                self.reference_file_selector,
+                v.Col(
+                    cols=12,
+                    md=10,
+                    children=[
+                        self.source_data_file_selector,
+                    ],
+                ),
                 self.start_button,                
             ],
         )
@@ -106,3 +110,12 @@ class HomePage(BasePage):
             self.git_buttons,
             self.footer,
         ]
+        
+
+    def set_source_data_file(widget, event, data):
+        """
+        Sets the reference file name to use
+        
+        To be called by a widget event
+        """
+        BasePage.source_data_file = data

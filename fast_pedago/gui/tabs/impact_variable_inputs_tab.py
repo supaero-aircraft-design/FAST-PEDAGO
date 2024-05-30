@@ -15,6 +15,8 @@ import plotly.graph_objects as go
 import openmdao.api as om
 import fastoad.api as oad
 
+from fast_pedago import source_data_files
+
 from fast_pedago.utils.functions import _image_from_path  # noqa
 
 from fast_pedago.gui.tabs import BaseTab
@@ -26,7 +28,7 @@ from fast_pedago.gui.sliders import (
 
 
 class ImpactVariableInputLaunchTab(BaseTab):
-    def __init__(self, **kwargs):
+    def __init__(self, source_data_file: str, **kwargs):
         super().__init__(**kwargs)
 
         # Generate the N2 diagram and the XDSM. We will locate them near the configuration file
@@ -46,9 +48,13 @@ class ImpactVariableInputLaunchTab(BaseTab):
             configuration_file_name, "xdsm.html"
         )
 
-        # Read the reference input file path so that we can give first accurate first value. Also
+        # Read the source data file path so that we can give accurate first value. Also
         # save it as an object attribute that we can copy to modify inputs
-        self.reference_inputs = oad.DataFile(self.reference_input_file_path)
+        self.source_data_file_path = pth.join(
+            pth.dirname(source_data_files.__file__),
+            source_data_file.replace(" ", "_") + "_source_data_file.xml"
+        )
+        self.reference_inputs = oad.DataFile(self.source_data_file_path)
 
         # Define attribute to store variable value. Also, those are gonna be attribute of the
         # parent HBox so that the children can exchange those information.

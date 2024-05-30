@@ -19,7 +19,7 @@ class FASTOADInterface(v.App):
         }
 
         self.children = [
-            WorkPage(self.pages),
+            HomePage(self.pages),
         ]
 
     
