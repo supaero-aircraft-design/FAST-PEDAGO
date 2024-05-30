@@ -40,7 +40,7 @@ class ImpactVariableAircraftGeometryTab(BaseTab):
 
         self.output_file_selection_widget.on_event(
             "change", 
-            lambda widget, event, data: self.display_graph(widget, data, oad.aircraft_geometry_plot)
+            lambda widget, event, data: self.display_graph(data, oad.aircraft_geometry_plot)
         )
 
         self.children = [

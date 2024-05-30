@@ -40,7 +40,7 @@ class ImpactVariableMassBarBreakdownTab(BaseTab):
         
         self.output_file_selection_widget.on_event(
             "change", 
-            lambda widget, event, data: self.display_graph(widget, data, oad.mass_breakdown_bar_plot)
+            lambda widget, event, data: self.display_graph(data, oad.mass_breakdown_bar_plot)
         )
 
         self.children = [

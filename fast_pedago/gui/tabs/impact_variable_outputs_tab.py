@@ -36,9 +36,12 @@ class ImpactVariableOutputTab(BaseTab):
             ],
         )
 
+        # FIXME
+        # The variable viewer renders in front of the selection tool, making it 
+        # uncomfortable to use with a lot of outputs to select
         self.output_file_selection_widget.on_event(
             "change",
-            lambda widget, event, data: self.display_graph(widget, data, oad.variable_viewer)
+            lambda widget, event, data: self.display_graph(data, oad.variable_viewer)
         )
 
         self.children = [

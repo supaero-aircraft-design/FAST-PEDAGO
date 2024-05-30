@@ -43,7 +43,7 @@ class ImpactVariableWingGeometryTab(BaseTab):
 
         self.output_file_selection_widget.on_event(
             "change",
-            lambda widget, event, data: self.display_graph(widget, data, oad.wing_geometry_plot)
+            lambda widget, event, data: self.display_graph(data, oad.wing_geometry_plot)
         )
 
         self.children = [

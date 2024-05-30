@@ -40,7 +40,7 @@ class ImpactVariableDragPolarTab(BaseTab):
 
         self.output_file_selection_widget.on_event(
             "change", 
-            lambda widget, event, data: self.display_graph(widget, data, oad.drag_polar_plot)
+            lambda widget, event, data: self.display_graph(data, oad.drag_polar_plot)
         )
 
         self.children = [

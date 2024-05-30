@@ -59,26 +59,21 @@ class ImpactVariableMissionTab(BaseTab):
     # As this graph use a special class of oad, I did not manage to factorize 
     # the function in the base tab class
     def display_mission_graph(self, widget, event, data):
-
-        # First check if there are any sizing process to add to the display of if we need to
-        # clear them
-        if data == "None":
-            self.sizing_process_to_display = []
-
-        elif data not in self.sizing_process_to_display:
-            self.sizing_process_to_display.append(data)
+        
+        self.sizing_process_to_display = data
 
         with self.output_display:
 
             clear_output()
 
             mission_viewer = oad.MissionViewer()
-
-            for sizing_process_to_add in self.sizing_process_to_display:
-
-                path_to_output_folder = pth.join(
+            
+            path_to_output_folder = pth.join(
                     self.working_directory_path, "outputs"
                 )
+
+            for sizing_process_to_add in self.sizing_process_to_display:
+                
                 path_to_flight_data_file = pth.join(
                     path_to_output_folder,
                     sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
@@ -89,6 +84,4 @@ class ImpactVariableMissionTab(BaseTab):
                 )
 
             if self.sizing_process_to_display:
-
                 mission_viewer.display()
-

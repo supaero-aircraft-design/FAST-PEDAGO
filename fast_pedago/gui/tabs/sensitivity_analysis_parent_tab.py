@@ -236,6 +236,7 @@ class ParentTab(v.Card):
             # do it if the old tab was the tab from which we can launch a sizing process, i.e the
             # first tab
             
+            # TODO
             # if change["name"] == "selected_index":
             #     if change["old"] == 0:
             
@@ -256,9 +257,7 @@ class ParentTab(v.Card):
                     # named "output_file_selection_widget"
                     self.tabs_items[
                         tab_index
-                    ].output_file_selection_widget.items = [
-                        "None"
-                    ] + self.available_sizing_process
+                    ].output_file_selection_widget.items = self.available_sizing_process
 
 
         # Add a title for each tab

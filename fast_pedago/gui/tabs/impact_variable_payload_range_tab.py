@@ -25,9 +25,9 @@ class ImpactVariablePayloadRangeTab(BaseTab):
 
         self.sizing_process_to_display = []
 
-        # Initialize it with fake values that we will overwrite as we scan through available
-        # processes in the launch tab
-        self.output_file_selection_widget = SelectOutput()
+        # Since the plot function for payload range is limited to 5 plots at
+        # the same time, we limit the selection
+        self.output_file_selection_widget = SelectOutput(counter=5)
         self.info_button = MultipleProcessSelectionInfoButton()
 
         self.selection_and_info_box = v.Row(
@@ -63,25 +63,20 @@ class ImpactVariablePayloadRangeTab(BaseTab):
     # the function in the base tab class
     def display_payload_range_graph(self, widget, event, data):
 
-        # First check if there are any sizing process to add to the display of if we need to
-        # clear them
-        if data == "None":
-            self.sizing_process_to_display = []
-
-        elif data not in self.sizing_process_to_display:
-            self.sizing_process_to_display.append(data)
+        self.sizing_process_to_display = data
 
         with self.output_display:
 
             clear_output()
-
             fig = None
+            
+            path_to_output_folder = pth.join(
+                self.working_directory_path, "outputs"
+            )
 
             for sizing_process_to_add in self.sizing_process_to_display:
 
-                path_to_output_folder = pth.join(
-                    self.working_directory_path, "outputs"
-                )
+                
                 path_to_output_file = pth.join(
                     path_to_output_folder,
                     sizing_process_to_add + OUTPUT_FILE_SUFFIX,
@@ -99,6 +94,5 @@ class ImpactVariablePayloadRangeTab(BaseTab):
                 )
                 fig.update_layout(height=550)
 
-            if self.sizing_process_to_display:
-
+            if fig:
                 display(fig)

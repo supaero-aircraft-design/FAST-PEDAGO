@@ -10,9 +10,13 @@ class SelectOutput(v.Select):
         super().__init__(**kwargs)
         
         self.outlined = True
-        self.is_single_output = is_single_output
+        self.clearable = True
         
         if is_single_output:
             self.label = "Select an output file to display"
         else:
             self.label = "Select an output file to add to the display"
+            self.multiple = True
+            self.chips = True
+            self.deletable_chips = True
+            self.hide_selected = True
