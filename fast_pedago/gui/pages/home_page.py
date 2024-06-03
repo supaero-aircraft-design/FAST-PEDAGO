@@ -103,12 +103,17 @@ class HomePage(BasePage):
 
         # The default appearance of the box should be the main menu hence the following line
         self.children = [
-            self.header_logo,
-            self.start_box,
-            # A simple divider for esthetics
-            v.Row(children=[v.Divider(class_="pa-2")]),
-            self.git_buttons,
-            self.footer,
+            v.Container(
+                fluid=True,
+                children=[
+                    self.header_logo,
+                    self.start_box,
+                    # A simple divider for esthetics
+                    v.Row(children=[v.Divider(class_="pa-2")]),
+                    self.git_buttons,
+                    self.footer,
+                ],
+            ),
         ]
         
 

@@ -9,6 +9,9 @@ import ipyvuetify as v
 from fast_pedago.utils.functions import _image_from_path
 from fast_pedago import gui
 
+SUPAERO_WEBSITE_LINK = "https://www.isae-supaero.fr/"
+AIRBUS_WEBSITE_LINK = "https://www.airbus.com/"
+
 class BasePage(v.Container):
     
     # Sets the default source file to use in all pages
@@ -93,16 +96,18 @@ class BasePage(v.Container):
             height="20vw", 
             width="100",
         )
+        self.fast_oad_main_menu_logo.on_event("click", self.pages["home"])
 
         # Get FAST-OAD logo for top layer
         fast_oad_logo_top_layer_file_path = pth.join(
             pth.dirname(gui.__file__), "resources", "logo_fast_oad_top_layer.jpg"
         )
         self.fast_oad_top_layer_logo = _image_from_path(
-                file_path=fast_oad_logo_top_layer_file_path,
-                height="10vh",
-                width="100",
+            file_path=fast_oad_logo_top_layer_file_path,
+            height="10vh",
+            width="100",
         )
+        self.fast_oad_top_layer_logo.on_event("click", self.pages["home"])
 
         # Get ISAE logo
         isae_logo_file_path = pth.join(
@@ -113,6 +118,7 @@ class BasePage(v.Container):
             height="10vh", 
             width="100",
         )
+        self.isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
 
         # Get Airbus logo
         airbus_logo_file_path = pth.join(
@@ -123,3 +129,4 @@ class BasePage(v.Container):
             height="5vh", 
             width="100",
         )
+        self.airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}

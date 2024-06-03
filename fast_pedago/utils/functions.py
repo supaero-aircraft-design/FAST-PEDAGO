@@ -6,6 +6,7 @@ import openmdao.api as om
 from typing import List
 
 import ipywidgets as widgets
+import ipyvuetify as v
 
 from .constants import (
     OUTPUT_FILE_SUFFIX,
@@ -13,7 +14,7 @@ from .constants import (
 )
 
 
-def _image_from_path(file_path: str, height: str, width: str) -> widgets.Image:
+def _image_from_path(file_path: str, height: str, width: str) -> v.Html:
     """
     Creates an Image widgets from ipywidgets from the path to a picture.
 
@@ -28,14 +29,25 @@ def _image_from_path(file_path: str, height: str, width: str) -> widgets.Image:
     file_extension = pth.splitext(file_path)[1].replace(".", "")
 
     image = file.read()
-    image_widget = widgets.Image(value=image, format=file_extension)
-    image_widget.layout = widgets.Layout(
-        border="0px solid black",
-        margin="0 0 0 0px",
-        padding="0px",
-        align_items="center",
-        height=height,
-        width=width,
+    # Encapsulate the image in a "a" tag to be able to provide a "click" event and links
+    image_widget = v.Html(
+        tag="a",
+        style_="cursor:pointer;",
+        children=[
+            widgets.Image(
+                value=image, 
+                format=file_extension,
+                layout=widgets.Layout(
+                    border="0px solid black",
+                    margin="0 0 0 0px",
+                    padding="0px",
+                    align_items="center",
+                    height=height,
+                    width=width,
+                    cursor="pointer",
+                ),
+            ),  
+        ],
     )
 
     return image_widget
