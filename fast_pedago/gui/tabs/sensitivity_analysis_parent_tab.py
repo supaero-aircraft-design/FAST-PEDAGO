@@ -1,10 +1,13 @@
-# This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
+    # This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 from IPython.display import clear_output, display
 import os
 import os.path as pth
 import shutil
+
+from threading import Thread, Event
+from time import sleep
 
 import copy
 import warnings
@@ -185,38 +188,27 @@ class ParentTab(v.Card):
             min_objective_graph.y = []
 
             with dummy_output:
+                
+                # Initialize events to synchronize the process thread and the plotting thread
+                process_started = Event()
+                process_ended = Event()
 
                 if not self.input_tab.mdo_selection_widget.v_model:
-                    relative_error, target_residuals = self._launch_mda()
-
-                    # For the display, hte iteration will start at 1 :)
-                    iteration_numbers = np.arange(len(relative_error)) + 1
-
-                    residuals_graph.x = iteration_numbers
-                    residuals_graph.y = relative_error
-
-                    threshold_graph.x = [1, len(relative_error)]
-                    threshold_graph.y = [target_residuals, target_residuals]
-
-                    self.input_tab.graph_visualization_box.children = [
-                        self.input_tab.residuals_visualization_widget
-                    ]
+                    process_thread = Thread(target=self._launch_mda, args=(process_started,))
+                    plotting_thread = Thread(target=self._plot_residuals, args=(process_started, process_ended, residuals_graph, threshold_graph))
 
                 else:
-                    objective, min_objective = self._launch_mdo()
+                    process_thread = Thread(target=self._launch_mdo, args=(process_started,))
+                    plotting_thread = Thread(target=self._plot_objective, args=(process_started, process_ended, objective_graph, min_objective_graph))
 
-                    # For the display, hte iteration will start at 1 :)
-                    iteration_numbers = np.arange(len(objective)) + 1
-
-                    objective_graph.x = iteration_numbers
-                    objective_graph.y = objective
-
-                    min_objective_graph.x = [1, len(objective)]
-                    min_objective_graph.y = [min_objective, min_objective]
-
-                    self.input_tab.graph_visualization_box.children = [
-                        self.input_tab.objectives_visualization_widget
-                    ]
+                process_thread.start()
+                plotting_thread.start()
+                
+                process_thread.join()
+                # This line is to make sure the plotting ends after the process and plots everything
+                sleep(0.1)
+                process_ended.set()
+                plotting_thread.join()
 
                 self.input_tab.launch_button_widget.color = (
                     "#32cd32"
@@ -293,13 +285,14 @@ class ParentTab(v.Card):
             self.tabs,
         ]
 
-    def _launch_mdo(self):
+    def _launch_mdo(self, process_started: Event):
         """
         Launches the mdo by reading the design vars, the objective and the constraints from the tab
         and the rest of the input from the reference file except for the sweep which we will fix
         at 30° (M=0.82 which is the max you can enter as the upper bound).
-
-        :return: the residuals at each iterations
+        
+        :param process_started: an event that is set just before the beginning of the process,
+        after the setup is complete
         """
 
         # Create a new FAST-OAD problem based on the reference configuration file
@@ -401,14 +394,20 @@ class ParentTab(v.Card):
         )
 
         driver = problem.driver
-        recorder_database_file_path = orig_output_file_path.replace(
+        # The recorder file path is declared with "self" to be able to retrieve
+        # it from the plot function in an other thread. There might be better
+        # ways to pass it from a thread to an other.
+        self.recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
             self.input_tab.sizing_process_name + "_mdo_cases.sql",
         )
-        recorder = om.SqliteRecorder(recorder_database_file_path)
+        recorder = om.SqliteRecorder(self.recorder_database_file_path)
         driver.add_recorder(recorder)
         driver.recording_options["record_objectives"] = True
 
+        # Triggers the plot in an other thread
+        process_started.set()
+        
         problem.run_driver()
 
         problem.write_outputs()
@@ -436,24 +435,17 @@ class ParentTab(v.Card):
 
         os.rename(old_mission_data_file_path, new_mission_data_file_path)
 
-        # Extract the residuals, build a scatter based on them and plot them along with the
-        # threshold set in the configuration file
-        objective = np.array(
-            _extract_objective(recorder_database_file_path=recorder_database_file_path)
-        )
-        min_objective = min(objective)
-
         # Shut down the recorder so we can delete the .sql file later
         recorder.shutdown()
 
-        return objective, min_objective
 
-    def _launch_mda(self):
+    def _launch_mda(self, process_started: Event):
         """
         Launches the mda by reading the inputs from the proper tab and extract the value for the
-        graph of interest (in this case the residuals and the target residuals)
-
-        :return: the residuals at each iterations
+        target residuals
+        
+        :param process_started: an event that is set just before the beginning of the process,
+        after the setup is complete
         """
 
         # Create a new FAST-OAD problem based on the reference configuration file
@@ -542,16 +534,22 @@ class ParentTab(v.Card):
         problem.setup()
 
         # Save target residuals
-        target_residuals = problem.model.nonlinear_solver.options["rtol"]
+        # The "target_residuals" and recorder file path are declared with "self" 
+        # to be able to retrieve them from the plot function in an other thread. 
+        # There might be better ways to pass them from a thread to an other.
+        self.target_residuals = problem.model.nonlinear_solver.options["rtol"]
 
         model = problem.model
-        recorder_database_file_path = orig_output_file_path.replace(
+        self.recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
             self.input_tab.sizing_process_name + "_cases.sql",
         )
-        recorder = om.SqliteRecorder(recorder_database_file_path)
+        recorder = om.SqliteRecorder(self.recorder_database_file_path)
         model.nonlinear_solver.add_recorder(recorder)
         model.nonlinear_solver.recording_options["record_solver_residuals"] = True
+
+        # Triggers the plot in an other thread
+        process_started.set()
 
         # Run the problem and write output. Catch warning for cleaner interface
         with warnings.catch_warnings():
@@ -582,13 +580,127 @@ class ParentTab(v.Card):
 
         os.rename(old_mission_data_file_path, new_mission_data_file_path)
 
-        # Extract the residuals, build a scatter based on them and plot them along with the
-        # threshold set in the configuration file
-        relative_error = np.array(
-            _extract_residuals(recorder_database_file_path=recorder_database_file_path)
-        )
-
+        
         # Shut down the recorder so we can delete the .sql file later
         recorder.shutdown()
+    
+    
+    # TODO
+    # Factorize code from the two next methods
+    def _plot_residuals(self, process_started: Event, process_ended: Event, residuals_graph, threshold_graph):
+        """
+        Plots the relative error of each iteration during MDA process, and the relative error
+        threshold. 
+        First waits for the process to finish its setup by waiting for the process_started event
 
-        return relative_error, target_residuals
+        :param process_started: Event triggered in the process when the setup is finished
+        :param process_ended: Event triggered after the process ends
+        :param residuals_graph: The part of the graph containing the relative errors curve
+        :param threshold_graph: The part of the graph containing the threshold of the relative 
+        error curve given by the problem
+        """
+        residuals_graph.x = []
+        residuals_graph.y = []
+        
+        threshold_graph.x = []
+        threshold_graph.y = []
+        
+        # Wait until the beginning of the process.
+        # There should be a better way to do it with threading
+        # library though.
+        while not process_started.is_set():
+            sleep(0.1)
+        
+        temp_recorder_database_file_path = self.recorder_database_file_path.replace(
+                "_cases.sql",
+                "_temp_cases.sql",
+            )
+        
+        while not process_ended.is_set():
+            sleep(0.1)
+            
+            try :
+                # Copy the db file before reading it to avoid reading when an other thread is writing,
+                # which could cause the code to fail.
+                shutil.copyfile(self.recorder_database_file_path, temp_recorder_database_file_path)
+                
+                # Extract the residuals, build a scatter based on them and plot them along with the
+                # threshold set in the configuration file
+                iterations, relative_error = np.array(
+                    _extract_residuals(recorder_database_file_path=temp_recorder_database_file_path)
+                )
+                
+                residuals_graph.x = iterations
+                residuals_graph.y = relative_error
+                
+                threshold_graph.x = iterations
+                threshold_graph.y = [self.target_residuals for _ in iterations]
+
+                self.input_tab.graph_visualization_box.children = [
+                    self.input_tab.residuals_visualization_widget
+                ]
+            except:
+                pass                
+                
+                
+                
+    def _plot_objective(self, process_started, process_ended, objective_graph, min_objective_graph):
+        """
+        Plots the objective reached at each iteration during the MDO process, and the minimum reached.
+        First waits for the process to finish its setup by waiting for the process_started event.
+        The minimum is only plotted when the process ends
+
+        :param process_started: Event triggered in the process when the setup is finished
+        :param process_ended: Event triggered after the process ends
+        :param objective_graph: The part of the graph containing the objectives curve
+        :param min_objective_graph: The part of the graph containing the minimum objective reached
+        """
+        objective_graph.x = []
+        objective_graph.y = []
+        
+        min_objective_graph.x = []
+        min_objective_graph.y = []
+        
+        
+        # Wait until the beginning of the process.
+        # There should be a better way to do it with threading
+        # library though.
+        while not process_started.is_set():
+            sleep(0.1)
+            
+        temp_recorder_database_file_path = self.recorder_database_file_path.replace(
+                "_cases.sql",
+                "_temp_cases.sql",
+            )
+        
+        while not process_ended.is_set():
+            sleep(0.1)
+
+            try :
+                # Copy the db file before reading it to avoid reading when an other thread is writing,
+                # which could cause the code to fail.
+                shutil.copyfile(self.recorder_database_file_path, temp_recorder_database_file_path)
+                
+                # Extract the residuals, build a scatter based on them and plot them along with the
+                # threshold set in the configuration file
+                iterations, objective = np.array(
+                    _extract_objective(recorder_database_file_path=temp_recorder_database_file_path)
+                )
+                min_objective = min(objective)
+
+                objective_graph.x = iterations
+                objective_graph.y = objective
+
+                self.input_tab.graph_visualization_box.children = [
+                    self.input_tab.objectives_visualization_widget
+                ]
+
+            except:
+                pass
+            
+        min_objective_graph.x = iterations
+        min_objective_graph.y = [min_objective for _ in iterations]
+
+        self.input_tab.graph_visualization_box.children = [
+            self.input_tab.objectives_visualization_widget
+        ]
