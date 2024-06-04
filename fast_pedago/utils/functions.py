@@ -112,21 +112,21 @@ def _extract_residuals(recorder_database_file_path: str) -> list:
     residuals at each iteration.
 
     :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the value of the relative error at each iteration
+    :return: two arrays containing the iterations and the associated values of the relative error
     """
 
     case_reader = om.CaseReader(recorder_database_file_path)
 
     # Will only work if the recorder was attached to the base solver
-    solver_cases = case_reader.get_cases("root.nonlinear_solver")
+    solver_cases = case_reader.list_cases("root.nonlinear_solver")
+    
+    # For the display, first iteration will be 1
+    iterations, relative_error = zip(*[
+        (i + 1, case_reader.get_case(case_id).rel_err) 
+        for i, case_id in enumerate(solver_cases)
+        ])
 
-    relative_error = []
-
-    for _, case in enumerate(solver_cases):
-
-        relative_error.append(case.rel_err)
-
-    return relative_error
+    return iterations, relative_error
 
 
 def _extract_objective(recorder_database_file_path: str) -> list:
@@ -135,18 +135,18 @@ def _extract_objective(recorder_database_file_path: str) -> list:
     iteration of the driver.
 
     :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the value of the objective at each iteration
+    :return: an array containing the iterations and the associated values of the objective
     """
 
     case_reader = om.CaseReader(recorder_database_file_path)
 
     # Will only work if the recorder was attached to the base solver
-    solver_cases = case_reader.get_cases("driver")
+    solver_cases = case_reader.list_cases("driver")
+    
+    # For the display, first iteration will be 1
+    iterations, objective = zip(*[
+        (i + 1, float(list(case_reader.get_case(case_id).get_objectives().values())[0])) 
+        for i, case_id in enumerate(solver_cases)
+    ])
 
-    relative_error = []
-
-    for _, case in enumerate(solver_cases):
-
-        relative_error.append(float(list(case.get_objectives().values())[0]))
-
-    return relative_error
+    return iterations, objective
