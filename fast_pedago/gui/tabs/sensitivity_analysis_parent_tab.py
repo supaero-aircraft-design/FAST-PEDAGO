@@ -16,8 +16,6 @@ import numpy as np
 
 import openmdao.api as om
 
-from typing import List
-
 import ipywidgets as widgets
 import ipyvuetify as v
 
@@ -55,20 +53,17 @@ TABS_NAME = [
     "Performances - Mission",
 ]
 
-def show_tabs(tabs: v.Tabs):
-    for child in tabs.children:
-        child.disabled = False
-
-def hide_tabs(tabs: v.Tabs):
-    for child in tabs.children:
-        child.disabled = True
-
 
 class ParentTab(v.Card):
-    def __init__(self, source_data_file: str, **kwargs):
+    def __init__(self, source_data_file_name: str, **kwargs):
 
         super().__init__(**kwargs)
-
+        
+        self._configure()
+        self._set_layout(source_data_file_name)
+        
+    
+    def _configure(self):
         # The configuration file path, source file path and input file path will be shared by
         # children tab, so we will define them there and pass them on. The file for the
         # sensitivity analysis is specific. Consequently, we won't generate it from
@@ -134,129 +129,15 @@ class ParentTab(v.Card):
                 ),
             )
 
+
+    def _set_layout(self, source_data_file_name):
+        
         self.input_tab = ImpactVariableInputLaunchTab(
-            source_data_file=source_data_file,
+            source_data_file_name=source_data_file_name,
             configuration_file_path=self.configuration_file_path,
             reference_input_file_path=self.reference_input_file_path,
         )
-
-        ############################################################################################
-        # Originally the launch button was created inside the input_tab (but is
-        # still displayed there). The reason we moved it here is that we want to "disable" the
-        # output tabs when the process is running, so that button will have to interact with
-        # attributes of the parent tab, this is the reason why it was moved here. It understandably
-        # make things a bit more complicated but is seems like it's working.
-
-        dummy_output = widgets.Output()
-
-        def launch_sizing_process(widget, event, data):
-
-            # "Hide" the output tabs !
-            self.input_tab.launch_button_widget.color = (
-                "#FF0000"
-            )
-            hide_tabs(self.tabs)
-            # TODO
-            # Disable the sliders and inputs while process is running
-            # Make the launch button a cancel button to stop the process
-
-            # Clear the residuals visualization to make it apparent that a computation is
-            # underway.
-
-            residuals_graph = (
-                self.input_tab.residuals_visualization_widget.data[0]
-            )
-            residuals_graph.x = []
-            residuals_graph.y = []
-
-            threshold_graph = (
-                self.input_tab.residuals_visualization_widget.data[1]
-            )
-            threshold_graph.x = []
-            threshold_graph.y = []
-
-            objective_graph = (
-                self.input_tab.objectives_visualization_widget.data[0]
-            )
-            objective_graph.x = []
-            objective_graph.y = []
-
-            min_objective_graph = (
-                self.input_tab.objectives_visualization_widget.data[1]
-            )
-            min_objective_graph.x = []
-            min_objective_graph.y = []
-
-            with dummy_output:
-                
-                # Initialize events to synchronize the process thread and the plotting thread
-                process_started = Event()
-                process_ended = Event()
-
-                if not self.input_tab.mdo_selection_widget.v_model:
-                    process_thread = Thread(target=self._launch_mda, args=(process_started,))
-                    plotting_thread = Thread(target=self._plot_residuals, args=(process_started, process_ended, residuals_graph, threshold_graph))
-
-                else:
-                    process_thread = Thread(target=self._launch_mdo, args=(process_started,))
-                    plotting_thread = Thread(target=self._plot_objective, args=(process_started, process_ended, objective_graph, min_objective_graph))
-
-                process_thread.start()
-                plotting_thread.start()
-                
-                process_thread.join()
-                # This line is to make sure the plotting ends after the process and plots everything
-                sleep(0.1)
-                process_ended.set()
-                plotting_thread.join()
-
-                self.input_tab.launch_button_widget.color = (
-                    "#32cd32"
-                )
-
-                show_tabs(self.tabs)
-
-        self.input_tab.launch_button_widget.on_event(
-            "click",
-            launch_sizing_process
-        )
-
-        ############################################################################################
-
-        def browse_available_sizing_process(widget, event, data):
-            # On tab change, we browse the output folder of the workdir to check all completed
-            # sizing processes. Additionally instead of doing it on all tab change, we will only
-            # do it if the old tab was the tab from which we can launch a sizing process, i.e the
-            # first tab
-            
-            # TODO
-            # if change["name"] == "selected_index":
-            #     if change["old"] == 0:
-            
-            self.available_sizing_process = (
-                _list_available_sizing_process_results(
-                    pth.join(self.working_directory_path, "outputs")
-                )
-            )
-
-            # Update the available value for each tab while making sure to leave the None
-            # option as it will always be the selected value
-            for tab_index, _ in enumerate(TABS_NAME):
-
-                # Nothing to update in the first tab (the launch tab)
-                if tab_index != 0:
-
-                    # This assumes that all tabs except the first will have an attribute
-                    # named "output_file_selection_widget"
-                    self.tabs_items[
-                        tab_index
-                    ].output_file_selection_widget.items = self.available_sizing_process
-
-
-        # Add a title for each tab
-        self.tabs_titles = [
-            v.Tab(children=[tab_name]) for tab_name in TABS_NAME
-        ]
+        self.input_tab.launch_button.on_event("click",self._launch_process)
 
         self.tabs_items = [
             self.input_tab,
@@ -271,19 +152,21 @@ class ParentTab(v.Card):
         ]
 
         self.tabs = v.Tabs(
-            children=
-                self.tabs_titles
+            children=[
+                # Tabs titles
+                    v.Tab(children=[tab_name]) for tab_name in TABS_NAME
+                ]
                 + self.tabs_items
                 + [
                     v.TabsSlider(),
                 ]
         )
-
-        self.tabs.on_event("change", browse_available_sizing_process)
+        self.tabs.on_event("change", self.browse_available_sizing_process)
 
         self.children = [
             self.tabs,
         ]
+
 
     def _launch_mdo(self, process_started: Event):
         """
@@ -307,77 +190,27 @@ class ParentTab(v.Card):
 
         new_input_file_path = orig_input_file_path.replace(
             orig_input_file_name,
-            self.input_tab.sizing_process_name + "_mdo_input_file.xml",
+            self.input_tab.process_name + "_mdo_input_file.xml",
         )
         new_output_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name
+            self.input_tab.process_name
             + "_mdo"
             + OUTPUT_FILE_SUFFIX,
         )
+        
 
         # Change the input and output file path in the configurator
         configurator.input_file_path = new_input_file_path
         configurator.output_file_path = new_output_file_path
-
+        
         # Create the input file with the reference value, except for sweep
-        new_inputs = copy.deepcopy(self.input_tab.reference_inputs)
-
+        new_inputs = copy.deepcopy(self.input_tab.inputs.reference_inputs)
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
         new_inputs.save_as(new_input_file_path, overwrite=True)
 
-        # Get the problem, no need to write inputs. The fact that the reference was created
-        # based on the same configuration we will always use should ensure the completion of
-        # the input file
-        problem = configurator.get_problem(read_inputs=True)
-
-        if self.input_tab.ar_design_var_checkbox.v_model:
-
-            problem.model.add_design_var(
-                name="data:geometry:wing:aspect_ratio",
-                lower=self.input_tab.ar_design_var_input.range[0],
-                upper=self.input_tab.ar_design_var_input.range[1],
-            )
-
-        if self.input_tab.sweep_w_design_var_checkbox.v_model:
-
-            problem.model.add_design_var(
-                name="data:geometry:wing:sweep_25",
-                units="deg",
-                lower=self.input_tab.sweep_w_design_var_input.range[0],
-                upper=self.input_tab.sweep_w_design_var_input.range[1],
-            )
-
-        
-        # The objective is found using the v-model of the button group
-        # 0: fuel sizing, 1: MTOW, 2: OWE
-        if (
-            self.input_tab.objective_selection.v_model==0
-            == "Fuel sizing"
-        ):
-            problem.model.add_objective(
-                name="data:mission:sizing:block_fuel",
-                units="kg",
-                scaler=1e-4,
-            )
-        elif self.input_tab.objective_selection.v_model == 1:
-            problem.model.add_objective(
-                name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
-            )
-        else:
-            # Selected objective is the OWE
-            problem.model.add_objective(
-                name="data:weight:aircraft:OWE", units="kg", scaler=1e-4
-            )
-
-        if self.input_tab.wing_span_constraints_checkbox.v_model:
-            problem.model.add_constraint(
-                name="data:geometry:wing:span",
-                units="m",
-                lower=0.0,
-                upper=self.input_tab.wing_span_constraint_max.value
-            )
+        problem = self.input_tab.inputs.retrieve_mdo_inputs(configurator)
 
         problem.model.approx_totals()
         problem.setup()
@@ -399,7 +232,7 @@ class ParentTab(v.Card):
         # ways to pass it from a thread to an other.
         self.recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name + "_mdo_cases.sql",
+            self.input_tab.process_name + "_mdo_cases.sql",
         )
         recorder = om.SqliteRecorder(self.recorder_database_file_path)
         driver.add_recorder(recorder)
@@ -423,7 +256,7 @@ class ParentTab(v.Card):
         )
         new_mission_data_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name
+            self.input_tab.process_name
             + "_mdo"
             + FLIGHT_DATA_FILE_SUFFIX,
         )
@@ -460,69 +293,19 @@ class ParentTab(v.Card):
 
         new_input_file_path = orig_input_file_path.replace(
             orig_input_file_name,
-            self.input_tab.sizing_process_name + "_input_file.xml",
+            self.input_tab.process_name + "_input_file.xml",
         )
         new_output_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name + OUTPUT_FILE_SUFFIX,
+            self.input_tab.process_name + OUTPUT_FILE_SUFFIX,
         )
 
         # Change the input and output file path in the configurator
         configurator.input_file_path = new_input_file_path
         configurator.output_file_path = new_output_file_path
+        
+        new_inputs = self.input_tab.inputs.retrieve_mda_inputs()
 
-        # Create the input file with the current value
-        new_inputs = copy.deepcopy(self.input_tab.reference_inputs)
-
-        # No need to provide list or numpy array for scalar values.
-        new_inputs["data:TLAR:NPAX"].value = self.input_tab.n_pax_input.value
-
-        new_inputs[
-            "data:TLAR:approach_speed"
-        ].value = self.input_tab.v_app_input.value
-        new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
-
-        # If the Mach get too high and because we originally didn't plan on changing sweep,
-        # the compressibility drag might get too high causing the code to not converge ! We
-        # will thus adapt the sweep based on the mach number with a message to let the
-        # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
-        # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.input_tab.cruise_mach_input.value > 0.78:
-            cos_phi_25 = (
-                0.78
-                / self.input_tab.cruise_mach_input.value
-                * np.cos(np.deg2rad(24.54))
-            )
-            phi_25 = np.arccos(cos_phi_25)
-            new_inputs["data:geometry:wing:sweep_25"].value = phi_25
-            new_inputs["data:geometry:wing:sweep_25"].units = "rad"
-
-        new_inputs[
-            "data:TLAR:cruise_mach"
-        ].value = self.input_tab.cruise_mach_input.value
-
-        new_inputs["data:TLAR:range"].value = self.input_tab.range_input.value
-        new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
-
-        new_inputs[
-            "data:weight:aircraft:payload"
-        ].value = self.input_tab.payload_input.value
-        new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
-
-        new_inputs[
-            "data:weight:aircraft:max_payload"
-        ].value = self.input_tab.max_payload_input.value
-        new_inputs[
-            "data:weight:aircraft:max_payload"
-        ].units = "kg"  # Unit from the widget
-
-        new_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value = self.input_tab.wing_aspect_ratio_input.value
-
-        new_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.input_tab.bpr_input.value
         # Save as the new input file. We overwrite always, may need to put a warning for
         # students
         new_inputs.save_as(new_input_file_path, overwrite=True)
@@ -542,7 +325,7 @@ class ParentTab(v.Card):
         model = problem.model
         self.recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name + "_cases.sql",
+            self.input_tab.process_name + "_cases.sql",
         )
         recorder = om.SqliteRecorder(self.recorder_database_file_path)
         model.nonlinear_solver.add_recorder(recorder)
@@ -569,7 +352,7 @@ class ParentTab(v.Card):
         )
         new_mission_data_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            self.input_tab.sizing_process_name
+            self.input_tab.process_name
             + FLIGHT_DATA_FILE_SUFFIX,
         )
 
@@ -580,94 +363,28 @@ class ParentTab(v.Card):
 
         os.rename(old_mission_data_file_path, new_mission_data_file_path)
 
-        
         # Shut down the recorder so we can delete the .sql file later
         recorder.shutdown()
     
-    
+
     # TODO
     # Factorize code from the two next methods
-    def _plot_residuals(self, process_started: Event, process_ended: Event, residuals_graph, threshold_graph):
+    def _plot(self, process_started: Event, process_ended: Event, is_MDA: bool=True):
         """
         Plots the relative error of each iteration during MDA process, and the relative error
         threshold. 
-        First waits for the process to finish its setup by waiting for the process_started event
-
-        :param process_started: Event triggered in the process when the setup is finished
-        :param process_ended: Event triggered after the process ends
-        :param residuals_graph: The part of the graph containing the relative errors curve
-        :param threshold_graph: The part of the graph containing the threshold of the relative 
-        error curve given by the problem
-        """
-        residuals_graph.x = []
-        residuals_graph.y = []
-        
-        threshold_graph.x = []
-        threshold_graph.y = []
-        
-        # Wait until the beginning of the process.
-        # There should be a better way to do it with threading
-        # library though.
-        while not process_started.is_set():
-            sleep(0.1)
-        
-        temp_recorder_database_file_path = self.recorder_database_file_path.replace(
-                "_cases.sql",
-                "_temp_cases.sql",
-            )
-        
-        while not process_ended.is_set():
-            sleep(0.1)
-            
-            try :
-                # Copy the db file before reading it to avoid reading when an other thread is writing,
-                # which could cause the code to fail.
-                shutil.copyfile(self.recorder_database_file_path, temp_recorder_database_file_path)
-                
-                # Extract the residuals, build a scatter based on them and plot them along with the
-                # threshold set in the configuration file
-                iterations, relative_error = np.array(
-                    _extract_residuals(recorder_database_file_path=temp_recorder_database_file_path)
-                )
-                
-                residuals_graph.x = iterations
-                residuals_graph.y = relative_error
-                
-                threshold_graph.x = iterations
-                threshold_graph.y = [self.target_residuals for _ in iterations]
-
-                self.input_tab.graph_visualization_box.children = [
-                    self.input_tab.residuals_visualization_widget
-                ]
-            except:
-                pass                
-                
-                
-                
-    def _plot_objective(self, process_started, process_ended, objective_graph, min_objective_graph):
-        """
-        Plots the objective reached at each iteration during the MDO process, and the minimum reached.
         First waits for the process to finish its setup by waiting for the process_started event.
-        The minimum is only plotted when the process ends
 
-        :param process_started: Event triggered in the process when the setup is finished
-        :param process_ended: Event triggered after the process ends
-        :param objective_graph: The part of the graph containing the objectives curve
-        :param min_objective_graph: The part of the graph containing the minimum objective reached
+        :param process_started: event triggered in the process when the setup is finished
+        :param process_ended: event triggered after the process ends
+        :param is_MDA: boolean indicating if the program should plot objectives (MDO) or residuals (MDA)
         """
-        objective_graph.x = []
-        objective_graph.y = []
-        
-        min_objective_graph.x = []
-        min_objective_graph.y = []
-        
-        
         # Wait until the beginning of the process.
         # There should be a better way to do it with threading
         # library though.
         while not process_started.is_set():
             sleep(0.1)
-            
+        
         temp_recorder_database_file_path = self.recorder_database_file_path.replace(
                 "_cases.sql",
                 "_temp_cases.sql",
@@ -675,32 +392,122 @@ class ParentTab(v.Card):
         
         while not process_ended.is_set():
             sleep(0.1)
-
+            
             try :
                 # Copy the db file before reading it to avoid reading when an other thread is writing,
                 # which could cause the code to fail.
                 shutil.copyfile(self.recorder_database_file_path, temp_recorder_database_file_path)
                 
-                # Extract the residuals, build a scatter based on them and plot them along with the
-                # threshold set in the configuration file
-                iterations, objective = np.array(
-                    _extract_objective(recorder_database_file_path=temp_recorder_database_file_path)
-                )
-                min_objective = min(objective)
-
-                objective_graph.x = iterations
-                objective_graph.y = objective
-
-                self.input_tab.graph_visualization_box.children = [
-                    self.input_tab.objectives_visualization_widget
-                ]
+                if is_MDA:
+                    # Extract the residuals, build a scatter based on them and plot them along with the
+                    # threshold set in the configuration file
+                    iterations, relative_error = np.array(
+                        _extract_residuals(recorder_database_file_path=temp_recorder_database_file_path)
+                    )
+                    self.input_tab.graphs.plot(iterations, relative_error, self.target_residuals)
+                
+                else :
+                    # Extract the residuals, build a scatter based on them and plot them along with the
+                    # threshold set in the configuration file
+                    iterations, objective = np.array(
+                        _extract_objective(recorder_database_file_path=temp_recorder_database_file_path)
+                    )
+                    min_objective = min(objective)
+                    
+                    self.input_tab.graphs.plot(iterations, objective, min_objective)
 
             except:
                 pass
-            
-        min_objective_graph.x = iterations
-        min_objective_graph.y = [min_objective for _ in iterations]
 
-        self.input_tab.graph_visualization_box.children = [
-            self.input_tab.objectives_visualization_widget
-        ]
+
+    def _launch_process(self, widget, event, data):
+
+        # "Hide" the output tabs !
+        self.input_tab.launch_button.color = (
+            "#FF0000"
+        )
+        self.hide_tabs(self.tabs)
+        # TODO
+        # Disable the sliders and inputs while process is running
+        # Make the launch button a cancel button to stop the process
+
+        # Show a loading widget to make it apparent that a computation is
+        # underway.
+        self.input_tab.graphs.set_loading("Setup")
+
+        dummy_output = widgets.Output()
+        with dummy_output:
+            
+            # Initialize events to synchronize the process thread and the plotting thread
+            process_started = Event()
+            process_ended = Event()
+
+            # If the switch is off, MDA, else MDO
+            if not self.input_tab.process_selection_switch.v_model:
+                process_thread = Thread(target=self._launch_mda, args=(process_started,))
+                plotting_thread = Thread(
+                    target=self._plot, 
+                    args=(process_started, process_ended),
+                )
+
+            else:
+                process_thread = Thread(target=self._launch_mdo, args=(process_started,))
+                plotting_thread = Thread(
+                    target=self._plot, 
+                    args=(process_started, process_ended, False),
+                )
+
+            process_thread.start()
+            plotting_thread.start()
+            
+            process_thread.join()
+            # This line is to make sure the plotting ends after the process and plots everything
+            sleep(0.5)
+            process_ended.set()
+            plotting_thread.join()
+
+            self.input_tab.launch_button.color = (
+                "#32cd32"
+            )
+
+            self.show_tabs(self.tabs)
+
+
+    def show_tabs(self, tabs: v.Tabs):
+        for child in tabs.children:
+            child.disabled = False
+
+
+    def hide_tabs(self, tabs: v.Tabs):
+        for child in tabs.children:
+            child.disabled = True
+
+
+    def browse_available_sizing_process(self, widget, event, data):
+        # On tab change, we browse the output folder of the workdir to check all completed
+        # sizing processes. Additionally instead of doing it on all tab change, we will only
+        # do it if the old tab was the tab from which we can launch a sizing process, i.e the
+        # first tab
+        
+        # TODO
+        # if change["name"] == "selected_index":
+        #     if change["old"] == 0:
+        
+        self.available_sizing_process = (
+            _list_available_sizing_process_results(
+                pth.join(self.working_directory_path, "outputs")
+            )
+        )
+
+        # Update the available value for each tab while making sure to leave the None
+        # option as it will always be the selected value
+        for tab_index, _ in enumerate(TABS_NAME):
+
+            # Nothing to update in the first tab (the launch tab)
+            if tab_index != 0:
+
+                # This assumes that all tabs except the first will have an attribute
+                # named "output_file_selection_widget"
+                self.tabs_items[
+                    tab_index
+                ].output_file_selection_widget.items = self.available_sizing_process

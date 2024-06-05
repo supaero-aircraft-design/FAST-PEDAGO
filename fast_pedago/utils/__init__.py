@@ -9,4 +9,11 @@ from .functions import (
 from .constants import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
+    FIGURE_HEIGHT,
+)
+
+from .layouts import (
+    _InputsCategory,
+    _TooltipButton,
+    _Figure,
 )
