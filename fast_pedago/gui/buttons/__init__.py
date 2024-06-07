@@ -1,8 +1,4 @@
-from .github_links_buttons import (
-    FastOadCoreGitButton,
-    FastOadCS25GitButton,
-    FastOadCS23GitButton,
-)
+from .github_links_buttons import GitLinksButton
 from .info_button import (
     MainMenuInfoButton,
     SensitivityAnalysisInfoButton,
