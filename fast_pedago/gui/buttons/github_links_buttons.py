@@ -8,8 +8,41 @@ GITHUB_FAST_CORE = "https://github.com/fast-aircraft-design/FAST-OAD"
 GITHUB_FAST_CS25 = "https://github.com/fast-aircraft-design/FAST-OAD_CS25"
 GITHUB_FAST_CS23 = "https://github.com/supaero-aircraft-design/FAST-GA"
 
+class GitLinksButton(v.Menu):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+        self.offset_y = True
+        self.rounded = True
+        self.tile = True,
+        self.v_slots = [{
+            "name": "activator",
+            "variable": "button",
+            "children": v.Btn(
+                v_bind="button.attrs",
+                v_on="button.on",
+                icon=True,
+                x_large=True,
+                children=[
+                    v.Icon(
+                        x_large=True,
+                        children=["fa-github"],
+                    ),
+                ],
+            ),   
+        }]
+        self.children = [
+            v.List(
+                class_="pa-0",
+                children=[
+                    _GitLinkButtonItem(GITHUB_FAST_CORE, "FAST-OAD_core"),
+                    _GitLinkButtonItem(GITHUB_FAST_CS25, "FAST-OAD_cs25"),
+                    _GitLinkButtonItem(GITHUB_FAST_CS23, "FAST-OAD_cs23"),
+                ],
+            ),
+        ]
 
-class BaseGitButton(v.Btn):
+class _GitLinkButtonItem(v.ListItem):
     """
     A button with a git icon that is clickable and opens the link provided
 
@@ -19,24 +52,13 @@ class BaseGitButton(v.Btn):
     def __init__(self, href, text, **kwargs):
         super().__init__(**kwargs)
 
-        self.href = href
-
+        self.class_ = "pa-0"
         self.children = [
-            v.Icon(
-                class_ = "me-2",
-                children = ["fa-github"]
+            v.Btn(
+                text=True,
+                href=href,
+                children=[
+                    text,
+                ],
             ),
-            text,
         ]
-
-class FastOadCoreGitButton(BaseGitButton):
-    def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CORE, "FAST-OAD_core", **kwargs)
-
-class FastOadCS25GitButton(BaseGitButton):
-    def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CS25, "FAST-OAD_cs25", **kwargs)
-
-class FastOadCS23GitButton(BaseGitButton):
-    def __init__(self, **kwargs):
-        super().__init__(GITHUB_FAST_CS23, "FAST-OAD_cs23", **kwargs)
