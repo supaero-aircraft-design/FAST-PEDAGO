@@ -14,7 +14,7 @@ class GitLinksButton(v.Menu):
         
         self.offset_y = True
         self.rounded = True
-        self.tile = True,
+        self.open_on_hover = True
         self.v_slots = [{
             "name": "activator",
             "variable": "button",
