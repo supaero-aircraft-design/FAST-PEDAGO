@@ -42,18 +42,15 @@ class Header(v.AppBar):
         followed by FAST-OAD logo, github links buttons and utilitary
         buttons.
         """
-        self.class_ = "px-5 ma-0"
-        self.min_height = "10vh"
+        self.class_ = "px-5"
         self.fixed = True
         self.color = "white"
         
         self.children = [
             v.Row(
-                class_ = "pt-2",
                 align="center",
                 children=[
                     v.Col(
-                        class_="pa-0",
                         cols=4,
                         children=[
                             v.Row(
@@ -61,12 +58,10 @@ class Header(v.AppBar):
                                 justify="start",
                                 children=[
                                     v.Col(
-                                        class_="px-0 py-1",
                                         cols=3,
                                         children=[self.isae_logo]
                                     ),
                                     v.Col(
-                                        class_="px-1 py-0",
                                         cols=5,
                                         children=[self.airbus_logo]
                                     ),
@@ -75,21 +70,17 @@ class Header(v.AppBar):
                         ],
                     ),
                     v.Col(
-                        class_="pa-0",
                         cols=4,
                         children=[
                             v.Row(
-                                align="center",
                                 justify="center",
                                 children=[self.fast_oad_top_layer_logo]
                             ),
                         ],
                     ),
                     v.Col(
-                        class_="pa-0",
                         children=[
                             v.Row(
-                                align="center",
                                 justify="end",
                                 children=[
                                     GitLinksButton(),
@@ -113,29 +104,17 @@ class Header(v.AppBar):
         resources_path = pth.join(pth.dirname(gui.__file__), "resources")
 
         # Get FAST-OAD logo for main menu
-        self.fast_oad_main_menu_logo = _image_from_path(
-            pth.join(resources_path, FAST_OAD_MAIN_MENU_LOGO),
-            height="10vw",
-        )
+        self.fast_oad_main_menu_logo = _image_from_path(pth.join(resources_path, FAST_OAD_MAIN_MENU_LOGO))
 
         # Get FAST-OAD logo for top layer
-        self.fast_oad_top_layer_logo = _image_from_path(
-            pth.join(resources_path, FAST_OAD_TOP_LAYER_LOGO),
-            height="7vh",
-        )
+        self.fast_oad_top_layer_logo = _image_from_path(pth.join(resources_path, FAST_OAD_TOP_LAYER_LOGO))
 
         # Get ISAE logo
-        self.isae_logo = _image_from_path(
-            pth.join(resources_path, FAST_OAD_MAIN_MENU_LOGO),
-            height="8vh",
-        )
+        self.isae_logo = _image_from_path(pth.join(resources_path, ISAE_LOGO))
         # Sets the link to supaero website, to open in a new tab
         self.isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
 
         # Get Airbus logo
-        self.airbus_logo = _image_from_path(
-            pth.join(resources_path, FAST_OAD_MAIN_MENU_LOGO),
-            height="4vh",
-        )
+        self.airbus_logo = _image_from_path(pth.join(resources_path, AIRBUS_LOGO))
         # Sets the link to airbus website, to open in a new tab
         self.airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}
