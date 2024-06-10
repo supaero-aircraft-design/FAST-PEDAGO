@@ -14,7 +14,7 @@ from .constants import (
 )
 
 
-def _image_from_path(file_path: str, height: str) -> v.Html:
+def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     """
     Creates an Image widgets from ipywidgets from the path to a picture.
 
@@ -31,20 +31,18 @@ def _image_from_path(file_path: str, height: str) -> v.Html:
     image = file.read()
     # Encapsulate the image in a "a" tag to be able to provide a "click" event and links
     image_widget = v.Html(
-        class_="px-1",
-        style_="cursor:pointer;",
         tag="a",
         children=[
             widgets.Image(
                 value=image, 
                 format=file_extension,
                 layout=widgets.Layout(
-                    height=height,
-                    object_fit="contain",
+                    max_height=max_height,
                 ),
-            ),  
+            ),
         ],
     )
+    
 
     return image_widget
 
