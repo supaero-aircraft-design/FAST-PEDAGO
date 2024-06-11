@@ -51,6 +51,7 @@ class Header(v.AppBar):
                 align="center",
                 children=[
                     v.Col(
+                        class_="py-0",
                         cols=4,
                         children=[
                             v.Row(
@@ -58,10 +59,12 @@ class Header(v.AppBar):
                                 justify="start",
                                 children=[
                                     v.Col(
+                                        class_="py-0",
                                         cols=3,
                                         children=[self.isae_logo]
                                     ),
                                     v.Col(
+                                        class_="py-0",
                                         cols=5,
                                         children=[self.airbus_logo]
                                     ),
@@ -70,6 +73,7 @@ class Header(v.AppBar):
                         ],
                     ),
                     v.Col(
+                        class_="py-0",
                         cols=4,
                         children=[
                             v.Row(
@@ -79,6 +83,7 @@ class Header(v.AppBar):
                         ],
                     ),
                     v.Col(
+                        class_="py-0",
                         children=[
                             v.Row(
                                 justify="end",
