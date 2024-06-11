@@ -50,8 +50,17 @@ class Interface(v.App):
         # This is to adjust the layout since the navigation drawer hides
         # on small screens.
         self.header = Header()
-        self.header.open_drawer_button.on_event("click.stop", self._open_drawer)
+        self.header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
         
+        close_drawer_button = v.Btn(
+            class_="me-5 hidden-lg-and-up",
+            icon=True,
+            children=[
+                v.Icon(children=["fa-times"]),
+            ],
+        )
+        close_drawer_button.on_event("click", self._open_close_drawer)
+
         self.drawer = v.NavigationDrawer(
             app=True,
             clipped=True,
@@ -61,6 +70,12 @@ class Interface(v.App):
                 v.Container(
                     style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
                     class_="hidden-md-and-down",
+                ),
+                v.Row(
+                    justify="end",
+                    children=[
+                        close_drawer_button,
+                    ],
                 ),
                 InputsContainer()
             ],
@@ -170,7 +185,7 @@ class Interface(v.App):
             )
     
 
-    def _open_drawer(self, widget, event, data):
+    def _open_close_drawer(self, widget, event, data):
             self.drawer.v_model = not self.drawer.v_model
 
     
