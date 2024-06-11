@@ -145,3 +145,29 @@ def _extract_objective(recorder_database_file_path: str) -> list:
     ])
 
     return iterations, objective
+
+
+def _n2_xdsm_to_vue_template(html_file_path: str):
+    html_file = open(html_file_path, "r")
+    content = html_file.readlines()
+    content = [
+        item
+        .replace("<body>", "<template>")
+        .replace("</body>", "</template>")
+        .replace("body", "div")
+        .replace("<head>", "")
+        .replace("</head>", "")
+        .replace("<!doctype html>", "")
+        .replace("</html>", "")
+        .replace('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', "")
+        for item in content
+    ]
+    html_file.close()
+    
+    # Remove the extension in the file name
+    vue_file_path = html_file_path.replace('.html' , '.vue')
+    vue_file = open(vue_file_path, "+w")
+    vue_file.writelines(content)
+    vue_file.close()
+    
+    return vue_file_path
