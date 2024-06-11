@@ -143,7 +143,7 @@ class GraphVisualizationContainer(v.Col):
             configuration_file_name, "n2.html"
         )
         self.n2_visualization_widget = _image_from_path(
-            self.n2_image_path
+            self.n2_image_path , max_height="70vh"
         )
         
         self.xdsm_image_path = configuration_file_path.replace(
@@ -153,7 +153,7 @@ class GraphVisualizationContainer(v.Col):
             configuration_file_name, "xdsm.html"
         )
         self.xdsm_visualization_widget = _image_from_path(
-            self.xdsm_image_path
+            self.xdsm_image_path, max_height="70vh"
         )
         
         
