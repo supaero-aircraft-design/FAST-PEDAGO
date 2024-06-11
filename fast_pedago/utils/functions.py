@@ -38,6 +38,7 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
                 format=file_extension,
                 layout=widgets.Layout(
                     max_height=max_height,
+                    padding = "0px",
                 ),
             ),
         ],
