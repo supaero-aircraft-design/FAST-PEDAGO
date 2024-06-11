@@ -39,18 +39,40 @@ class Interface(v.App):
         
         self._configure_paths()
         self._build_layout()
+        
+        self.to_inputs()
+
+
+    def to_inputs(self):
+        self.drawer_content.children = [self.inputs]
+        self.main_content.children = [self.default_content]
 
 
     def _build_layout(self):
         """
         Builds the layout of the app.
         """
+        self.inputs = InputsContainer()
+        self.default_content = v.Html(tag="div", children=["Lorem ipsum"])
+        
+        # The content attributes will be used to change the components
+        # displayed depending on the phase of the app : inputs, outputs, 
+        # source file selection.
+        self.drawer_content = v.Container(
+            class_="pa-0",
+        )
+        
+        self.main_content = v.Container(
+            class_="pt-0",
+            fluid=True,
+            fill_height=True,
+        )
         
         # Some of the components are made to hide when on small screens
         # This is to adjust the layout since the navigation drawer hides
         # on small screens.
-        self.header = Header()
-        self.header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
+        header = Header()
+        header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
         
         close_drawer_button = v.Btn(
             class_="me-5 hidden-lg-and-up",
@@ -61,59 +83,49 @@ class Interface(v.App):
         )
         close_drawer_button.on_event("click", self._open_close_drawer)
 
-        self.drawer = v.NavigationDrawer(
-            app=True,
-            clipped=True,
-            width=DRAWER_WIDTH,
-            v_model=True,
-            children=[
-                v.Container(
-                    style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
-                    class_="hidden-md-and-down",
-                ),
-                v.Row(
-                    justify="end",
-                    children=[
-                        close_drawer_button,
-                    ],
-                ),
-                InputsContainer()
-            ],
-        )
-        
-        self.content = v.Container(
-            class_="pt-0",
-            fluid=True,
-            fill_height=True,
-            children=["ligjhcgj"],
-        )
-        
-        self.main = v.Html(
-            tag="main",
-            class_="v-main",
-            children=[
-                v.Row(
-                style_="padding: " + TOP_PADDING + " 0 0 0;",
-                ),
-                v.Row(
-                    children=[
-                        v.Col(
-                            cols="1",
-                            style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
-                            class_="hidden-md-and-down",
-                        ),
-                        v.Col(
-                            children=[self.content],
-                        ),
-                    ],
-                ),
-            ]
-        )
-
         self.children = [
-            self.header,
-            self.drawer,
-            self.main,
+            header,
+            v.NavigationDrawer(
+                app=True,
+                clipped=True,
+                width=DRAWER_WIDTH,
+                v_model=True,
+                children=[
+                    v.Container(
+                        style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
+                        class_="hidden-md-and-down",
+                    ),
+                    v.Row(
+                        justify="end",
+                        children=[
+                            close_drawer_button,
+                        ],
+                    ),
+                    self.drawer_content,
+                ],
+            ),
+            # Main content : to display graphs
+            v.Html(
+                tag="main",
+                class_="v-main",
+                children=[
+                    v.Row(
+                    style_="padding: " + TOP_PADDING + " 0 0 0;",
+                    ),
+                    v.Row(
+                        children=[
+                            v.Col(
+                                cols="1",
+                                style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
+                                class_="hidden-md-and-down",
+                            ),
+                            v.Col(
+                                children=[self.main_content],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
             Footer()
         ]
 
