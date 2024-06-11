@@ -20,7 +20,7 @@ class GraphVisualizationContainer(v.Col):
     """
     A container to display process figures, N2 and XDSM graphs.
     """
-    def __init__(self, configuration_file_path: str, **kwargs):
+    def __init__(self, **kwargs):
         """
         :param configuration_file_path: the path to the configuration file 
         needed to generated XDSM/N2 graphs.
@@ -29,11 +29,10 @@ class GraphVisualizationContainer(v.Col):
         
         self.is_MDA = True
         
-        self.generate_n2_xdsm(configuration_file_path)
         self._set_layout()
         self.to_MDA()
 
-    
+
     def to_MDO(self):
         """
         Changes the buttons texts and the figure displayed to MDO
@@ -47,7 +46,8 @@ class GraphVisualizationContainer(v.Col):
         
         self._resize_figures()
         self.display.children = [self.objectives_figure]
-        
+
+
     def to_MDA(self):
         """
         Changes the buttons texts and the figure displayed to MDA
@@ -60,6 +60,7 @@ class GraphVisualizationContainer(v.Col):
         
         self._resize_figures()
         self.display.children = [self.residuals_figure]
+
 
     def set_loading(self, message):
         """
@@ -142,7 +143,7 @@ class GraphVisualizationContainer(v.Col):
             configuration_file_name, "n2.html"
         )
         self.n2_visualization_widget = _image_from_path(
-            self.n2_image_path, height="100vh", width="100"
+            self.n2_image_path
         )
         
         self.xdsm_image_path = configuration_file_path.replace(
@@ -152,7 +153,7 @@ class GraphVisualizationContainer(v.Col):
             configuration_file_name, "xdsm.html"
         )
         self.xdsm_visualization_widget = _image_from_path(
-            self.xdsm_image_path, height="100vh", width="100"
+            self.xdsm_image_path
         )
         
         
@@ -212,7 +213,7 @@ class GraphVisualizationContainer(v.Col):
             ),
             self.display,
         ]
-        
+    
 
     def _change_display(self, widget, event, data):
         """
@@ -221,7 +222,6 @@ class GraphVisualizationContainer(v.Col):
 
         To be called by an "on_event" of an ipyvuetify widget
         """
-
         # 0: Residuals/Objective 1: N2 2: N2(browser) 3: XDSM 4: XDSM(browser)
         if data == 0:
             self._resize_figures()
