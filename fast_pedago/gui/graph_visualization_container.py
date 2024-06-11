@@ -222,16 +222,8 @@ class GraphVisualizationContainer(v.Col):
 
         To be called by an "on_event" of an ipyvuetify widget
         """
-        # 0: Residuals/Objective 1: N2 2: N2(browser) 3: XDSM 4: XDSM(browser)
-        if data == 0:
-            self._resize_figures()
-            if self.is_MDA:
-                self.display.children = [self.residuals_figure]
- 
-            else :
-                self.display.children = [self.objectives_figure]
-
-        elif data == 1:
+        # None: Residuals/Objective 1: N2 2: N2(browser) 3: XDSM 4: XDSM(browser)
+        if data == 1:
             self.display.children = [self.n2_visualization_widget]
 
         elif data == 2:
@@ -240,8 +232,16 @@ class GraphVisualizationContainer(v.Col):
         elif data == 3:
             self.display.children = [self.xdsm_visualization_widget]
 
-        else:
+        elif data == 4:
             webbrowser.open_new_tab(self.xdsm_file_path)
+        
+        else:
+            self._resize_figures()
+            if self.is_MDA:
+                self.display.children = [self.residuals_figure]
+ 
+            else :
+                self.display.children = [self.objectives_figure]
 
 
     def _resize_figures(self):
