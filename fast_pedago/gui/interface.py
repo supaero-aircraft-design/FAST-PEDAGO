@@ -66,32 +66,39 @@ class Interface(v.App):
             ],
         )
         
-        self.main = v.Container(
+        self.content = v.Container(
+            class_="pt-0",
             fluid=True,
             fill_height=True,
+            children=["ligjhcgj"],
+        )
+        
+        self.main = v.Html(
             tag="main",
-            children=["ihkvb"],
+            class_="v-main",
+            children=[
+                v.Row(
+                style_="padding: " + TOP_PADDING + " 0 0 0;",
+                ),
+                v.Row(
+                    children=[
+                        v.Col(
+                            cols="1",
+                            style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
+                            class_="hidden-md-and-down",
+                        ),
+                        v.Col(
+                            children=[self.content],
+                        ),
+                    ],
+                ),
+            ]
         )
 
         self.children = [
             self.header,
             self.drawer,
-            v.Row(
-                style_="padding: " + TOP_PADDING + " 0 0 0;",
-            ),
-            v.Row(
-                children=[
-                    v.Col(
-                        style_="padding: 0 0 0 " + LEFT_PADDING + ";",
-                        class_="hidden-md-and-down",
-                    ),
-                ],
-            ),
-            v.Row(
-                children=[
-                    self.main,
-                ],
-            ),
+            self.main,
             Footer()
         ]
 
