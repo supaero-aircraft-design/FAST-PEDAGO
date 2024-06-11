@@ -46,6 +46,15 @@ class Header(v.AppBar):
         self.fixed = True
         self.color = "white"
         
+        self.open_drawer_button = v.Btn(
+            class_="hidden-lg-and-up",
+            icon=True,
+            x_large=True,
+            children=[
+                v.AppBarNavIcon(),
+            ],
+        )
+        
         self.children = [
             v.Row(
                 align="center",
@@ -57,18 +66,7 @@ class Header(v.AppBar):
                             v.Row(
                                 align="center",
                                 justify="start",
-                                children=[
-                                    v.Col(
-                                        class_="py-0",
-                                        cols=3,
-                                        children=[self.isae_logo]
-                                    ),
-                                    v.Col(
-                                        class_="py-0",
-                                        cols=5,
-                                        children=[self.airbus_logo]
-                                    ),
-                                ],
+                                children=[self.open_drawer_button],
                             ),
                         ],
                     ),
