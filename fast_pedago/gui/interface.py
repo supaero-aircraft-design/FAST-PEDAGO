@@ -14,11 +14,18 @@ from fast_pedago import (
     configuration,
     source_data_files,
 )
-from . import Header
+from . import Header, Footer
+from . import InputsContainer
 
 
-DRAWER_WIDTH = "35%"
-HEADER_WIDTH = "52px"
+DRAWER_WIDTH = "450px"
+HEADER_HEIGHT = "64px" 
+
+# As there are margins and padding in the voila template, 
+# I have to adjust the padding considering both the spacings
+# in the voila template and the other components sizes.
+TOP_PADDING = "36px"
+LEFT_PADDING = "426px"
 
 
 DEFAULT_SOURCE_DATA_FILE = "reference aircraft"
@@ -35,21 +42,57 @@ class Interface(v.App):
 
 
     def _build_layout(self):
+        """
+        Builds the layout of the app.
+        """
+        
+        # Some of the components are made to hide when on small screens
+        # This is to adjust the layout since the navigation drawer hides
+        # on small screens.
+        self.header = Header()
+        self.header.open_drawer_button.on_event("click.stop", self._open_drawer)
+        
         self.drawer = v.NavigationDrawer(
             app=True,
             clipped=True,
             width=DRAWER_WIDTH,
+            v_model=True,
+            children=[
+                v.Container(
+                    style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
+                    class_="hidden-md-and-down",
+                ),
+                InputsContainer()
+            ],
         )
+        
         self.main = v.Container(
-            style_="padding: " + HEADER_WIDTH + " 0px 0px " + DRAWER_WIDTH + ";",
             fluid=True,
+            fill_height=True,
             tag="main",
+            children=["ihkvb"],
         )
 
         self.children = [
-            Header(),
+            self.header,
             self.drawer,
-            self.main,
+            v.Row(
+                style_="padding: " + TOP_PADDING + " 0 0 0;",
+            ),
+            v.Row(
+                children=[
+                    v.Col(
+                        style_="padding: 0 0 0 " + LEFT_PADDING + ";",
+                        class_="hidden-md-and-down",
+                    ),
+                ],
+            ),
+            v.Row(
+                children=[
+                    self.main,
+                ],
+            ),
+            Footer()
         ]
 
 
@@ -118,5 +161,9 @@ class Interface(v.App):
                     "reference_aircraft_source_data_file.xml",
                 ),
             )
+    
+
+    def _open_drawer(self, widget, event, data):
+            self.drawer.v_model = not self.drawer.v_model
 
     
