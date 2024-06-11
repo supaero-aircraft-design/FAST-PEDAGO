@@ -89,28 +89,30 @@ class Interface(v.App):
             ],
         )
         close_drawer_button.on_event("click", self._open_close_drawer)
+        
+        self.drawer = v.NavigationDrawer(
+            app=True,
+            clipped=True,
+            width=DRAWER_WIDTH,
+            v_model=True,
+            children=[
+                v.Container(
+                    style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
+                    class_="hidden-md-and-down",
+                ),
+                v.Row(
+                    justify="end",
+                    children=[
+                        close_drawer_button,
+                    ],
+                ),
+                self.drawer_content,
+            ],
+        )
 
         self.children = [
             header,
-            v.NavigationDrawer(
-                app=True,
-                clipped=True,
-                width=DRAWER_WIDTH,
-                v_model=True,
-                children=[
-                    v.Container(
-                        style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
-                        class_="hidden-md-and-down",
-                    ),
-                    v.Row(
-                        justify="end",
-                        children=[
-                            close_drawer_button,
-                        ],
-                    ),
-                    self.drawer_content,
-                ],
-            ),
+            self.drawer,
             # Main content : to display graphs
             v.Html(
                 tag="main",
