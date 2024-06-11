@@ -53,7 +53,7 @@ class _Figure(go.FigureWidget):
             self.update_yaxes(title_text=y_axes_label, type="log")
 
 
-class _InputsCategory(v.Container):
+class _InputsCategory(v.ListGroup):
     """
     Internal class to factorize layout of an input category
     such as weight inputs, geometry inputs, TLARs, etc.
@@ -67,26 +67,22 @@ class _InputsCategory(v.Container):
         :param inputs: a list of input widgets 
         """
         super().__init__(**kwargs)
-        
-        self.class_="ps-6 pb-0 pt-2" 
-        
-        self.children=[
-            v.Row(
-                children=[
-                    v.Html(
-                        tag="div",
-                        style_="font-weight: bold;",
-                        children=[name],
-                    ),
-                ],
-            ),
-            v.Row(
-                children=inputs,
-            ),
-            v.Divider(
-                class_="pb-2 mt-1",
-            ),
+
+        self.value = True
+        self.v_slots = [{
+            'name': 'activator',
+            'children': [
+                v.ListItemTitle(
+                    children=[
+                        name,
+                    ],
+                ),
+            ],
+        }]
+        self.children = [
+            v.ListItem(children=[input]) for input in inputs
         ]
+
 
 # FIXME 
 # Tooltip doesn't work
