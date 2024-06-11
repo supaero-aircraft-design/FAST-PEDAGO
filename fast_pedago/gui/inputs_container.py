@@ -34,22 +34,22 @@ OPT_SWEEP_W_MAX = 45.0
 OPT_WING_SPAN_MAX = 60.0
 
 
-class InputsContainer(v.Col):
+class InputsContainer(v.List):
     """
     An input container that can switch to set inputs for MDA and MDO.
     """
-    def __init__(self, source_data_file_name: str, **kwargs):
+    def __init__(self, **kwargs):
         """
         :param source_data_file: the path to the source file to initialize the inputs from.
         """
         super().__init__(**kwargs)
         
-        self.cols = 3
+        
+        self.class_ = "pa-0"
+        self.expand = True
         
         self._set_layout_mda()
         self._set_layout_mdo()
-        
-        self.set_initial_value_mda(source_data_file_name)
         
         self.to_MDA()
     
@@ -58,13 +58,13 @@ class InputsContainer(v.Col):
         """
         Changes inputs to MDO inputs
         """
-        self.children = [self.mdo_input]
+        self.children = self.mdo_input
     
     def to_MDA(self):
         """
         Changes inputs to MDA inputs
         """
-        self.children = [self.mda_input]
+        self.children = self.mda_input
         
 
     def retrieve_mda_inputs(self):
@@ -296,29 +296,29 @@ class InputsContainer(v.Col):
             label="Max b_w", 
             tooltip="Maximum wing span allowed for the optimisation [m]"
         )
+        
+        
 
-        self.mdo_input = v.Card(
-            children=[
-                _InputsCategory("Objective", [
-                        v.Row(
-                            class_="pb-4 pt-2",
-                            justify="center",
-                            children=[
-                                self.objective_selection
-                            ],
-                        )
-                ]),
-                _InputsCategory("Design variables", [
-                    self.ar_design_var_checkbox,
-                    self.ar_design_var_input,
-                    self.sweep_w_design_var_checkbox,
-                    self.sweep_w_design_var_input,
-                ]),
-                _InputsCategory("Constraints", [
-                    self.wing_span_constraint_max,
-                ]),    
-            ],
-        )
+        self.mdo_input = [
+            _InputsCategory("Objective", [
+                    v.Row(
+                        class_="pb-4 pt-2",
+                        justify="center",
+                        children=[
+                            self.objective_selection
+                        ],
+                    )
+            ]),
+            _InputsCategory("Design variables", [
+                self.ar_design_var_checkbox,
+                self.ar_design_var_input,
+                self.sweep_w_design_var_checkbox,
+                self.sweep_w_design_var_input,
+            ]),
+            _InputsCategory("Constraints", [
+                self.wing_span_constraint_max,
+            ]),    
+        ]
         
     
     def _set_layout_mda(self):
@@ -382,26 +382,24 @@ class InputsContainer(v.Col):
             tooltip="ByPass Ratio of the engine"
         )
 
-        self.mda_input = v.Card(
-            children=[
-                _InputsCategory("TLARs", [
-                    self.n_pax_input,
-                    self.v_app_input,
-                    self.cruise_mach_input,
-                    self.range_input,
-                ]),
-                _InputsCategory("Weight", [
-                    self.payload_input,
-                    self.max_payload_input,
-                ]),
-                _InputsCategory("Geometry", [
-                    self.wing_aspect_ratio_input,
-                ]),
-                _InputsCategory("Propulsion", [
-                    self.bpr_input,
-                ]),
-            ],
-        )
+        self.mda_input = [
+            _InputsCategory("TLARs", [
+                self.n_pax_input,
+                self.v_app_input,
+                self.cruise_mach_input,
+                self.range_input,
+            ]),
+            _InputsCategory("Weight", [
+                self.payload_input,
+                self.max_payload_input,
+            ]),
+            _InputsCategory("Geometry", [
+                self.wing_aspect_ratio_input,
+            ]),
+            _InputsCategory("Propulsion", [
+                self.bpr_input,
+            ]),
+        ]
 
     
     def _ensure_one_design_var(self, widget, event, data):
