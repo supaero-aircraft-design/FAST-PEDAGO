@@ -14,8 +14,12 @@ from fast_pedago import (
     configuration,
     source_data_files,
 )
-from . import Header, Footer
-from . import InputsContainer
+from . import (
+    Header,
+    Footer,
+    InputsContainer,
+    GraphVisualizationContainer,
+)
 
 
 DRAWER_WIDTH = "450px"
@@ -40,12 +44,14 @@ class Interface(v.App):
         self._configure_paths()
         self._build_layout()
         
+        self.graphs.generate_n2_xdsm(self.mda_configuration_file_path)
+        
         self.to_inputs()
 
 
     def to_inputs(self):
         self.drawer_content.children = [self.inputs]
-        self.main_content.children = [self.default_content]
+        self.main_content.children = [self.graphs]
 
 
     def _build_layout(self):
@@ -53,6 +59,7 @@ class Interface(v.App):
         Builds the layout of the app.
         """
         self.inputs = InputsContainer()
+        self.graphs = GraphVisualizationContainer()
         self.default_content = v.Html(tag="div", children=["Lorem ipsum"])
         
         # The content attributes will be used to change the components
