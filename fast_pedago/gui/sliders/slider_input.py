@@ -53,7 +53,7 @@ class SliderInput(v.Tooltip):
         # Link the values of the slider with the associated text field.
         # Since v_slots has an known issue in ipyvuetify, this is for 
         # now the best way to do it.
-        widgets.jsdlink((self.slider,'v_model'),(text_field,'v_model'))
+        widgets.jslink((self.slider,'v_model'),(text_field,'v_model'))
         
         self.v_slots=[{
             'name': 'activator',
