@@ -1,69 +1,80 @@
+from typing import List
 
 import ipyvuetify as v
-import traitlets
+import ipywidgets as widgets
 
-#TODO
-# Implement tooltip
-class RangeSliderInput(v.VuetifyTemplate):
-    min = traitlets.Float(default_value=5).tag(sync=True)
-    max = traitlets.Float(default_value=30).tag(sync=True)
-    step = traitlets.Float(default_value=1).tag(sync=True)
-    label = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-    tooltip = traitlets.Unicode(default_value=None, allow_none=True).tag(sync=True)
-    range = traitlets.List(traitlets.Float(default_value=[10, 20], minlen=2, maxlen=2)).tag(sync=True)
-    
-    @traitlets.default('template')
-    def _template(self):
-        return f'''
-        <template>
-            <v-row
-                justify="center"
-            >
-                <v-col
-                    class="ps-8 pe-0 py-1"
-                    cols=4
-                >
-                    <p>{self.label}</p>
-                </v-col>
 
-                <v-col
-                    class="ps-3 py-1"
-                >
-                    <v-range-slider
-                        v-model="range"
-                        class="align-center pe-3"
-                        :max="max"
-                        :min="min"
-                        :step="step"
-                        hide-details
-                    >
-                        <template v-slot:prepend>
-                            <v-text-field
-                                :value="range[0]"
-                                class="mt-0 pt-0"
-                                density="compact"
-                                style="width: 40px"
-                                type="number"
-                                variant="outlined"
-                                hide-details
-                                single-line
-                            ></v-text-field>
-                        </template>
-                        
-                        <template v-slot:append>
-                            <v-text-field
-                                :value="range[1]"
-                                class="mt-0 pt-0"
-                                density="compact"
-                                style="width: 40px"
-                                type="number"
-                                variant="outlined"
-                                hide-details
-                                single-line
-                            ></v-text-field>
-                        </template>
-                    </v-range-slider>
-                </v-col>
-            </v-row>
-        </template>
-        ''' 
+# Unfortunately it is impossible to link the v_model of the slider
+# with two v_models of text fields, as it is done for the SliderInput,
+# since it is impossible to get only a part of the list that is the
+# range slider v_model.
+class RangeSliderInput(v.Tooltip):
+    """
+    A slider input with a text field for more input possibilities.
+    The slider has an optional tooltip to display information.
+    """
+    def __init__(
+        self,
+        min: float=0,
+        max: float=100,
+        step: float=10,
+        label: str=None,
+        tooltip: str=None,
+        range: float=0,
+        **kwargs,
+        ):
+        """
+        :param min: min value of the slider
+        :param max: max value of the slider
+        :param step: step between two slider values 
+        :pram label: label to put before the slider
+        :param tooltip: tooltip to show when label, slider,
+            or text field is hovered
+        :param value: initial value of the slider
+        """
+        super().__init__(**kwargs)
+        
+        # slider is an instance variable to be able to get the value of
+        # its v_model from outside.
+        self.slider = v.RangeSlider(
+            v_model=range,
+            max=max,
+            min=min,
+            step=step,
+            dense=True,
+            thumb_label="always",
+            thumb_size=24,
+            hide_details=True,
+            class_="align-center pe-3",
+        )
+        
+        self.v_slots=[{
+            'name': 'activator',
+            'variable': 'tooltip',
+            'children': v.Row(
+                v_bind="tooltip.attrs",
+                v_on="tooltip.on",
+                class_="pt-6",
+                justify="center",
+                children=[
+                    v.Col(
+                        class_="ps-8 pe-0 py-1",
+                        cols=4,
+                        children=[
+                            v.Html(
+                                tag="p",
+                                children=[label],
+                            ),
+                        ],
+                    ),
+                    v.Col(
+                        class_="ps-3 py-1",
+                        children=[self.slider],
+                    ),
+                ],
+            ),
+        }]
+        
+        self.children=[
+            tooltip
+        ]
