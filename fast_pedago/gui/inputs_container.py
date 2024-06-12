@@ -14,6 +14,7 @@ import openmdao.api as om
 import fastoad.api as oad
 
 from fast_pedago import source_data_files
+from fast_pedago.gui.buttons import Snackbar
 from fast_pedago.gui.sliders import (
     SliderInput,
     RangeSliderInput,
@@ -78,11 +79,11 @@ class InputsContainer(v.List):
         new_inputs = copy.deepcopy(self.reference_inputs)
 
         # No need to provide list or numpy array for scalar values.
-        new_inputs["data:TLAR:NPAX"].value = self.n_pax_input.value
+        new_inputs["data:TLAR:NPAX"].value = self.n_pax_input.slider.v_model
 
         new_inputs[
             "data:TLAR:approach_speed"
-        ].value = self.v_app_input.value
+        ].value = self.v_app_input.slider.v_model
         new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
 
         # If the Mach get too high and because we originally didn't plan on changing sweep,
@@ -93,7 +94,7 @@ class InputsContainer(v.List):
         if self.cruise_mach_input.value > 0.78:
             cos_phi_25 = (
                 0.78
-                / self.cruise_mach_input.value
+                / self.cruise_mach_input.slider.v_model
                 * np.cos(np.deg2rad(24.54))
             )
             phi_25 = np.arccos(cos_phi_25)
@@ -102,30 +103,30 @@ class InputsContainer(v.List):
 
         new_inputs[
             "data:TLAR:cruise_mach"
-        ].value = self.cruise_mach_input.value
+        ].value = self.cruise_mach_input.slider.v_model
 
-        new_inputs["data:TLAR:range"].value = self.range_input.value
+        new_inputs["data:TLAR:range"].value = self.range_input.slider.v_model
         new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:payload"
-        ].value = self.payload_input.value
+        ].value = self.payload_input.slider.v_model
         new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:weight:aircraft:max_payload"
-        ].value = self.max_payload_input.value
+        ].value = self.max_payload_input.slider.v_model
         new_inputs[
             "data:weight:aircraft:max_payload"
         ].units = "kg"  # Unit from the widget
 
         new_inputs[
             "data:geometry:wing:aspect_ratio"
-        ].value = self.wing_aspect_ratio_input.value
+        ].value = self.wing_aspect_ratio_input.slider.v_model
 
         new_inputs[
             "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.bpr_input.value
+        ].value = self.bpr_input.slider.v_model
         
         return new_inputs
 
@@ -184,7 +185,7 @@ class InputsContainer(v.List):
                 name="data:geometry:wing:span",
                 units="m",
                 lower=0.0,
-                upper=self.wing_span_constraint_max.value
+                upper=self.wing_span_constraint_max.slider.v_model
             )
         
         return problem
@@ -206,34 +207,34 @@ class InputsContainer(v.List):
         self.reference_inputs = oad.DataFile(source_data_file_path)
         
         # No need to convert to alternate units
-        self.n_pax_input.value = self.reference_inputs["data:TLAR:NPAX"].value[0]
+        self.n_pax_input.slider.v_model = self.reference_inputs["data:TLAR:NPAX"].value[0]
         # Convert in kts in case it was not
-        self.v_app_input.value = om.convert_units(
+        self.v_app_input.slider.v_model = om.convert_units(
             self.reference_inputs["data:TLAR:approach_speed"].value[0],
             self.reference_inputs["data:TLAR:approach_speed"].units,
             "kn",
         )
-        self.cruise_mach_input.value = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
+        self.cruise_mach_input.slider.v_model = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
         # Convert in nm in case it was not, etc, etc, ...
-        self.range_input.value = om.convert_units(
+        self.range_input.slider.v_model = om.convert_units(
             self.reference_inputs["data:TLAR:range"].value[0],
             self.reference_inputs["data:TLAR:range"].units,
             "NM",
         )
-        self.payload_input.value = om.convert_units(
+        self.payload_input.slider.v_model = om.convert_units(
             self.reference_inputs["data:weight:aircraft:payload"].value[0],
             self.reference_inputs["data:weight:aircraft:payload"].units,
             "kg",
         )
-        self.max_payload_input.value = om.convert_units(
+        self.max_payload_input.slider.v_model = om.convert_units(
             self.reference_inputs["data:weight:aircraft:max_payload"].value[0],
             self.reference_inputs["data:weight:aircraft:max_payload"].units,
             "kg",
         )
-        self.wing_aspect_ratio_input.value = self.reference_inputs[
+        self.wing_aspect_ratio_input.slider.v_model = self.reference_inputs[
             "data:geometry:wing:aspect_ratio"
         ].value[0]
-        self.bpr_input.value = self.reference_inputs[
+        self.bpr_input.slider.v_model = self.reference_inputs[
             "data:propulsion:rubber_engine:bypass_ratio"
         ].value[0]
 
@@ -381,6 +382,15 @@ class InputsContainer(v.List):
             label="BPR",
             tooltip="ByPass Ratio of the engine"
         )
+        
+        # As can be seen in the parent tab, there is an issue when cruise mach gets too high,
+        # we will display a warning when that value is reached, informing students of what is
+        # done behind the scene
+        self.snackbar = Snackbar(
+            "The sweep angle of the wing has been adjusted to avoid having compressibility "
+            "drag coefficient too high"
+        )
+        self.cruise_mach_input.slider.on_event("change", self._mach_alert)
 
         self.mda_input = [
             _InputsCategory("TLARs", [
@@ -399,6 +409,7 @@ class InputsContainer(v.List):
             _InputsCategory("Propulsion", [
                 self.bpr_input,
             ]),
+            self.snackbar,
         ]
 
     
@@ -421,85 +432,8 @@ class InputsContainer(v.List):
                     self.sweep_w_design_var_checkbox.v_model = True
 
 
-
-""" 
-        #############################################################
-        # Create the widgets to change the value of the parameters in the sensitivity analysis,
-        # which entails: create the widget, create the function to update the input and on_click
-        # that function
-
-        self.cruise_mach_input_widget = widgets.BoundedFloatText(
-            min=0.0,
-            max=1.0,
-            step=0.01,
-            value=self.cruise_mach,
-            description="M_cruise",
-            description_tooltip="Cruise mach",
-        )
-        
-        self.cruise_mach_input_box = widgets.HBox()
-        self.cruise_mach_input_box.children = [self.cruise_mach_input_widget]
-        self.cruise_mach_input_box.layout = widgets.Layout(
-            width="100%",
-            height="54px",
-            align_items="center",
-        )
-
-        # As can be seen in the parent tab, there is an issue when cruise mach gets too high,
-        # we will display a warning when that value is reached, informing students of what is
-        # done behind the scene
-        self.cruise_mach_warning_button = widgets.Button(
-            description="",
-            icon="fa-info-circle",
-            button_style="warning",
-            tooltip="The sweep angle of the wing has been adjusted to avoid having compressibility "
-            "drag coefficient too high ",
-        )
-        self.cruise_mach_warning_button.layout = widgets.Layout(
-            height="28px", width="36px"
-        )
-
-        self.cruise_mach_filler_box = widgets.Box(
-            layout=widgets.Layout(
-                border="0px solid black",
-                margin="0 0 0 0px",
-                padding="0px",
-                align_items="center",
-                width="17px",
-                height="28px",
-            ),
-        )
-
-        def update_cruise_mach(change):
-            self.cruise_mach = change["new"]
-
-            if self.cruise_mach > 0.78:
-
-                self.cruise_mach_input_box.children = [
-                    self.cruise_mach_input_widget,
-                    self.cruise_mach_warning_button,
-                    self.cruise_mach_filler_box,
-                ]
-
-            else:
-
-                self.cruise_mach_input_box.children = [
-                    self.cruise_mach_input_widget,
-                ]
-
-        self.cruise_mach_input_widget.observe(update_cruise_mach, names="value")
-
-        ###########################
-        
-
-        ############################################################################################
-        # We also create a bow specific for launching an MDO which will only consists of selecting
-        # the objectives and the bounds for the design variables
-        # Input box
-        
-        
-
-
-        ##########################################################################################
-    
-"""
+    def _mach_alert(self, widget, event, data):
+        # If the mach is above the value of 0.78 and the snackbar is closed, opens
+        # the snackbar to alert the user
+        if self.cruise_mach_input.slider.v_model > 0.78 and not self.snackbar.v_model:
+            self.snackbar.open_close(widget, event, data)
