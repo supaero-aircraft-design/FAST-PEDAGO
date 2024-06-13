@@ -108,7 +108,7 @@ class InputsContainer(v.List):
         # will thus adapt the sweep based on the mach number with a message to let the
         # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
         # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.cruise_mach_input.value > 0.78:
+        if self.cruise_mach_input.slider.v_model > 0.78:
             cos_phi_25 = (
                 0.78
                 / self.cruise_mach_input.slider.v_model
@@ -166,8 +166,8 @@ class InputsContainer(v.List):
 
             problem.model.add_design_var(
                 name="data:geometry:wing:aspect_ratio",
-                lower=self.ar_design_var_input.range[0],
-                upper=self.ar_design_var_input.range[1],
+                lower=self.ar_design_var_input.slider.v_model[0],
+                upper=self.ar_design_var_input.slider.v_model[1],
             )
 
         if self.sweep_w_design_var_checkbox.v_model:
@@ -175,8 +175,8 @@ class InputsContainer(v.List):
             problem.model.add_design_var(
                 name="data:geometry:wing:sweep_25",
                 units="deg",
-                lower=self.sweep_w_design_var_input.range[0],
-                upper=self.sweep_w_design_var_input.range[1],
+                lower=self.sweep_w_design_var_input.slider.v_model[0],
+                upper=self.sweep_w_design_var_input.slider.v_model[1],
             )
         
         # The objective is found using the v-model of the button group
@@ -295,9 +295,8 @@ class InputsContainer(v.List):
                     children=["MDO"])
             ],
         )
-        
-        # TODO
-        # Implement the header and put the right on_event call in the interface
+
+
         self.inputs_header = _InputsCategory(
             "Process definition",
             [
