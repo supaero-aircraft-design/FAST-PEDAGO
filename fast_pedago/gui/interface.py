@@ -44,8 +44,9 @@ class Interface(v.App):
         self._configure_paths()
         self._build_layout()
         
+        self.inputs.set_initial_value_mda("reference aircraft")
         self.graphs.generate_n2_xdsm(self.mda_configuration_file_path)
-        
+
         self.to_inputs()
 
 
@@ -61,6 +62,8 @@ class Interface(v.App):
         self.inputs = InputsContainer()
         self.graphs = GraphVisualizationContainer()
         self.default_content = v.Html(tag="div", children=["Lorem ipsum"])
+        
+        self.inputs.process_selection_switch.on_event("change", self._switch_process)
         
         # The content attributes will be used to change the components
         # displayed depending on the phase of the app : inputs, outputs, 
@@ -209,4 +212,14 @@ class Interface(v.App):
     def _open_close_drawer(self, widget, event, data):
             self.drawer.v_model = not self.drawer.v_model
 
-    
+
+    def _switch_process(self, widget, event, data):
+
+        # If the button toggle is on 1, switch to MDO
+        if data==1:
+            self.inputs.to_MDO()
+            self.graphs.to_MDO()
+
+        else:
+            self.inputs.to_MDA()
+            self.graphs.to_MDA()

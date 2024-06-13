@@ -25,6 +25,8 @@ from fast_pedago.utils import (
 )
 
 
+DEFAULT_PROCESS_NAME = "aircraft"
+
 # Min and max values for sliders input values
 OPT_AR_MIN = 9.0
 OPT_AR_MAX = 18.0
@@ -52,6 +54,8 @@ class InputsContainer(v.List):
         self._set_layout_mda()
         self._set_layout_mdo()
         
+        self._build_layout()
+        
         self.to_MDA()
     
     
@@ -59,14 +63,27 @@ class InputsContainer(v.List):
         """
         Changes inputs to MDO inputs
         """
-        self.children = self.mdo_input
-    
+        self.children = [self.inputs_header] + self.mdo_input
+        self.launch_button.children =[
+            v.Icon(class_="px-3", children=["fa-plane"]),
+            "Launch optimization",
+        ]
+        self.process_name_field.label = "Opimization name"
+        self.process_name_field.placeholder = "Write a name for your optimization process"
+
+
     def to_MDA(self):
         """
         Changes inputs to MDA inputs
         """
-        self.children = self.mda_input
-        
+        self.children = [self.inputs_header] + self.mda_input
+        self.launch_button.children =[
+            v.Icon(class_="px-3", children=["fa-plane"]),
+            "Launch sizing",
+        ]
+        self.process_name_field.label = "Sizing name"
+        self.process_name_field.placeholder = "Write a name for your sizing process"
+
 
     def retrieve_mda_inputs(self):
         """
@@ -237,6 +254,84 @@ class InputsContainer(v.List):
         self.bpr_input.slider.v_model = self.reference_inputs[
             "data:propulsion:rubber_engine:bypass_ratio"
         ].value[0]
+
+
+    def _build_layout(self):
+        self.process_name = DEFAULT_PROCESS_NAME
+        
+        # Text box to give a name to the run
+        self.process_name_field = v.TextField(
+            outlined=True,
+            hide_details=True,
+            dense=True,
+            label="Sizing name",
+            placeholder="Write a name for your sizing process",
+        )
+        self.process_name_field.on_event("change", self._update_process_name)
+
+        # Create a button to launch the sizing
+        self.launch_button = v.Btn(
+            block=True,
+            color="#32cd32",
+            children=[
+                v.Icon(class_="px-3", children=["fa-plane"]),
+                "Launch sizing"
+            ],
+        )
+        # Create a button to trigger the MDO "mode"
+        self.process_selection_switch = v.BtnToggle(
+            rounded=True,
+            mandatory=True,
+            dense=True,
+            children=[
+                v.Btn(
+                    v_bind='tooltip.attrs',
+                    v_on='tooltip.on',
+                    children=["MDA"]
+                ),
+                v.Btn(
+                    v_bind='tooltip.attrs',
+                    v_on='tooltip.on',
+                    children=["MDO"])
+            ],
+        )
+        
+        # TODO
+        # Implement the header and put the right on_event call in the interface
+        self.inputs_header = _InputsCategory(
+            "Process definition",
+            [
+                v.Row(
+                    align="center",
+                    children=[
+                        v.Col(
+                            cols=4,
+                            children=[
+                               v.Tooltip(
+                                    bottom=True,
+                                    v_slots=[{
+                                        'name': 'activator',
+                                        'variable': 'tooltip',
+                                        'children': self.process_selection_switch,
+                                    }],
+                                    children=["Swap between analysis and optimisation mode"],
+                                ), 
+                            ],
+                        ),
+                        v.Col(
+                            cols=8,
+                            children=[self.launch_button],
+                        ),
+                    ],
+                ),
+                v.Row(
+                    class_="px-3",
+                    align="center",
+                    justify="center",
+                    children=[self.process_name_field],
+                ),
+            ],
+        )
 
    
     def _set_layout_mdo(self):
@@ -437,3 +532,13 @@ class InputsContainer(v.List):
         # the snackbar to alert the user
         if self.cruise_mach_input.slider.v_model > 0.78 and not self.snackbar.v_model:
             self.snackbar.open_close(widget, event, data)
+
+
+    def _update_process_name(self, widget, event, data):
+        """
+        Changes process name when a new name is written
+        in the input text field.
+
+        To be used with a "on_event" of a text field ipyvuetify 
+        """
+        self.process_name = data
