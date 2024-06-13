@@ -14,6 +14,10 @@ from fast_pedago import (
     configuration,
     source_data_files,
 )
+from fast_pedago.processes import (
+    MDAMDOLauncher,
+    ResidualsObjectivesPlotter,
+)
 from . import (
     Header,
     Footer,
@@ -45,14 +49,24 @@ class Interface(v.App):
         self._build_layout()
         
         self.inputs.set_initial_value_mda("reference aircraft")
-        self.graphs.generate_n2_xdsm(self.mda_configuration_file_path)
+        self.graph.generate_n2_xdsm(self.mda_configuration_file_path)
 
         self.to_inputs()
+        
+        # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
+        # MDA/MDO and plot there evolution.
+        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.graph)
+        self.process_launcher = MDAMDOLauncher(
+            self.mda_configuration_file_path,
+            self.mda_configuration_file_path,
+            self.inputs,
+            self.residuals_objectives_plotter,
+        )
 
 
     def to_inputs(self):
         self.drawer_content.children = [self.inputs]
-        self.main_content.children = [self.graphs]
+        self.main_content.children = [self.graph]
 
 
     def _build_layout(self):
@@ -60,10 +74,13 @@ class Interface(v.App):
         Builds the layout of the app.
         """
         self.inputs = InputsContainer()
-        self.graphs = GraphVisualizationContainer()
+        self.graph = GraphVisualizationContainer()
         self.default_content = v.Html(tag="div", children=["Lorem ipsum"])
         
+        # Buttons actions are defined outside of inputs to put all the non-graphical
+        # code in the same place.
         self.inputs.process_selection_switch.on_event("change", self._switch_process)
+        self.inputs.launch_button.on_event("click", self._launch_process)
         
         # The content attributes will be used to change the components
         # displayed depending on the phase of the app : inputs, outputs, 
@@ -217,9 +234,40 @@ class Interface(v.App):
 
         # If the button toggle is on 1, switch to MDO
         if data==1:
+            self.is_MDO = True
             self.inputs.to_MDO()
-            self.graphs.to_MDO()
+            self.graph.to_MDO()
 
         else:
+            self.is_MDO = False
             self.inputs.to_MDA()
-            self.graphs.to_MDA()
+            self.graph.to_MDA()
+
+
+    def _to_process_computation(self):
+        """
+        When a process is on-going, disables all inputs components
+        to let the user know he can't modify inputs.
+        """
+        self.inputs.launch_button.color = (
+            "#FF0000"
+        )
+        
+        # Show a loading widget to make it apparent that a computation is
+        # underway.
+        self.graph.set_loading("Setting up")
+
+
+    def _to_process_results(self):
+        """
+        Re-enables input widgets after the end of a MDA/MDO process
+        """
+        self.inputs.launch_button.color = (
+            "#32cd32"
+        )
+
+
+    def _launch_process(self, widget, event, data):
+        self._to_process_computation()
+        self.process_launcher.launch_processes(self.is_MDO)
+        self._to_process_results()
