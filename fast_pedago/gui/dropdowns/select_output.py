@@ -13,9 +13,9 @@ class SelectOutput(v.Select):
         self.clearable = True
         
         if is_single_output:
-            self.label = "Select an output file to display"
+            self.label = "Select a main output file to display"
         else:
-            self.label = "Select an output file to add to the display"
+            self.label = "Select output files for comparison"
             self.multiple = True
             self.chips = True
             self.deletable_chips = True
