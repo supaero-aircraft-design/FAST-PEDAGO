@@ -84,6 +84,46 @@ class _InputsCategory(v.ListGroup):
         ]
 
 
+class _OutputsCategory(v.ListGroup):
+    """
+    Internal class to factorize layout of an output category
+    such as geometry, weight, mission, etc.
+    
+    It displays the name of the category as a title and
+    a multi-button to select a graph.
+    """
+    def __init__(self, name: str, outputs = [], **kwargs):
+        """
+        :param name: the name of the category
+        :param outputs: a list of graphs
+        """
+        super().__init__(**kwargs)
+
+        self.value = True
+        self.v_slots = [{
+            'name': 'activator',
+            'children': [
+                v.ListItemTitle(
+                    children=[
+                        name,
+                    ],
+                ),
+            ],
+        }]
+        self.children = [
+            v.ListItem(
+                children=[
+                    v.BtnToggle(
+                        mandatory=True,
+                        children=[
+                            v.Btn(children=[output]) for output in outputs
+                        ],
+                    ),
+                ],
+            ),
+        ]
+
+
 # FIXME 
 # Tooltip doesn't work
 class _TooltipButton(v.Btn):
