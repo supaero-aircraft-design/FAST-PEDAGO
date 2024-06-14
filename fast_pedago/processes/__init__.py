@@ -1,2 +1,3 @@
 from .residuals_objectives_plotter import ResidualsObjectivesPlotter
 from .mda_mdo_launcher import MDAMDOLauncher
+from .output_graphs_plotter import OutputGraphsPlotter
