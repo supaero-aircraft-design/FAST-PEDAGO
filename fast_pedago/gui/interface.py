@@ -22,6 +22,7 @@ from . import (
     Header,
     Footer,
     InputsContainer,
+    OutputsSelectionContainer,
     GraphVisualizationContainer,
 )
 
@@ -46,16 +47,18 @@ class Interface(v.App):
         self.source_data_file = DEFAULT_SOURCE_DATA_FILE
         
         self._configure_paths()
+        self._build_inputs_layout()
+        self._build_outputs_layout()
         self._build_layout()
         
         self.inputs.set_initial_value_mda("reference aircraft")
-        self.graph.generate_n2_xdsm(self.mda_configuration_file_path)
+        self.process_graph.generate_n2_xdsm(self.mda_configuration_file_path)
 
-        self.to_inputs()
+        self._to_inputs()
         
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
         # MDA/MDO and plot there evolution.
-        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.graph)
+        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.process_graph)
         self.process_launcher = MDAMDOLauncher(
             self.mda_configuration_file_path,
             self.mda_configuration_file_path,
@@ -64,24 +67,35 @@ class Interface(v.App):
         )
 
 
-    def to_inputs(self):
+    def _to_inputs(self):
         self.drawer_content.children = [self.inputs]
-        self.main_content.children = [self.graph]
+        self.main_content.children = [self.process_graph]
+    
+    
+    def _to_outputs(self):
+        self.drawer_content.children = [self.outputs]
+        self.main_content.children = [self.process_graph]
 
 
-    def _build_layout(self):
-        """
-        Builds the layout of the app.
-        """
+    def _build_inputs_layout(self):
         self.inputs = InputsContainer()
-        self.graph = GraphVisualizationContainer()
-        self.default_content = v.Html(tag="div", children=["Lorem ipsum"])
+        self.process_graph = GraphVisualizationContainer()
         
         # Buttons actions are defined outside of inputs to put all the non-graphical
         # code in the same place.
         self.inputs.process_selection_switch.on_event("change", self._switch_process)
         self.inputs.launch_button.on_event("click", self._launch_process)
-        
+
+
+    def _build_outputs_layout(self):
+        self.outputs = OutputsSelectionContainer(self.working_directory_path)
+        self.output_graphs = ...
+
+
+    def _build_layout(self):
+        """
+        Builds the layout of the app.
+        """ 
         # The content attributes will be used to change the components
         # displayed depending on the phase of the app : inputs, outputs, 
         # source file selection.
@@ -236,12 +250,12 @@ class Interface(v.App):
         if data==1:
             self.is_MDO = True
             self.inputs.to_MDO()
-            self.graph.to_MDO()
+            self.process_graph.to_MDO()
 
         else:
             self.is_MDO = False
             self.inputs.to_MDA()
-            self.graph.to_MDA()
+            self.process_graph.to_MDA()
 
 
     def _to_process_computation(self):
@@ -255,7 +269,7 @@ class Interface(v.App):
         
         # Show a loading widget to make it apparent that a computation is
         # underway.
-        self.graph.set_loading("Setting up")
+        self.process_graph.set_loading("Setting up")
 
 
     def _to_process_results(self):
