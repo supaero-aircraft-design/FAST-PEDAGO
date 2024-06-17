@@ -16,7 +16,7 @@ from fast_pedago.utils import (
 )
 
 
-class GraphVisualizationContainer(v.Col):
+class ProcessGraphContainer(v.Col):
     """
     A container to display process figures, N2 and XDSM graphs.
     """

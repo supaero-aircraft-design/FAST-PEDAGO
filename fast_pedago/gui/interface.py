@@ -23,7 +23,7 @@ from . import (
     Footer,
     InputsContainer,
     OutputsSelectionContainer,
-    GraphVisualizationContainer,
+    ProcessGraphContainer,
 )
 
 
@@ -79,7 +79,7 @@ class Interface(v.App):
 
     def _build_inputs_layout(self):
         self.inputs = InputsContainer()
-        self.process_graph = GraphVisualizationContainer()
+        self.process_graph = ProcessGraphContainer()
         
         # Buttons actions are defined outside of inputs to put all the non-graphical
         # code in the same place.
