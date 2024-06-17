@@ -51,10 +51,10 @@ class Interface(v.App):
         self._build_outputs_layout()
         self._build_layout()
         
+        self._to_inputs()
+        
         self.inputs.set_initial_value_mda("reference aircraft")
         self.process_graph.generate_n2_xdsm(self.mda_configuration_file_path)
-
-        self._to_inputs()
         
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
         # MDA/MDO and plot there evolution.
@@ -70,11 +70,15 @@ class Interface(v.App):
     def _to_inputs(self):
         self.drawer_content.children = [self.inputs]
         self.main_content.children = [self.process_graph]
+        self.navigation_buttons.children = [self.to_outputs_button]
+        self.navigation_buttons.justify = "end"
     
     
     def _to_outputs(self):
         self.drawer_content.children = [self.outputs]
         self.main_content.children = [self.process_graph]
+        self.navigation_buttons.children = [self.to_inputs_button]
+        self.navigation_buttons.justify = "start"
 
 
     def _build_inputs_layout(self):
@@ -143,6 +147,37 @@ class Interface(v.App):
                 self.drawer_content,
             ],
         )
+        
+        self.to_outputs_button = v.Btn(
+            color="primary",
+            children=[
+                "Outputs",
+                v.Icon(
+                    class_="ps-2",
+                    children=["fa-angle-right"]
+                ),
+            ],
+        )
+        
+        self.to_inputs_button = v.Btn(
+            color="primary",
+            children=[
+                v.Icon(
+                    class_="pe-2",
+                    children=["fa-angle-left"]
+                ),
+                "Inputs",
+            ],
+        )
+
+        self.navigation_buttons = v.Row(
+            class_="mx-6 mt-5",
+        )
+        # As I don't want _to_inputs and _to_outputs to be called only by widgets
+        # events, I have to put them in a lambda function here since the on_event
+        # requires args widget, event and data.
+        self.to_inputs_button.on_event("click", lambda *args: self._to_inputs())
+        self.to_outputs_button.on_event("click", lambda *args : self._to_outputs())
 
         self.children = [
             header,
@@ -163,7 +198,15 @@ class Interface(v.App):
                                 class_="hidden-md-and-down",
                             ),
                             v.Col(
-                                children=[self.main_content],
+                                class_="pa-0",
+                                children=[
+                                    self.navigation_buttons,
+                                    v.Row(
+                                        children=[
+                                            self.main_content,
+                                        ],
+                                    ),
+                                ],
                             ),
                         ],
                     ),
