@@ -325,6 +325,7 @@ class Interface(v.App):
 
 
     def _launch_process(self, widget, event, data):
+        self._open_close_drawer(widget, event, data)
         self._to_process_computation()
         self.process_launcher.launch_processes(self.is_MDO)
         self._to_process_results()
