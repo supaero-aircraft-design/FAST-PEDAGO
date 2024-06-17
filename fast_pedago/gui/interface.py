@@ -24,6 +24,7 @@ from . import (
     InputsContainer,
     OutputsSelectionContainer,
     ProcessGraphContainer,
+    SourceSelectionContainer,
 )
 
 
@@ -47,11 +48,12 @@ class Interface(v.App):
         self.source_data_file = DEFAULT_SOURCE_DATA_FILE
         
         self._configure_paths()
+        self._build_source_selection_layout()
         self._build_inputs_layout()
         self._build_outputs_layout()
         self._build_layout()
         
-        self._to_inputs()
+        self._to_source_selection()
         
         self.inputs.set_initial_value_mda("reference aircraft")
         self.process_graph.generate_n2_xdsm(self.mda_configuration_file_path)
@@ -67,7 +69,17 @@ class Interface(v.App):
         )
 
 
+    def _to_source_selection(self):
+        self.drawer.hide()
+        self.header.open_drawer_button.hide()
+        self.padding_column.hide()
+        self.main_content.children = [self.source_selection]
+
+
     def _to_inputs(self):
+        self.drawer.show()
+        self.header.open_drawer_button.show()
+        self.padding_column.show()
         self.drawer_content.children = [self.inputs]
         self.main_content.children = [self.process_graph]
         self.navigation_buttons.children = [self.to_outputs_button]
@@ -96,6 +108,11 @@ class Interface(v.App):
         self.output_graphs = ...
 
 
+    def _build_source_selection_layout(self):
+        self.source_selection = SourceSelectionContainer()
+        self.source_selection.source_data_file_selector.on_event("change", self._set_source_data_file)
+
+
     def _build_layout(self):
         """
         Builds the layout of the app.
@@ -116,8 +133,9 @@ class Interface(v.App):
         # Some of the components are made to hide when on small screens
         # This is to adjust the layout since the navigation drawer hides
         # on small screens.
-        header = Header()
-        header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
+        self.header = Header()
+        self.header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
+        self.header.fast_oad_top_layer_logo.on_event("click", lambda *args : self._to_source_selection())
         
         close_drawer_button = v.Btn(
             class_="me-5 hidden-lg-and-up",
@@ -178,9 +196,15 @@ class Interface(v.App):
         # requires args widget, event and data.
         self.to_inputs_button.on_event("click", lambda *args: self._to_inputs())
         self.to_outputs_button.on_event("click", lambda *args : self._to_outputs())
+        
+        self.padding_column = v.Col(
+            cols="1",
+            style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
+            class_="hidden-md-and-down",
+        )
 
         self.children = [
-            header,
+            self.header,
             self.drawer,
             # Main content : to display graphs
             v.Html(
@@ -192,11 +216,7 @@ class Interface(v.App):
                     ),
                     v.Row(
                         children=[
-                            v.Col(
-                                cols="1",
-                                style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
-                                class_="hidden-md-and-down",
-                            ),
+                            self.padding_column,
                             v.Col(
                                 class_="pa-0",
                                 children=[
@@ -329,3 +349,14 @@ class Interface(v.App):
         self._to_process_computation()
         self.process_launcher.launch_processes(self.is_MDO)
         self._to_process_results()
+
+
+    def _set_source_data_file(self, widget, event, data):
+        """
+        Sets the reference file name to use
+        
+        To be called by a widget event
+        """
+        self.source_data_files = data
+        self.inputs.set_initial_value_mda(data)
+        self._to_inputs()
