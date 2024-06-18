@@ -4,12 +4,17 @@ Utilitary layout classes for widgets to avoid repeating code
 # This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
+import os.path as pth
 
 import ipyvuetify as v
 
 import plotly.graph_objects as go
 
 from . import FIGURE_HEIGHT
+from fast_pedago.processes import (
+    OutputGraphsPlotter,
+    GRAPH,
+)
 
 
 class _Figure(go.FigureWidget):
@@ -122,6 +127,55 @@ class _OutputsCategory(v.ListGroup):
                 ],
             ),
         ]
+
+
+class _OutputCard(v.Card):
+    def __init__(self, title, working_directory_path, **kwargs):
+        """
+        :param title: The title of the graph. Coresponds to a graph category.
+        """
+        super().__init__(**kwargs)
+        self.plotter = OutputGraphsPlotter(working_directory_path)
+        select = v.Select(
+            dense=True,
+            hide_details=True,
+            
+            items = GRAPH[title],
+            v_model = GRAPH[title][0],
+        )
+        select.on_event("change", 
+            lambda widget, event, data: self.plotter.change_graph(data)
+        )
+        self.plotter.change_graph(GRAPH[title][0])
+        
+        self.class_="my-3"
+        self.max_width = "100vw"
+        
+        self.children = [
+            v.CardTitle(
+                children=[
+                    v.Row(
+                        children=[
+                            v.Col(
+                                cols=2,
+                                children=[
+                                    title,
+                                ],
+                            ),
+                            v.Col(
+                                children=[
+                                    select,
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            v.CardText(children=[self.plotter.output_display]),
+        ]
+    
+
+        
 
 
 # FIXME 

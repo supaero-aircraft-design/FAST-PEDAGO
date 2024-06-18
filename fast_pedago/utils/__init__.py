@@ -17,4 +17,5 @@ from .layouts import (
     _OutputsCategory,
     _TooltipButton,
     _Figure,
+    _OutputCard,
 )
