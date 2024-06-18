@@ -23,6 +23,7 @@ from . import (
     Footer,
     InputsContainer,
     OutputsSelectionContainer,
+    OutputsGraphsContainer,
     ProcessGraphContainer,
     SourceSelectionContainer,
 )
@@ -53,7 +54,7 @@ class Interface(v.App):
         self._build_outputs_layout()
         self._build_layout()
         
-        self._to_source_selection()
+        self._to_outputs()
         
         self.inputs.set_initial_value_mda("reference aircraft")
         
@@ -87,7 +88,7 @@ class Interface(v.App):
     
     def _to_outputs(self):
         self.drawer_content.children = [self.outputs]
-        self.main_content.children = [self.process_graph]
+        self.main_content.children = [self.output_graphs]
         self.navigation_buttons.children = [self.to_inputs_button]
         self.navigation_buttons.justify = "start"
 
@@ -104,7 +105,7 @@ class Interface(v.App):
 
     def _build_outputs_layout(self):
         self.outputs = OutputsSelectionContainer(self.working_directory_path)
-        self.output_graphs = ...
+        self.output_graphs = OutputsGraphsContainer(self.working_directory_path)
 
 
     def _build_source_selection_layout(self):
