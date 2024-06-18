@@ -10,7 +10,7 @@ from fast_pedago.utils import (
     _OutputCard,
     _list_available_sizing_process_results,
 )
-from fast_pedago.gui.dropdowns import SelectOutput
+from . import SelectOutput
 
 
 class OutputsGraphsContainer(v.Col):

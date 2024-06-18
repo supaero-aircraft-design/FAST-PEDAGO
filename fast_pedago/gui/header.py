@@ -8,7 +8,7 @@ import ipyvuetify as v
 
 from fast_pedago.utils.functions import _image_from_path
 from fast_pedago import gui
-from fast_pedago.gui.buttons import (
+from . import (
     GitLinksButton,
     ClearAllButton,
 )

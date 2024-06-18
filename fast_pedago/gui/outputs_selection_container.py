@@ -6,7 +6,7 @@ import os.path as pth
 
 import ipyvuetify as v
 
-from fast_pedago.gui.dropdowns import SelectOutput
+from . import SelectOutput
 from fast_pedago.utils import (
     _OutputsCategory,
     _list_available_sizing_process_results,
