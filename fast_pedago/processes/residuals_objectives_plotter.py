@@ -4,7 +4,6 @@ import shutil
 from time import sleep
 from threading import Event
 
-from fast_pedago.gui import ProcessGraphContainer
 from fast_pedago.utils import (
     _extract_objective,
     _extract_residuals,
@@ -12,9 +11,9 @@ from fast_pedago.utils import (
 
 
 class ResidualsObjectivesPlotter():
-    def __init__(self, graph: ProcessGraphContainer, **kwargs):
+    def __init__(self, graph, **kwargs):
         """
-        :param graph: The GraphVisualizationContainer
+        :param graph: The ProcessGraphContainer
             on which to plot the residuals and objectives.
         """
         super().__init__(**kwargs)

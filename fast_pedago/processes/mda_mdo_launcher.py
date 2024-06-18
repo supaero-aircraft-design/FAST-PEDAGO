@@ -13,7 +13,6 @@ import openmdao.api as om
 import fastoad.api as oad
 
 from . import ResidualsObjectivesPlotter
-from fast_pedago.gui import InputsContainer
 from fast_pedago.utils import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
@@ -28,7 +27,7 @@ class MDAMDOLauncher():
     def __init__(self, 
             mda_configuration_file_path: str, 
             mdo_configuration_file_path: str, 
-            inputs: InputsContainer,
+            inputs,
             plotter: ResidualsObjectivesPlotter, 
             **kwargs):
         """
