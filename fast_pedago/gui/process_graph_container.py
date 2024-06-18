@@ -20,7 +20,7 @@ class ProcessGraphContainer(v.Col):
     """
     A container to display process figures, N2 and XDSM graphs.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, configuration_file_path: str, **kwargs):
         """
         :param configuration_file_path: the path to the configuration file 
         needed to generated XDSM/N2 graphs.
@@ -28,6 +28,8 @@ class ProcessGraphContainer(v.Col):
         super().__init__(**kwargs)
         
         self.is_MDA = True
+
+        self._generate_n2_xdsm(configuration_file_path)
         
         self._set_layout()
         self.to_MDA()
@@ -125,7 +127,7 @@ class ProcessGraphContainer(v.Col):
     
     # TODO
     # Implement the generation of the graphs
-    def generate_n2_xdsm(self, configuration_file_path: str):
+    def _generate_n2_xdsm(self, configuration_file_path: str):
         """
         Generate the N2 diagram and the XDSM, located them near the configuration file
         as in this case there are more data than actual results. 
@@ -199,10 +201,10 @@ class ProcessGraphContainer(v.Col):
         
         # This is a container to avoid resetting all of the GraphVisualizationContainer
         # children when switching between MDA/MDO
-        self.display = v.Row(
-            justify="center",
+        self.display = v.Container(
+            
         )
-        
+
         self.children = [
             v.Row(
                 class_="pb-4 pt-2",
@@ -211,7 +213,12 @@ class ProcessGraphContainer(v.Col):
                     self.display_selection_buttons,
                 ],
             ),
-            self.display,
+            v.Row(
+                justify="center",
+                children=[
+                    self.display,
+                ],
+            ),
         ]
     
 

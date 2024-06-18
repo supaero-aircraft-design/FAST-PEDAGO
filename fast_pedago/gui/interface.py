@@ -56,7 +56,6 @@ class Interface(v.App):
         self._to_source_selection()
         
         self.inputs.set_initial_value_mda("reference aircraft")
-        self.process_graph.generate_n2_xdsm(self.mda_configuration_file_path)
         
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
         # MDA/MDO and plot there evolution.
@@ -95,7 +94,7 @@ class Interface(v.App):
 
     def _build_inputs_layout(self):
         self.inputs = InputsContainer()
-        self.process_graph = ProcessGraphContainer()
+        self.process_graph = ProcessGraphContainer(self.mda_configuration_file_path)
         
         # Buttons actions are defined outside of inputs to put all the non-graphical
         # code in the same place.
