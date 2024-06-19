@@ -134,24 +134,50 @@ class ProcessGraphContainer(v.Col):
         """
         configuration_file_name = pth.basename(configuration_file_path)
         
-        self.n2_image_path = configuration_file_path.replace(
-            configuration_file_name, "n2.png"
+        # N2 and XDSM pngs are wrapped in a tooltip to indicate to click on them.
+        # This is because it is impossible to load directly the .html into a frame (bugs)
+        n2_image_path = configuration_file_path.replace(
+            configuration_file_name, "n2.png")
+        n2_file_path = configuration_file_path.replace(
+            configuration_file_name, "n2.html")
+
+        n2_image = _image_from_path(
+            n2_image_path , max_height="50vh")
+        n2_image.v_on = 'tooltip.on'
+        n2_image.on_event("click", 
+            lambda *args: webbrowser.open_new_tab(n2_file_path))
+
+        self.n2_widget = v.Tooltip(
+            contained=True,
+            bottom=True,
+            v_slots=[{
+            'name': 'activator',
+            'variable': 'tooltip',
+            'children': n2_image,
+            }],
+            children=["Click me to open interactable N2 graph"]
         )
-        self.n2_file_path = configuration_file_path.replace(
-            configuration_file_name, "n2.html"
-        )
-        self.n2_visualization_widget = _image_from_path(
-            self.n2_image_path , max_height="70vh"
-        )
-        
-        self.xdsm_image_path = configuration_file_path.replace(
-            configuration_file_name, "xdsm.png"
-        )
-        self.xdsm_file_path = configuration_file_path.replace(
-            configuration_file_name, "xdsm.html"
-        )
-        self.xdsm_visualization_widget = _image_from_path(
-            self.xdsm_image_path, max_height="70vh"
+
+        xdsm_image_path = configuration_file_path.replace(
+            configuration_file_name, "xdsm.png")
+        xdsm_file_path = configuration_file_path.replace(
+            configuration_file_name, "xdsm.html")
+
+        xdsm_image = _image_from_path(
+            xdsm_image_path, max_height="50vh")
+        xdsm_image.v_on = 'tooltip.on' 
+        xdsm_image.on_event("click", 
+            lambda *args: webbrowser.open_new_tab(xdsm_file_path))
+
+        self.xdsm_widget = v.Tooltip(
+            contained=True,
+            bottom=True,
+            v_slots=[{
+            'name': 'activator',
+            'variable': 'tooltip',
+            'children': xdsm_image,
+            }],
+            children=["Click me to open interactable XDSM graph"]
         )
         
         
@@ -180,16 +206,8 @@ class ProcessGraphContainer(v.Col):
                     tooltip="Displays the N2 diagram of the sizing process",
                 ),
                 v.Btn(
-                    children=["N2 (browser)"],
-                    tooltip="Displays the N2 diagram of the sizing process in a new browser tab",
-                ),
-                v.Btn(
                     children=["XDSM"],
                     tooltip="Displays the XDSM diagram of the sizing process",
-                ),
-                v.Btn(
-                    children=["XDSM (browser)"],
-                    tooltip="Displays the XDSM diagram of the sizing process in a new browser tab",
                 ),
             ]
         )
@@ -240,16 +258,10 @@ class ProcessGraphContainer(v.Col):
         """
         # None: Residuals/Objective 1: N2 2: N2(browser) 3: XDSM 4: XDSM(browser)
         if data == 1:
-            self.display.children = [self.n2_visualization_widget]
+            self.display.children = [self.n2_widget]
 
         elif data == 2:
-            webbrowser.open_new_tab(self.n2_file_path)
-
-        elif data == 3:
-            self.display.children = [self.xdsm_visualization_widget]
-
-        elif data == 4:
-            webbrowser.open_new_tab(self.xdsm_file_path)
+            self.display.children = [self.xdsm_widget]
         
         else:
             self._resize_figures()
