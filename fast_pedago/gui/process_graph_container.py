@@ -46,7 +46,7 @@ class ProcessGraphContainer(v.Col):
         # Modifies the selected button to display the process figure
         self.display_selection_buttons.v_model = 0
         
-        self._resize_figures()
+        # self._resize_figures()
         self.display.children = [self.objectives_figure]
 
 
@@ -60,7 +60,7 @@ class ProcessGraphContainer(v.Col):
         )
         self.display_selection_buttons.v_model = 0
         
-        self._resize_figures()
+        # self._resize_figures()
         self.display.children = [self.residuals_figure]
 
 
@@ -216,7 +216,12 @@ class ProcessGraphContainer(v.Col):
             v.Row(
                 justify="center",
                 children=[
-                    self.display,
+                    v.Col(
+                        class_="pa-0",
+                        children=[
+                            self.display,
+                        ],
+                    ),
                 ],
             ),
         ]

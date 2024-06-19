@@ -55,7 +55,7 @@ class Interface(v.App):
         self._build_outputs_layout()
         self._build_layout()
         
-        self._to_outputs()
+        self._to_source_selection()
         
         self.inputs.set_initial_value_mda("reference aircraft")
         
@@ -77,21 +77,22 @@ class Interface(v.App):
         self.main_content.children = [self.source_selection]
 
 
-    def _to_inputs(self):
+    def _to_main(self):
         self.drawer.show()
         self.header.open_drawer_button.show()
         self.padding_column.show()
         self.drawer.content.children = [self.inputs]
-        self.main_content.children = [self.process_graph]
-        self.navigation_buttons.children = [self.to_outputs_button]
-        self.navigation_buttons.justify = "end"
+        self.main_content.children = [self.graphs]
     
-    
-    def _to_outputs(self):
-        self.drawer.content.children = [self.outputs]
-        self.main_content.children = [self.output_graphs]
-        self.navigation_buttons.children = [self.to_inputs_button]
-        self.navigation_buttons.justify = "start"
+    def _switch_tab(self, widget, event, data):
+        if data == 1:
+            self.drawer.hide()
+            self.header.open_drawer_button.hide()
+            self.padding_column.hide()
+        else:
+            self.drawer.show()
+            self.header.open_drawer_button.show()
+            self.padding_column.show()
 
 
     def _build_inputs_layout(self):
@@ -123,6 +124,27 @@ class Interface(v.App):
             fluid=True,
             fill_height=True,
         )
+        
+        self.graphs = v.Tabs(
+            centered=True,
+            grow=True,
+            hide_slider=True,
+            children=[
+                v.Tab(children=["Inputs"]),
+                v.Tab(children=["Outputs"]),
+                v.TabItem(
+                    children=[
+                        self.process_graph,
+                    ],
+                ),
+                v.TabItem(
+                    children=[
+                        self.output_graphs,
+                    ],
+                ),
+            ],
+        )
+        self.graphs.on_event("change", self._switch_tab)
         
         self.header = Header()
         self.header.fast_oad_top_layer_logo.on_event("click", lambda *args : self._to_source_selection())
@@ -156,11 +178,6 @@ class Interface(v.App):
         self.navigation_buttons = v.Row(
             class_="mx-6 mt-5",
         )
-        # As I don't want _to_inputs and _to_outputs to be called only by widgets
-        # events, I have to put them in a lambda function here since the on_event
-        # requires args widget, event and data.
-        self.to_inputs_button.on_event("click", lambda *args: self._to_inputs())
-        self.to_outputs_button.on_event("click", lambda *args : self._to_outputs())
         
         # Padding column to avoid having the main content behind the drawer when expanded
         self.padding_column = v.Col(
@@ -186,7 +203,6 @@ class Interface(v.App):
                             v.Col(
                                 class_="pa-0",
                                 children=[
-                                    self.navigation_buttons,
                                     v.Row(
                                         children=[
                                             self.main_content,
@@ -320,7 +336,7 @@ class Interface(v.App):
         """
         self.source_data_files = data
         self.inputs.set_initial_value_mda(data)
-        self._to_inputs()
+        self._to_main()
     
     
     def _open_or_close_drawer(self, widget, event, data):
