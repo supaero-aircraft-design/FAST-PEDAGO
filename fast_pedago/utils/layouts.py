@@ -95,14 +95,16 @@ class _InputsCategory(v.ListGroup):
 
 
 class _OutputCard(v.Col):
-    def __init__(self, title, working_directory_path, **kwargs):
+    def __init__(self, title, working_directory_path, is_full_screen: bool = False, **kwargs):
         """
         :param title: The title of the graph. Coresponds to a graph category.
+        :param is_full_screen: if True, the card will take all the screen space.
         """
         super().__init__(**kwargs)
 
         self.cols = 12
-        self.md = 6
+        if not is_full_screen:
+            self.md = 6
 
         self.plotter = OutputGraphsPlotter(working_directory_path)
         select = v.Select(
@@ -117,9 +119,13 @@ class _OutputCard(v.Col):
         )
         self.plotter.change_graph(GRAPH[title][0])
         
+        height="80vh"
+        if is_full_screen:
+            height="100vh"
+        
         self.children = [
             v.Card(
-                height="80vh",
+                height=height,
                 children=[
                     v.CardTitle(
                         children=[

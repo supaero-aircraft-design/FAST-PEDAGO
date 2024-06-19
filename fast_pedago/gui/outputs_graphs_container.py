@@ -24,7 +24,7 @@ class OutputsGraphsContainer(v.Col):
     def _build_layout(self, working_directory_path):
         self.output_selection = SelectOutput()
 
-        self.general_graph = _OutputCard('General', working_directory_path)
+        self.general_graph = _OutputCard('General', working_directory_path, is_full_screen=True)
         self.geometry_graph = _OutputCard('Geometry', working_directory_path)
         self.aerodynamics_graph = _OutputCard('Aerodynamics', working_directory_path)
         self.mass_graph = _OutputCard('Mass', working_directory_path)
@@ -41,11 +41,11 @@ class OutputsGraphsContainer(v.Col):
             v.Row(
                 align="center",
                 children=[
-                    self.general_graph,
                     self.geometry_graph,
                     self.aerodynamics_graph,
                     self.mass_graph,
                     self.performances_graph,
+                    self.general_graph,
                 ],
             ),
         ]
