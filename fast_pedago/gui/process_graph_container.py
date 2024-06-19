@@ -43,10 +43,7 @@ class ProcessGraphContainer(v.Col):
         self.specific_button.update("Objectives", 
             tooltip="Displays a graph of the evolution of the objective reached at each function call"
         )
-        # Modifies the selected button to display the process figure
-        self.display_selection_buttons.v_model = 0
-        
-        # self._resize_figures()
+        self._resize_figures()
         self.display.children = [self.objectives_figure]
 
 
@@ -58,9 +55,7 @@ class ProcessGraphContainer(v.Col):
         self.specific_button.update("Residuals", 
             tooltip="Displays a graph of the evolution of residuals with the number of iterations"
         )
-        self.display_selection_buttons.v_model = 0
-        
-        # self._resize_figures()
+        self._resize_figures()
         self.display.children = [self.residuals_figure]
 
 
