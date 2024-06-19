@@ -64,7 +64,7 @@ class Interface(v.App):
         self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.process_graph)
         self.process_launcher = MDAMDOLauncher(
             self.mda_configuration_file_path,
-            self.mda_configuration_file_path,
+            self.mdo_configuration_file_path,
             self.inputs,
             self.residuals_objectives_plotter,
         )
