@@ -11,7 +11,6 @@ import ipyvuetify as v
 from fast_pedago.utils.functions import _image_from_path  # noqa
 from fast_pedago.utils import (
     _Figure,
-    _TooltipButton,
     FIGURE_HEIGHT,
 )
 
@@ -40,9 +39,10 @@ class ProcessGraphContainer(v.Col):
         Changes the buttons texts and the figure displayed to MDO
         """
         self.is_MDA = False
-        self.specific_button.update("Objectives", 
-            tooltip="Displays a graph of the evolution of the objective reached at each function call"
-        )
+        self.specific_button.children = ["Objectives"]
+        self.specific_button.tooltip = "Displays a graph of the evolution "
+        "of the objective reached at each function call"
+        
         self._resize_figures()
         self.display.children = [self.objectives_figure]
 
@@ -52,9 +52,10 @@ class ProcessGraphContainer(v.Col):
         Changes the buttons texts and the figure displayed to MDA
         """
         self.is_MDA = True
-        self.specific_button.update("Residuals", 
-            tooltip="Displays a graph of the evolution of residuals with the number of iterations"
-        )
+        self.specific_button.children=["Residuals"]
+        self.specific_button.tooltip = "Displays a graph of the evolution "
+        "of residuals with the number of iterations"
+
         self._resize_figures()
         self.display.children = [self.residuals_figure]
 
@@ -160,20 +161,36 @@ class ProcessGraphContainer(v.Col):
         """
         
         # By defining the buttons this way it is possible to change the button group between MDA/MDO
-        self.specific_button = _TooltipButton("Residuals", 
-            tooltip="Displays a graph of the evolution of residuals with the number of iterations"
+        self.specific_button = v.Btn(
+            children=["Residuals"],
+            tooltip="Displays a graph of the evolution of residuals with the number of iterations",
         )
         
+        # TODO: Find another way to implement tooltips as they don't seem to work with BtnToggle
+        # TODO: Make the browser links only on the png of N2/XDSM (since iframe doesn't work
+        # because of a voilà bug.)
         self.display_selection_buttons = v.BtnToggle(
             v_model="toggle_exclusive",
             mandatory=True,
             dense=True,
             children=[
                 self.specific_button,
-                _TooltipButton("N2", tooltip="Displays the N2 diagram of the sizing process"),
-                _TooltipButton("N2 (browser)", tooltip="Displays the N2 diagram of the sizing process in a new browser tab"),
-                _TooltipButton("XDSM", tooltip="Displays the XDSM diagram of the sizing process"),
-                _TooltipButton("XDSM (browser)", tooltip="Displays the XDSM diagram of the sizing process in a new browser tab"),
+                v.Btn(
+                    children=["N2"],
+                    tooltip="Displays the N2 diagram of the sizing process",
+                ),
+                v.Btn(
+                    children=["N2 (browser)"],
+                    tooltip="Displays the N2 diagram of the sizing process in a new browser tab",
+                ),
+                v.Btn(
+                    children=["XDSM"],
+                    tooltip="Displays the XDSM diagram of the sizing process",
+                ),
+                v.Btn(
+                    children=["XDSM (browser)"],
+                    tooltip="Displays the XDSM diagram of the sizing process in a new browser tab",
+                ),
             ]
         )
         self.display_selection_buttons.on_event("change", self._change_display)

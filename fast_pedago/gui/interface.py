@@ -23,7 +23,6 @@ from . import (
     Footer,
     Drawer,
     InputsContainer,
-    OutputsSelectionContainer,
     OutputsGraphsContainer,
     ProcessGraphContainer,
     SourceSelectionContainer,
@@ -50,9 +49,6 @@ class Interface(v.App):
         self.source_data_file = DEFAULT_SOURCE_DATA_FILE
         
         self._configure_paths()
-        self._build_source_selection_layout()
-        self._build_inputs_layout()
-        self._build_outputs_layout()
         self._build_layout()
         
         self._to_source_selection()
@@ -83,7 +79,8 @@ class Interface(v.App):
         self.padding_column.show()
         self.drawer.content.children = [self.inputs]
         self.main_content.children = [self.graphs]
-    
+
+
     def _switch_tab(self, widget, event, data):
         if data == 1:
             self.drawer.hide()
@@ -95,30 +92,25 @@ class Interface(v.App):
             self.padding_column.show()
 
 
-    def _build_inputs_layout(self):
-        self.inputs = InputsContainer()
-        self.process_graph = ProcessGraphContainer(self.mda_configuration_file_path)
-        
-        # Buttons actions are defined outside of inputs to put all the non-graphical
-        # code in the same place.
-        self.inputs.process_selection_switch.on_event("change", self._switch_process)
-        self.inputs.launch_button.on_event("click", self._launch_process)
-
-
-    def _build_outputs_layout(self):
-        self.outputs = OutputsSelectionContainer(self.working_directory_path)
-        self.output_graphs = OutputsGraphsContainer(self.working_directory_path)
-
-
-    def _build_source_selection_layout(self):
-        self.source_selection = SourceSelectionContainer()
-        self.source_selection.source_data_file_selector.on_event("change", self._set_source_data_file)
-
-
     def _build_layout(self):
         """
         Builds the layout of the app.
         """ 
+        # Source selection + home widgets
+        self.source_selection = SourceSelectionContainer()
+        self.source_selection.source_data_file_selector.on_event("change", self._set_source_data_file)
+        
+        # Inputs + process graph widgets
+        self.inputs = InputsContainer()
+        self.process_graph = ProcessGraphContainer(self.mda_configuration_file_path)
+
+        self.inputs.process_selection_switch.on_event("change", self._switch_process)
+        self.inputs.launch_button.on_event("click", self._launch_process)
+        
+        # Outputs widgets
+        self.output_graphs = OutputsGraphsContainer(self.working_directory_path)
+        
+        
         self.main_content = v.Container(
             class_="pt-0",
             fluid=True,

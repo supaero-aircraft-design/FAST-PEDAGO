@@ -20,7 +20,6 @@ from . import (
     RangeSliderInput,
 )
 from fast_pedago.utils import (
-    _TooltipButton,
     _InputsCategory,
 )
 
@@ -341,9 +340,18 @@ class InputsContainer(v.List):
             v_model="toggle_exclusive",
             mandatory=True,
             children=[
-                _TooltipButton("Fuel sizing", tooltip="Minimize the aircraft fuel consumption on the design mission"),
-                _TooltipButton("MTOW", tooltip="Minimize the aircraft MTOW"),
-                _TooltipButton("OWE", tooltip="Minimize the aircraft OWE"),
+                v.Btn(
+                    children=["Fuel sizing"],
+                    tooltip="Minimize the aircraft fuel consumption on the design mission"
+                ),
+                v.Btn(
+                    children=["MTOW"],
+                    tooltip="Minimize the aircraft MTOW",
+                ),
+                v.Btn(
+                    children=["OWE"],
+                    tooltip="Minimize the aircraft OWE",
+                ),
             ],
         )
         

@@ -14,8 +14,6 @@ from .constants import (
 
 from .layouts import (
     _InputsCategory,
-    _OutputsCategory,
-    _TooltipButton,
     _Figure,
     _OutputCard,
 )

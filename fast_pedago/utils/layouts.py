@@ -89,46 +89,6 @@ class _InputsCategory(v.ListGroup):
         ]
 
 
-class _OutputsCategory(v.ListGroup):
-    """
-    Internal class to factorize layout of an output category
-    such as geometry, weight, mission, etc.
-    
-    It displays the name of the category as a title and
-    a multi-button to select a graph.
-    """
-    def __init__(self, name: str, outputs = [], **kwargs):
-        """
-        :param name: the name of the category
-        :param outputs: a list of graphs
-        """
-        super().__init__(**kwargs)
-
-        self.value = True
-        self.v_slots = [{
-            'name': 'activator',
-            'children': [
-                v.ListItemTitle(
-                    children=[
-                        name,
-                    ],
-                ),
-            ],
-        }]
-        self.children = [
-            v.ListItem(
-                children=[
-                    v.BtnToggle(
-                        mandatory=True,
-                        children=[
-                            v.Btn(children=[output]) for output in outputs
-                        ],
-                    ),
-                ],
-            ),
-        ]
-
-
 class _OutputCard(v.Card):
     def __init__(self, title, working_directory_path, **kwargs):
         """
@@ -172,35 +132,4 @@ class _OutputCard(v.Card):
                 ],
             ),
             v.CardText(children=[self.plotter.output_display]),
-        ]
-    
-
-        
-
-
-# FIXME 
-# Tooltip doesn't work
-class _TooltipButton(v.Btn):
-    """
-    Internal class to factorize layout of a button
-    with a tooltip
-    """
-    def __init__(self, text: str, tooltip: str, **kwargs):
-        """
-        :param text: text of the button
-        :param tooltip: text of the tooltip
-        """
-        super().__init__(**kwargs)
-
-        self.update(text, tooltip)
-        
-    
-    def update(self, text:str, tooltip: str):
-        self.children = [
-            text,
-            v.Tooltip(
-                activator="parent",
-                location="top",
-                children=tooltip,
-            ),
         ]
