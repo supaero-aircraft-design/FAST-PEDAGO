@@ -306,7 +306,7 @@ class InputsContainer(v.List):
                             cols=4,
                             children=[
                                v.Tooltip(
-                                    bottom=True,
+                                    contained=True,
                                     v_slots=[{
                                         'name': 'activator',
                                         'variable': 'tooltip',
