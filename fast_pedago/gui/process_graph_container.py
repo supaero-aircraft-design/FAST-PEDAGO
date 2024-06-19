@@ -167,6 +167,7 @@ class ProcessGraphContainer(v.Col):
         self.display_selection_buttons = v.BtnToggle(
             v_model="toggle_exclusive",
             mandatory=True,
+            dense=True,
             children=[
                 self.specific_button,
                 _TooltipButton("N2", tooltip="Displays the N2 diagram of the sizing process"),
@@ -196,8 +197,9 @@ class ProcessGraphContainer(v.Col):
         
         # This is a container to avoid resetting all of the GraphVisualizationContainer
         # children when switching between MDA/MDO
-        self.display = v.Container(
-            
+        self.display = v.Row(
+            justify="center",
+            align="center",
         )
 
         self.children = [
@@ -208,17 +210,7 @@ class ProcessGraphContainer(v.Col):
                     self.display_selection_buttons,
                 ],
             ),
-            v.Row(
-                justify="center",
-                children=[
-                    v.Col(
-                        class_="pa-0",
-                        children=[
-                            self.display,
-                        ],
-                    ),
-                ],
-            ),
+            self.display,
         ]
     
 
