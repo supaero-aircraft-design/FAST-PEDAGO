@@ -94,12 +94,16 @@ class _InputsCategory(v.ListGroup):
         ]
 
 
-class _OutputCard(v.Card):
+class _OutputCard(v.Col):
     def __init__(self, title, working_directory_path, **kwargs):
         """
         :param title: The title of the graph. Coresponds to a graph category.
         """
         super().__init__(**kwargs)
+
+        self.cols = 12
+        self.md = 6
+
         self.plotter = OutputGraphsPlotter(working_directory_path)
         select = v.Select(
             dense=True,
@@ -113,28 +117,26 @@ class _OutputCard(v.Card):
         )
         self.plotter.change_graph(GRAPH[title][0])
         
-        self.class_="my-3"
-        self.max_width = "100vw"
-        
         self.children = [
-            v.CardTitle(
+            v.Card(
+                height="80vh",
                 children=[
-                    v.Row(
+                    v.CardTitle(
                         children=[
-                            v.Col(
-                                cols=2,
+                            v.Row(
                                 children=[
-                                    title,
-                                ],
-                            ),
-                            v.Col(
-                                children=[
-                                    select,
+                                    v.Col(
+                                        cols=6,
+                                        children=[title],
+                                    ),
+                                    v.Col(
+                                        children=[select],
+                                    ),
                                 ],
                             ),
                         ],
                     ),
+                    v.CardText(children=[self.plotter.output_display]),
                 ],
             ),
-            v.CardText(children=[self.plotter.output_display]),
         ]

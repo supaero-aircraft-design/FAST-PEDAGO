@@ -33,24 +33,44 @@ class OutputsGraphsContainer(v.Col):
         self.output_selection.on_event("click", self._browse_available_process)
         self.output_selection.on_event("change", self._update_data)
         
-        self.class_="pa-4"
-        
         self.children = [
-            self.output_selection,
-            self.general_graph,
-            self.geometry_graph,
-            self.aerodynamics_graph,
-            self.mass_graph,
-            self.performances_graph,
+            v.Row(
+                class_="px-4",
+                children=[self.output_selection],
+            ),
+            v.Row(
+                align="center",
+                children=[
+                    self.general_graph,
+                    self.geometry_graph,
+                    self.aerodynamics_graph,
+                    self.mass_graph,
+                    self.performances_graph,
+                ],
+            ),
         ]
     
     
     def _update_data(self, widget, event, data):
-        self.general_graph.plotter.plot(data)
-        self.geometry_graph.plotter.plot(data)
-        self.aerodynamics_graph.plotter.plot(data)
-        self.mass_graph.plotter.plot(data)
-        self.performances_graph.plotter.plot(data)
+        if data :
+            self.general_graph.plotter.plot(data)
+            self.geometry_graph.plotter.plot(data)
+            self.aerodynamics_graph.plotter.plot(data)
+            self.mass_graph.plotter.plot(data)
+            self.performances_graph.plotter.plot(data)
+            
+            self.general_graph.show()
+            self.geometry_graph.show()
+            self.aerodynamics_graph.show()
+            self.mass_graph.show()
+            self.performances_graph.show()
+        
+        else:
+            self.general_graph.hide()
+            self.geometry_graph.hide()
+            self.aerodynamics_graph.hide()
+            self.mass_graph.hide()
+            self.performances_graph.hide()
 
 
     def _browse_available_process(self, widget, event, data):

@@ -377,6 +377,7 @@ class SelectOutput(v.Select):
         
         self.outlined = True
         self.clearable = True
+        self.hide_details = True
         
         if is_single_output:
             self.label = "Select a main output file to display"

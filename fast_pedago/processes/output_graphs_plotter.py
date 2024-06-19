@@ -25,10 +25,9 @@ import fastoad.api as oad
 from fast_pedago.utils import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
-    FIGURE_HEIGHT,
 )
 
-
+FIGURE_HEIGHT = 450
 COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 
 
@@ -162,7 +161,7 @@ class OutputGraphsPlotter():
                     sizing_process_to_add,
                     fig=fig,
                 )
-                fig.update_layout(height=550)
+                fig.update_layout(height=FIGURE_HEIGHT, title_font_size=10)
 
             if fig:
                 display(fig)
@@ -200,7 +199,7 @@ class OutputGraphsPlotter():
                         fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
                 
             if fig:
-                fig.update_layout(height=FIGURE_HEIGHT)
+                fig.update_layout(height=FIGURE_HEIGHT, title_font_size=10)
                 display(fig)
 
 
@@ -295,7 +294,7 @@ class OutputGraphsPlotter():
             x=[nominal_range],
             y=[nominal_payload],
             mode="markers",
-            name=name + " - Design range",
+            name=name + "-Design range",
             legendgroup=name,
             line=dict(color=trace_colour),
         )
@@ -304,6 +303,7 @@ class OutputGraphsPlotter():
         fig.add_trace(scatter_nominal_mission)
         fig = go.FigureWidget(fig)
         fig.update_layout(
+            height=FIGURE_HEIGHT,
             title_text="Payload-Range diagram",
             title_x=0.5,
             xaxis_title="Range [Nm]",
