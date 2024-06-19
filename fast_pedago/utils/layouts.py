@@ -66,14 +66,19 @@ class _InputsCategory(v.ListGroup):
     It displays the name of the category as a title and
     the input widgets under it.
     """
-    def __init__(self, name: str, inputs: v.VuetifyWidget = [], **kwargs):
+    def __init__(self, 
+            name: str, 
+            inputs: v.VuetifyWidget = [], 
+            is_open: bool = False,
+            **kwargs):
         """
         :param name: the name of the category
         :param inputs: a list of input widgets 
+        :param is_open: True if the group is initially open
         """
         super().__init__(**kwargs)
 
-        self.value = True
+        self.value = is_open
         self.v_slots = [{
             'name': 'activator',
             'children': [

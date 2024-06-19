@@ -296,9 +296,9 @@ class InputsContainer(v.List):
         )
 
 
-        self.inputs_header = _InputsCategory(
-            "Process definition",
-            [
+        self.inputs_header = v.ListItemGroup(
+            class_="px-2",
+            children=[
                 v.Row(
                     align="center",
                     children=[
@@ -364,7 +364,7 @@ class InputsContainer(v.List):
         )
         self.sweep_w_design_var_checkbox = v.Checkbox(
             class_="ms-4",
-            v_model=True,
+            v_model=False,
             label="Wing sweep as design variable",
         )
         self.wing_span_constraints_checkbox = v.Checkbox(
@@ -411,7 +411,7 @@ class InputsContainer(v.List):
                             self.objective_selection
                         ],
                     )
-            ]),
+            ], is_open=True),
             _InputsCategory("Design variables", [
                 self.ar_design_var_checkbox,
                 self.ar_design_var_input,
@@ -419,6 +419,7 @@ class InputsContainer(v.List):
                 self.sweep_w_design_var_input,
             ]),
             _InputsCategory("Constraints", [
+                self.wing_span_constraints_checkbox,
                 self.wing_span_constraint_max,
             ]),    
         ]
@@ -500,7 +501,7 @@ class InputsContainer(v.List):
                 self.v_app_input,
                 self.cruise_mach_input,
                 self.range_input,
-            ]),
+            ], is_open=True),
             _InputsCategory("Weight", [
                 self.payload_input,
                 self.max_payload_input,
