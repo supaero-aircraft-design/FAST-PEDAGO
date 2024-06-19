@@ -7,8 +7,12 @@ from .input_widets import (
     SelectOutput,
 )
 
-from .header import Header
-from .footer import Footer
+from .app_layout import (
+    Header,
+    Footer,
+    Drawer,
+)
+
 from .inputs_container import InputsContainer
 from .process_graph_container import ProcessGraphContainer
 from .outputs_selection_container import OutputsSelectionContainer

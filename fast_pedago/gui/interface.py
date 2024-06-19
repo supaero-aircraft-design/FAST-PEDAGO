@@ -21,6 +21,7 @@ from fast_pedago.processes import (
 from . import (
     Header,
     Footer,
+    Drawer,
     InputsContainer,
     OutputsSelectionContainer,
     OutputsGraphsContainer,
@@ -80,14 +81,14 @@ class Interface(v.App):
         self.drawer.show()
         self.header.open_drawer_button.show()
         self.padding_column.show()
-        self.drawer_content.children = [self.inputs]
+        self.drawer.content.children = [self.inputs]
         self.main_content.children = [self.process_graph]
         self.navigation_buttons.children = [self.to_outputs_button]
         self.navigation_buttons.justify = "end"
     
     
     def _to_outputs(self):
-        self.drawer_content.children = [self.outputs]
+        self.drawer.content.children = [self.outputs]
         self.main_content.children = [self.output_graphs]
         self.navigation_buttons.children = [self.to_inputs_button]
         self.navigation_buttons.justify = "start"
@@ -117,54 +118,18 @@ class Interface(v.App):
         """
         Builds the layout of the app.
         """ 
-        # The content attributes will be used to change the components
-        # displayed depending on the phase of the app : inputs, outputs, 
-        # source file selection.
-        self.drawer_content = v.Container(
-            class_="pa-0",
-        )
-        
         self.main_content = v.Container(
             class_="pt-0",
             fluid=True,
             fill_height=True,
         )
         
-        # Some of the components are made to hide when on small screens
-        # This is to adjust the layout since the navigation drawer hides
-        # on small screens.
         self.header = Header()
-        self.header.open_drawer_button.on_event("click.stop", self._open_close_drawer)
         self.header.fast_oad_top_layer_logo.on_event("click", lambda *args : self._to_source_selection())
+        self.header.open_drawer_button.on_event("click", self._open_or_close_drawer)
         
-        close_drawer_button = v.Btn(
-            class_="me-5 hidden-lg-and-up",
-            icon=True,
-            children=[
-                v.Icon(children=["fa-times"]),
-            ],
-        )
-        close_drawer_button.on_event("click", self._open_close_drawer)
-        
-        self.drawer = v.NavigationDrawer(
-            app=True,
-            clipped=True,
-            width=DRAWER_WIDTH,
-            v_model=True,
-            children=[
-                v.Container(
-                    style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
-                    class_="hidden-md-and-down",
-                ),
-                v.Row(
-                    justify="end",
-                    children=[
-                        close_drawer_button,
-                    ],
-                ),
-                self.drawer_content,
-            ],
-        )
+        self.drawer = Drawer()
+        self.drawer.close_drawer_button.on_event("click", self._open_or_close_drawer)
         
         self.to_outputs_button = v.Btn(
             color="primary",
@@ -197,6 +162,7 @@ class Interface(v.App):
         self.to_inputs_button.on_event("click", lambda *args: self._to_inputs())
         self.to_outputs_button.on_event("click", lambda *args : self._to_outputs())
         
+        # Padding column to avoid having the main content behind the drawer when expanded
         self.padding_column = v.Col(
             cols="1",
             style_="padding: 100px 0 0 " + LEFT_PADDING + ";",
@@ -301,10 +267,6 @@ class Interface(v.App):
                     "reference_aircraft_source_data_file.xml",
                 ),
             )
-    
-
-    def _open_close_drawer(self, widget, event, data):
-            self.drawer.v_model = not self.drawer.v_model
 
 
     def _switch_process(self, widget, event, data):
@@ -359,3 +321,7 @@ class Interface(v.App):
         self.source_data_files = data
         self.inputs.set_initial_value_mda(data)
         self._to_inputs()
+    
+    
+    def _open_or_close_drawer(self, widget, event, data):
+        self.drawer.v_model = not self.drawer.v_model
