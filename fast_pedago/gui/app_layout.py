@@ -125,7 +125,7 @@ class Header(v.AppBar):
                         children=[
                             v.Row(
                                 justify="center",
-                                children=[self.fast_oad_top_layer_logo]
+                                children=[self.fast_oad_top_layer_logo_wrapper]
                             ),
                         ],
                     ),
@@ -157,6 +157,16 @@ class Header(v.AppBar):
 
         # Get FAST-OAD logo for top layer
         self.fast_oad_top_layer_logo = _image_from_path(pth.join(resources_path, FAST_OAD_TOP_LAYER_LOGO))
+        self.fast_oad_top_layer_logo.v_on = 'tooltip.on'
+        self.fast_oad_top_layer_logo_wrapper = v.Tooltip(
+            absolute=True,
+            v_slots=[{
+            'name': 'activator',
+            'variable': 'tooltip',
+            'children': self.fast_oad_top_layer_logo,
+            }],
+            children=["Return to source file selection"],
+        )
 
 
 
