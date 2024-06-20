@@ -32,6 +32,7 @@ class OutputsGraphsContainer(v.Col):
 
         self.output_selection.on_event("click", self._browse_available_process)
         self.output_selection.on_event("change", self._update_data)
+        self._hide_graphs()
         
         self.children = [
             v.Row(
@@ -50,6 +51,27 @@ class OutputsGraphsContainer(v.Col):
             ),
         ]
     
+    def _hide_graphs(self):
+        """
+        Hides graphs containers (for when no result file is selected).
+        """
+        self.general_graph.hide()
+        self.geometry_graph.hide()
+        self.aerodynamics_graph.hide()
+        self.mass_graph.hide()
+        self.performances_graph.hide()
+    
+    
+    def _show_graphs(self):
+        """
+        Re-displays graphs.
+        """
+        self.general_graph.show()
+        self.geometry_graph.show()
+        self.aerodynamics_graph.show()
+        self.mass_graph.show()
+        self.performances_graph.show()
+    
     
     def _update_data(self, widget, event, data):
         if data :
@@ -59,18 +81,11 @@ class OutputsGraphsContainer(v.Col):
             self.mass_graph.plotter.plot(data)
             self.performances_graph.plotter.plot(data)
             
-            self.general_graph.show()
-            self.geometry_graph.show()
-            self.aerodynamics_graph.show()
-            self.mass_graph.show()
-            self.performances_graph.show()
-        
+            self._show_graphs()
+            
         else:
-            self.general_graph.hide()
-            self.geometry_graph.hide()
-            self.aerodynamics_graph.hide()
-            self.mass_graph.hide()
-            self.performances_graph.hide()
+            self._hide_graphs()
+            
 
 
     def _browse_available_process(self, widget, event, data):
