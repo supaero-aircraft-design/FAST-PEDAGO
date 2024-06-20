@@ -28,7 +28,7 @@ from fast_pedago.utils import (
 )
 
 FIGURE_HEIGHT = 450
-COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
+COLORS = plotly.colors.qualitative.Plotly
 
 
 # When a new graph is added, it should be added to the dict, and then
@@ -250,7 +250,7 @@ class OutputGraphsPlotter():
         else:
             color_counter = len(fig.data)
 
-        trace_colour = COLS[color_counter]
+        trace_colour = COLORS[color_counter % len(COLORS)]
 
         mean_tas, mean_sfc, mean_l_over_d = self._extract_value_from_flight_data_file(
             flight_data_file_path=flight_data_file_path
