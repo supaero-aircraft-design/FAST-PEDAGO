@@ -42,7 +42,7 @@ LEFT_PADDING = "426px"
 DEFAULT_SOURCE_DATA_FILE = "reference aircraft"
 
 
-class Interface(v.App):
+class AppInterface(v.App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
