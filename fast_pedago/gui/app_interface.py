@@ -126,11 +126,13 @@ class AppInterface(v.App):
                 v.Tab(children=["Outputs"]),
                 v.TabItem(
                     children=[
+                        v.Divider(),
                         self.process_graph,
                     ],
                 ),
                 v.TabItem(
                     children=[
+                        v.Divider(),
                         self.output_graphs,
                     ],
                 ),
