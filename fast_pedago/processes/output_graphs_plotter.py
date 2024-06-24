@@ -19,6 +19,7 @@ import os.path as pth
 from IPython.display import clear_output, display
 
 import ipywidgets as widgets
+import ipyvuetify as v
 
 import fastoad.api as oad
 
@@ -68,15 +69,34 @@ class OutputGraphsPlotter():
         # Stores the function to call when plotting
         self.plot_function = None
         self.data = []
-        
-        self.output_display = widgets.Output()
 
+        self.output = widgets.Output()
+
+        # A file selection widget for graphs that can
+        # only display one output.
+        self.file_selector = v.Select(
+            class_="pa-0 ma-0",
+            label="This graph only displays one output, please choose one."
+        )
+        self.file_selector.on_event("click", self._update_selection_data)
+        self.file_selector.on_event("change", lambda widget, event, data: self.plot_function(data))
+        self.file_selector.hide()
+        
+        self.output_display = v.Container(
+            class_="pa-0",
+            children=[
+                self.file_selector,
+                self.output,
+            ],
+        )
 
     def change_graph(self, plot_name: str):
         self.plot_name = plot_name
+        self.file_selector.hide()
         
         if plot_name == GRAPH['General'][0]:
             self.plot_function = self._variable_viewer
+            self.file_selector.show()
         elif plot_name == GRAPH['Geometry'][0]:
             self.plot_function = self._aircraft_geometry_plot
         elif plot_name == GRAPH['Geometry'][1]:
@@ -87,6 +107,7 @@ class OutputGraphsPlotter():
             self.plot_function = self._mass_breakdown_bar_plot
         elif plot_name == GRAPH['Mass'][1]:
             self.plot_function = self._mass_breakdown_sun_plot
+            self.file_selector.show()
         elif plot_name == GRAPH['Performances'][0]:
             self.plot_function = self._mission_plot
         elif plot_name == GRAPH['Performances'][1]:
@@ -98,6 +119,7 @@ class OutputGraphsPlotter():
     def plot(self, data = None):
         if data:
             self.data = data
+            self.file_selector.items = data
         self.plot_function(self.data)
 
 
@@ -122,7 +144,7 @@ class OutputGraphsPlotter():
     def _mission_plot(self, data):
         self.sizing_process_to_display = data
 
-        with self.output_display:
+        with self.output:
             clear_output()
             mission_viewer = oad.MissionViewer()
 
@@ -141,7 +163,7 @@ class OutputGraphsPlotter():
     def _payload_range_plot(self, data):
         self.sizing_process_to_display = data
         
-        with self.output_display:
+        with self.output:
             clear_output()
             fig = None
 
@@ -167,7 +189,7 @@ class OutputGraphsPlotter():
                 display(fig)
 
 
-    def _base_plot(self, oad_plot, data, has_one_output_only=False) -> widgets.Output:
+    def _base_plot(self, oad_plot, data, is_single_output=False) -> widgets.Output:
         # data contains a list of outputs or a single output, depending on the graph
         # If there is no data, the rest of the code will be enough to clear the screen
         if type(data) == str:
@@ -175,7 +197,7 @@ class OutputGraphsPlotter():
         else:
             sizing_process_to_display = data
 
-        with self.output_display:
+        with self.output:
             clear_output()
             fig = None
             
@@ -187,12 +209,13 @@ class OutputGraphsPlotter():
                     )
                                 
                     # The plot function have a simplified signature if only one output can be added
-                    if len(sizing_process_to_display) == 1 or has_one_output_only:
+                    if len(sizing_process_to_display) == 1 or is_single_output:
                         fig = oad_plot(path_to_output_file)
                         # Leave the loop is the graph can only plot one
                         # output at a time. Only the first data will be
                         # plotted
-                        if has_one_output_only:
+                        if is_single_output:
+                            self.file_selector.v_model = sizing_process_to_add
                             break
 
                     else:
@@ -340,3 +363,7 @@ class OutputGraphsPlotter():
         mean_tas = float(cruise_flight_data["true_airspeed [m/s]"].to_numpy()[0])
 
         return mean_tas, mean_sfc, mean_l_over_d
+
+
+    def _update_selection_data(self, widget, event, data):
+        self.file_selector.items = self.data
