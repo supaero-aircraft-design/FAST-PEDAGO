@@ -223,7 +223,7 @@ class SliderInput(v.Tooltip):
         """
         super().__init__(**kwargs)
         
-        text_field = v.TextField(
+        self.text_field = v.TextField(
             v_model=value,
             class_="mt-0 pt-0",
             style_="width: 60px",
@@ -247,7 +247,7 @@ class SliderInput(v.Tooltip):
         # Link the values of the slider with the associated text field.
         # Since v_slots has an known issue in ipyvuetify, this is for 
         # now the best way to do it.
-        widgets.jslink((self.slider,'v_model'),(text_field,'v_model'))
+        widgets.jslink((self.slider,'v_model'),(self.text_field,'v_model'))
         
         self.v_slots=[{
             'name': 'activator',
@@ -279,7 +279,7 @@ class SliderInput(v.Tooltip):
                                     ),
                                     v.Col(
                                         class_="pa-0",
-                                        children=[text_field],
+                                        children=[self.text_field],
                                     ),
                                 ]
                             ),
@@ -292,6 +292,14 @@ class SliderInput(v.Tooltip):
         self.children=[
             tooltip,
         ]
+    
+    def disable(self):
+        self.slider.readonly = True
+        self.text_field.readonly = True
+    
+    def enable(self):
+        self.slider.readonly = False
+        self.text_field.readonly = False
 
 
 # Unfortunately it is impossible to link the v_model of the slider
@@ -369,6 +377,11 @@ class RangeSliderInput(v.Tooltip):
             tooltip,
         ]
 
+    def disable(self):
+        self.slider.readonly = True
+    
+    def enable(self):
+        self.slider.readonly = False
 
 
 class SelectOutput(v.Select):

@@ -550,3 +550,68 @@ class InputsContainer(v.List):
         To be used with a "on_event" of a text field ipyvuetify 
         """
         self.process_name = data
+
+
+    def disable(self):
+        """
+        Disables all inputs components
+        to let the user know he can't modify inputs.
+        """
+        self.process_selection_switch.children[0].disabled = True
+        self.process_selection_switch.children[1].disabled = True
+        self.process_name_field.readonly = True
+        self.launch_button.disabled = True
+        self.launch_button.color = ("#FF0000")
+        
+        # MDA inputs
+        self.n_pax_input.disable()
+        self.v_app_input.disable()
+        self.cruise_mach_input.disable()
+        self.range_input.disable()
+        self.payload_input.disable()
+        self.max_payload_input.disable()
+        self.wing_aspect_ratio_input.disable()
+        self.bpr_input.disable()
+        
+        # MDO inputs
+        self.objective_selection.children[0].disabled = True
+        self.objective_selection.children[1].disabled = True
+        self.objective_selection.children[2].disabled = True
+        self.ar_design_var_checkbox.readonly = True
+        self.ar_design_var_input.disable()
+        self.sweep_w_design_var_checkbox.readonly = True
+        self.sweep_w_design_var_input.disable()
+        self.wing_span_constraints_checkbox.readonly = True
+        self.wing_span_constraint_max.disable()
+    
+
+    def enable(self):
+        """
+        Re-enables inputs after the end of computation.
+        """
+        self.process_selection_switch.children[0].disabled = False
+        self.process_selection_switch.children[1].disabled = False
+        self.process_name_field.readonly = False
+        self.launch_button.disabled = False
+        self.launch_button.color = ("#32cd32")
+        
+        # MDA inputs
+        self.n_pax_input.enable()
+        self.v_app_input.enable()
+        self.cruise_mach_input.enable()
+        self.range_input.enable()
+        self.payload_input.enable()
+        self.max_payload_input.enable()
+        self.wing_aspect_ratio_input.enable()
+        self.bpr_input.enable()
+        
+        # MDO inputs
+        self.objective_selection.children[0].disabled = False
+        self.objective_selection.children[1].disabled = False
+        self.objective_selection.children[2].disabled = False
+        self.ar_design_var_checkbox.readonly = False
+        self.ar_design_var_input.enable()
+        self.sweep_w_design_var_checkbox.readonly = False
+        self.sweep_w_design_var_input.enable()
+        self.wing_span_constraints_checkbox.readonly = False
+        self.wing_span_constraint_max.enable()

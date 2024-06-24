@@ -293,12 +293,11 @@ class AppInterface(v.App):
 
     def _to_process_computation(self):
         """
-        When a process is on-going, disables all inputs components
-        to let the user know he can't modify inputs.
+        When a process is on-going.
         """
-        self.inputs.launch_button.color = (
-            "#FF0000"
-        )
+        self.inputs.disable()
+        self.graphs.children[0].disabled = True
+        self.graphs.children[1].disabled = True
         
         # Show a loading widget to make it apparent that a computation is
         # underway.
@@ -309,9 +308,9 @@ class AppInterface(v.App):
         """
         Re-enables input widgets after the end of a MDA/MDO process
         """
-        self.inputs.launch_button.color = (
-            "#32cd32"
-        )
+        self.inputs.enable()
+        self.graphs.children[0].disabled = False
+        self.graphs.children[1].disabled = False
 
 
     def _launch_process(self, widget, event, data):
