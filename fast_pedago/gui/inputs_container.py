@@ -336,35 +336,25 @@ class InputsContainer(v.List):
         """
         Generates the layout for the MDO inputs
         """
-        self.objective_selection = v.Tooltip(
-            contained=True,
-            v_slots=[{
-                'name': 'activator',
-                'variable': 'tooltip',
-                'children': v.BtnToggle(
-                    v_model="toggle_exclusive",
-                    mandatory=True,
-                    children=[
-                        v.Btn(
-                            v_bind='tooltip.attrs',
-                            v_on='tooltip.on',
-                            children=["Fuel sizing"],
-                        ),
-                        v.Btn(
-                            v_bind='tooltip.attrs',
-                            v_on='tooltip.on',
-                            children=["MTOW"],
-                        ),
-                        v.Btn(
-                            v_bind='tooltip.attrs',
-                            v_on='tooltip.on',
-                            children=["OWE"],
-                        ),
-                    ],
-                ),
-            }],
+        self.objective_selection = v.BtnToggle(
+            v_model="toggle_exclusive",
+            mandatory=True,
             children=[
-                "Minimize fuel consumption or MTOW or OWE",
+                v.Btn(
+                    v_bind='tooltip.attrs',
+                    v_on='tooltip.on',
+                    children=["Fuel sizing"],
+                ),
+                v.Btn(
+                    v_bind='tooltip.attrs',
+                    v_on='tooltip.on',
+                    children=["MTOW"],
+                ),
+                v.Btn(
+                    v_bind='tooltip.attrs',
+                    v_on='tooltip.on',
+                    children=["OWE"],
+                ),
             ],
         )
         
@@ -422,7 +412,17 @@ class InputsContainer(v.List):
                         class_="pb-4 pt-2",
                         justify="center",
                         children=[
-                            self.objective_selection
+                            v.Tooltip(
+                                contained=True,
+                                v_slots=[{
+                                    'name': 'activator',
+                                    'variable': 'tooltip',
+                                    'children': self.objective_selection,
+                                }],
+                                children=[
+                                    "Minimize fuel consumption or MTOW or OWE",
+                                ],
+                            ),
                         ],
                     )
             ], is_open=True),
