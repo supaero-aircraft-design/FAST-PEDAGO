@@ -826,14 +826,14 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "fast-oad-core"
-version = "1.7.1"
+version = "1.7.2"
 description = "FAST-OAD is a framework for performing rapid Overall Aircraft Design"
 category = "main"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "fast_oad_core-1.7.1-py3-none-any.whl", hash = "sha256:4aa0f9515ca122cb3233f2a2a268dd8879177084d381b29bfd5fcea334e0c731"},
-    {file = "fast_oad_core-1.7.1.tar.gz", hash = "sha256:e437726798d7afd17c8c3e889b832b78cf923af7d2f3d754fad28c43cbb0084c"},
+    {file = "fast_oad_core-1.7.2-py3-none-any.whl", hash = "sha256:1983e6e1980690e866c36ae27cfc10edddb80a4a8b5f7c6ea8971e19a4aea344"},
+    {file = "fast_oad_core-1.7.2.tar.gz", hash = "sha256:31733e87c146291ad0fcdaed970bc20a9465d59cfd45134132ad5df710532779"},
 ]
 
 [package.dependencies]
@@ -4229,4 +4229,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "616994f88a4819ae1f7b54e32430e1d727a4758593a4ae69ac6da183bdc23fa1"
+content-hash = "9196c4210f7c7ce8fdfb6f5b3040958d7701b59c7269453c99ec97dd0d0739af"
