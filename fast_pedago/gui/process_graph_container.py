@@ -226,7 +226,7 @@ class ProcessGraphContainer(v.Col):
             limit_scatter_name="Optimized value",
             title="Evolution of the objective",
             x_axes_label="Number of function calls",
-            y_axes_label="Objective value",
+            y_axes_label="Objective value (10-4 kg)",
             is_log=False,
         )
         
