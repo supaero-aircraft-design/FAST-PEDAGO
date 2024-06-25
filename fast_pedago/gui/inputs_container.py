@@ -408,7 +408,7 @@ class InputsContainer(v.List):
         self.wing_span_constraint_max = SliderInput(
             min=20., 
             max=100., 
-            step=0.01, 
+            step=1, 
             value=OPT_WING_SPAN_MAX,
             label="Max b_w", 
             tooltip="Maximum wing span allowed for the optimisation [m]"
@@ -444,16 +444,16 @@ class InputsContainer(v.List):
         Generates the layout for the MDA inputs
         """
         self.n_pax_input = SliderInput(
-            min=19,
-            max=500, 
-            step=1,
+            min=20,
+            max=400, 
+            step=2,
             label="N_PAX", 
             tooltip="Number of passengers"
         )
         self.v_app_input = SliderInput(
-            min=45., 
-            max=200., 
-            step=0.1,
+            min=45, 
+            max=170, 
+            step=1,
             label="V_app", 
             tooltip="Approach speed [kts]"
         )
@@ -474,28 +474,28 @@ class InputsContainer(v.List):
         self.payload_input = SliderInput(
             min=0, 
             max=100000, 
-            step=10,
+            step=1000,
             label="Payload", 
             tooltip="Aircraft payload [kg]"
         )
         self.max_payload_input = SliderInput(
             min=0, 
             max=100000, 
-            step=10,
+            step=1000,
             label="Max Payload", 
             tooltip="Aircraft max payload [kg]"
         )
         self.wing_aspect_ratio_input = SliderInput(
-            min=4., 
-            max=25., 
-            step=0.1,
+            min=4, 
+            max=25, 
+            step=1,
             label="AR_w", 
             tooltip="Aspect Ratio of the wing"
         )
         self.bpr_input = SliderInput(
             min=0, 
-            max=25., 
-            step=0.1, 
+            max=25, 
+            step=1, 
             label="BPR",
             tooltip="ByPass Ratio of the engine"
         )
