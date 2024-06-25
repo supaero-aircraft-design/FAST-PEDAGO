@@ -336,24 +336,38 @@ class InputsContainer(v.List):
         """
         Generates the layout for the MDO inputs
         """
-        self.objective_selection = v.BtnToggle(
-            v_model="toggle_exclusive",
-            mandatory=True,
+        self.objective_selection = v.Tooltip(
+            contained=True,
+            v_slots=[{
+                'name': 'activator',
+                'variable': 'tooltip',
+                'children': v.BtnToggle(
+                    v_model="toggle_exclusive",
+                    mandatory=True,
+                    children=[
+                        v.Btn(
+                            v_bind='tooltip.attrs',
+                            v_on='tooltip.on',
+                            children=["Fuel sizing"],
+                        ),
+                        v.Btn(
+                            v_bind='tooltip.attrs',
+                            v_on='tooltip.on',
+                            children=["MTOW"],
+                        ),
+                        v.Btn(
+                            v_bind='tooltip.attrs',
+                            v_on='tooltip.on',
+                            children=["OWE"],
+                        ),
+                    ],
+                ),
+            }],
             children=[
-                v.Btn(
-                    children=["Fuel sizing"],
-                    tooltip="Minimize the aircraft fuel consumption on the design mission"
-                ),
-                v.Btn(
-                    children=["MTOW"],
-                    tooltip="Minimize the aircraft MTOW",
-                ),
-                v.Btn(
-                    children=["OWE"],
-                    tooltip="Minimize the aircraft OWE",
-                ),
+                "Minimize fuel consumption or MTOW or OWE",
             ],
         )
+        
         
         # Checkboxes to chose which design variable and
         # constraints to use
