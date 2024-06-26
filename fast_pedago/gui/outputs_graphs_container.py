@@ -36,11 +36,12 @@ class OutputsGraphsContainer(v.Col):
         
         self.children = [
             v.Row(
-                class_="px-4",
+                class_="px-4 pb-3",
                 children=[self.output_selection],
             ),
             v.Row(
-                align="center",
+                no_gutters=True,
+                align="top",
                 children=[
                     self.geometry_graph,
                     self.aerodynamics_graph,

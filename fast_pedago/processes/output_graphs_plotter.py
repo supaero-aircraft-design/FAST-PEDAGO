@@ -28,7 +28,6 @@ from fast_pedago.utils import (
     FLIGHT_DATA_FILE_SUFFIX,
 )
 
-FIGURE_HEIGHT = 450
 COLORS = plotly.colors.qualitative.Plotly
 
 
@@ -83,7 +82,7 @@ class OutputGraphsPlotter():
         self.file_selector.hide()
         
         self.output_display = v.Container(
-            class_="pa-0",
+            class_="pe-10",
             children=[
                 self.file_selector,
                 self.output,
@@ -183,7 +182,6 @@ class OutputGraphsPlotter():
                     sizing_process_to_add,
                     fig=fig,
                 )
-                fig.update_layout(height=FIGURE_HEIGHT, title_font_size=10)
 
             if fig:
                 display(fig)
@@ -222,7 +220,6 @@ class OutputGraphsPlotter():
                         fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
                 
             if fig:
-                fig.update_layout(height=FIGURE_HEIGHT, title_font_size=10)
                 display(fig)
 
 
@@ -326,7 +323,6 @@ class OutputGraphsPlotter():
         fig.add_trace(scatter_nominal_mission)
         fig = go.FigureWidget(fig)
         fig.update_layout(
-            height=FIGURE_HEIGHT,
             title_text="Payload-Range diagram",
             title_x=0.5,
             xaxis_title="Range [Nm]",

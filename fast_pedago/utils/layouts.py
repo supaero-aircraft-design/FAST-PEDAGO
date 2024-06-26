@@ -118,14 +118,11 @@ class _OutputCard(v.Col):
             lambda widget, event, data: self.plotter.change_graph(data)
         )
         self.plotter.change_graph(GRAPH[title][0])
-        
-        height="80vh"
-        if is_full_screen:
-            height="100vh"
-        
+
         self.children = [
             v.Card(
-                height=height,
+                outlined=True,
+                flat=True,
                 children=[
                     v.CardTitle(
                         children=[
@@ -142,7 +139,10 @@ class _OutputCard(v.Col):
                             ),
                         ],
                     ),
-                    v.CardText(children=[self.plotter.output_display]),
+                    v.CardText(
+                        class_="pa-0",
+                        children=[self.plotter.output_display]
+                    ),
                 ],
             ),
         ]
