@@ -384,8 +384,8 @@ class InputsContainer(v.List):
             max=30,
             step=1,
             range=[OPT_AR_MIN, OPT_AR_MAX],
-            label="Min/Max AR_w",
-            tooltip="Range of aspect ratio for the optimisation [-]",
+            label="Min/Max wing AR",
+            tooltip="Range of aspect ratio for the optimization [-]",
         )
         self.sweep_w_design_var_input = RangeSliderInput(
             min=5,
@@ -393,15 +393,15 @@ class InputsContainer(v.List):
             step=1,
             range=[OPT_SWEEP_W_MIN, OPT_SWEEP_W_MAX],
             label="Sweep Range",
-            tooltip="range of wing sweep angle for the optimisation [-]",
+            tooltip="Range of wing sweep angle for the optimization [-]",
         )
         self.wing_span_constraint_max = SliderInput(
             min=20., 
             max=100., 
             step=1, 
             value=OPT_WING_SPAN_MAX,
-            label="Max b_w", 
-            tooltip="Maximum wing span allowed for the optimisation [m]"
+            label="Max wing span", 
+            tooltip="Maximum wing span allowed for the optimization [m]"
         )
         
         
@@ -447,21 +447,21 @@ class InputsContainer(v.List):
             min=20,
             max=400, 
             step=2,
-            label="N_PAX", 
+            label="NPAX", 
             tooltip="Number of passengers"
         )
         self.v_app_input = SliderInput(
             min=45, 
             max=170, 
             step=1,
-            label="V_app", 
+            label="Vapp", 
             tooltip="Approach speed [kts]"
         )
         self.cruise_mach_input = SliderInput(
             min=0., 
             max=1., 
             step=0.01, 
-            label="M_cruise", 
+            label="Mcruise", 
             tooltip="Cruise mach"
         )
         self.range_input = SliderInput(
@@ -489,7 +489,7 @@ class InputsContainer(v.List):
             min=4, 
             max=25, 
             step=1,
-            label="AR_w", 
+            label="Wing AR", 
             tooltip="Aspect Ratio of the wing"
         )
         self.bpr_input = SliderInput(
