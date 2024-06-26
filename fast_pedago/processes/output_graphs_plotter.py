@@ -218,8 +218,9 @@ class OutputGraphsPlotter():
 
                     else:
                         fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
-                
+
             if fig:
+                fig.update_annotations(font_size=10)
                 display(fig)
 
 
