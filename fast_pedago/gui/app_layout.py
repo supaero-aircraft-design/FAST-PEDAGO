@@ -104,6 +104,8 @@ class Header(v.AppBar):
             ],
         )
         
+        self.clear_all_button = ClearAllButton()
+        
         self.children = [
             v.Row(
                 align="center",
@@ -136,7 +138,7 @@ class Header(v.AppBar):
                                 justify="end",
                                 children=[
                                     GitLinksButton(),
-                                    ClearAllButton(),
+                                    self.clear_all_button,
                                 ],
                             ),
                         ],

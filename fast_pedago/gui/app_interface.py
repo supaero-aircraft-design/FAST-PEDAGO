@@ -143,6 +143,7 @@ class AppInterface(v.App):
         self.header = Header()
         self.header.fast_oad_top_layer_logo.on_event("click", lambda *args : self._to_source_selection())
         self.header.open_drawer_button.on_event("click", self._open_or_close_drawer)
+        self.header.clear_all_button.button.on_event("click", self._clear_all_files)
         
         self.drawer = Drawer()
         self.drawer.close_drawer_button.on_event("click", self._open_or_close_drawer)
@@ -334,3 +335,46 @@ class AppInterface(v.App):
     
     def _open_or_close_drawer(self, widget, event, data):
         self.drawer.v_model = not self.drawer.v_model
+    
+    
+    def _clear_all_files(self, widget, event, data):
+        """
+        Clear all files contained in "workdir", in subdirectories "inputs"
+        and "outputs", that are not the files of the reference aircraft.
+        Also makes the user come back to source selection.
+
+        The subdirectories of workdir are not deleted in the process.
+        """
+        # Gets back to source file selection
+        self._to_source_selection()
+        # Clears the output selection
+        self.output_graphs.output_selection.v_model = []
+
+        working_directory_path = pth.join(os.getcwd(), "workdir")
+        input_directory_path = pth.join(working_directory_path, "inputs")
+        output_directory_path = pth.join(working_directory_path, "outputs")
+
+        # Remove all input files in the inputs directory
+        input_file_list = os.listdir(input_directory_path)
+        for file_name in input_file_list:
+            file_path = pth.join(input_directory_path, file_name)
+
+            # We keep the reference input_file and avoid deleting subdirectory
+            if file_name != "reference_aircraft_input_file.xml" and not pth.isdir(
+                file_path
+            ):
+                os.remove(file_path)
+
+        # Remove all input files in the outputs directory, we can remove all .sql because they
+        # are re-generated anyway
+        output_file_list = os.listdir(output_directory_path)
+        for file_name in output_file_list:
+            file_path = pth.join(output_directory_path, file_name)
+
+            # We keep the reference input_file and avoid deleting subdirectory
+            if (
+                file_name != "reference_aircraft_output_file.xml"
+                and file_name != "reference_aircraft_flight_points.csv"
+                and not pth.isdir(file_path)
+            ):
+                os.remove(file_path)
