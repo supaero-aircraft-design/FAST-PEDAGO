@@ -13,6 +13,7 @@ from fast_pedago.utils import (
     _Figure,
     FIGURE_HEIGHT,
 )
+from fast_pedago.gui import Snackbar
 
 
 class ProcessGraphContainer(v.Col):
@@ -192,8 +193,6 @@ class ProcessGraphContainer(v.Col):
             tooltip="Displays a graph of the evolution of residuals with the number of iterations",
         )
         
-        # TODO: Find another way to implement tooltips as they don't seem to work with BtnToggle
-        # TODO: Make the browser links only on the png of N2/XDSM (since iframe doesn't work
         # because of a voilà bug.)
         self.display_selection_buttons = v.BtnToggle(
             v_model="toggle_exclusive",
@@ -230,6 +229,10 @@ class ProcessGraphContainer(v.Col):
             is_log=False,
         )
         
+        self.snackbar = Snackbar(
+            "Process ended!"
+        )
+        
         # This is a container to avoid resetting all of the GraphVisualizationContainer
         # children when switching between MDA/MDO
         self.display = v.Row(
@@ -246,6 +249,7 @@ class ProcessGraphContainer(v.Col):
                 ],
             ),
             self.display,
+            self.snackbar,
         ]
     
 

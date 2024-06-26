@@ -35,7 +35,7 @@ class Slide:
         EXPLANATIONS = "When launching, the inputs are retrieved and merged with the source "\
         "file other inputs."\
         "Then process is set up (association of all the modules together to make them loop) "\
-        "and the evolution of the process is plotted."
+        "and the evolution of the process is plotted. When the graph stops plotting, it is done!"
 
     class Configuration:
         EXPLANATIONS = "You have the possibility to see N2 and XDSM graphs. Both represents "\
