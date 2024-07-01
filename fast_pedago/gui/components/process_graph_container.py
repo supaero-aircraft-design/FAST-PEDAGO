@@ -13,7 +13,7 @@ from fast_pedago.utils import (
     _Figure,
     FIGURE_HEIGHT,
 )
-from fast_pedago.gui import Snackbar
+from . import Snackbar
 
 
 class ProcessGraphContainer(v.Col):

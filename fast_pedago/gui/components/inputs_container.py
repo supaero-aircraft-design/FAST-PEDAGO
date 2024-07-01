@@ -14,7 +14,7 @@ import openmdao.api as om
 import fastoad.api as oad
 
 from fast_pedago import source_data_files
-from . import (
+from .input_widgets import (
     Snackbar,
     SliderInput,
     RangeSliderInput,

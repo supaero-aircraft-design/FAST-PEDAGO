@@ -6,7 +6,7 @@ import os.path as pth
 
 import ipyvuetify as v
 
-from .resources import Slide
+from ..resources import Slide
 from fast_pedago import gui
 from fast_pedago import source_data_files
 from fast_pedago.utils import (

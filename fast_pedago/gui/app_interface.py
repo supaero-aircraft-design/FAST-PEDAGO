@@ -10,15 +10,8 @@ import ipyvuetify as v
 
 import fastoad.api as oad
 
-from fast_pedago import (
-    configuration,
-    source_data_files,
-)
-from fast_pedago.processes import (
-    MDAMDOLauncher,
-    ResidualsObjectivesPlotter,
-)
-from . import (
+
+from .components import (
     Header,
     Footer,
     Drawer,
@@ -27,6 +20,15 @@ from . import (
     ProcessGraphContainer,
     SourceSelectionContainer,
 )
+from fast_pedago import (
+    configuration,
+    source_data_files,
+)
+from fast_pedago.processes import (
+    MDAMDOLauncher,
+    ResidualsObjectivesPlotter,
+)
+
 
 
 DRAWER_WIDTH = "450px"
