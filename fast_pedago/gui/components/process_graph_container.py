@@ -133,7 +133,7 @@ class ProcessGraphContainer(v.Col):
         we check if they exist.
         """
         
-        # N2 and XDSM pngs are wrapped in a tooltip to indicate to click on them.
+        # N2 and XDSM images are wrapped in a tooltip to indicate to click on them.
         # This is because it is impossible to load directly the .html into a frame (bugs)
         n2_image_path = pth.join(
             PathManager.data_directory_path, N2_PNG)
@@ -154,7 +154,7 @@ class ProcessGraphContainer(v.Col):
             'variable': 'tooltip',
             'children': n2_image,
             }],
-            children=["Click me to open interactable N2 graph"]
+            children=["Click me to open interactive N2 graph"]
         )
 
         xdsm_image_path = pth.join(
