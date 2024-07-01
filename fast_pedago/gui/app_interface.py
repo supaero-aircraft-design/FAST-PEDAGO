@@ -8,9 +8,6 @@ import shutil
 
 import ipyvuetify as v
 
-import fastoad.api as oad
-
-
 from .components import (
     Header,
     Footer,
@@ -20,11 +17,8 @@ from .components import (
     ProcessGraphContainer,
     SourceSelectionContainer,
 )
-from fast_pedago import (
-    configuration,
-    source_data_files,
-)
 from fast_pedago.processes import (
+    PathManager,
     MDAMDOLauncher,
     ResidualsObjectivesPlotter,
 )
@@ -41,28 +35,26 @@ TOP_PADDING = "36px"
 LEFT_PADDING = "426px"
 
 
-DEFAULT_SOURCE_DATA_FILE = "reference aircraft"
-
-
 class AppInterface(v.App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
-        self.source_data_file = DEFAULT_SOURCE_DATA_FILE
+        PathManager.build_paths()
+    
+        self.source_data_file = PathManager.reference_aircraft
         
-        self._configure_paths()
         self._build_layout()
-        
+
         self._to_source_selection()
         
-        self.inputs.set_initial_value_mda("reference aircraft")
+        self.inputs.set_initial_value_mda(PathManager.reference_aircraft)
         
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
         # MDA/MDO and plot there evolution.
         self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.process_graph)
         self.process_launcher = MDAMDOLauncher(
-            self.mda_configuration_file_path,
-            self.mdo_configuration_file_path,
+            PathManager.mda_configuration_file_path,
+            PathManager.mdo_configuration_file_path,
             self.inputs,
             self.residuals_objectives_plotter,
         )
@@ -104,13 +96,13 @@ class AppInterface(v.App):
         
         # Inputs + process graph widgets
         self.inputs = InputsContainer()
-        self.process_graph = ProcessGraphContainer(self.mda_configuration_file_path)
+        self.process_graph = ProcessGraphContainer(PathManager.mda_configuration_file_path)
 
         self.inputs.process_selection_switch.on_event("change", self._switch_process)
         self.inputs.launch_button.on_event("click", self._launch_process)
         
         # Outputs widgets
-        self.output_graphs = OutputsGraphsContainer(self.working_directory_path)
+        self.output_graphs = OutputsGraphsContainer(PathManager.working_directory_path)
         
         
         self.main_content = v.Container(
@@ -215,73 +207,6 @@ class AppInterface(v.App):
         ]
 
 
-    def _configure_paths(self):
-        # The configuration file path, source file path and input file path will be shared by
-        # children tab, so we will define them there and pass them on. The file for the
-        # sensitivity analysis is specific. Consequently, we won't generate it from
-        # fast-oad_cs25. Additionally, to make it simpler to handle relative path from the
-        # configuration file, instead of using this one directly we will make a copy of it in a
-        # data directory of the active directory.
-
-        self.working_directory_path = pth.join(os.getcwd(), "workdir")
-        self.data_directory_path = pth.join(os.getcwd(), "data")
-
-        # Create an attribute to store the converged sizing processes, it will be updated each
-        # time we exit the launch tab.
-        self.available_sizing_process = []
-
-        if not pth.exists(self.working_directory_path):
-            os.mkdir(self.working_directory_path)
-
-        if not pth.exists(self.data_directory_path):
-            os.mkdir(self.data_directory_path)
-
-        # Please note here that I'm using a different configuration file from the original one
-        # because I wanted to use the one from fast-oad_cs25 and change some paths
-        self.mda_configuration_file_path = pth.join(
-            self.data_directory_path, "oad_sizing_sensitivity_analysis.yml"
-        )
-        self.mdo_configuration_file_path = pth.join(
-            self.data_directory_path, "oad_optim_sensitivity_analysis.yml"
-        )
-
-        self.reference_input_file_path = pth.join(
-            self.working_directory_path,
-            pth.join("inputs", "reference_aircraft_input_file.xml"),
-        )
-
-        # Avoid operation if we don't have to
-        if not pth.exists(self.mda_configuration_file_path):
-            shutil.copy(
-                pth.join(
-                    pth.dirname(configuration.__file__),
-                    "oad_sizing_sensitivity_analysis.yml",
-                ),
-                self.mda_configuration_file_path,
-            )
-
-        if not pth.exists(self.mdo_configuration_file_path):
-            shutil.copy(
-                pth.join(
-                    pth.dirname(configuration.__file__),
-                    "oad_optim_sensitivity_analysis.yml",
-                ),
-                self.mdo_configuration_file_path,
-            )
-
-        # Technically, we could simply copy the reference file because I already did the input
-        # generation but to be more generic we will do it like this which will make it longer on
-        # the first execution.
-        if not pth.exists(self.reference_input_file_path):
-            oad.generate_inputs(
-                configuration_file_path=self.mda_configuration_file_path,
-                source_data_path=pth.join(
-                    pth.dirname(source_data_files.__file__),
-                    "reference_aircraft_source_data_file.xml",
-                ),
-            )
-
-
     def _switch_process(self, widget, event, data):
 
         # If the button toggle is on 1, switch to MDO
@@ -353,31 +278,27 @@ class AppInterface(v.App):
         # Clears the output selection
         self.output_graphs.output_selection.v_model = []
 
-        working_directory_path = pth.join(os.getcwd(), "workdir")
-        input_directory_path = pth.join(working_directory_path, "inputs")
-        output_directory_path = pth.join(working_directory_path, "outputs")
-
         # Remove all input files in the inputs directory
-        input_file_list = os.listdir(input_directory_path)
+        input_file_list = os.listdir(PathManager.input_directory_path)
         for file_name in input_file_list:
-            file_path = pth.join(input_directory_path, file_name)
+            file_path = pth.join(PathManager.input_directory_path, file_name)
 
             # We keep the reference input_file and avoid deleting subdirectory
-            if file_name != "reference_aircraft_input_file.xml" and not pth.isdir(
+            if file_name != PathManager.reference_input_file_name and not pth.isdir(
                 file_path
             ):
                 os.remove(file_path)
 
         # Remove all input files in the outputs directory, we can remove all .sql because they
         # are re-generated anyway
-        output_file_list = os.listdir(output_directory_path)
+        output_file_list = os.listdir(PathManager.output_directory_path)
         for file_name in output_file_list:
-            file_path = pth.join(output_directory_path, file_name)
+            file_path = pth.join(PathManager.output_directory_path, file_name)
 
             # We keep the reference input_file and avoid deleting subdirectory
             if (
-                file_name != "reference_aircraft_output_file.xml"
-                and file_name != "reference_aircraft_flight_points.csv"
+                file_name != PathManager.reference_output_file_name
+                and file_name != PathManager.reference_flight_data_file_name
                 and not pth.isdir(file_path)
             ):
                 os.remove(file_path)
