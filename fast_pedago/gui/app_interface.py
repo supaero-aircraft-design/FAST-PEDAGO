@@ -96,7 +96,7 @@ class AppInterface(v.App):
         
         # Inputs + process graph widgets
         self.inputs = InputsContainer()
-        self.process_graph = ProcessGraphContainer(PathManager.mda_configuration_file_path)
+        self.process_graph = ProcessGraphContainer()
 
         self.inputs.process_selection_switch.on_event("change", self._switch_process)
         self.inputs.launch_button.on_event("click", self._launch_process)
