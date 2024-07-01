@@ -241,7 +241,7 @@ class AppInterface(v.App):
         self.inputs.enable()
         self.graphs.children[0].disabled = False
         self.graphs.children[1].disabled = False
-        self.process_graph.snackbar.open_close(None, None, None)
+        self.process_graph.snackbar.open_or_close(None, None, None)
 
 
     def _launch_process(self, widget, event, data):

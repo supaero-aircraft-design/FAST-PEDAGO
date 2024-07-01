@@ -553,7 +553,7 @@ class InputsContainer(v.List):
         # If the mach is above the value of 0.78 and the snackbar is closed, opens
         # the snackbar to alert the user
         if self.cruise_mach_input.slider.v_model > 0.78 and not self.snackbar.v_model:
-            self.snackbar.open_close(widget, event, data)
+            self.snackbar.open_or_close(widget, event, data)
 
 
     def _update_process_name(self, widget, event, data):
