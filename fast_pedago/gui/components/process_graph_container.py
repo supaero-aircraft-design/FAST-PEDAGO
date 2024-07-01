@@ -6,6 +6,7 @@ import os.path as pth
 
 import webbrowser
 
+import plotly.graph_objects as go
 import ipyvuetify as v
 
 from fast_pedago.utils.functions import _image_from_path  # noqa
@@ -21,6 +22,13 @@ N2_PNG = "n2.png"
 N2_HTML = "n2.html"
 XDSM_PNG = "xdsm.png"
 XDSM_HTML = "xdsm.html"
+
+# This is the value of the figure next to the inputs height
+# This value for the height will only work for that particular definition of the back
+# image. Which means it is not generic enough. If no height is specified however the
+# widget will be too big for its container which is not very pretty.
+FIGURE_HEIGHT = 440
+
 
 class ProcessGraphContainer(v.Col):
     """
@@ -209,7 +217,7 @@ class ProcessGraphContainer(v.Col):
         )
         self.display_selection_buttons.on_event("change", self._change_display)
         
-        self.residuals_figure = _Figure(
+        self.residuals_figure = _ProcessFigure(
             main_scatter_name="Relative error",
             limit_scatter_name="Threshold",
             title="Evolution of the residuals",
@@ -217,7 +225,7 @@ class ProcessGraphContainer(v.Col):
             y_axes_label="Relative value of residuals",
         )
         
-        self.objectives_figure = _Figure(
+        self.objectives_figure = _ProcessFigure(
             main_scatter_name="Objective",
             limit_scatter_name="Optimized value",
             title="Evolution of the objective",
@@ -287,3 +295,44 @@ class ProcessGraphContainer(v.Col):
         self.objectives_figure.update_layout(
             dict(height=FIGURE_HEIGHT, autosize=None)
         )
+
+
+class _ProcessFigure(go.FigureWidget):
+    """
+    A widget to prepare the layout used to plot residuals and
+    objectives
+    """
+    def __init__(
+            self,
+            main_scatter_name: str,
+            limit_scatter_name: str,
+            title: str,
+            x_axes_label: str,
+            y_axes_label: str,
+            is_log: bool = True,
+            **kwargs,
+        ):
+        """
+        :param main_scatter_name: label for the main plot (residuals or objective)
+        :param limit_scatter_name: label for the relative error threshold or the
+        minimum objective reached
+        :param title: title of the plot
+        :param x_axes_label: label of the x axes
+        :param y_axes_label: label of the y axes
+        :param is_log: true if y is a log axis
+        """
+        super().__init__(
+            data = [
+                go.Scatter(x=[], y=[], name=main_scatter_name),
+                go.Scatter(x=[], y=[], mode="lines", name=limit_scatter_name),
+            ],
+            layout = go.Layout(height=FIGURE_HEIGHT),
+            **kwargs,
+        )
+        
+        self.update_layout(title_text=title, title_x=0.5)
+        self.update_xaxes(title_text=x_axes_label)
+        if is_log:
+            self.update_yaxes(title_text=y_axes_label, type="log", range=[-7.0, 1.0])
+        else:
+            self.update_yaxes(title_text=y_axes_label, type="log")
