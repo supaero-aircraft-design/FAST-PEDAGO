@@ -9,29 +9,32 @@ import webbrowser
 import ipyvuetify as v
 
 from fast_pedago.utils.functions import _image_from_path  # noqa
+from fast_pedago.processes import PathManager
 from fast_pedago.utils import (
     _Figure,
     FIGURE_HEIGHT,
 )
 from . import Snackbar
 
+# Image files
+N2_PNG = "n2.png"
+N2_HTML = "n2.html"
+XDSM_PNG = "xdsm.png"
+XDSM_HTML = "xdsm.html"
 
 class ProcessGraphContainer(v.Col):
     """
     A container to display process figures, N2 and XDSM graphs.
     """
-    def __init__(self, configuration_file_path: str, **kwargs):
+    def __init__(self, **kwargs):
         """
         :param configuration_file_path: the path to the configuration file 
         needed to generated XDSM/N2 graphs.
         """
         super().__init__(**kwargs)
-        
-        self.is_MDA = True
 
-        self._generate_n2_xdsm(configuration_file_path)
-        
-        self._set_layout()
+        self._generate_n2_xdsm()
+        self._build_layout()
         self.to_MDA()
 
 
@@ -122,25 +125,20 @@ class ProcessGraphContainer(v.Col):
         self.display.children = [active_figure]
 
     
-    # TODO
-    # Implement the generation of the graphs
-    def _generate_n2_xdsm(self, configuration_file_path: str):
+    # TODO: Implement the generation of the graphs
+    def _generate_n2_xdsm(self):
         """
-        Generate the N2 diagram and the XDSM, located them near the configuration file
-        as in this case there are more data than actual results. 
+        Generate the N2 diagram and the XDSM, located them in data folder. 
         Also, since the take a lot of time to generate, before actually generating them, 
-        we check if they exist
-        
-        :param configuration_file_path: path to the chosen configuration file 
+        we check if they exist.
         """
-        configuration_file_name = pth.basename(configuration_file_path)
         
         # N2 and XDSM pngs are wrapped in a tooltip to indicate to click on them.
         # This is because it is impossible to load directly the .html into a frame (bugs)
-        n2_image_path = configuration_file_path.replace(
-            configuration_file_name, "n2.png")
-        n2_file_path = configuration_file_path.replace(
-            configuration_file_name, "n2.html")
+        n2_image_path = pth.join(
+            PathManager.data_directory_path, N2_PNG)
+        n2_file_path = pth.join(
+            PathManager.data_directory_path, N2_HTML)
 
         n2_image = _image_from_path(
             n2_image_path , max_height="50vh")
@@ -159,10 +157,10 @@ class ProcessGraphContainer(v.Col):
             children=["Click me to open interactable N2 graph"]
         )
 
-        xdsm_image_path = configuration_file_path.replace(
-            configuration_file_name, "xdsm.png")
-        xdsm_file_path = configuration_file_path.replace(
-            configuration_file_name, "xdsm.html")
+        xdsm_image_path = pth.join(
+            PathManager.data_directory_path, XDSM_PNG)
+        xdsm_file_path = pth.join(
+            PathManager.data_directory_path, XDSM_HTML)
 
         xdsm_image = _image_from_path(
             xdsm_image_path, max_height="50vh")
@@ -178,15 +176,14 @@ class ProcessGraphContainer(v.Col):
             'variable': 'tooltip',
             'children': xdsm_image,
             }],
-            children=["Click me to open interactable XDSM graph"]
+            children=["Click me to open interactive XDSM graph"]
         )
         
         
-    def _set_layout(self):
+    def _build_layout(self):
         """
-        Sets the layout of the graph visualization container
+        Builds the layout of the graph visualization container
         """
-        
         # By defining the buttons this way it is possible to change the button group between MDA/MDO
         self.specific_button = v.Btn(
             children=["Residuals"],
@@ -278,8 +275,7 @@ class ProcessGraphContainer(v.Col):
 
     def _resize_figures(self):
         """
-        Resizes the figures to defined height in case it has been
-        autosized.
+        Resizes the figures to defined height in case it has been auto-sized.
         """
         # It looks like the fact that we switch back and forth between image
         # automatically resizes this FigureWidget so we'll ensure that the layout remains
