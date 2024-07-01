@@ -6,13 +6,11 @@ import os.path as pth
 
 import ipyvuetify as v
 
-from ..resources import Slide
+from fast_pedago.gui.resources import Slide
 from fast_pedago.processes import PathManager
-from fast_pedago.utils import (
-    _image_from_path,
-)
+from fast_pedago.utils import _image_from_path
 
-
+# Image files
 FAST_OAD_LOGO = "logo_fast_oad_main_menu.jpg"
 
 INPUTS_GIF = "inputs.gif"
@@ -34,6 +32,9 @@ class SourceSelectionContainer(v.Col):
     
 
     def _build_layout(self):
+        """
+        Builds the container layout.
+        """
         self.class_ = "pa-8"
 
         # This reference file should always be there and is always taken as reference
