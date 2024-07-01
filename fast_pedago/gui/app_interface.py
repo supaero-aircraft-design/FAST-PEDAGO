@@ -102,7 +102,7 @@ class AppInterface(v.App):
         self.inputs.launch_button.on_event("click", self._launch_process)
         
         # Outputs widgets
-        self.output_graphs = OutputsGraphsContainer(PathManager.working_directory_path)
+        self.output_graphs = OutputsGraphsContainer()
         
         
         self.main_content = v.Container(

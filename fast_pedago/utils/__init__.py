@@ -1,6 +1,5 @@
 from .functions import (
     _image_from_path,
-    _list_available_sizing_process_results,
     _extract_objective,
     _extract_residuals,
 )
@@ -13,6 +12,4 @@ from .constants import (
 
 from .layouts import (
     _InputsCategory,
-    _Figure,
-    _OutputCard,
 )

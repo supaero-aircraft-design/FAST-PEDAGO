@@ -2,33 +2,31 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os.path as pth
-
 import ipyvuetify as v
 
-from fast_pedago.utils import (
-    _OutputCard,
-    _list_available_sizing_process_results,
+from fast_pedago.processes import (
+    PathManager, 
+    OutputGraphsPlotter, 
+    GRAPH
 )
 from .input_widgets import SelectOutput
 
 
 class OutputsGraphsContainer(v.Col):
-    def __init__(self, working_directory_path, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.working_directory_path = working_directory_path
-        self._build_layout(working_directory_path)
+        
+        self._build_layout()
 
     
-    def _build_layout(self, working_directory_path):
+    def _build_layout(self):
         self.output_selection = SelectOutput()
 
-        self.general_graph = _OutputCard('General', working_directory_path, is_full_screen=True)
-        self.geometry_graph = _OutputCard('Geometry', working_directory_path)
-        self.aerodynamics_graph = _OutputCard('Aerodynamics', working_directory_path)
-        self.mass_graph = _OutputCard('Mass', working_directory_path)
-        self.performances_graph = _OutputCard('Performances', working_directory_path)
+        self.general_graph = _OutputFigure('General', is_full_screen=True)
+        self.geometry_graph = _OutputFigure('Geometry')
+        self.aerodynamics_graph = _OutputFigure('Aerodynamics')
+        self.mass_graph = _OutputFigure('Mass')
+        self.performances_graph = _OutputFigure('Performances')
 
         self.output_selection.on_event("click", self._browse_available_process)
         self.output_selection.on_event("change", self._update_data)
@@ -90,11 +88,61 @@ class OutputsGraphsContainer(v.Col):
 
 
     def _browse_available_process(self, widget, event, data):
-        
-        available_process = (
-            _list_available_sizing_process_results(
-                pth.join(self.working_directory_path, "outputs")
-            )
+        self.output_selection.items = PathManager.list_available_process_results()
+
+
+
+class _OutputFigure(v.Col):
+    def __init__(self, title, is_full_screen: bool = False, **kwargs):
+        """
+        :param title: The title of the graph. Corresponds to a graph category.
+        :param is_full_screen: if True, the card will take all the screen space.
+        """
+        super().__init__(**kwargs)
+
+        self.cols = 12
+        if not is_full_screen:
+            self.md = 6
+
+        self.plotter = OutputGraphsPlotter(PathManager.working_directory_path)
+        select = v.Select(
+            dense=True,
+            hide_details=True,
+            
+            items = GRAPH[title],
+            v_model = GRAPH[title][0],
         )
+        select.on_event("change", 
+            lambda widget, event, data: self.plotter.change_graph(data)
+        )
+        self.plotter.change_graph(GRAPH[title][0])
+
+        self.children = [
+            v.Card(
+                outlined=True,
+                flat=True,
+                children=[
+                    v.CardTitle(
+                        children=[
+                            v.Row(
+                                children=[
+                                    v.Col(
+                                        cols=6,
+                                        children=[title],
+                                    ),
+                                    v.Col(
+                                        children=[select],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    v.CardText(
+                        class_="pa-0",
+                        children=[self.plotter.output_display]
+                    ),
+                ],
+            ),
+        ]
         
-        self.output_selection.items = available_process
+        

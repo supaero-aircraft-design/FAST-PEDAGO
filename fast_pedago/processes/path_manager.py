@@ -192,3 +192,30 @@ class PathManager():
                 available_reference_files.append(associated_sizing_process_name)
 
         return available_reference_files
+
+    
+    def list_available_process_results() -> List[str]:
+        """
+        Parses the name of all the file in the output folder and scan for the one that would match the
+        results of an OAD sizing process.
+
+        :return: a list of available process names
+        """
+
+        list_files = os.listdir(PathManager.output_directory_path)
+        available_sizing_process = []
+
+        for file in list_files:
+            # Delete the suffix corresponding to the output file and flight data file because that's
+            # how they were built. Also, we will ignore the .sql file
+            if file.endswith(".sql"):
+                continue
+
+            associated_sizing_process_name = file.replace(OUTPUT_FILE_SUFFIX, "").replace(
+                FLIGHT_DATA_FILE_SUFFIX, ""
+            )
+
+            if associated_sizing_process_name not in available_sizing_process:
+                available_sizing_process.append(associated_sizing_process_name)
+
+        return available_sizing_process

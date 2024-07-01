@@ -11,10 +11,6 @@ import ipyvuetify as v
 
 from fast_pedago.utils.functions import _image_from_path  # noqa
 from fast_pedago.processes import PathManager
-from fast_pedago.utils import (
-    _Figure,
-    FIGURE_HEIGHT,
-)
 from . import Snackbar
 
 # Image files
