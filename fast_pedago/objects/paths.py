@@ -8,6 +8,9 @@ INPUT_FILE_SUFFIX = "_input_file.xml"
 OUTPUT_FILE_SUFFIX = "_output_file.xml"
 FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
 
+MDA_FILE_SUFFIX = "_mda"
+MDO_FILE_SUFFIX = "_mdo"
+
 # Processes names
 MDA = "MDA"
 MDO = "MDO"

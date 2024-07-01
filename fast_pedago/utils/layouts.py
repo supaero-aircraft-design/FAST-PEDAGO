@@ -7,11 +7,6 @@ Utility layout classes for widgets to avoid repeating code
 
 import ipyvuetify as v
 
-from fast_pedago.processes import (
-    OutputGraphsPlotter,
-    GRAPH,
-)
-
 
 class _InputsCategory(v.ListGroup):
     """

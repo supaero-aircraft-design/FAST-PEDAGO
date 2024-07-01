@@ -23,7 +23,7 @@ import ipyvuetify as v
 
 import fastoad.api as oad
 
-from fast_pedago.utils import (
+from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )

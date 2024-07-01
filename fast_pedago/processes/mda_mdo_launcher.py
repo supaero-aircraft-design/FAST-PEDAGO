@@ -13,14 +13,12 @@ import openmdao.api as om
 import fastoad.api as oad
 
 from . import ResidualsObjectivesPlotter
-from fast_pedago.utils import (
+from fast_pedago.objects.paths import (
+    MDA_FILE_SUFFIX,
+    MDO_FILE_SUFFIX,
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )
-
-
-MDA_FILE = "_mda"
-MDO_FILE = "_mdo"
 
 
 class MDAMDOLauncher():
@@ -87,10 +85,10 @@ class MDAMDOLauncher():
     def _configure_paths(self, is_MDO: bool=False):
         # Create a new FAST-OAD problem based on the reference configuration file
         if is_MDO:
-            problem_type = MDO_FILE
+            problem_type = MDO_FILE_SUFFIX
             self.configurator = oad.FASTOADProblemConfigurator(self.mdo_configuration_file_path)
         else :
-            problem_type = MDA_FILE
+            problem_type = MDA_FILE_SUFFIX
             self.configurator = oad.FASTOADProblemConfigurator(self.mda_configuration_file_path)
         
         # Save orig file path and name so that we can replace them with the optim process
