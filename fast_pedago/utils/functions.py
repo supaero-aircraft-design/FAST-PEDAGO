@@ -48,28 +48,6 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     return image_widget
 
 
-def _list_available_reference_file(path_to_scan: str) -> List[str]:
-    """
-    Parses the name of all the file in the provided path and scan for reference file that can be
-    selected for the rest of the analysis
-
-    :param path_to_scan: path to look for reference file in
-    :return: a list of available reference files
-    """
-
-    list_files = os.listdir(path_to_scan)
-    available_reference_files = []
-
-    for file in list_files:
-
-        if file.endswith(".xml"):
-
-            associated_sizing_process_name = file.replace(".xml", "")
-            available_reference_files.append(associated_sizing_process_name)
-
-    return available_reference_files
-
-
 def _list_available_sizing_process_results(path_to_scan: str) -> List[str]:
     """
     Parses the name of all the file in the provided path and scan for the one that would match the

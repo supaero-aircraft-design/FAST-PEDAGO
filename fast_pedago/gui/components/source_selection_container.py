@@ -7,10 +7,8 @@ import os.path as pth
 import ipyvuetify as v
 
 from ..resources import Slide
-from fast_pedago import gui
-from fast_pedago import source_data_files
+from fast_pedago.processes import PathManager
 from fast_pedago.utils import (
-    _list_available_reference_file,
     _image_from_path,
 )
 
@@ -37,17 +35,13 @@ class SourceSelectionContainer(v.Col):
 
     def _build_layout(self):
         self.class_ = "pa-8"
-        reference_file_list = [
-            file.replace("_source_data_file", "").replace("_", " ") 
-            for file in _list_available_reference_file(pth.dirname(source_data_files.__file__))
-        ]
 
         # This reference file should always be there and is always taken as reference
         self.source_data_file_selector = v.Select(
             outlined=True,
             hide_details=True,
             label="Select a reference file",
-            items=reference_file_list,
+            items=PathManager.list_available_reference_file(),
         )
         
         tutorial_carousel = v.Carousel(
@@ -189,7 +183,6 @@ class SourceSelectionContainer(v.Col):
             ],
         )
         
-        # TODO: Write tutorial/explanations on fast-oad
         self.children=[
             v.Row(
                 justify="center",
@@ -212,14 +205,16 @@ class SourceSelectionContainer(v.Col):
         Loads tutorial images and gifs as instance variables to call them during
         the layout building.
         """
-        resources_path = pth.join(pth.dirname(gui.__file__), "resources")
-        tutorial_resources_path = pth.join(resources_path, "tutorial")
-
-        self.fast_oad_logo = _image_from_path(pth.join(resources_path, FAST_OAD_LOGO), max_height="40vh")
+        self.fast_oad_logo = _image_from_path(
+            pth.join(PathManager.resources_path, FAST_OAD_LOGO), max_height="40vh")
         
-        self.inputs_gif = _image_from_path(pth.join(tutorial_resources_path, INPUTS_GIF), max_height="70vh")
-        self.launch_gif = _image_from_path(pth.join(tutorial_resources_path, LAUNCH_GIF), max_height="50vh")
-        self.n2_gif = _image_from_path(pth.join(tutorial_resources_path, N2_GIF), max_height="50vh")
-        self.outputs_gif = _image_from_path(pth.join(tutorial_resources_path, OUTPUTS_GIF), max_height="35vh")
+        self.inputs_gif = _image_from_path(
+            pth.join(PathManager.tutorial_resources_path, INPUTS_GIF), max_height="70vh")
+        self.launch_gif = _image_from_path(
+            pth.join(PathManager.tutorial_resources_path, LAUNCH_GIF), max_height="50vh")
+        self.n2_gif = _image_from_path(
+            pth.join(PathManager.tutorial_resources_path, N2_GIF), max_height="50vh")
+        self.outputs_gif = _image_from_path(
+            pth.join(PathManager.tutorial_resources_path, OUTPUTS_GIF), max_height="35vh")
 
         

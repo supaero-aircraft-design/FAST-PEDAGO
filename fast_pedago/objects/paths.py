@@ -16,10 +16,12 @@ MDO = "MDO"
 SEPARATOR = "_"
 
 # Directories
-WORK_DIRECTORY_NAME = "workdir"
-DATA_DIRECTORY_NAME = "data"
-INPUTS_DIRECTORY_NAME = "inputs"
-OUTPUTS_DIRECTORY_NAME = "outputs"
+WORK_DIRECTORY = "workdir"
+DATA_DIRECTORY = "data"
+INPUTS_DIRECTORY = "inputs"
+OUTPUTS_DIRECTORY = "outputs"
+RESOURCES_DIRECTORY = "resources"
+TUTORIAL_DIRECTORY = "tutorial"
 
 # Configuration files
 MDA_CONFIGURATION_FILE = "oad_sizing_sensitivity_analysis.yml"

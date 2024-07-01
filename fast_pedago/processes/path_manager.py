@@ -4,18 +4,23 @@ import os
 import os.path as pth
 import shutil
 
+from typing import List
+
 import fastoad.api as oad
 
 from fast_pedago import (
     configuration,
+    gui,
     source_data_files,
 )
 
 from fast_pedago.objects.paths import(
-    WORK_DIRECTORY_NAME,
-    DATA_DIRECTORY_NAME,
-    INPUTS_DIRECTORY_NAME,
-    OUTPUTS_DIRECTORY_NAME,
+    WORK_DIRECTORY,
+    DATA_DIRECTORY,
+    INPUTS_DIRECTORY,
+    OUTPUTS_DIRECTORY,
+    RESOURCES_DIRECTORY,
+    TUTORIAL_DIRECTORY,
     MDA_CONFIGURATION_FILE,
     MDO_CONFIGURATION_FILE,
     REFERENCE_AIRCRAFT,
@@ -23,6 +28,7 @@ from fast_pedago.objects.paths import(
     OUTPUT_FILE_SUFFIX,
     SOURCE_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
+    SEPARATOR,
 )
 
 
@@ -47,6 +53,9 @@ class PathManager():
     
     input_directory_path = ""
     output_directory_path = ""
+    
+    resources_path = ""
+    tutorial_resources_path = ""
 
 
     @staticmethod
@@ -55,14 +64,14 @@ class PathManager():
         Creates the working directory if not already created, and sets the path to it.
         Working directory contains input and output files (.xml and .csv).
         """
-        PathManager.working_directory_path = pth.join(os.getcwd(), WORK_DIRECTORY_NAME)
+        PathManager.working_directory_path = pth.join(os.getcwd(), WORK_DIRECTORY)
         if not pth.exists(PathManager.working_directory_path):
             os.mkdir(PathManager.working_directory_path)
 
         PathManager.input_directory_path = pth.join(
-            PathManager.working_directory_path, INPUTS_DIRECTORY_NAME)
+            PathManager.working_directory_path, INPUTS_DIRECTORY)
         PathManager.output_directory_path = pth.join(
-            PathManager.working_directory_path, OUTPUTS_DIRECTORY_NAME)
+            PathManager.working_directory_path, OUTPUTS_DIRECTORY)
 
 
     @staticmethod
@@ -85,7 +94,7 @@ class PathManager():
         """
         PathManager.reference_input_file_path = pth.join(
             PathManager.working_directory_path,
-            pth.join(INPUTS_DIRECTORY_NAME, PathManager.reference_input_file_path),
+            pth.join(INPUTS_DIRECTORY, PathManager.reference_input_file_path),
         )
         
         # Technically, we could simply copy the reference file because I already did the input
@@ -108,7 +117,7 @@ class PathManager():
         Data directory contains configuration files (copied from original configuration
         files), and N2/XDSM graphs
         """
-        PathManager.data_directory_path = pth.join(os.getcwd(), DATA_DIRECTORY_NAME)
+        PathManager.data_directory_path = pth.join(os.getcwd(), DATA_DIRECTORY)
         if not pth.exists(PathManager.data_directory_path):
             os.mkdir(PathManager.data_directory_path)
         
@@ -146,6 +155,12 @@ class PathManager():
 
 
     @staticmethod
+    def _build_resources_directory():
+        PathManager.resources_path = pth.join(pth.dirname(gui.__file__), RESOURCES_DIRECTORY)
+        PathManager.tutorial_resources_path = pth.join(PathManager.resources_path, TUTORIAL_DIRECTORY)
+
+
+    @staticmethod
     def build_paths():
         """
         Generates all directories and files needed, and saves their path.
@@ -156,3 +171,24 @@ class PathManager():
         PathManager._build_working_directory() 
         PathManager._sets_reference_files()
         PathManager._build_reference_input_file()
+        PathManager._build_resources_directory()
+
+
+    @staticmethod
+    def list_available_reference_file() -> List[str]:
+        """
+        Parses the name of all the file in the source files folder and scan 
+        for reference file that can be selected for the rest of the analysis
+
+        :return: a list of available reference files names
+        """
+
+        list_files = os.listdir(pth.dirname(source_data_files.__file__))
+        available_reference_files = []
+
+        for file in list_files:
+            if file.endswith(".xml"):
+                associated_sizing_process_name = file.replace(SOURCE_FILE_SUFFIX, "").replace(SEPARATOR, " ")
+                available_reference_files.append(associated_sizing_process_name)
+
+        return available_reference_files

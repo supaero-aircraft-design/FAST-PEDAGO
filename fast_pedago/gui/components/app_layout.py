@@ -8,6 +8,7 @@ import ipyvuetify as v
 
 from fast_pedago.utils.functions import _image_from_path
 from fast_pedago import gui
+from fast_pedago.processes import PathManager
 from . import (
     GitLinksButton,
     ClearAllButton,
@@ -152,13 +153,13 @@ class Header(v.AppBar):
         Loads header images as instance variables to call them during
         the layout building.
         """
-        resources_path = pth.join(pth.dirname(gui.__file__), "resources")
-        
         # Get FAST-OAD logo for main menu
-        self.fast_oad_main_menu_logo = _image_from_path(pth.join(resources_path, FAST_OAD_MAIN_MENU_LOGO))
+        self.fast_oad_main_menu_logo = _image_from_path(
+            pth.join(PathManager.resources_path, FAST_OAD_MAIN_MENU_LOGO))
 
         # Get FAST-OAD logo for top layer
-        self.fast_oad_top_layer_logo = _image_from_path(pth.join(resources_path, FAST_OAD_TOP_LAYER_LOGO))
+        self.fast_oad_top_layer_logo = _image_from_path(
+            pth.join(PathManager.resources_path, FAST_OAD_TOP_LAYER_LOGO))
         self.fast_oad_top_layer_logo.v_on = 'tooltip.on'
         self.fast_oad_top_layer_logo_wrapper = v.Tooltip(
             absolute=True,
@@ -216,14 +217,14 @@ class Footer(v.Footer):
         Loads header images as instance variables to call them during
         the layout building.
         """
-        resources_path = pth.join(pth.dirname(gui.__file__), "resources")
-
         # Get ISAE logo
-        self.isae_logo = _image_from_path(pth.join(resources_path, ISAE_LOGO))
+        self.isae_logo = _image_from_path(
+            pth.join(PathManager.resources_path, ISAE_LOGO))
         # Sets the link to supaero website, to open in a new tab
         self.isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
 
         # Get Airbus logo
-        self.airbus_logo = _image_from_path(pth.join(resources_path, AIRBUS_LOGO))
+        self.airbus_logo = _image_from_path(
+            pth.join(PathManager.resources_path, AIRBUS_LOGO))
         # Sets the link to airbus website, to open in a new tab
         self.airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}

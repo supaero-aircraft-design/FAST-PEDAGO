@@ -1,6 +1,5 @@
 from .functions import (
     _image_from_path,
-    _list_available_reference_file,
     _list_available_sizing_process_results,
     _extract_objective,
     _extract_residuals,
