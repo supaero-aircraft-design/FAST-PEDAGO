@@ -227,3 +227,38 @@ class PathManager():
         return pth.join(pth.dirname(source_data_files.__file__),
             source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
         )
+
+
+    @staticmethod
+    def clear_all_files():
+        """
+        Clear all files contained in "workdir", in subdirectories "inputs"
+        and "outputs", that are not the files of the reference aircraft.
+        Also makes the user come back to source selection.
+
+        The subdirectories of workdir are not deleted in the process.
+        """
+        # Remove all input files in the inputs directory
+        input_file_list = os.listdir(PathManager.input_directory_path)
+        for file_name in input_file_list:
+            file_path = pth.join(PathManager.input_directory_path, file_name)
+
+            # We keep the reference input_file and avoid deleting subdirectory
+            if file_name != PathManager.reference_input_file_name and not pth.isdir(
+                file_path
+            ):
+                os.remove(file_path)
+
+        # Remove all input files in the outputs directory, we can remove all .sql because they
+        # are re-generated anyway
+        output_file_list = os.listdir(PathManager.output_directory_path)
+        for file_name in output_file_list:
+            file_path = pth.join(PathManager.output_directory_path, file_name)
+
+            # We keep the reference input_file and avoid deleting subdirectory
+            if (
+                file_name != PathManager.reference_output_file_name
+                and file_name != PathManager.reference_flight_data_file_name
+                and not pth.isdir(file_path)
+            ):
+                os.remove(file_path)

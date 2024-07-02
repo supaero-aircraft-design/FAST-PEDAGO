@@ -2,10 +2,6 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os
-import os.path as pth
-import shutil
-
 import ipyvuetify as v
 
 from .components import (
@@ -275,28 +271,5 @@ class AppInterface(v.App):
         self._to_source_selection()
         # Clears the output selection
         self.output_graphs.output_selection.v_model = []
-
-        # Remove all input files in the inputs directory
-        input_file_list = os.listdir(PathManager.input_directory_path)
-        for file_name in input_file_list:
-            file_path = pth.join(PathManager.input_directory_path, file_name)
-
-            # We keep the reference input_file and avoid deleting subdirectory
-            if file_name != PathManager.reference_input_file_name and not pth.isdir(
-                file_path
-            ):
-                os.remove(file_path)
-
-        # Remove all input files in the outputs directory, we can remove all .sql because they
-        # are re-generated anyway
-        output_file_list = os.listdir(PathManager.output_directory_path)
-        for file_name in output_file_list:
-            file_path = pth.join(PathManager.output_directory_path, file_name)
-
-            # We keep the reference input_file and avoid deleting subdirectory
-            if (
-                file_name != PathManager.reference_output_file_name
-                and file_name != PathManager.reference_flight_data_file_name
-                and not pth.isdir(file_path)
-            ):
-                os.remove(file_path)
+        
+        PathManager.clear_all_files()
