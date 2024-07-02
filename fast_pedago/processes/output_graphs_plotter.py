@@ -57,11 +57,20 @@ class OutputGraphsPlotter():
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # Stores the current plot name, plot function, and data
         self.plot_name = ''
-        # Stores the function to call when plotting
         self.plot_function = None
         self.data = []
+        self.is_single_output = False
+        
+        self._build_layout()
 
+
+    def _build_layout(self):
+        """
+        Builds the graph layout: the graph container and a selector specific to
+        single output figures.
+        """
         self.output = widgets.Output()
 
         # A file selection widget for graphs that can
@@ -81,6 +90,7 @@ class OutputGraphsPlotter():
                 self.output,
             ],
         )
+    
 
     def change_graph(self, plot_name: str):
         """
