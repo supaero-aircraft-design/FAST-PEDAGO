@@ -54,8 +54,8 @@ class PathManager():
     input_directory_path = ""
     output_directory_path = ""
     
-    resources_path = ""
-    tutorial_resources_path = ""
+    resources_directory_path = ""
+    tutorial_directory_path = ""
 
 
     @staticmethod
@@ -156,8 +156,8 @@ class PathManager():
 
     @staticmethod
     def _build_resources_directory():
-        PathManager.resources_path = pth.join(pth.dirname(gui.__file__), RESOURCES_DIRECTORY)
-        PathManager.tutorial_resources_path = pth.join(PathManager.resources_path, TUTORIAL_DIRECTORY)
+        PathManager.resources_directory_path = pth.join(pth.dirname(gui.__file__), RESOURCES_DIRECTORY)
+        PathManager.tutorial_directory_path = pth.join(PathManager.resources_directory_path, TUTORIAL_DIRECTORY)
 
 
     @staticmethod
@@ -262,3 +262,30 @@ class PathManager():
                 and not pth.isdir(file_path)
             ):
                 os.remove(file_path)
+
+
+    @staticmethod
+    def path_to(folder: str, file: str) -> str:
+        """
+        Finds path to file within the chosen folder.
+
+        :param folder: the folder in which to search the file, either
+            "data", "work", "input", "output", "resources", "tutorial" or nothing.
+        :param file: the exact name of the file, with the extension.
+        :return the path to the file.
+        """
+        if folder == "data":
+            folder_path = PathManager.data_directory_path
+        elif folder == "work": 
+            folder_path = PathManager.working_directory_path
+        elif folder == "input":
+            folder_path = PathManager.input_directory_path
+        elif folder == "output":
+            folder_path = PathManager.output_directory_path
+        elif folder == "resources":
+            folder_path = PathManager.resources_directory_path
+        elif folder == "tutorial":
+            folder_path = PathManager.tutorial_directory_path
+        else:
+            folder_path == ""
+        return pth.join(folder_path, file)

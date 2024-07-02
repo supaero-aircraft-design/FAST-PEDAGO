@@ -207,15 +207,15 @@ class SourceSelectionContainer(v.Col):
         the layout building.
         """
         self._fast_oad_logo = _image_from_path(
-            pth.join(PathManager.resources_path, FAST_OAD_LOGO), max_height="40vh")
+            PathManager.path_to("resources", FAST_OAD_LOGO), max_height="40vh")
         
         self._inputs_gif = _image_from_path(
-            pth.join(PathManager.tutorial_resources_path, INPUTS_GIF), max_height="70vh")
+            PathManager.path_to("tutorial", INPUTS_GIF), max_height="70vh")
         self._launch_gif = _image_from_path(
-            pth.join(PathManager.tutorial_resources_path, LAUNCH_GIF), max_height="50vh")
+            PathManager.path_to("tutorial", LAUNCH_GIF), max_height="50vh")
         self._n2_gif = _image_from_path(
-            pth.join(PathManager.tutorial_resources_path, N2_GIF), max_height="50vh")
+            PathManager.path_to("tutorial", N2_GIF), max_height="50vh")
         self._outputs_gif = _image_from_path(
-            pth.join(PathManager.tutorial_resources_path, OUTPUTS_GIF), max_height="35vh")
+            PathManager.path_to("tutorial", OUTPUTS_GIF), max_height="35vh")
 
         

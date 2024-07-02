@@ -2,8 +2,6 @@
 Contains the main layout of the app : header, footer, drawer layouts.
 """
 
-import os.path as pth
-
 import ipyvuetify as v
 
 
@@ -165,7 +163,7 @@ class Header(v.AppBar):
         """
         # Get FAST-OAD logo
         self.fast_oad_logo = _image_from_path(
-            pth.join(PathManager.resources_path, FAST_OAD_TOP_LAYER_LOGO))
+            PathManager.path_to("resources", FAST_OAD_TOP_LAYER_LOGO))
         self.fast_oad_logo.v_on = 'tooltip.on'
         self._fast_oad_logo_wrapper = v.Tooltip(
             absolute=True,
@@ -226,12 +224,12 @@ class Footer(v.Footer):
         """
         # Get ISAE logo
         self._isae_logo = _image_from_path(
-            pth.join(PathManager.resources_path, ISAE_LOGO))
+            PathManager.path_to("resources", ISAE_LOGO))
         # Sets the link to supaero website, to open in a new tab
         self._isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
 
         # Get Airbus logo
         self._airbus_logo = _image_from_path(
-            pth.join(PathManager.resources_path, AIRBUS_LOGO))
+            PathManager.path_to("resources", AIRBUS_LOGO))
         # Sets the link to airbus website, to open in a new tab
         self._airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}

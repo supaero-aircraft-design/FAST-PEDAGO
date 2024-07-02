@@ -2,7 +2,6 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os.path as pth
 import webbrowser
 
 import plotly.graph_objects as go
@@ -136,10 +135,8 @@ class ProcessGraphContainer(v.Col):
         
         # N2 and XDSM images are wrapped in a tooltip to indicate to click on them.
         # This is because it is impossible to load directly the .html into a frame (bugs)
-        n2_image_path = pth.join(
-            PathManager.data_directory_path, N2_PNG)
-        n2_file_path = pth.join(
-            PathManager.data_directory_path, N2_HTML)
+        n2_image_path = PathManager.path_to("data", N2_PNG)
+        n2_file_path = PathManager.path_to("data", N2_HTML)
 
         n2_image = _image_from_path(
             n2_image_path , max_height="50vh")
@@ -158,10 +155,8 @@ class ProcessGraphContainer(v.Col):
             children=["Click me to open interactive N2 graph"]
         )
 
-        xdsm_image_path = pth.join(
-            PathManager.data_directory_path, XDSM_PNG)
-        xdsm_file_path = pth.join(
-            PathManager.data_directory_path, XDSM_HTML)
+        xdsm_image_path = PathManager.path_to("data", XDSM_PNG)
+        xdsm_file_path = PathManager.path_to("data", XDSM_HTML)
 
         xdsm_image = _image_from_path(
             xdsm_image_path, max_height="50vh")

@@ -8,8 +8,6 @@ import numpy as np
 import pandas as pd
 import scipy.constants as sc
 
-import os.path as pth
-
 import plotly
 import plotly.graph_objects as go
 import ipywidgets as widgets
@@ -196,8 +194,7 @@ class OutputGraphsPlotter():
             mission_viewer = oad.MissionViewer()
 
             for sizing_process_to_add in self.sizing_process_to_display:
-                path_to_flight_data_file = pth.join(
-                    PathManager.output_directory_path,
+                path_to_flight_data_file = PathManager.path_to("output", 
                     sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                 )
                 mission_viewer.add_mission(
@@ -223,12 +220,10 @@ class OutputGraphsPlotter():
             fig = None
 
             for sizing_process_to_add in self.sizing_process_to_display:
-                path_to_output_file = pth.join(
-                    PathManager.output_directory_path,
+                path_to_output_file = PathManager.path_to("output",
                     sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                 )
-                path_to_flight_data_file = pth.join(
-                    PathManager.output_directory_path,
+                path_to_flight_data_file = PathManager.path_to("output",
                     sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                 )
 
@@ -269,8 +264,7 @@ class OutputGraphsPlotter():
             
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
-                    path_to_output_file = pth.join(
-                        PathManager.output_directory_path,
+                    path_to_output_file = PathManager.path_to("output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                     )
                                 
