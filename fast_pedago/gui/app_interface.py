@@ -11,7 +11,7 @@ from .components import (
     InputsContainer,
     OutputsGraphsContainer,
     ProcessGraphContainer,
-    SourceSelectionContainer,
+    SourceSelectionContainer
 )
 from fast_pedago.processes import (
     PathManager,
@@ -19,10 +19,6 @@ from fast_pedago.processes import (
     ResidualsObjectivesPlotter,
 )
 
-
-
-DRAWER_WIDTH = "450px"
-HEADER_HEIGHT = "64px" 
 
 # As there are margins and padding in the voila template, 
 # I have to adjust the padding considering both the spacings
@@ -40,11 +36,13 @@ class AppInterface(v.App):
         self.source_data_file = PathManager.reference_aircraft
         
         self._build_layout()
-
         self._to_source_selection()
 
 
     def _to_source_selection(self):
+        """
+        Displays tutorial and source selection widget.
+        """
         self.drawer.hide()
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
@@ -52,6 +50,10 @@ class AppInterface(v.App):
 
 
     def _to_main(self):
+        """
+        Displays main window, with input drawer and tabs to change 
+        between residuals/objectives graph and output figures.
+        """
         self.drawer.show()
         self.header.open_drawer_button.show()
         self.padding_column.show()
@@ -60,6 +62,12 @@ class AppInterface(v.App):
 
 
     def _switch_tab(self, widget, event, data):
+        """
+        Hides the drawer when on outputs tabs, and show it when on 
+        inputs tab.
+
+        To be called with "on_event" method of a widget.
+        """
         if data == 1:
             self.drawer.hide()
             self.header.open_drawer_button.hide()
@@ -72,7 +80,8 @@ class AppInterface(v.App):
 
     def _build_layout(self):
         """
-        Builds the layout of the app.
+        Builds the layout of the app: all the app components (drawer, input/output tabs, 
+        header, footer, tutorial).
         """ 
         # Source selection + home widgets
         self.source_selection = SourceSelectionContainer()
@@ -93,7 +102,6 @@ class AppInterface(v.App):
         
         # Outputs widgets
         self.output_graphs = OutputsGraphsContainer()
-        
         
         self.main_content = v.Container(
             class_="pt-0",
@@ -125,7 +133,7 @@ class AppInterface(v.App):
         self.graphs.on_event("change", self._switch_tab)
         
         self.header = Header()
-        self.header.fast_oad_top_layer_logo.on_event("click", lambda *args : self._to_source_selection())
+        self.header.fast_oad_logo.on_event("click", lambda *args : self._to_source_selection())
         self.header.open_drawer_button.on_event("click", self._open_or_close_drawer)
         self.header.clear_all_button.button.on_event("click", self._clear_all_files)
         
@@ -198,7 +206,12 @@ class AppInterface(v.App):
 
 
     def _switch_process(self, widget, event, data):
+        """
+        Switch display between MDA and MDO depending on process selection
+        button state.
 
+        To be called with "on_event" method of a widget.
+        """
         # If the button toggle is on 1, switch to MDO
         if data==1:
             self.is_MDO = True
@@ -213,7 +226,7 @@ class AppInterface(v.App):
 
     def _to_process_computation(self):
         """
-        When a process is on-going.
+        When a process is on-going, blocks the inputs and set a loading screen.
         """
         self.inputs.disable()
         self.graphs.children[0].disabled = True
@@ -226,7 +239,7 @@ class AppInterface(v.App):
 
     def _to_process_results(self):
         """
-        Re-enables input widgets after the end of a MDA/MDO process
+        Re-enables input widgets after the end of a MDA/MDO process.
         """
         self.inputs.enable()
         self.graphs.children[0].disabled = False
@@ -235,6 +248,11 @@ class AppInterface(v.App):
 
 
     def _launch_process(self, widget, event, data):
+        """
+        Retrieves the user inputs from the drawer and launch the selected process.
+
+        To be called with "on_event" method of a widget.
+        """
         self._to_process_computation()
         if self.is_MDO:
             self.inputs.retrieve_mdo_inputs()
@@ -256,6 +274,11 @@ class AppInterface(v.App):
     
     
     def _open_or_close_drawer(self, widget, event, data):
+        """
+        Opens or closes the input drawer depending on its actual state.
+        
+        To be called with "on_event" method of a widget.
+        """
         self.drawer.v_model = not self.drawer.v_model
     
     

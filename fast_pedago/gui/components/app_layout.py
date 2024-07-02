@@ -6,20 +6,20 @@ import os.path as pth
 
 import ipyvuetify as v
 
-from fast_pedago.utils.functions import _image_from_path
-from fast_pedago import gui
-from fast_pedago.processes import PathManager
-from . import (
+
+from .input_widgets import (
     GitLinksButton,
     ClearAllButton,
 )
+from fast_pedago.processes import PathManager
+from fast_pedago.utils.functions import _image_from_path
 
 
+# Components sizes
 DRAWER_WIDTH = "450px"
 HEADER_HEIGHT = "64px" 
 
 # Path of the logos used
-FAST_OAD_MAIN_MENU_LOGO = "logo_fast_oad_main_menu.jpg"
 FAST_OAD_TOP_LAYER_LOGO = "logo_fast_oad_top_layer.jpg"
 ISAE_LOGO = "logo_supaero.png"
 AIRBUS_LOGO = "logo_airbus.png"
@@ -38,13 +38,25 @@ class Drawer(v.NavigationDrawer):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
+        self._build_layout()
+
+
+    def _build_layout(self):
+        """
+        Generates the drawer layout.
+        """
+        self.app = True
+        self.clipped = True
+        self.width = DRAWER_WIDTH
+        self.v_model = True
+        
         # The content attributes will be used to change the components
         # displayed easily.
         self.content = v.Container(
             class_="pa-0",
         )
         
-        # Some of the components are made to hide when on small screens
+        # Some of the components are made to hide when on small screens ("hidden-lg-and-up")
         # This is to adjust the layout since the navigation drawer hides
         # on small screens.
         self.close_drawer_button = v.Btn(
@@ -55,10 +67,6 @@ class Drawer(v.NavigationDrawer):
             ],
         )
 
-        self.app = True
-        self.clipped = True
-        self.width = DRAWER_WIDTH
-        self.v_model = True
         self.children = [
             v.Container(
                 style_="padding: " + HEADER_HEIGHT + " 0 0 0;",
@@ -72,6 +80,7 @@ class Drawer(v.NavigationDrawer):
             ),
             self.content,
         ]
+
 
 
 class Header(v.AppBar):
@@ -128,7 +137,7 @@ class Header(v.AppBar):
                         children=[
                             v.Row(
                                 justify="center",
-                                children=[self.fast_oad_top_layer_logo_wrapper]
+                                children=[self._fast_oad_logo_wrapper]
                             ),
                         ],
                     ),
@@ -147,26 +156,23 @@ class Header(v.AppBar):
                 ],
             ),
         ]
+ 
     
     def _load_images(self):
         """
         Loads header images as instance variables to call them during
         the layout building.
         """
-        # Get FAST-OAD logo for main menu
-        self.fast_oad_main_menu_logo = _image_from_path(
-            pth.join(PathManager.resources_path, FAST_OAD_MAIN_MENU_LOGO))
-
-        # Get FAST-OAD logo for top layer
-        self.fast_oad_top_layer_logo = _image_from_path(
+        # Get FAST-OAD logo
+        self.fast_oad_logo = _image_from_path(
             pth.join(PathManager.resources_path, FAST_OAD_TOP_LAYER_LOGO))
-        self.fast_oad_top_layer_logo.v_on = 'tooltip.on'
-        self.fast_oad_top_layer_logo_wrapper = v.Tooltip(
+        self.fast_oad_logo.v_on = 'tooltip.on'
+        self._fast_oad_logo_wrapper = v.Tooltip(
             absolute=True,
             v_slots=[{
             'name': 'activator',
             'variable': 'tooltip',
-            'children': self.fast_oad_top_layer_logo,
+            'children': self.fast_oad_logo,
             }],
             children=["Return to source file selection"],
         )
@@ -201,16 +207,17 @@ class Footer(v.Footer):
                 children=[
                     v.Col(
                         cols="1",
-                        children=[self.isae_logo]
+                        children=[self._isae_logo]
                     ),
                     v.Col(
                         class_="pe-6",
                         cols=2,
-                        children=[self.airbus_logo]
+                        children=[self._airbus_logo]
                     ),
                 ],
             ),
         ]
+
 
     def _load_images(self):
         """
@@ -218,13 +225,13 @@ class Footer(v.Footer):
         the layout building.
         """
         # Get ISAE logo
-        self.isae_logo = _image_from_path(
+        self._isae_logo = _image_from_path(
             pth.join(PathManager.resources_path, ISAE_LOGO))
         # Sets the link to supaero website, to open in a new tab
-        self.isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
+        self._isae_logo.attributes = {'href': SUPAERO_WEBSITE_LINK, "target": "_blank"}
 
         # Get Airbus logo
-        self.airbus_logo = _image_from_path(
+        self._airbus_logo = _image_from_path(
             pth.join(PathManager.resources_path, AIRBUS_LOGO))
         # Sets the link to airbus website, to open in a new tab
-        self.airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}
+        self._airbus_logo.attributes = {'href': AIRBUS_WEBSITE_LINK, "target": "_blank"}

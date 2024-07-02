@@ -4,15 +4,13 @@
 
 import ipyvuetify as v
 
-from fast_pedago.processes import MDAMDOLauncher
 from .input_widgets import (
     Snackbar,
     SliderInput,
     RangeSliderInput,
 )
-from fast_pedago.utils import (
-    _InputsCategory,
-)
+from fast_pedago.processes import MDAMDOLauncher
+from fast_pedago.utils import _InputsCategory
 
 
 # Min and max values for sliders input values
@@ -36,36 +34,29 @@ class InputsContainer(v.List):
         super().__init__(**kwargs)
         
         self.process_launcher = process_launcher
-        
-        self.class_ = "pa-0"
-        self.expand = True
-        
-        self._set_layout_mda()
-        self._set_layout_mdo()
-        
+
         self._build_layout()
-        
         self.to_MDA()
-    
+
     
     def to_MDO(self):
         """
-        Changes inputs to MDO inputs
+        Changes layout to MDO inputs
         """
-        self.children = [self.inputs_header] + self.mdo_input
+        self.children = [self.inputs_header] + self._mdo_input
         self.launch_button.children =[
             v.Icon(class_="px-3", children=["fa-plane"]),
             "Launch optimization",
         ]
-        self.process_name_field.label = "Opimization name"
+        self.process_name_field.label = "Optimization name"
         self.process_name_field.placeholder = "Write a name for your optimization process"
 
 
     def to_MDA(self):
         """
-        Changes inputs to MDA inputs
+        Changes layout to MDA inputs
         """
-        self.children = [self.inputs_header] + self.mda_input
+        self.children = [self.inputs_header] + self._mda_input
         self.launch_button.children =[
             v.Icon(class_="px-3", children=["fa-plane"]),
             "Launch sizing",
@@ -74,60 +65,17 @@ class InputsContainer(v.List):
         self.process_name_field.placeholder = "Write a name for your sizing process"
 
 
-    def retrieve_mda_inputs(self):
-        """
-        Retrieves inputs from the MDA input widgets
-        """
-        self.process_launcher.set_mda_inputs(
-            n_pax=self.n_pax_input.slider.v_model,
-            v_app=self.v_app_input.slider.v_model,
-            cruise_mach=self.cruise_mach_input.slider.v_model,
-            range=self.range_input.slider.v_model,
-            payload=self.payload_input.slider.v_model,
-            max_payload=self.max_payload_input.slider.v_model,
-            wing_aspect_ratio=self.wing_aspect_ratio_input.slider.v_model,
-            bypass_ratio=self.bpr_input.slider.v_model
-        )
-
-
-    def retrieve_mdo_inputs(self):
-        """
-        Retrieves inputs from the MDO input widgets
-        """
-        self.process_launcher.set_mdo_inputs(
-            objective=self.objective_selection.v_model,
-            is_aspect_ratio_design_variable=self.ar_design_var_checkbox.v_model,
-            aspect_ratio_lower_bound=self.ar_design_var_input.slider.v_model[0],
-            aspect_ratio_upper_bound=self.ar_design_var_input.slider.v_model[1],
-            is_wing_sweep_design_variable=self.sweep_w_design_var_checkbox.v_model,
-            wing_sweep_lower_bound=self.sweep_w_design_var_input.slider.v_model[0],
-            wing_sweep_upper_bound=self.sweep_w_design_var_input.slider.v_model[1],
-            is_wing_span_constrained=self.wing_span_constraints_checkbox.v_model,
-            wing_span_upper_bound=self.wing_span_constraint_max.slider.v_model,
-        )
-
-
-    def set_initial_value_mda(self, source_data_file_name: str):
-        """
-        Set the value of the attributes that store the variable for the MDA based on their value
-        in the reference inputs.
-        
-        Also save the source file inputs as an object attribute that we can copy to modify inputs
-        
-        :param source_data_file_name: the source file to read data from
-        """
-        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
-        self.n_pax_input.slider.v_model = reference_inputs[0]
-        self.v_app_input.slider.v_model = reference_inputs[1]
-        self.cruise_mach_input.slider.v_model = reference_inputs[2]
-        self.range_input.slider.v_model = reference_inputs[3]
-        self.payload_input.slider.v_model = reference_inputs[4]
-        self.max_payload_input.slider.v_model = reference_inputs[5]
-        self.wing_aspect_ratio_input.slider.v_model = reference_inputs[6]
-        self.bpr_input.slider.v_model = reference_inputs[7]
-
-
     def _build_layout(self):
+        """
+        Builds the main layout of the inputs container, with a text field,
+        launch button, and button to switch from MDA to MDO.
+        """
+        self.class_ = "pa-0"
+        self.expand = True
+        
+        self._build_layout_mda()
+        self._build_layout_mdo()
+
         # Text box to give a name to the run
         self.process_name_field = v.TextField(
             outlined=True,
@@ -147,6 +95,7 @@ class InputsContainer(v.List):
                 "Launch sizing"
             ],
         )
+
         # Create a button to trigger the MDO "mode"
         self.process_selection_switch = v.BtnToggle(
             rounded=True,
@@ -165,7 +114,6 @@ class InputsContainer(v.List):
             ],
         )
 
-
         self.inputs_header = v.ListItemGroup(
             class_="px-2",
             children=[
@@ -182,7 +130,7 @@ class InputsContainer(v.List):
                                         'variable': 'tooltip',
                                         'children': self.process_selection_switch,
                                     }],
-                                    children=["Swap between analysis and optimisation mode"],
+                                    children=["Swap between analysis and optimization mode"],
                                 ), 
                             ],
                         ),
@@ -201,12 +149,12 @@ class InputsContainer(v.List):
             ],
         )
 
-   
-    def _set_layout_mdo(self):
+
+    def _build_layout_mdo(self):
         """
-        Generates the layout for the MDO inputs
+        Generates the layout for the MDO inputs.
         """
-        self.objective_selection = v.BtnToggle(
+        self._objective_selection = v.BtnToggle(
             v_model="toggle_exclusive",
             mandatory=True,
             children=[
@@ -231,25 +179,25 @@ class InputsContainer(v.List):
         
         # Checkboxes to chose which design variable and
         # constraints to use
-        self.ar_design_var_checkbox = v.Checkbox(
+        self._ar_design_var_checkbox = v.Checkbox(
             class_="ms-4",
             v_model=True,
             label="Wing AR as design variable",
         )
-        self.sweep_w_design_var_checkbox = v.Checkbox(
+        self._sweep_w_design_var_checkbox = v.Checkbox(
             class_="ms-4",
             v_model=False,
             label="Wing sweep as design variable",
         )
-        self.wing_span_constraints_checkbox = v.Checkbox(
+        self._wing_span_constraints_checkbox = v.Checkbox(
             input_value=False,
             label="Wing span as a constraint",
         )
-        self.sweep_w_design_var_checkbox.on_event("change", self._ensure_one_design_var)
-        self.ar_design_var_checkbox.on_event("change",self. _ensure_one_design_var)
+        self._sweep_w_design_var_checkbox.on_event("change", self._ensure_one_design_var)
+        self._ar_design_var_checkbox.on_event("change",self. _ensure_one_design_var)
         
         # Range sliders to input design variables and constraints
-        self.ar_design_var_input = RangeSliderInput(
+        self._ar_design_var_input = RangeSliderInput(
             min=5,
             max=30,
             step=1,
@@ -257,7 +205,7 @@ class InputsContainer(v.List):
             label="Min/Max wing AR",
             tooltip="Range of aspect ratio for the optimization [-]",
         )
-        self.sweep_w_design_var_input = RangeSliderInput(
+        self._sweep_w_design_var_input = RangeSliderInput(
             min=5,
             max=50,
             step=1,
@@ -265,7 +213,7 @@ class InputsContainer(v.List):
             label="Sweep Range",
             tooltip="Range of wing sweep angle for the optimization [-]",
         )
-        self.wing_span_constraint_max = SliderInput(
+        self._wing_span_constraint_max = SliderInput(
             min=20., 
             max=100., 
             step=1, 
@@ -273,10 +221,8 @@ class InputsContainer(v.List):
             label="Max wing span", 
             tooltip="Maximum wing span allowed for the optimization [m]"
         )
-        
-        
 
-        self.mdo_input = [
+        self._mdo_input = [
             _InputsCategory("Objective", [
                     v.Row(
                         class_="pb-4 pt-2",
@@ -287,7 +233,7 @@ class InputsContainer(v.List):
                                 v_slots=[{
                                     'name': 'activator',
                                     'variable': 'tooltip',
-                                    'children': self.objective_selection,
+                                    'children': self._objective_selection,
                                 }],
                                 children=[
                                     "Minimize fuel consumption or MTOW or OWE",
@@ -297,72 +243,72 @@ class InputsContainer(v.List):
                     )
             ], is_open=True),
             _InputsCategory("Design variables", [
-                self.ar_design_var_checkbox,
-                self.ar_design_var_input,
-                self.sweep_w_design_var_checkbox,
-                self.sweep_w_design_var_input,
+                self._ar_design_var_checkbox,
+                self._ar_design_var_input,
+                self._sweep_w_design_var_checkbox,
+                self._sweep_w_design_var_input,
             ]),
             _InputsCategory("Constraints", [
-                self.wing_span_constraints_checkbox,
-                self.wing_span_constraint_max,
+                self._wing_span_constraints_checkbox,
+                self._wing_span_constraint_max,
             ]),    
         ]
-        
-    
-    def _set_layout_mda(self):
+
+
+    def _build_layout_mda(self):
         """
-        Generates the layout for the MDA inputs
+        Generates the layout for the MDA inputs.
         """
-        self.n_pax_input = SliderInput(
+        self._n_pax_input = SliderInput(
             min=20,
             max=400, 
             step=2,
             label="NPAX", 
             tooltip="Number of passengers"
         )
-        self.v_app_input = SliderInput(
+        self._v_app_input = SliderInput(
             min=45, 
             max=170, 
             step=1,
             label="Vapp", 
             tooltip="Approach speed [kts]"
         )
-        self.cruise_mach_input = SliderInput(
+        self._cruise_mach_input = SliderInput(
             min=0., 
             max=1., 
             step=0.01, 
             label="Mcruise", 
             tooltip="Cruise mach"
         )
-        self.range_input = SliderInput(
+        self._range_input = SliderInput(
             min=0,
             max=10000, 
             step=100,
             label="Range", 
             tooltip="Aircraft range [NM]"
         )
-        self.payload_input = SliderInput(
+        self._payload_input = SliderInput(
             min=0, 
             max=100000, 
             step=1000,
             label="Payload", 
             tooltip="Aircraft payload [kg]"
         )
-        self.max_payload_input = SliderInput(
+        self._max_payload_input = SliderInput(
             min=0, 
             max=100000, 
             step=1000,
             label="Max Payload", 
             tooltip="Aircraft max payload [kg]"
         )
-        self.wing_aspect_ratio_input = SliderInput(
+        self._wing_aspect_ratio_input = SliderInput(
             min=4, 
             max=25, 
             step=1,
             label="Wing AR", 
             tooltip="Aspect Ratio of the wing"
         )
-        self.bpr_input = SliderInput(
+        self._bpr_input = SliderInput(
             min=0, 
             max=25, 
             step=1, 
@@ -373,30 +319,30 @@ class InputsContainer(v.List):
         # As can be seen in the parent tab, there is an issue when cruise mach gets too high,
         # we will display a warning when that value is reached, informing students of what is
         # done behind the scene
-        self.snackbar = Snackbar(
+        self._snackbar = Snackbar(
             "The sweep angle of the wing has been adjusted to avoid having compressibility "
             "drag coefficient too high"
         )
-        self.cruise_mach_input.slider.on_event("change", self._mach_alert)
+        self._cruise_mach_input.slider.on_event("change", self._mach_alert)
 
-        self.mda_input = [
+        self._mda_input = [
             _InputsCategory("TLARs", [
-                self.n_pax_input,
-                self.v_app_input,
-                self.cruise_mach_input,
-                self.range_input,
+                self._n_pax_input,
+                self._v_app_input,
+                self._cruise_mach_input,
+                self._range_input,
             ], is_open=True),
             _InputsCategory("Weight", [
-                self.payload_input,
-                self.max_payload_input,
+                self._payload_input,
+                self._max_payload_input,
             ]),
             _InputsCategory("Geometry", [
-                self.wing_aspect_ratio_input,
+                self._wing_aspect_ratio_input,
             ]),
             _InputsCategory("Propulsion", [
-                self.bpr_input,
+                self._bpr_input,
             ]),
-            self.snackbar,
+            self._snackbar,
         ]
 
     
@@ -405,25 +351,29 @@ class InputsContainer(v.List):
         Ensures that at least one design variable is chosen
         for MDO.
         
-        If the user tries to untick a checkbox, the other is ticked
+        If the user tries to un-tick a checkbox, the other is ticked
         by default.
 
         To be called with an "on_event" ipyvuetify component method
         """
         if not data:
-            if widget == self.sweep_w_design_var_checkbox:
-                if not self.ar_design_var_checkbox.v_model:
-                    self.ar_design_var_checkbox.v_model = True
+            if widget == self._sweep_w_design_var_checkbox:
+                if not self._ar_design_var_checkbox.v_model:
+                    self._ar_design_var_checkbox.v_model = True
             else:
-                if not self.sweep_w_design_var_checkbox.v_model:
-                    self.sweep_w_design_var_checkbox.v_model = True
+                if not self._sweep_w_design_var_checkbox.v_model:
+                    self._sweep_w_design_var_checkbox.v_model = True
 
 
     def _mach_alert(self, widget, event, data):
-        # If the mach is above the value of 0.78 and the snackbar is closed, opens
-        # the snackbar to alert the user
-        if self.cruise_mach_input.slider.v_model > 0.78 and not self.snackbar.v_model:
-            self.snackbar.open_or_close(widget, event, data)
+        """
+        Opens the snackbar to alert the user if the mach is above the value 
+        of 0.78 and the snackbar is closedK
+
+        To be called with "on_event" method of a widget.
+        """
+        if self._cruise_mach_input.slider.v_model > 0.78 and not self._snackbar.v_model:
+            self._snackbar.open_or_close(widget, event, data)
 
 
     def _update_process_name(self, widget, event, data):
@@ -448,25 +398,25 @@ class InputsContainer(v.List):
         self.launch_button.color = ("#FF0000")
         
         # MDA inputs
-        self.n_pax_input.disable()
-        self.v_app_input.disable()
-        self.cruise_mach_input.disable()
-        self.range_input.disable()
-        self.payload_input.disable()
-        self.max_payload_input.disable()
-        self.wing_aspect_ratio_input.disable()
-        self.bpr_input.disable()
+        self._n_pax_input.disable()
+        self._v_app_input.disable()
+        self._cruise_mach_input.disable()
+        self._range_input.disable()
+        self._payload_input.disable()
+        self._max_payload_input.disable()
+        self._wing_aspect_ratio_input.disable()
+        self._bpr_input.disable()
         
         # MDO inputs
-        self.objective_selection.children[0].disabled = True
-        self.objective_selection.children[1].disabled = True
-        self.objective_selection.children[2].disabled = True
-        self.ar_design_var_checkbox.readonly = True
-        self.ar_design_var_input.disable()
-        self.sweep_w_design_var_checkbox.readonly = True
-        self.sweep_w_design_var_input.disable()
-        self.wing_span_constraints_checkbox.readonly = True
-        self.wing_span_constraint_max.disable()
+        self._objective_selection.children[0].disabled = True
+        self._objective_selection.children[1].disabled = True
+        self._objective_selection.children[2].disabled = True
+        self._ar_design_var_checkbox.readonly = True
+        self._ar_design_var_input.disable()
+        self._sweep_w_design_var_checkbox.readonly = True
+        self._sweep_w_design_var_input.disable()
+        self._wing_span_constraints_checkbox.readonly = True
+        self._wing_span_constraint_max.disable()
     
 
     def enable(self):
@@ -480,22 +430,78 @@ class InputsContainer(v.List):
         self.launch_button.color = ("#32cd32")
         
         # MDA inputs
-        self.n_pax_input.enable()
-        self.v_app_input.enable()
-        self.cruise_mach_input.enable()
-        self.range_input.enable()
-        self.payload_input.enable()
-        self.max_payload_input.enable()
-        self.wing_aspect_ratio_input.enable()
-        self.bpr_input.enable()
+        self._n_pax_input.enable()
+        self._v_app_input.enable()
+        self._cruise_mach_input.enable()
+        self._range_input.enable()
+        self._payload_input.enable()
+        self._max_payload_input.enable()
+        self._wing_aspect_ratio_input.enable()
+        self._bpr_input.enable()
         
         # MDO inputs
-        self.objective_selection.children[0].disabled = False
-        self.objective_selection.children[1].disabled = False
-        self.objective_selection.children[2].disabled = False
-        self.ar_design_var_checkbox.readonly = False
-        self.ar_design_var_input.enable()
-        self.sweep_w_design_var_checkbox.readonly = False
-        self.sweep_w_design_var_input.enable()
-        self.wing_span_constraints_checkbox.readonly = False
-        self.wing_span_constraint_max.enable()
+        self._objective_selection.children[0].disabled = False
+        self._objective_selection.children[1].disabled = False
+        self._objective_selection.children[2].disabled = False
+        self._ar_design_var_checkbox.readonly = False
+        self._ar_design_var_input.enable()
+        self._sweep_w_design_var_checkbox.readonly = False
+        self._sweep_w_design_var_input.enable()
+        self._wing_span_constraints_checkbox.readonly = False
+        self._wing_span_constraint_max.enable()
+
+
+    
+    def retrieve_mda_inputs(self):
+        """
+        Retrieves inputs from the MDA input widgets and configure the 
+        process launcher with it.
+        """
+        self.process_launcher.set_mda_inputs(
+            n_pax=self._n_pax_input.slider.v_model,
+            v_app=self._v_app_input.slider.v_model,
+            cruise_mach=self._cruise_mach_input.slider.v_model,
+            range=self._range_input.slider.v_model,
+            payload=self._payload_input.slider.v_model,
+            max_payload=self._max_payload_input.slider.v_model,
+            wing_aspect_ratio=self._wing_aspect_ratio_input.slider.v_model,
+            bypass_ratio=self._bpr_input.slider.v_model
+        )
+
+
+    def retrieve_mdo_inputs(self):
+        """
+        Retrieves inputs from the MDO input widgets and configure the 
+        process launcher with it.
+        """
+        self.process_launcher.set_mdo_inputs(
+            objective=self._objective_selection.v_model,
+            is_aspect_ratio_design_variable=self._ar_design_var_checkbox.v_model,
+            aspect_ratio_lower_bound=self._ar_design_var_input.slider.v_model[0],
+            aspect_ratio_upper_bound=self._ar_design_var_input.slider.v_model[1],
+            is_wing_sweep_design_variable=self._sweep_w_design_var_checkbox.v_model,
+            wing_sweep_lower_bound=self._sweep_w_design_var_input.slider.v_model[0],
+            wing_sweep_upper_bound=self._sweep_w_design_var_input.slider.v_model[1],
+            is_wing_span_constrained=self._wing_span_constraints_checkbox.v_model,
+            wing_span_upper_bound=self._wing_span_constraint_max.slider.v_model,
+        )
+
+
+    def set_initial_value_mda(self, source_data_file_name: str):
+        """
+        Set the value of the attributes that store the variable for the MDA based on their value
+        in the reference inputs.
+        
+        Also save the source file inputs as an object attribute that we can copy to modify inputs
+        
+        :param source_data_file_name: the source file to read data from
+        """
+        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
+        self._n_pax_input.slider.v_model = reference_inputs[0]
+        self._v_app_input.slider.v_model = reference_inputs[1]
+        self._cruise_mach_input.slider.v_model = reference_inputs[2]
+        self._range_input.slider.v_model = reference_inputs[3]
+        self._payload_input.slider.v_model = reference_inputs[4]
+        self._max_payload_input.slider.v_model = reference_inputs[5]
+        self._wing_aspect_ratio_input.slider.v_model = reference_inputs[6]
+        self._bpr_input.slider.v_model = reference_inputs[7]

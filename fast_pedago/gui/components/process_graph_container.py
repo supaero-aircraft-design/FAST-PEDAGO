@@ -3,15 +3,16 @@
 # Copyright (C) 2022 ISAE-SUPAERO
 
 import os.path as pth
-
 import webbrowser
 
 import plotly.graph_objects as go
 import ipyvuetify as v
 
-from fast_pedago.utils.functions import _image_from_path  # noqa
-from fast_pedago.processes import PathManager
+
 from . import Snackbar
+from fast_pedago.utils.functions import _image_from_path
+from fast_pedago.processes import PathManager
+
 
 # Image files
 N2_PNG = "n2.png"
@@ -46,26 +47,22 @@ class ProcessGraphContainer(v.Col):
         """
         Changes the buttons texts and the figure displayed to MDO
         """
-        self.is_MDA = False
-        self.specific_button.children = ["Objectives"]
-        self.specific_button.tooltip = "Displays a graph of the evolution "
+        self._is_MDA = False
+        self._specific_button.children = ["Objectives"]
+        self._specific_button.tooltip = "Displays a graph of the evolution "
         "of the objective reached at each function call"
-        
-        self._resize_figures()
-        self.display.children = [self.objectives_figure]
+        self._display.children = [self._objectives_figure]
 
 
     def to_MDA(self):
         """
         Changes the buttons texts and the figure displayed to MDA
         """
-        self.is_MDA = True
-        self.specific_button.children=["Residuals"]
-        self.specific_button.tooltip = "Displays a graph of the evolution "
+        self._is_MDA = True
+        self._specific_button.children=["Residuals"]
+        self._specific_button.tooltip = "Displays a graph of the evolution "
         "of residuals with the number of iterations"
-
-        self._resize_figures()
-        self.display.children = [self.residuals_figure]
+        self._display.children = [self._residuals_figure]
 
 
     def set_loading(self, message):
@@ -75,8 +72,8 @@ class ProcessGraphContainer(v.Col):
 
         :param message: a message to display
         """
-        self.display_selection_buttons.v_model = 0
-        self.display.children = [
+        self._display_selection_buttons.v_model = 0
+        self._display.children = [
             v.Col(
                 children=[
                     v.Row(
@@ -112,10 +109,10 @@ class ProcessGraphContainer(v.Col):
         :param main: the main graph to plot (residuals/objectives), y axis values
         :param limit: a limit to plot (threshold/minimum objective), y axis value
         """
-        if self.is_MDA:
-            active_figure = self.residuals_figure
+        if self._is_MDA:
+            active_figure = self._residuals_figure
         else:
-            active_figure = self.objectives_figure
+            active_figure = self._objectives_figure
         
         main_graph = (active_figure.data[0])
         limit_graph = (active_figure.data[1])
@@ -126,7 +123,7 @@ class ProcessGraphContainer(v.Col):
         limit_graph.x = iterations
         limit_graph.y = [limit for _ in iterations]
         
-        self.display.children = [active_figure]
+        self._display.children = [active_figure]
 
     
     # TODO: Implement the generation of the graphs
@@ -150,7 +147,7 @@ class ProcessGraphContainer(v.Col):
         n2_image.on_event("click", 
             lambda *args: webbrowser.open_new_tab(n2_file_path))
 
-        self.n2_widget = v.Tooltip(
+        self._n2_widget = v.Tooltip(
             contained=True,
             bottom=True,
             v_slots=[{
@@ -172,7 +169,7 @@ class ProcessGraphContainer(v.Col):
         xdsm_image.on_event("click", 
             lambda *args: webbrowser.open_new_tab(xdsm_file_path))
 
-        self.xdsm_widget = v.Tooltip(
+        self._xdsm_widget = v.Tooltip(
             contained=True,
             bottom=True,
             v_slots=[{
@@ -188,19 +185,19 @@ class ProcessGraphContainer(v.Col):
         """
         Builds the layout of the graph visualization container
         """
+        #TODO: Implement tooltip
         # By defining the buttons this way it is possible to change the button group between MDA/MDO
-        self.specific_button = v.Btn(
+        self._specific_button = v.Btn(
             children=["Residuals"],
             tooltip="Displays a graph of the evolution of residuals with the number of iterations",
         )
-        
-        # because of a voilà bug.)
-        self.display_selection_buttons = v.BtnToggle(
+
+        self._display_selection_buttons = v.BtnToggle(
             v_model="toggle_exclusive",
             mandatory=True,
             dense=True,
             children=[
-                self.specific_button,
+                self._specific_button,
                 v.Btn(
                     children=["N2"],
                     tooltip="Displays the N2 diagram of the sizing process",
@@ -211,9 +208,9 @@ class ProcessGraphContainer(v.Col):
                 ),
             ]
         )
-        self.display_selection_buttons.on_event("change", self._change_display)
+        self._display_selection_buttons.on_event("change", self._change_display)
         
-        self.residuals_figure = _ProcessFigure(
+        self._residuals_figure = _ProcessFigure(
             main_scatter_name="Relative error",
             limit_scatter_name="Threshold",
             title="Evolution of the residuals",
@@ -221,7 +218,7 @@ class ProcessGraphContainer(v.Col):
             y_axes_label="Relative value of residuals",
         )
         
-        self.objectives_figure = _ProcessFigure(
+        self._objectives_figure = _ProcessFigure(
             main_scatter_name="Objective",
             limit_scatter_name="Optimized value",
             title="Evolution of the objective",
@@ -236,7 +233,7 @@ class ProcessGraphContainer(v.Col):
         
         # This is a container to avoid resetting all of the GraphVisualizationContainer
         # children when switching between MDA/MDO
-        self.display = v.Row(
+        self._display = v.Row(
             justify="center",
             align="center",
         )
@@ -246,10 +243,10 @@ class ProcessGraphContainer(v.Col):
                 class_="pb-4 pt-2",
                 justify="center",
                 children=[
-                    self.display_selection_buttons,
+                    self._display_selection_buttons,
                 ],
             ),
-            self.display,
+            self._display,
             self.snackbar,
         ]
     
@@ -263,40 +260,24 @@ class ProcessGraphContainer(v.Col):
         """
         # None: Residuals/Objective 1: N2 2: N2(browser) 3: XDSM 4: XDSM(browser)
         if data == 1:
-            self.display.children = [self.n2_widget]
+            self._display.children = [self._n2_widget]
 
         elif data == 2:
-            self.display.children = [self.xdsm_widget]
+            self._display.children = [self._xdsm_widget]
         
         else:
-            self._resize_figures()
-            if self.is_MDA:
-                self.display.children = [self.residuals_figure]
+            if self._is_MDA:
+                self._display.children = [self._residuals_figure]
  
             else :
-                self.display.children = [self.objectives_figure]
+                self._display.children = [self._objectives_figure]
 
-
-    def _resize_figures(self):
-        """
-        Resizes the figures to defined height in case it has been auto-sized.
-        """
-        # It looks like the fact that we switch back and forth between image
-        # automatically resizes this FigureWidget so we'll ensure that the layout remains
-        # consistent. Additionally, we have to resize before displaying or else,
-        # for some reasons, the figure is suddenly too big every other time ...
-        self.residuals_figure.update_layout(
-            dict(height=FIGURE_HEIGHT, autosize=None)
-        )
-        self.objectives_figure.update_layout(
-            dict(height=FIGURE_HEIGHT, autosize=None)
-        )
 
 
 class _ProcessFigure(go.FigureWidget):
     """
     A widget to prepare the layout used to plot residuals and
-    objectives
+    objectives.
     """
     def __init__(
             self,

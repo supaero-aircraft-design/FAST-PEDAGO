@@ -33,7 +33,7 @@ class SourceSelectionContainer(v.Col):
 
     def _build_layout(self):
         """
-        Builds the container layout.
+        Builds the container layout : a tutorial, with the source selection widget at the bottom.
         """
         self.class_ = "pa-8"
 
@@ -65,7 +65,7 @@ class SourceSelectionContainer(v.Col):
                         v.Row(
                             justify="center",
                             align="center",
-                            children=[self.fast_oad_logo],
+                            children=[self._fast_oad_logo],
                         ),
                         v.Row(
                             class_="px-12",
@@ -117,7 +117,7 @@ class SourceSelectionContainer(v.Col):
                                 v.Col(
                                     cols=5,
                                     lg=4,
-                                    children=[self.inputs_gif],
+                                    children=[self._inputs_gif],
                                 ),
                                 v.Col(),
                             ],
@@ -135,7 +135,7 @@ class SourceSelectionContainer(v.Col):
                         v.Row(
                             justify="center",
                             align="center",
-                            children=[self.launch_gif],
+                            children=[self._launch_gif],
                         ),
                     ],
                 ),
@@ -150,7 +150,7 @@ class SourceSelectionContainer(v.Col):
                         v.Row(
                             justify="center",
                             align="center",
-                            children=[self.n2_gif],
+                            children=[self._n2_gif],
                         ),
                     ],
                 ),
@@ -165,7 +165,7 @@ class SourceSelectionContainer(v.Col):
                         v.Row(
                             justify="center",
                             align="center",
-                            children=[self.outputs_gif],
+                            children=[self._outputs_gif],
                         ),
                         v.Row(
                             class_="pt-2 px-12 mx-12",
@@ -206,16 +206,16 @@ class SourceSelectionContainer(v.Col):
         Loads tutorial images and gifs as instance variables to call them during
         the layout building.
         """
-        self.fast_oad_logo = _image_from_path(
+        self._fast_oad_logo = _image_from_path(
             pth.join(PathManager.resources_path, FAST_OAD_LOGO), max_height="40vh")
         
-        self.inputs_gif = _image_from_path(
+        self._inputs_gif = _image_from_path(
             pth.join(PathManager.tutorial_resources_path, INPUTS_GIF), max_height="70vh")
-        self.launch_gif = _image_from_path(
+        self._launch_gif = _image_from_path(
             pth.join(PathManager.tutorial_resources_path, LAUNCH_GIF), max_height="50vh")
-        self.n2_gif = _image_from_path(
+        self._n2_gif = _image_from_path(
             pth.join(PathManager.tutorial_resources_path, N2_GIF), max_height="50vh")
-        self.outputs_gif = _image_from_path(
+        self._outputs_gif = _image_from_path(
             pth.join(PathManager.tutorial_resources_path, OUTPUTS_GIF), max_height="35vh")
 
         

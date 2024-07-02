@@ -36,6 +36,7 @@ class MDAMDOLauncher():
         """
         super().__init__(**kwargs)
 
+        self.process_name = DEFAULT_PROCESS_NAME
         self.plotter = plotter
 
 
@@ -80,7 +81,13 @@ class MDAMDOLauncher():
 
 
     def _configure_paths(self, is_MDO: bool=False):
-        # Create a new FAST-OAD problem based on the reference configuration file
+        """
+        Create a new FAST-OAD problem based on the reference configuration file.
+        Sets the paths to inputs/outputs files.
+        The files names and the configuration depend on the type of process.
+        
+        :param is_MDO: true if the process is a MDO.
+        """
         if is_MDO:
             problem_type = MDO_FILE_SUFFIX
             self.configurator = oad.FASTOADProblemConfigurator(PathManager.mdo_configuration_file_path)
@@ -132,6 +139,10 @@ class MDAMDOLauncher():
 
 
     def _configure_mdo(self) :
+        """
+        Sets the MDO problem and the design variables, objective and constraints, 
+        with the reference MDO configuration.
+        """
         # Create the input file with the reference value, except for sweep
         new_inputs = copy.deepcopy(self.reference_inputs)
         # Save as the new input file. We overwrite always, may need to put a warning for
@@ -202,7 +213,12 @@ class MDAMDOLauncher():
         driver.recording_options["record_objectives"] = True
 
 
-    def _configure_mda(self) -> str:
+    def _configure_mda(self) -> float:
+        """
+        Sets the MDA problem and all the user inputs, with the reference MDA configuration
+        
+        :return the targeted residual to achieve MDA convergence
+        """
         # Create the input file with the current value
         new_inputs = copy.deepcopy(self.reference_inputs)
 
@@ -271,6 +287,8 @@ class MDAMDOLauncher():
         """
         Runs the MDA or MDO pre-configured problem, and finish by
         renaming the mission data file and closing the problem recorder.
+        
+        :param is_MDO: runs the driver if MDO, and the model if MDA.
         """
         if is_MDO:
             self.problem.run_driver()
@@ -295,18 +313,18 @@ class MDAMDOLauncher():
     
     def set_mdo_inputs(
         self,
-        objective,
-        is_aspect_ratio_design_variable,
-        aspect_ratio_lower_bound,
-        aspect_ratio_upper_bound,
-        is_wing_sweep_design_variable,
-        wing_sweep_lower_bound,
-        wing_sweep_upper_bound,
-        is_wing_span_constrained,
-        wing_span_upper_bound,
+        objective: int,
+        is_aspect_ratio_design_variable: bool,
+        aspect_ratio_lower_bound: float,
+        aspect_ratio_upper_bound: float,
+        is_wing_sweep_design_variable: bool,
+        wing_sweep_lower_bound: float,
+        wing_sweep_upper_bound: float,
+        is_wing_span_constrained: bool,
+        wing_span_upper_bound: float,
         ):
         """
-        Retrieves inputs from the MDO input widgets
+        Sets the MDO inputs as variables to use it later in in the MDO configuration function.
         """
         self.objective = objective
         self.is_aspect_ratio_design_variable = is_aspect_ratio_design_variable
@@ -321,17 +339,17 @@ class MDAMDOLauncher():
 
     def set_mda_inputs(
         self,
-        n_pax,
-        v_app,
-        cruise_mach,
-        range,
-        payload,
-        max_payload,
-        wing_aspect_ratio,
-        bypass_ratio,
+        n_pax: int,
+        v_app: float,
+        cruise_mach: float,
+        range: float,
+        payload: float,
+        max_payload: float,
+        wing_aspect_ratio: float,
+        bypass_ratio: float,
         ):
         """
-        Retrieves inputs from the MDA input widgets.
+        Sets the MDA inputs as variables to use it later in in the MDA configuration function.
         """
         self.n_pax = n_pax
         self.v_app = v_app
@@ -343,9 +361,13 @@ class MDAMDOLauncher():
         self.bypass_ratio = bypass_ratio
 
 
-    def get_reference_inputs(self, source_data_file_name):
-        self.process_name = DEFAULT_PROCESS_NAME
-        
+    def get_reference_inputs(self, source_data_file_name: str):
+        """
+        Takes the inputs from the source file
+
+        :param source_data_file_name: the source file name (with spaces and without extension)
+        :return a list of int or float inputs from the source file
+        """
         # Read the source data file
         source_data_file_path = PathManager.to_full_source_file_name(source_data_file_name)
         self.reference_inputs = oad.DataFile(source_data_file_path)

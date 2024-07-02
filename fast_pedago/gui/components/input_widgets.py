@@ -6,9 +6,11 @@ import ipywidgets as widgets
 import ipyvuetify as v
 
 
+# Github links
 GITHUB_FAST_CORE = "https://github.com/fast-aircraft-design/FAST-OAD"
 GITHUB_FAST_CS25 = "https://github.com/fast-aircraft-design/FAST-OAD_CS25"
 GITHUB_FAST_CS23 = "https://github.com/supaero-aircraft-design/FAST-GA"
+
 
 
 class ClearAllButton(v.Tooltip):
@@ -23,6 +25,8 @@ class ClearAllButton(v.Tooltip):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.bottom = True
+
         self.button = v.Btn(
             v_on = 'tooltip.on', 
             x_large=True,
@@ -32,8 +36,6 @@ class ClearAllButton(v.Tooltip):
                 v.Icon(children=["fa-trash"])
             ]
         )
-        
-        self.bottom = True
 
         # The button has to be encapsulated by the tooltip 
         self.v_slots = [{
@@ -56,6 +58,7 @@ class GitLinksButton(v.Menu):
         self.offset_y = True
         self.rounded = True
         self.open_on_hover = True
+
         self.v_slots = [{
             "name": "activator",
             "variable": "button",
@@ -82,6 +85,7 @@ class GitLinksButton(v.Menu):
                 ],
             ),
         ]
+
 
 
 class _GitLinkButtonItem(v.ListItem):
@@ -118,7 +122,10 @@ class Snackbar(v.Snackbar):
         :param text: The text to put in the snackbar.
         """
         super().__init__(**kwargs)
-            
+
+        self.app = True
+        self.v_model = False
+
         close_snackbar_button = v.Btn(
             class_="ma-0 pa-0",
             color="pink",
@@ -126,9 +133,6 @@ class Snackbar(v.Snackbar):
             children=["Close"],
         )
         close_snackbar_button.on_event("click", self.open_or_close)
-        
-        self.app = True
-        self.v_model = False
         
         self.children = [
             v.Row(
@@ -146,7 +150,8 @@ class Snackbar(v.Snackbar):
                 ],
             ),
         ]
-    
+
+
     def open_or_close(self, widget, event, data):
         """
         Opens or closes the snackbar depending on its state.
@@ -183,7 +188,7 @@ class SliderInput(v.Tooltip):
         """
         super().__init__(**kwargs)
         
-        self.text_field = v.TextField(
+        self._text_field = v.TextField(
             v_model=value,
             class_="mt-0 pt-0",
             style_="width: 60px",
@@ -207,7 +212,7 @@ class SliderInput(v.Tooltip):
         # Link the values of the slider with the associated text field.
         # Since v_slots has an known issue in ipyvuetify, this is for 
         # now the best way to do it.
-        widgets.jslink((self.slider,'v_model'),(self.text_field,'v_model'))
+        widgets.jslink((self.slider,'v_model'),(self._text_field,'v_model'))
         
         self.v_slots=[{
             'name': 'activator',
@@ -239,7 +244,7 @@ class SliderInput(v.Tooltip):
                                     ),
                                     v.Col(
                                         class_="pa-0",
-                                        children=[self.text_field],
+                                        children=[self._text_field],
                                     ),
                                 ]
                             ),
@@ -255,13 +260,19 @@ class SliderInput(v.Tooltip):
 
 
     def disable(self):
+        """
+        Disables the inputs to forbid user input.
+        """
         self.slider.readonly = True
-        self.text_field.readonly = True
+        self._text_field.readonly = True
 
     
     def enable(self):
+        """
+        Re-enables the inputs after they have been disabled.
+        """
         self.slider.readonly = False
-        self.text_field.readonly = False
+        self._text_field.readonly = False
 
 
 
@@ -342,10 +353,16 @@ class RangeSliderInput(v.Tooltip):
 
 
     def disable(self):
+        """
+        Disables the slider to forbid user input.
+        """
         self.slider.readonly = True
 
 
     def enable(self):
+        """
+        Re-enables the slider after it has been disabled.
+        """
         self.slider.readonly = False
 
 

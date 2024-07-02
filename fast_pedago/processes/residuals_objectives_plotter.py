@@ -30,13 +30,13 @@ class ResidualsObjectivesPlotter():
             is_MDO: bool=False):
         """
         Plots the relative error of each iteration during MDA process, and the relative error
-        threshold (The threshold 'target_residuals' have to be set externaly after configuring MDA),
+        threshold (The threshold 'target_residuals' have to be set externally after configuring MDA),
         or plots the objectives of each iteration and the minimum objective reached during an
         MDO process.
         This method is made to be used in a separated thread from the main MDA/MDO process
 
         :param process_ended: event triggered after the MDA/MDO process ends
-        :param recorder_database_file_path: path of the databased used to store process data
+        :param recorder_database_file_path: path of the database used to store process data
         :param is_MDA: boolean indicating if the program should plot objectives (MDO) or residuals (MDA)
         """
         

@@ -2,27 +2,24 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-from typing import Tuple
+from typing import Tuple, List
 
 import numpy as np
 import pandas as pd
-
 import scipy.constants as sc
-
-import plotly
-import plotly.graph_objects as go
-
-from fastoad.io import VariableIO
 
 import os.path as pth
 
-from IPython.display import clear_output, display
-
+import plotly
+import plotly.graph_objects as go
 import ipywidgets as widgets
 import ipyvuetify as v
+from IPython.display import clear_output, display
 
+from fastoad.io import VariableIO
 import fastoad.api as oad
 
+from .path_manager import PathManager
 from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
@@ -56,13 +53,11 @@ GRAPH = {
 
 
 class OutputGraphsPlotter():
-    def __init__(self, working_directory_path: str, **kwargs):
+    """
+    A class that manages the plot of all the available figures.
+    """
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
-        self.working_directory_path = working_directory_path
-        self.path_to_output_folder = pth.join(
-            self.working_directory_path, "outputs"
-        )
 
         self.plot_name = ''
         # Stores the function to call when plotting
@@ -90,6 +85,14 @@ class OutputGraphsPlotter():
         )
 
     def change_graph(self, plot_name: str):
+        """
+        Changes the plotting function to another one, and displays a 
+        file selector for when the figure only allows one aircraft,
+        then plots the new figure.
+
+        :param plot_name: the name of the new figure to plot. 
+            (standard name taken from GRAPH constant)
+        """
         self.plot_name = plot_name
         self.file_selector.hide()
         
@@ -115,32 +118,77 @@ class OutputGraphsPlotter():
         self.plot()
 
 
-    def plot(self, data = None):
+    def plot(self, data: List[str] = None):
+        """
+        Plots the given data on the current figure.
+        
+        :param data: the data to plot.
+        """
+        # If no data is given, use the cached one. Else use 
+        # the given one and cache it.
         if data:
             self.data = data
             self.file_selector.items = data
         self.plot_function(self.data)
 
 
-    def _variable_viewer(self, data):
+    def _variable_viewer(self, data: List[str]):
+        """
+        Plots the variable viewer with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.variable_viewer, data, True)
 
-    def _aircraft_geometry_plot(self, data):
+    def _aircraft_geometry_plot(self, data: List[str]):
+        """
+        Plots the aircraft geometry with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.aircraft_geometry_plot, data)
     
-    def _wing_geometry_plot(self, data):
+    def _wing_geometry_plot(self, data: List[str]):
+        """
+        Plots the wing geometry with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.wing_geometry_plot, data)
 
-    def _drag_polar_plot(self, data):
+    def _drag_polar_plot(self, data: List[str]):
+        """
+        Plots the drag polar with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.drag_polar_plot, data)
 
-    def _mass_breakdown_bar_plot(self, data):
+    def _mass_breakdown_bar_plot(self, data: List[str]):
+        """
+        Plots the bar mass breakdown with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.mass_breakdown_bar_plot, data)
 
-    def _mass_breakdown_sun_plot(self, data):
+    def _mass_breakdown_sun_plot(self, data: List[str]):
+        """
+        Plots the sun mass breakdown with the given aircraft
+
+        :param data: the aircraft to plot
+        """
         self._base_plot(oad.mass_breakdown_sun_plot, data, True)
 
-    def _mission_plot(self, data):
+
+    #TODO: Find a way to merge this function with _base_plot
+    def _mission_plot(self, data: List[str]):
+        """
+        Specific function to plot mission, since it works with the mission viewer. 
+        Add all aircraft to the given plot.
+
+        :param data: all the aircraft to plot from (names of the aircraft)
+        """
         self.sizing_process_to_display = data
 
         with self.output:
@@ -149,7 +197,7 @@ class OutputGraphsPlotter():
 
             for sizing_process_to_add in self.sizing_process_to_display:
                 path_to_flight_data_file = pth.join(
-                    self.path_to_output_folder,
+                    PathManager.output_directory_path,
                     sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                 )
                 mission_viewer.add_mission(
@@ -159,7 +207,15 @@ class OutputGraphsPlotter():
             if self.sizing_process_to_display:
                 mission_viewer.display()
 
-    def _payload_range_plot(self, data):
+
+    #TODO: Find a way to merge this function with _base_plot
+    def _payload_range_plot(self, data: List[str]):
+        """
+        Specific function to plot payload-range, since it needs flight data. 
+        Add all aircraft to the given plot.
+
+        :param data: all the aircraft to plot from (names of the aircraft)
+        """
         self.sizing_process_to_display = data
         
         with self.output:
@@ -168,15 +224,15 @@ class OutputGraphsPlotter():
 
             for sizing_process_to_add in self.sizing_process_to_display:
                 path_to_output_file = pth.join(
-                    self.path_to_output_folder,
+                    PathManager.output_directory_path,
                     sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                 )
                 path_to_flight_data_file = pth.join(
-                    self.path_to_output_folder,
+                    PathManager.output_directory_path,
                     sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                 )
 
-                fig = self._simplified_payload_range_plot(
+                fig = self._simplified_payload_range(
                     path_to_output_file,
                     path_to_flight_data_file,
                     sizing_process_to_add,
@@ -187,7 +243,19 @@ class OutputGraphsPlotter():
                 display(fig)
 
 
-    def _base_plot(self, oad_plot, data, is_single_output=False) -> widgets.Output:
+    def _base_plot(self, 
+        oad_plot, 
+        data: List[str], 
+        is_single_output: bool = False
+        ):
+        """
+        Base function to plot data. Add all aircraft to the given plot.
+
+        :param oad_plot: plot function to use.
+        :param data: all the aircraft to plot from (names of the aircraft)
+        :param is_single_output: true if the figure can only plot a single output,
+            limits the aircraft to plot to only one.
+        """
         # data contains a list of outputs or a single output, depending on the graph
         # If there is no data, the rest of the code will be enough to clear the screen
         if type(data) == str:
@@ -202,7 +270,7 @@ class OutputGraphsPlotter():
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
                     path_to_output_file = pth.join(
-                        self.path_to_output_folder,
+                        PathManager.output_directory_path,
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                     )
                                 
@@ -224,8 +292,7 @@ class OutputGraphsPlotter():
                 display(fig)
 
 
-    # pylint: disable-msg=too-many-locals
-    def _simplified_payload_range_plot(self,
+    def _simplified_payload_range(self,
         aircraft_file_path: str,
         flight_data_file_path: str,
         name=None,
@@ -363,4 +430,8 @@ class OutputGraphsPlotter():
 
 
     def _update_selection_data(self, widget, event, data):
+        """
+        Updates the file selector with the pre-selected aircraft to choose 
+        among them for single aircraft figures.
+        """
         self.file_selector.items = self.data

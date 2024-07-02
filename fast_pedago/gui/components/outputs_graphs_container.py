@@ -4,12 +4,12 @@
 
 import ipyvuetify as v
 
+from .input_widgets import SelectOutput
 from fast_pedago.processes import (
     PathManager, 
     OutputGraphsPlotter, 
     GRAPH
 )
-from .input_widgets import SelectOutput
 
 
 class OutputsGraphsContainer(v.Col):
@@ -18,15 +18,19 @@ class OutputsGraphsContainer(v.Col):
         
         self._build_layout()
 
-    
+
     def _build_layout(self):
+        """
+        Builds the layout of the graph container : a selection widget and multiple
+        graph sub-windows.
+        """
         self.output_selection = SelectOutput()
 
-        self.general_graph = _OutputFigure('General', is_full_screen=True)
-        self.geometry_graph = _OutputFigure('Geometry')
-        self.aerodynamics_graph = _OutputFigure('Aerodynamics')
-        self.mass_graph = _OutputFigure('Mass')
-        self.performances_graph = _OutputFigure('Performances')
+        self._general_graph = _OutputGraph('General', is_full_screen=True)
+        self._geometry_graph = _OutputGraph('Geometry')
+        self._aerodynamics_graph = _OutputGraph('Aerodynamics')
+        self._mass_graph = _OutputGraph('Mass')
+        self._performances_graph = _OutputGraph('Performances')
 
         self.output_selection.on_event("click", self._browse_available_process)
         self.output_selection.on_event("change", self._update_data)
@@ -41,70 +45,87 @@ class OutputsGraphsContainer(v.Col):
                 no_gutters=True,
                 align="top",
                 children=[
-                    self.geometry_graph,
-                    self.aerodynamics_graph,
-                    self.mass_graph,
-                    self.performances_graph,
-                    self.general_graph,
+                    self._geometry_graph,
+                    self._aerodynamics_graph,
+                    self._mass_graph,
+                    self._performances_graph,
+                    self._general_graph,
                 ],
             ),
         ]
-    
+
+
     def _hide_graphs(self):
         """
         Hides graphs containers (for when no result file is selected).
         """
-        self.general_graph.hide()
-        self.geometry_graph.hide()
-        self.aerodynamics_graph.hide()
-        self.mass_graph.hide()
-        self.performances_graph.hide()
+        self._general_graph.hide()
+        self._geometry_graph.hide()
+        self._aerodynamics_graph.hide()
+        self._mass_graph.hide()
+        self._performances_graph.hide()
     
-    
+
     def _show_graphs(self):
         """
         Re-displays graphs.
         """
-        self.general_graph.show()
-        self.geometry_graph.show()
-        self.aerodynamics_graph.show()
-        self.mass_graph.show()
-        self.performances_graph.show()
-    
-    
+        self._general_graph.show()
+        self._geometry_graph.show()
+        self._aerodynamics_graph.show()
+        self._mass_graph.show()
+        self._performances_graph.show()
+
+
     def _update_data(self, widget, event, data):
+        """
+        Updates the graphs when a new aircraft is selected or removed.
+        If no aircraft is selected, hides the graphs.
+        
+        To be called with "on_event" method of a widget.
+        """
         if data :
-            self.general_graph.plotter.plot(data)
-            self.geometry_graph.plotter.plot(data)
-            self.aerodynamics_graph.plotter.plot(data)
-            self.mass_graph.plotter.plot(data)
-            self.performances_graph.plotter.plot(data)
-            
+            self._general_graph.plotter.plot(data)
+            self._geometry_graph.plotter.plot(data)
+            self._aerodynamics_graph.plotter.plot(data)
+            self._mass_graph.plotter.plot(data)
+            self._performances_graph.plotter.plot(data)
+
             self._show_graphs()
-            
+
         else:
             self._hide_graphs()
-            
 
 
     def _browse_available_process(self, widget, event, data):
+        """
+        Updates the available aircraft that can be selected.
+
+        To be called with "on_event" method of a widget.
+        """
         self.output_selection.items = PathManager.list_available_process_results()
 
 
 
-class _OutputFigure(v.Col):
+class _OutputGraph(v.Col):
+    """
+    A template for an output card, that can switch between figures
+    of the same category.
+    """
     def __init__(self, title, is_full_screen: bool = False, **kwargs):
         """
-        :param title: The title of the graph. Corresponds to a graph category.
+        :param title: The title of the card. Corresponds to a graph category.
         :param is_full_screen: if True, the card will take all the screen space.
         """
         super().__init__(**kwargs)
 
+        # When full screen, displays by default on two columns, and only 
+        # one column on smaller screens.
         self.cols = 12
         if not is_full_screen:
             self.md = 6
 
-        self.plotter = OutputGraphsPlotter(PathManager.working_directory_path)
+        self.plotter = OutputGraphsPlotter()
         select = v.Select(
             dense=True,
             hide_details=True,
@@ -144,5 +165,3 @@ class _OutputFigure(v.Col):
                 ],
             ),
         ]
-        
-        

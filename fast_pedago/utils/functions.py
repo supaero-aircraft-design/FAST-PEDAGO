@@ -3,7 +3,6 @@ import os.path as pth
 
 import openmdao.api as om
 
-
 import ipywidgets as widgets
 import ipyvuetify as v
 
