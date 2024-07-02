@@ -189,6 +189,16 @@ class OutputGraphsPlotter():
         self._base_plot(oad.mass_breakdown_sun_plot, data, True)
 
 
+    def _payload_range_plot(self, data: List[str]):
+        """
+        Plots the payload-range with the given aircraft
+
+        :param data: the aircraft to plot
+        """
+        self._base_plot(self._simplified_payload_range, data)
+
+
+
     #TODO: Find a way to merge this function with _base_plot
     def _mission_plot(self, data: List[str]):
         """
@@ -213,39 +223,6 @@ class OutputGraphsPlotter():
 
             if self.sizing_process_to_display:
                 mission_viewer.display()
-
-
-    #TODO: Find a way to merge this function with _base_plot
-    def _payload_range_plot(self, data: List[str]):
-        """
-        Specific function to plot payload-range, since it needs flight data. 
-        Add all aircraft to the given plot.
-
-        :param data: all the aircraft to plot from (names of the aircraft)
-        """
-        self.sizing_process_to_display = data
-        
-        with self.output:
-            clear_output()
-            fig = None
-
-            for sizing_process_to_add in self.sizing_process_to_display:
-                path_to_output_file = PathManager.path_to("output",
-                    sizing_process_to_add + OUTPUT_FILE_SUFFIX,
-                )
-                path_to_flight_data_file = PathManager.path_to("output",
-                    sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
-                )
-
-                fig = self._simplified_payload_range(
-                    path_to_output_file,
-                    path_to_flight_data_file,
-                    sizing_process_to_add,
-                    fig=fig,
-                )
-
-            if fig:
-                display(fig)
 
 
     def _base_plot(self, 
@@ -277,19 +254,32 @@ class OutputGraphsPlotter():
                     path_to_output_file = PathManager.path_to("output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                     )
-                                
-                    # The plot function have a simplified signature if only one output can be added
-                    if len(sizing_process_to_display) == 1 or is_single_output:
-                        fig = oad_plot(path_to_output_file)
-                        # Leave the loop is the graph can only plot one
-                        # output at a time. Only the first data will be
-                        # plotted
-                        if is_single_output:
-                            self.file_selector.v_model = sizing_process_to_add
-                            break
-
+                    
+                    # Not exactly the same way to plot payload range.
+                    if self.plot_name == GRAPH["Performances"][1]:
+                        path_to_flight_data_file = PathManager.path_to("output",
+                            sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
+                        )
+                        fig = oad_plot(
+                            path_to_output_file,
+                            path_to_flight_data_file,
+                            sizing_process_to_add,
+                            fig=fig,
+                        )
+                    
                     else:
-                        fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
+                        # The plot function have a simplified signature if only one output can be added
+                        if len(sizing_process_to_display) == 1 or is_single_output:
+                            fig = oad_plot(path_to_output_file)
+                            # Leave the loop is the graph can only plot one
+                            # output at a time. Only the first data will be
+                            # plotted
+                            if is_single_output:
+                                self.file_selector.v_model = sizing_process_to_add
+                                break
+
+                        else:
+                            fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
 
             if fig:
                 fig.update_annotations(font_size=10)
