@@ -198,31 +198,13 @@ class OutputGraphsPlotter():
         self._base_plot(self._simplified_payload_range, data)
 
 
-
-    #TODO: Find a way to merge this function with _base_plot
     def _mission_plot(self, data: List[str]):
         """
-        Specific function to plot mission, since it works with the mission viewer. 
-        Add all aircraft to the given plot.
+        Plots the mission with the given aircraft
 
-        :param data: all the aircraft to plot from (names of the aircraft)
+        :param data: the aircraft to plot
         """
-        self.sizing_process_to_display = data
-
-        with self.output:
-            clear_output()
-            mission_viewer = oad.MissionViewer()
-
-            for sizing_process_to_add in self.sizing_process_to_display:
-                path_to_flight_data_file = PathManager.path_to("output", 
-                    sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
-                )
-                mission_viewer.add_mission(
-                    path_to_flight_data_file, sizing_process_to_add
-                )
-
-            if self.sizing_process_to_display:
-                mission_viewer.display()
+        self._base_plot(None, data)
 
 
     def _base_plot(self, 
@@ -246,25 +228,34 @@ class OutputGraphsPlotter():
             sizing_process_to_display = data
 
         with self.output:
+            
+            # Clear actual graphs :
             clear_output()
             fig = None
+            if self.plot_name ==  GRAPH["Performances"][0]:
+                mission_viewer = oad.MissionViewer()
             
+            # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
                     path_to_output_file = PathManager.path_to("output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
                     )
+                    path_to_flight_data_file = PathManager.path_to("output",
+                        sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
+                    )
                     
-                    # Not exactly the same way to plot payload range.
+                    # Not exactly the same way to plot payload range and mission.
                     if self.plot_name == GRAPH["Performances"][1]:
-                        path_to_flight_data_file = PathManager.path_to("output",
-                            sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
-                        )
                         fig = oad_plot(
                             path_to_output_file,
                             path_to_flight_data_file,
                             sizing_process_to_add,
                             fig=fig,
+                        )
+                    elif self.plot_name ==  GRAPH["Performances"][0]:
+                        mission_viewer.add_mission(
+                            path_to_flight_data_file, sizing_process_to_add
                         )
                     
                     else:
@@ -281,9 +272,12 @@ class OutputGraphsPlotter():
                         else:
                             fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
 
+            # Display the plot:
             if fig:
                 fig.update_annotations(font_size=10)
                 display(fig)
+            if self.plot_name ==  GRAPH["Performances"][0]:
+                mission_viewer.display()
 
 
     def _simplified_payload_range(self,
