@@ -32,8 +32,6 @@ class AppInterface(v.App):
         super().__init__(**kwargs)
     
         PathManager.build_paths()
-    
-        self.source_data_file = PathManager.reference_aircraft
         
         self._build_layout()
         self._to_source_selection()
@@ -268,7 +266,6 @@ class AppInterface(v.App):
         
         To be called by a widget event
         """
-        self.source_data_files = data
         self.inputs.set_initial_value_mda(data)
         self._to_main()
     
