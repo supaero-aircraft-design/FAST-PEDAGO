@@ -33,7 +33,7 @@ class Drawer(v.NavigationDrawer):
     """
     A navigation drawer that expands from the left of the screen,
     that is always displayed on large screens, and hidden on small
-    screens (with the possibility to open it temporarely). 
+    screens (with the possibility to open it temporarily). 
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -89,7 +89,7 @@ class Header(v.AppBar):
     def _build_layout(self):
         """
         Builds the layout of the header : ISAE-Supaero and Airbus logos
-        followed by FAST-OAD logo, github links buttons and utilitary
+        followed by FAST-OAD logo, github links buttons and utility
         buttons.
         """
         self.class_ = "px-5"
@@ -187,7 +187,7 @@ class Footer(v.Footer):
     def _build_layout(self):
         """
         Builds the layout of the header : ISAE-Supaero and Airbus logos
-        followed by FAST-OAD logo, github links buttons and utilitary
+        followed by FAST-OAD logo, github links buttons and utility
         buttons.
         """
         self.padless = True
