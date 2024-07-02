@@ -15,8 +15,6 @@ from fast_pedago.utils import (
 )
 
 
-DEFAULT_PROCESS_NAME = "aircraft"
-
 # Min and max values for sliders input values
 OPT_AR_MIN = 9.0
 OPT_AR_MAX = 18.0
@@ -130,8 +128,6 @@ class InputsContainer(v.List):
 
 
     def _build_layout(self):
-        self.process_name = DEFAULT_PROCESS_NAME
-        
         # Text box to give a name to the run
         self.process_name_field = v.TextField(
             outlined=True,
@@ -437,7 +433,7 @@ class InputsContainer(v.List):
 
         To be used with a "on_event" of a text field ipyvuetify 
         """
-        self.process_name = data
+        self.process_launcher.process_name = data
 
 
     def disable(self):

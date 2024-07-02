@@ -244,7 +244,7 @@ class AppInterface(v.App):
             self.inputs.retrieve_mdo_inputs()
         else:
             self.inputs.retrieve_mda_inputs()
-        self.process_launcher.launch_processes(self.inputs.process_name, self.is_MDO)
+        self.process_launcher.launch_processes(self.is_MDO)
         self._to_process_results()
 
 

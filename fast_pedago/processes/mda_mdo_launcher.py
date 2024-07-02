@@ -23,6 +23,7 @@ from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
     RECORDER_FILE_SUFFIX,
+    DEFAULT_PROCESS_NAME,
 )
 
 
@@ -38,7 +39,7 @@ class MDAMDOLauncher():
         self.plotter = plotter
 
 
-    def launch_processes(self, process_name, is_MDO: bool=False):
+    def launch_processes(self, is_MDO: bool=False):
         """
         Launches the chosen process (MDA or MDO), and launches
         the plot of residuals or objectives depending on the main 
@@ -50,7 +51,7 @@ class MDAMDOLauncher():
         # Initialize event to synchronize the process thread and the plotting thread
         process_ended = Event()
         
-        self._configure_paths(process_name, is_MDO)
+        self._configure_paths(is_MDO)
 
         # If the switch is off, MDA, else MDO
         if is_MDO:
@@ -78,7 +79,7 @@ class MDAMDOLauncher():
         plotting_thread.join()
 
 
-    def _configure_paths(self, process_name: str, is_MDO: bool=False):
+    def _configure_paths(self, is_MDO: bool=False):
         # Create a new FAST-OAD problem based on the reference configuration file
         if is_MDO:
             problem_type = MDO_FILE_SUFFIX
@@ -97,11 +98,11 @@ class MDAMDOLauncher():
         # Save inputs and outputs file paths
         self.new_input_file_path = orig_input_file_path.replace(
             orig_input_file_name,
-            process_name + problem_type + INPUT_FILE_SUFFIX,
+            self.process_name + problem_type + INPUT_FILE_SUFFIX,
         )
         self.new_output_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            process_name + problem_type + OUTPUT_FILE_SUFFIX,
+            self.process_name + problem_type + OUTPUT_FILE_SUFFIX,
         )
 
         # Change the input and output file path in the configurator
@@ -113,7 +114,7 @@ class MDAMDOLauncher():
         # ways to pass it from a thread to an other.
         self.recorder_database_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            process_name + problem_type + RECORDER_FILE_SUFFIX,
+            self.process_name + problem_type + RECORDER_FILE_SUFFIX,
         )
         
         # We also need to rename the .csv file which contains the mission data. I don't
@@ -126,7 +127,7 @@ class MDAMDOLauncher():
         )
         self.new_mission_data_file_path = orig_output_file_path.replace(
             orig_output_file_name,
-            process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX,
+            self.process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX,
         )
 
 
@@ -343,6 +344,8 @@ class MDAMDOLauncher():
 
 
     def get_reference_inputs(self, source_data_file_name):
+        self.process_name = DEFAULT_PROCESS_NAME
+        
         # Read the source data file
         source_data_file_path = PathManager.to_full_source_file_name(source_data_file_name)
         self.reference_inputs = oad.DataFile(source_data_file_path)

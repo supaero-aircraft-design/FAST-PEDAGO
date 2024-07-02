@@ -33,3 +33,4 @@ MDO_CONFIGURATION_FILE = "oad_optim_sensitivity_analysis.yml"
 
 # Reference aircraft
 REFERENCE_AIRCRAFT = "reference_aircraft"
+DEFAULT_PROCESS_NAME = "aircraft"
