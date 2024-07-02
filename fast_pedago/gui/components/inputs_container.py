@@ -2,18 +2,9 @@
 # Electric Aircraft.
 # Copyright (C) 2022 ISAE-SUPAERO
 
-import os.path as pth
-
-import copy
-
-import numpy as np
-
 import ipyvuetify as v
 
-import openmdao.api as om
-import fastoad.api as oad
-
-from fast_pedago import source_data_files
+from fast_pedago.processes import MDAMDOLauncher
 from .input_widgets import (
     Snackbar,
     SliderInput,
@@ -40,12 +31,13 @@ class InputsContainer(v.List):
     """
     An input container that can switch to set inputs for MDA and MDO.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, process_launcher: MDAMDOLauncher, **kwargs):
         """
         :param source_data_file: the path to the source file to initialize the inputs from.
         """
         super().__init__(**kwargs)
         
+        self.process_launcher = process_launcher
         
         self.class_ = "pa-0"
         self.expand = True
@@ -87,126 +79,37 @@ class InputsContainer(v.List):
     def retrieve_mda_inputs(self):
         """
         Retrieves inputs from the MDA input widgets
-        
-        :return: an oad DataFile containing the source file inputs merged
-        with the user inputs
         """
-        # Create the input file with the current value
-        new_inputs = copy.deepcopy(self.reference_inputs)
-
-        # No need to provide list or numpy array for scalar values.
-        new_inputs["data:TLAR:NPAX"].value = self.n_pax_input.slider.v_model
-
-        new_inputs[
-            "data:TLAR:approach_speed"
-        ].value = self.v_app_input.slider.v_model
-        new_inputs["data:TLAR:approach_speed"].units = "kn"  # Unit from the widget
-
-        # If the Mach get too high and because we originally didn't plan on changing sweep,
-        # the compressibility drag might get too high causing the code to not converge ! We
-        # will thus adapt the sweep based on the mach number with a message to let the
-        # student know about it. We'll keep the product M_cr * cos(phi_25) constant at the
-        # value obtain with M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.cruise_mach_input.slider.v_model > 0.78:
-            cos_phi_25 = (
-                0.78
-                / self.cruise_mach_input.slider.v_model
-                * np.cos(np.deg2rad(24.54))
-            )
-            phi_25 = np.arccos(cos_phi_25)
-            new_inputs["data:geometry:wing:sweep_25"].value = phi_25
-            new_inputs["data:geometry:wing:sweep_25"].units = "rad"
-
-        new_inputs[
-            "data:TLAR:cruise_mach"
-        ].value = self.cruise_mach_input.slider.v_model
-
-        new_inputs["data:TLAR:range"].value = self.range_input.slider.v_model
-        new_inputs["data:TLAR:range"].units = "NM"  # Unit from the widget
-
-        new_inputs[
-            "data:weight:aircraft:payload"
-        ].value = self.payload_input.slider.v_model
-        new_inputs["data:weight:aircraft:payload"].units = "kg"  # Unit from the widget
-
-        new_inputs[
-            "data:weight:aircraft:max_payload"
-        ].value = self.max_payload_input.slider.v_model
-        new_inputs[
-            "data:weight:aircraft:max_payload"
-        ].units = "kg"  # Unit from the widget
-
-        new_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value = self.wing_aspect_ratio_input.slider.v_model
-
-        new_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.bpr_input.slider.v_model
-        
-        return new_inputs
+        self.process_launcher.set_mda_inputs(
+            n_pax=self.n_pax_input.slider.v_model,
+            v_app=self.v_app_input.slider.v_model,
+            cruise_mach=self.cruise_mach_input.slider.v_model,
+            range=self.range_input.slider.v_model,
+            payload=self.payload_input.slider.v_model,
+            max_payload=self.max_payload_input.slider.v_model,
+            wing_aspect_ratio=self.wing_aspect_ratio_input.slider.v_model,
+            bypass_ratio=self.bpr_input.slider.v_model
+        )
 
 
-    def retrieve_mdo_inputs(self, configurator: oad.FASTOADProblemConfigurator):
+    def retrieve_mdo_inputs(self):
         """
         Retrieves inputs from the MDO input widgets
-        
-        :param configurator: the configurator from which the problem is created
-
-        :return: a FastOADProblem configured with the user inputs merged with
-        the source file inputs.
         """
-        # Get the problem, no need to write inputs. The fact that the reference was created
-        # based on the same configuration we will always use should ensure the completion of
-        # the input file
-        problem = configurator.get_problem(read_inputs=True)
+        self.process_launcher.set_mdo_inputs(
+            objective=self.objective_selection.v_model,
+            is_aspect_ratio_design_variable=self.ar_design_var_checkbox.v_model,
+            aspect_ratio_lower_bound=self.ar_design_var_input.slider.v_model[0],
+            aspect_ratio_upper_bound=self.ar_design_var_input.slider.v_model[1],
+            is_wing_sweep_design_variable=self.sweep_w_design_var_checkbox.v_model,
+            wing_sweep_lower_bound=self.sweep_w_design_var_input.slider.v_model[0],
+            wing_sweep_upper_bound=self.sweep_w_design_var_input.slider.v_model[1],
+            is_wing_span_constrained=self.wing_span_constraints_checkbox.v_model,
+            wing_span_upper_bound=self.wing_span_constraint_max.slider.v_model,
+        )
 
-        if self.ar_design_var_checkbox.v_model:
 
-            problem.model.add_design_var(
-                name="data:geometry:wing:aspect_ratio",
-                lower=self.ar_design_var_input.slider.v_model[0],
-                upper=self.ar_design_var_input.slider.v_model[1],
-            )
-
-        if self.sweep_w_design_var_checkbox.v_model:
-
-            problem.model.add_design_var(
-                name="data:geometry:wing:sweep_25",
-                units="deg",
-                lower=self.sweep_w_design_var_input.slider.v_model[0],
-                upper=self.sweep_w_design_var_input.slider.v_model[1],
-            )
-        
-        # The objective is found using the v-model of the button group
-        # 0: fuel sizing, 1: MTOW, 2: OWE
-        if self.objective_selection.v_model==0:
-            problem.model.add_objective(
-                name="data:mission:sizing:block_fuel",
-                units="kg",
-                scaler=1e-4,
-            )
-        elif self.objective_selection.v_model == 1:
-            problem.model.add_objective(
-                name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
-            )
-        else:
-            # Selected objective is the OWE
-            problem.model.add_objective(
-                name="data:weight:aircraft:OWE", units="kg", scaler=1e-4
-            )
-
-        if self.wing_span_constraints_checkbox.v_model:
-            problem.model.add_constraint(
-                name="data:geometry:wing:span",
-                units="m",
-                lower=0.0,
-                upper=self.wing_span_constraint_max.slider.v_model
-            )
-        
-        return problem
-
-    def set_initial_value_mda(self, source_data_file_name):
+    def set_initial_value_mda(self, source_data_file_name: str):
         """
         Set the value of the attributes that store the variable for the MDA based on their value
         in the reference inputs.
@@ -215,44 +118,15 @@ class InputsContainer(v.List):
         
         :param source_data_file_name: the source file to read data from
         """
-        # Read the source data file
-        source_data_file_path = pth.join(
-            pth.dirname(source_data_files.__file__),
-            source_data_file_name.replace(" ", "_") + "_source_data_file.xml"
-        )
-        self.reference_inputs = oad.DataFile(source_data_file_path)
-        
-        # No need to convert to alternate units
-        self.n_pax_input.slider.v_model = self.reference_inputs["data:TLAR:NPAX"].value[0]
-        # Convert in kts in case it was not
-        self.v_app_input.slider.v_model = om.convert_units(
-            self.reference_inputs["data:TLAR:approach_speed"].value[0],
-            self.reference_inputs["data:TLAR:approach_speed"].units,
-            "kn",
-        )
-        self.cruise_mach_input.slider.v_model = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
-        # Convert in nm in case it was not, etc, etc, ...
-        self.range_input.slider.v_model = om.convert_units(
-            self.reference_inputs["data:TLAR:range"].value[0],
-            self.reference_inputs["data:TLAR:range"].units,
-            "NM",
-        )
-        self.payload_input.slider.v_model = om.convert_units(
-            self.reference_inputs["data:weight:aircraft:payload"].value[0],
-            self.reference_inputs["data:weight:aircraft:payload"].units,
-            "kg",
-        )
-        self.max_payload_input.slider.v_model = om.convert_units(
-            self.reference_inputs["data:weight:aircraft:max_payload"].value[0],
-            self.reference_inputs["data:weight:aircraft:max_payload"].units,
-            "kg",
-        )
-        self.wing_aspect_ratio_input.slider.v_model = self.reference_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value[0]
-        self.bpr_input.slider.v_model = self.reference_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value[0]
+        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
+        self.n_pax_input.slider.v_model = reference_inputs[0]
+        self.v_app_input.slider.v_model = reference_inputs[1]
+        self.cruise_mach_input.slider.v_model = reference_inputs[2]
+        self.range_input.slider.v_model = reference_inputs[3]
+        self.payload_input.slider.v_model = reference_inputs[4]
+        self.max_payload_input.slider.v_model = reference_inputs[5]
+        self.wing_aspect_ratio_input.slider.v_model = reference_inputs[6]
+        self.bpr_input.slider.v_model = reference_inputs[7]
 
 
     def _build_layout(self):

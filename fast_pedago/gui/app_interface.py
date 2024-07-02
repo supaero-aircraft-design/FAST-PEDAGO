@@ -46,18 +46,6 @@ class AppInterface(v.App):
         self._build_layout()
 
         self._to_source_selection()
-        
-        self.inputs.set_initial_value_mda(PathManager.reference_aircraft)
-        
-        # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
-        # MDA/MDO and plot there evolution.
-        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.process_graph)
-        self.process_launcher = MDAMDOLauncher(
-            PathManager.mda_configuration_file_path,
-            PathManager.mdo_configuration_file_path,
-            self.inputs,
-            self.residuals_objectives_plotter,
-        )
 
 
     def _to_source_selection(self):
@@ -95,8 +83,14 @@ class AppInterface(v.App):
         self.source_selection.source_data_file_selector.on_event("change", self._set_source_data_file)
         
         # Inputs + process graph widgets
-        self.inputs = InputsContainer()
         self.process_graph = ProcessGraphContainer()
+        
+        # Sets the residuals and objectives plotter, and the MDA/MDO launcher to run
+        # MDA/MDO and plot there evolution.
+        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(self.process_graph)
+        self.process_launcher = MDAMDOLauncher(self.residuals_objectives_plotter,)
+        
+        self.inputs = InputsContainer(self.process_launcher)
 
         self.inputs.process_selection_switch.on_event("change", self._switch_process)
         self.inputs.launch_button.on_event("click", self._launch_process)
@@ -246,7 +240,11 @@ class AppInterface(v.App):
 
     def _launch_process(self, widget, event, data):
         self._to_process_computation()
-        self.process_launcher.launch_processes(self.is_MDO)
+        if self.is_MDO:
+            self.inputs.retrieve_mdo_inputs()
+        else:
+            self.inputs.retrieve_mda_inputs()
+        self.process_launcher.launch_processes(self.inputs.process_name, self.is_MDO)
         self._to_process_results()
 
 

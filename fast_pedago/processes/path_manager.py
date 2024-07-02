@@ -193,7 +193,8 @@ class PathManager():
 
         return available_reference_files
 
-    
+
+    @staticmethod
     def list_available_process_results() -> List[str]:
         """
         Parses the name of all the file in the output folder and scan for the one that would match the
@@ -219,3 +220,10 @@ class PathManager():
                 available_sizing_process.append(associated_sizing_process_name)
 
         return available_sizing_process
+
+
+    @staticmethod
+    def to_full_source_file_name(source_file: str):
+        return pth.join(pth.dirname(source_data_files.__file__),
+            source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
+        )

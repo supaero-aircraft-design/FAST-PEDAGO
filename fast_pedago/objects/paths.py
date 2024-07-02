@@ -7,6 +7,7 @@ SOURCE_FILE_SUFFIX = "_source_data_file.xml"
 INPUT_FILE_SUFFIX = "_input_file.xml"
 OUTPUT_FILE_SUFFIX = "_output_file.xml"
 FLIGHT_DATA_FILE_SUFFIX = "_flight_points.csv"
+RECORDER_FILE_SUFFIX = "_cases.sql"
 
 MDA_FILE_SUFFIX = "_mda"
 MDO_FILE_SUFFIX = "_mdo"
