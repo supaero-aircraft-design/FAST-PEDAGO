@@ -10,7 +10,6 @@ from .input_widgets import (
     RangeSliderInput,
 )
 from fast_pedago.processes import MDAMDOLauncher
-from fast_pedago.utils import _InputsCategory
 
 
 # Min and max values for sliders input values
@@ -505,3 +504,40 @@ class InputsContainer(v.List):
         self._max_payload_input.slider.v_model = reference_inputs[5]
         self._wing_aspect_ratio_input.slider.v_model = reference_inputs[6]
         self._bpr_input.slider.v_model = reference_inputs[7]
+
+
+
+class _InputsCategory(v.ListGroup):
+    """
+    Internal class to factorize layout of an input category
+    such as weight inputs, geometry inputs, TLARs, etc.
+    
+    It displays the name of the category as a title and
+    the input widgets under it.
+    """
+    def __init__(self, 
+            name: str, 
+            inputs: v.VuetifyWidget = [], 
+            is_open: bool = False,
+            **kwargs):
+        """
+        :param name: the name of the category
+        :param inputs: a list of input widgets 
+        :param is_open: True if the group is initially open
+        """
+        super().__init__(**kwargs)
+
+        self.value = is_open
+        self.v_slots = [{
+            'name': 'activator',
+            'children': [
+                v.ListItemTitle(
+                    children=[
+                        name,
+                    ],
+                ),
+            ],
+        }]
+        self.children = [
+            v.ListItem(children=[input]) for input in inputs
+        ]

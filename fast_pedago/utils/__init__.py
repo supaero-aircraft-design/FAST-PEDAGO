@@ -3,7 +3,3 @@ from .functions import (
     _extract_objective,
     _extract_residuals,
 )
-
-from .layouts import (
-    _InputsCategory,
-)
