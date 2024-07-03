@@ -102,26 +102,29 @@ class OutputGraphsPlotter():
             (standard name taken from GRAPH constant)
         """
         self.plot_name = plot_name
+        self.is_single_output = False
         self.file_selector.hide()
         
         if plot_name == GRAPH['General'][0]:
-            self.plot_function = self._variable_viewer
+            self.plot_function = oad.variable_viewer
             self.file_selector.show()
+            self.is_single_output = True
         elif plot_name == GRAPH['Geometry'][0]:
-            self.plot_function = self._aircraft_geometry_plot
+            self.plot_function = oad.aircraft_geometry_plot
         elif plot_name == GRAPH['Geometry'][1]:
-            self.plot_function = self._wing_geometry_plot
+            self.plot_function = oad.wing_geometry_plot
         elif plot_name == GRAPH['Aerodynamics'][0]:
-            self.plot_function = self._drag_polar_plot
+            self.plot_function = oad.drag_polar_plot
         elif plot_name == GRAPH['Mass'][0]:
-            self.plot_function = self._mass_breakdown_bar_plot
+            self.plot_function = oad.mass_breakdown_bar_plot
         elif plot_name == GRAPH['Mass'][1]:
-            self.plot_function = self._mass_breakdown_sun_plot
+            self.plot_function = oad.mass_breakdown_sun_plot
+            self.is_single_output = True
             self.file_selector.show()
         elif plot_name == GRAPH['Performances'][0]:
-            self.plot_function = self._mission_plot
+            self.plot_function = None
         elif plot_name == GRAPH['Performances'][1]:
-            self.plot_function = self._payload_range_plot
+            self.plot_function = self._simplified_payload_range_plot
         
         self.plot()
 
@@ -137,88 +140,14 @@ class OutputGraphsPlotter():
         if data:
             self.data = data
             self.file_selector.items = data
-        self.plot_function(self.data)
+        self._base_plot(self.data)
 
 
-    def _variable_viewer(self, data: List[str]):
-        """
-        Plots the variable viewer with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.variable_viewer, data, True)
-
-    def _aircraft_geometry_plot(self, data: List[str]):
-        """
-        Plots the aircraft geometry with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.aircraft_geometry_plot, data)
-    
-    def _wing_geometry_plot(self, data: List[str]):
-        """
-        Plots the wing geometry with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.wing_geometry_plot, data)
-
-    def _drag_polar_plot(self, data: List[str]):
-        """
-        Plots the drag polar with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.drag_polar_plot, data)
-
-    def _mass_breakdown_bar_plot(self, data: List[str]):
-        """
-        Plots the bar mass breakdown with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.mass_breakdown_bar_plot, data)
-
-    def _mass_breakdown_sun_plot(self, data: List[str]):
-        """
-        Plots the sun mass breakdown with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(oad.mass_breakdown_sun_plot, data, True)
-
-
-    def _payload_range_plot(self, data: List[str]):
-        """
-        Plots the payload-range with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(self._simplified_payload_range, data)
-
-
-    def _mission_plot(self, data: List[str]):
-        """
-        Plots the mission with the given aircraft
-
-        :param data: the aircraft to plot
-        """
-        self._base_plot(None, data)
-
-
-    def _base_plot(self, 
-        oad_plot, 
-        data: List[str], 
-        is_single_output: bool = False
-        ):
+    def _base_plot(self, data: List[str]):
         """
         Base function to plot data. Add all aircraft to the given plot.
 
-        :param oad_plot: plot function to use.
         :param data: all the aircraft to plot from (names of the aircraft)
-        :param is_single_output: true if the figure can only plot a single output,
-            limits the aircraft to plot to only one.
         """
         # data contains a list of outputs or a single output, depending on the graph
         # If there is no data, the rest of the code will be enough to clear the screen
@@ -247,7 +176,7 @@ class OutputGraphsPlotter():
                     
                     # Not exactly the same way to plot payload range and mission.
                     if self.plot_name == GRAPH["Performances"][1]:
-                        fig = oad_plot(
+                        fig = self.plot_function(
                             path_to_output_file,
                             path_to_flight_data_file,
                             sizing_process_to_add,
@@ -260,17 +189,17 @@ class OutputGraphsPlotter():
                     
                     else:
                         # The plot function have a simplified signature if only one output can be added
-                        if len(sizing_process_to_display) == 1 or is_single_output:
-                            fig = oad_plot(path_to_output_file)
+                        if len(sizing_process_to_display) == 1 or self.is_single_output:
+                            fig = self.plot_function(path_to_output_file)
                             # Leave the loop is the graph can only plot one
                             # output at a time. Only the first data will be
                             # plotted
-                            if is_single_output:
+                            if self.is_single_output:
                                 self.file_selector.v_model = sizing_process_to_add
                                 break
 
                         else:
-                            fig = oad_plot(path_to_output_file, sizing_process_to_add, fig=fig)
+                            fig = self.plot_function(path_to_output_file, sizing_process_to_add, fig=fig)
 
             # Display the plot:
             if fig:
@@ -280,7 +209,7 @@ class OutputGraphsPlotter():
                 mission_viewer.display()
 
 
-    def _simplified_payload_range(self,
+    def _simplified_payload_range_plot(self,
         aircraft_file_path: str,
         flight_data_file_path: str,
         name=None,
