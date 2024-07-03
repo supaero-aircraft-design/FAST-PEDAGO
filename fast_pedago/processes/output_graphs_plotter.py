@@ -11,7 +11,10 @@ from IPython.display import clear_output, display
 import fastoad.api as oad
 
 from .path_manager import PathManager
-from fast_pedago.plots import simplified_payload_range_plot
+from fast_pedago.plots import (
+    simplified_payload_range_plot,
+    stability_diagram_plot,
+)
 from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
@@ -40,6 +43,9 @@ GRAPH = {
         ],
     },
     'Aerodynamics': {
+        'Stability diagram': [
+            stability_diagram_plot, True,
+        ],
         'Drag polar': [
             oad.drag_polar_plot, False,
         ],

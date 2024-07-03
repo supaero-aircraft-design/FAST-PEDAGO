@@ -1,1 +1,2 @@
 from .simplified_payload_range import simplified_payload_range_plot
+from .stability_diagram import stability_diagram_plot
