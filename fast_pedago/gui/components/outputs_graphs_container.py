@@ -46,8 +46,8 @@ class OutputsGraphsContainer(v.Col):
                 align="top",
                 children=[
                     self._geometry_graph,
-                    self._aerodynamics_graph,
                     self._mass_graph,
+                    self._aerodynamics_graph,
                     self._performances_graph,
                     self._general_graph,
                 ],
@@ -146,6 +146,7 @@ class _OutputGraph(v.Col):
                     v.CardTitle(
                         children=[
                             v.Row(
+                                no_gutters=True,
                                 children=[
                                     v.Col(
                                         cols=6,

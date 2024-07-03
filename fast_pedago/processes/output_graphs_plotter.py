@@ -4,6 +4,8 @@
 
 from typing import List
 
+import plotly.graph_objects as go
+
 import ipywidgets as widgets
 import ipyvuetify as v
 from IPython.display import clear_output, display
@@ -124,7 +126,8 @@ class OutputGraphsPlotter():
         self.file_selector.hide()
         
         self.output_display = v.Container(
-            class_="pe-10",
+            class_="pa-2",
+            fluid=True,
             children=[
                 self.file_selector,
                 self.output,
@@ -187,7 +190,7 @@ class OutputGraphsPlotter():
             
             # Clear actual graphs :
             clear_output()
-            fig = None
+            fig: go.Figure = None
             if self.plot_category ==  "Performances" and self.plot_name == "Mission":
                 mission_viewer = oad.MissionViewer()
             
@@ -230,7 +233,17 @@ class OutputGraphsPlotter():
 
             # Display the plot:
             if fig:
-                fig.update_annotations(font_size=10)
+                fig.update_layout(
+                    autosize = True,
+                    title_font_size=15,
+                    margin=go.layout.Margin(
+                        l=0,
+                        r=20,
+                        b=0,
+                        t=22,
+                    ),
+                )
+                fig.update_annotations(font_size=12)
                 display(fig)
             if self.plot_category ==  "Performances" and self.plot_name == "Mission":
                 mission_viewer.display()

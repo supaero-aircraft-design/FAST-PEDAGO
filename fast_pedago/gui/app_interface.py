@@ -183,10 +183,10 @@ class AppInterface(v.App):
                     style_="padding: " + TOP_PADDING + " 0 0 0;",
                     ),
                     v.Row(
+                        no_gutters=True,
                         children=[
                             self.padding_column,
                             v.Col(
-                                class_="pa-0",
                                 children=[
                                     v.Row(
                                         children=[
