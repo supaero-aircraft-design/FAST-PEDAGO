@@ -58,7 +58,7 @@ def simplified_payload_range_plot(
         fig = go.Figure()
 
     # Same color for each aircraft configuration
-    i = len(fig.data) % 10
+    i = int(len(fig.data)/2) % 10
 
     mean_tas, mean_sfc, mean_l_over_d = _extract_value_from_flight_data_file(
         flight_data_file_path=flight_data_file_path
@@ -93,17 +93,16 @@ def simplified_payload_range_plot(
         x=range_array_for_display,
         y=payload_array_for_display,
         mode="lines",
-        name=name,
+        name=name + " | · = Design",
         legendgroup=name,
-        legendgrouptitle_text=name,
         line=dict(color=COLORS[i]),
     )
     scatter_nominal_mission = go.Scatter(
         x=[nominal_range],
         y=[nominal_payload],
         mode="markers",
-        name=name + "-Design range",
         legendgroup=name,
+        showlegend=False,
         line=dict(color=COLORS[i]),
     )
 
