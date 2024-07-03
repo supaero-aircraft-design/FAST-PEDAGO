@@ -20,25 +20,46 @@ from fast_pedago.objects.paths import (
 
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
+# To add a graph, add its plotting function, and 'True' if the graph is
+# made to plot only one aircraft, False either.
+# If the plotting function has a particularity such as a different signature
+# (simplified_payload_range) or a particular way to be plotted (mission), modify
+# the _base_plot function to add the cases.
 GRAPH = {
-    'General': [
-        'Variables',
-    ],
-    'Geometry': [
-        'Aircraft',
-        'Wing',
-    ],
-    'Aerodynamics': [
-        'Drag polar',
-    ],
-    'Mass': [
-        'Bar breakdown',
-        'Sun breakdown',
-    ],
-    'Performances': [
-        'Missions',
-        'Payload-Range',
-    ],
+    'General':{
+        'Variables': [
+            oad.variable_viewer, True,
+        ],
+    },
+    'Geometry': {
+        'Aircraft': [
+            oad.aircraft_geometry_plot, False,
+        ],
+        'Wing': [
+            oad.wing_geometry_plot, False,
+        ],
+    },
+    'Aerodynamics': {
+        'Drag polar': [
+            oad.drag_polar_plot, False,
+        ],
+    },
+    'Mass': {
+        'Bar breakdown': [
+            oad.mass_breakdown_bar_plot, False,
+        ],
+        'Sun breakdown': [
+            oad.mass_breakdown_sun_plot, True,
+        ],
+    },
+    'Performances': {
+        'Mission': [
+            None, False,
+        ],
+        'Payload-Range': [
+            simplified_payload_range_plot, False,
+        ],
+    },
 }
 
 
@@ -50,6 +71,7 @@ class OutputGraphsPlotter():
         super().__init__(**kwargs)
 
         # Stores the current plot name, plot function, and data
+        self.plot_category = ''
         self.plot_name = ''
         self.plot_function = None
         self.data = []
@@ -84,7 +106,7 @@ class OutputGraphsPlotter():
         )
     
 
-    def change_graph(self, plot_name: str):
+    def change_graph(self, plot_category: str, plot_name: str):
         """
         Changes the plotting function to another one, and displays a 
         file selector for when the figure only allows one aircraft,
@@ -93,31 +115,18 @@ class OutputGraphsPlotter():
         :param plot_name: the name of the new figure to plot. 
             (standard name taken from GRAPH constant)
         """
-        self.plot_name = plot_name
-        self.is_single_output = False
-        self.file_selector.hide()
-        
-        if plot_name == GRAPH['General'][0]:
-            self.plot_function = oad.variable_viewer
-            self.file_selector.show()
-            self.is_single_output = True
-        elif plot_name == GRAPH['Geometry'][0]:
-            self.plot_function = oad.aircraft_geometry_plot
-        elif plot_name == GRAPH['Geometry'][1]:
-            self.plot_function = oad.wing_geometry_plot
-        elif plot_name == GRAPH['Aerodynamics'][0]:
-            self.plot_function = oad.drag_polar_plot
-        elif plot_name == GRAPH['Mass'][0]:
-            self.plot_function = oad.mass_breakdown_bar_plot
-        elif plot_name == GRAPH['Mass'][1]:
-            self.plot_function = oad.mass_breakdown_sun_plot
-            self.is_single_output = True
-            self.file_selector.show()
-        elif plot_name == GRAPH['Performances'][0]:
-            self.plot_function = None
-        elif plot_name == GRAPH['Performances'][1]:
-            self.plot_function = simplified_payload_range_plot
-        
+        if plot_category in list(GRAPH):
+            if plot_name in list(GRAPH[plot_category]):
+                self.plot_category = plot_category
+                self.plot_name = plot_name
+                self.plot_function = GRAPH[plot_category][plot_name][0]
+                self.is_single_output = GRAPH[plot_category][plot_name][1]
+
+                if self.is_single_output:
+                    self.file_selector.show()
+                else:
+                    self.file_selector.hide()
+
         self.plot()
 
 
@@ -153,7 +162,7 @@ class OutputGraphsPlotter():
             # Clear actual graphs :
             clear_output()
             fig = None
-            if self.plot_name ==  GRAPH["Performances"][0]:
+            if self.plot_category ==  "Performances" and self.plot_name == "Mission":
                 mission_viewer = oad.MissionViewer()
             
             # Add every aircraft to the plot :
@@ -167,14 +176,14 @@ class OutputGraphsPlotter():
                     )
                     
                     # Not exactly the same way to plot payload range and mission.
-                    if self.plot_name == GRAPH["Performances"][1]:
+                    if self.plot_category ==  "Performances" and self.plot_name == "Payload-Range":
                         fig = self.plot_function(
                             path_to_output_file,
                             path_to_flight_data_file,
                             sizing_process_to_add,
                             fig=fig,
                         )
-                    elif self.plot_name ==  GRAPH["Performances"][0]:
+                    elif self.plot_category ==  "Performances" and self.plot_name == "Mission":
                         mission_viewer.add_mission(
                             path_to_flight_data_file, sizing_process_to_add
                         )
@@ -197,7 +206,7 @@ class OutputGraphsPlotter():
             if fig:
                 fig.update_annotations(font_size=10)
                 display(fig)
-            if self.plot_name ==  GRAPH["Performances"][0]:
+            if self.plot_category ==  "Performances" and self.plot_name == "Mission":
                 mission_viewer.display()
 
 

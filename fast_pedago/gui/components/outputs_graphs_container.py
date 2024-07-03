@@ -130,13 +130,13 @@ class _OutputGraph(v.Col):
             dense=True,
             hide_details=True,
             
-            items = GRAPH[title],
-            v_model = GRAPH[title][0],
+            items = list(GRAPH[title]),
+            v_model = list(GRAPH[title])[0],
         )
         select.on_event("change", 
-            lambda widget, event, data: self.plotter.change_graph(data)
+            lambda widget, event, data: self.plotter.change_graph(title, data)
         )
-        self.plotter.change_graph(GRAPH[title][0])
+        self.plotter.change_graph(title, list(GRAPH[title])[0])
 
         self.children = [
             v.Card(
