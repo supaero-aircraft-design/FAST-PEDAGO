@@ -18,6 +18,7 @@ from fast_pedago.plots import (
     aircraft_front_view_plot,
     aircraft_side_view_plot,
     flaps_and_slats_plot,
+    wing_plot,
 )
 from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
@@ -57,6 +58,9 @@ GRAPH = {
         'Flaps and slats': [
             flaps_and_slats_plot, False,
         ],
+        'Detailed wing': [
+            wing_plot, True,
+        ]
     },
     'Aerodynamics': {
         'Stability diagram': [
