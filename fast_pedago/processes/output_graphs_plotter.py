@@ -72,7 +72,7 @@ class OutputGraphsPlotter():
             label="This graph only displays one output, please choose one."
         )
         self.file_selector.on_event("click", self._update_selection_data)
-        self.file_selector.on_event("change", lambda widget, event, data: self.plot_function(data))
+        self.file_selector.on_event("change", lambda widget, event, data: self._base_plot(data))
         self.file_selector.hide()
         
         self.output_display = v.Container(
