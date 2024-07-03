@@ -14,6 +14,10 @@ from .path_manager import PathManager
 from fast_pedago.plots import (
     simplified_payload_range_plot,
     stability_diagram_plot,
+    aircraft_top_view_plot,
+    aircraft_front_view_plot,
+    aircraft_side_view_plot,
+    flaps_and_slats_plot,
 )
 from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
@@ -40,6 +44,18 @@ GRAPH = {
         ],
         'Wing': [
             oad.wing_geometry_plot, False,
+        ],
+        'Front view': [
+            aircraft_front_view_plot, False,
+        ],
+        'Side view': [
+            aircraft_side_view_plot, False,
+        ],
+        'Top view': [
+            aircraft_top_view_plot, False,
+        ],
+        'Flaps and slats': [
+            flaps_and_slats_plot, False,
         ],
     },
     'Aerodynamics': {
