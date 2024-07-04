@@ -34,7 +34,6 @@ class OutputsGraphsContainer(v.Col):
             ),
             v.Row(
                 class_="mb-12",
-                no_gutters=True,
                 align="top",
                 children=[
                     self._geometry_graph,
@@ -74,13 +73,13 @@ class OutputsGraphsContainer(v.Col):
         To be called with "on_event" method of a widget.
         """
         if data:
+            self.show_graphs()
+
             self._general_graph.plotter.plot(data)
             self._geometry_graph.plotter.plot(data)
             self._aerodynamics_graph.plotter.plot(data)
             self._mass_graph.plotter.plot(data)
             self._performances_graph.plotter.plot(data)
-
-            self.show_graphs()
 
         else:
             self.hide_graphs()
@@ -112,7 +111,7 @@ class _OutputGraph(v.Col):
         # one column on smaller screens.
         self.cols = 12
         if not is_full_screen:
-            self.md = 6
+            self.lg = 6
 
         self.plotter = OutputGraphsPlotter()
         select = v.Select(
