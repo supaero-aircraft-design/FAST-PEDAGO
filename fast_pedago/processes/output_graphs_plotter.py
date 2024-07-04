@@ -252,7 +252,8 @@ class OutputGraphsPlotter:
             # Display the plots
             if fig:
                 fig.update_layout(
-                    height=FIGURE_HEIGHT,
+                    title=None,
+                    autosize=True,
                     width=FIGURE_WIDTH,
                     margin=go.layout.Margin(
                         l=0,
@@ -267,6 +268,7 @@ class OutputGraphsPlotter:
             elif self.plot_name == "Mission":
                 mission_viewer.update_layout(
                     {
+                        "title": None,
                         "width": FIGURE_WIDTH,
                         "margin": go.layout.Margin(
                             l=0,
