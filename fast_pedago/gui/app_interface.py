@@ -292,5 +292,6 @@ class AppInterface(v.App):
         self._to_source_selection()
         # Clears the output selection
         self.output_graphs.output_selection.v_model = []
+        self.output_graphs.hide_graphs()
 
         PathManager.clear_all_files()

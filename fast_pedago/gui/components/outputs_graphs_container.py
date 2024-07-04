@@ -25,7 +25,7 @@ class OutputsGraphsContainer(v.Col):
 
         self.output_selection.on_event("click", self._browse_available_process)
         self.output_selection.on_event("change", self._update_data)
-        self._hide_graphs()
+        self.hide_graphs()
 
         self.children = [
             v.Row(
@@ -46,7 +46,7 @@ class OutputsGraphsContainer(v.Col):
             ),
         ]
 
-    def _hide_graphs(self):
+    def hide_graphs(self):
         """
         Hides graphs containers (for when no result file is selected).
         """
@@ -56,7 +56,7 @@ class OutputsGraphsContainer(v.Col):
         self._mass_graph.hide()
         self._performances_graph.hide()
 
-    def _show_graphs(self):
+    def show_graphs(self):
         """
         Re-displays graphs.
         """
@@ -80,10 +80,10 @@ class OutputsGraphsContainer(v.Col):
             self._mass_graph.plotter.plot(data)
             self._performances_graph.plotter.plot(data)
 
-            self._show_graphs()
+            self.show_graphs()
 
         else:
-            self._hide_graphs()
+            self.hide_graphs()
 
     def _browse_available_process(self, widget, event, data):
         """
