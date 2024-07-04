@@ -13,7 +13,7 @@ cm0_wing = -0.2
 ths_deportation = -5 * pi / 180  # rad
 
 
-def stability_diagram_plot(
+def _stability_diagram_plot(
     aircraft_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """

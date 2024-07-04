@@ -7,8 +7,6 @@ import ipywidgets as widgets
 import ipyvuetify as v
 from IPython.display import clear_output, display
 
-import fastoad.api as oad
-
 from .path_manager import PathManager
 from fast_pedago.plots import (
     simplified_payload_range_plot,
@@ -18,6 +16,12 @@ from fast_pedago.plots import (
     aircraft_side_view_plot,
     flaps_and_slats_plot,
     wing_plot,
+    variable_viewer,
+    mass_breakdown_bar_plot,
+    mass_breakdown_sun_plot,
+    drag_polar_plot,
+    wing_geometry_plot,
+    aircraft_geometry_plot,
     BetterMissionViewer,
 )
 from fast_pedago.objects.paths import (
@@ -39,17 +43,17 @@ FIGURE_HEIGHT = 400
 GRAPH = {
     "General": {
         "Variables": [
-            oad.variable_viewer,
+            variable_viewer,
             True,
         ],
     },
     "Geometry": {
         "Aircraft": [
-            oad.aircraft_geometry_plot,
+            aircraft_geometry_plot,
             False,
         ],
         "Wing": [
-            oad.wing_geometry_plot,
+            wing_geometry_plot,
             False,
         ],
         "Front view": [
@@ -79,17 +83,17 @@ GRAPH = {
             True,
         ],
         "Drag polar": [
-            oad.drag_polar_plot,
+            drag_polar_plot,
             False,
         ],
     },
     "Mass": {
         "Bar breakdown": [
-            oad.mass_breakdown_bar_plot,
+            mass_breakdown_bar_plot,
             False,
         ],
         "Sun breakdown": [
-            oad.mass_breakdown_sun_plot,
+            mass_breakdown_sun_plot,
             True,
         ],
     },
@@ -202,7 +206,6 @@ class OutputGraphsPlotter:
             sizing_process_to_display = data
 
         with self.output:
-
             # Clear actual graphs :
             clear_output()
             fig: go.Figure = None
@@ -222,28 +225,18 @@ class OutputGraphsPlotter:
                         sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                     )
 
-                    # Not exactly the same way to plot payload range,
-                    # mission and variable viewer.
-                    if self.plot_name == "Payload-Range":
+                    # Mission plot works differently
+                    if self.plot_name == "Mission":
+                        mission_viewer.add_mission(
+                            path_to_flight_data_file, sizing_process_to_add
+                        )
+
+                    else:
                         fig = self.plot_function(
                             path_to_output_file,
                             path_to_flight_data_file,
                             sizing_process_to_add,
                             fig=fig,
-                        )
-
-                    elif self.plot_name == "Mission":
-                        mission_viewer.add_mission(
-                            path_to_flight_data_file, sizing_process_to_add
-                        )
-
-                    elif self.plot_name == "Variables":
-                        fig = self.plot_function(path_to_output_file)
-                        break
-
-                    else:
-                        fig = self.plot_function(
-                            path_to_output_file, sizing_process_to_add, fig=fig
                         )
                         if self.is_single_output:
                             self.file_selector.v_model = sizing_process_to_add

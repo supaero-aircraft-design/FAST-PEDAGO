@@ -27,7 +27,7 @@ HORIZONTAL_TAIL_TIP = 0.3
 HORIZONTAL_WIDTH_ELEVATOR = 0.85
 
 
-def aircraft_top_view_plot(
+def _aircraft_top_view_plot(
     aircraft_file_path: str,
     name=None,
     fig=None,

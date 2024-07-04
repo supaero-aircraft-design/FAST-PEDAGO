@@ -38,7 +38,7 @@ ENGINE_HEIGHT = 0.5
 WING_ROOT_HEIGHT = 0.2
 
 
-def aircraft_side_view_plot(
+def _aircraft_side_view_plot(
     aircraft_file_path: str,
     name=None,
     fig=None,

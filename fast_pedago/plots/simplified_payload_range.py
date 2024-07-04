@@ -14,7 +14,7 @@ from fastoad.io import VariableIO
 COLORS = plotly.colors.qualitative.Plotly
 
 
-def simplified_payload_range_plot(
+def _simplified_payload_range_plot(
     aircraft_file_path: str,
     flight_data_file_path: str,
     name=None,

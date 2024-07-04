@@ -11,7 +11,7 @@ pi = np.pi
 COLORS = plotly.colors.qualitative.Plotly
 
 
-def flaps_and_slats_plot(
+def _flaps_and_slats_plot(
     aircraft_file_path: str,
     name=None,
     fig=None,

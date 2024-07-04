@@ -9,7 +9,7 @@ from fastoad.io import VariableIO
 pi = np.pi
 
 
-def wing_plot(
+def _wing_plot(
     aircraft_file_path: str,
     name=None,
     fig=None,
