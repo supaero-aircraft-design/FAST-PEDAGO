@@ -33,6 +33,7 @@ class OutputsGraphsContainer(v.Col):
                 children=[self.output_selection],
             ),
             v.Row(
+                class_="mb-12",
                 no_gutters=True,
                 align="top",
                 children=[
