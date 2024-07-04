@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from typing import Callable
 
 import plotly.graph_objects as go
@@ -191,7 +191,7 @@ class OutputGraphsPlotter:
             self.file_selector.items = data
         self._base_plot(self.data)
 
-    def _base_plot(self, data: List[str]):
+    def _base_plot(self, data: Union[str, List[str]]):
         """
         Base function to plot data. Add all aircraft to the given plot.
 
@@ -200,7 +200,7 @@ class OutputGraphsPlotter:
         # data contains a list of outputs or a single output, depending on the
         # graph. If there is no data, the rest of the code will be enough to
         # clear the screen.
-        if data is str:
+        if isinstance(data, str):
             sizing_process_to_display = [data]
         else:
             sizing_process_to_display = data
