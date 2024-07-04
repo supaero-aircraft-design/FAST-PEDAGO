@@ -1,4 +1,5 @@
 from typing import List
+from typing import Callable
 
 import plotly.graph_objects as go
 
@@ -26,6 +27,7 @@ from fast_pedago.objects.paths import (
 
 
 FIGURE_WIDTH = 650
+FIGURE_HEIGHT = 400
 
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
@@ -115,7 +117,7 @@ class OutputGraphsPlotter:
         # Stores the current plot name, plot function, and data
         self.plot_category = ""
         self.plot_name = ""
-        self.plot_function = None
+        self.plot_function: Callable = None
         self.data = []
         self.is_single_output = False
 
@@ -204,12 +206,13 @@ class OutputGraphsPlotter:
             # Clear actual graphs :
             clear_output()
             fig: go.Figure = None
-            if self.plot_category == "Performances" and self.plot_name == "Mission":
+            if self.plot_name == "Mission":
                 mission_viewer = BetterMissionViewer()
 
             # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
+
                     path_to_output_file = PathManager.path_to(
                         "output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
@@ -219,47 +222,36 @@ class OutputGraphsPlotter:
                         sizing_process_to_add + FLIGHT_DATA_FILE_SUFFIX,
                     )
 
-                    # Not exactly the same way to plot payload range and
-                    # mission.
-                    if (
-                        self.plot_category == "Performances"
-                        and self.plot_name == "Payload-Range"
-                    ):
+                    # Not exactly the same way to plot payload range,
+                    # mission and variable viewer.
+                    if self.plot_name == "Payload-Range":
                         fig = self.plot_function(
                             path_to_output_file,
                             path_to_flight_data_file,
                             sizing_process_to_add,
                             fig=fig,
                         )
-                    elif (
-                        self.plot_category == "Performances"
-                        and self.plot_name == "Mission"
-                    ):
+
+                    elif self.plot_name == "Mission":
                         mission_viewer.add_mission(
                             path_to_flight_data_file, sizing_process_to_add
                         )
 
-                    else:
-                        # The plot function have a simplified signature if
-                        # only one output can be added
-                        if len(sizing_process_to_display) == 1 or self.is_single_output:
-                            fig = self.plot_function(path_to_output_file)
-                            # Leave the loop is the graph can only plot one
-                            # output at a time. Only the first data will be
-                            # plotted
-                            if self.is_single_output:
-                                self.file_selector.v_model = sizing_process_to_add
-                                break
+                    elif self.plot_name == "Variables":
+                        fig = self.plot_function(path_to_output_file)
 
-                        else:
-                            fig = self.plot_function(
-                                path_to_output_file, sizing_process_to_add, fig=fig
-                            )
+                    else:
+                        fig = self.plot_function(
+                            path_to_output_file, sizing_process_to_add, fig=fig
+                        )
+                        if self.is_single_output:
+                            self.file_selector.v_model = sizing_process_to_add
+                            break
 
             # Display the plots
             if fig:
                 fig.update_layout(
-                    autosize=True,
+                    height=FIGURE_HEIGHT,
                     width=FIGURE_WIDTH,
                     margin=go.layout.Margin(
                         l=0,
@@ -271,7 +263,7 @@ class OutputGraphsPlotter:
                 fig.update_annotations(font_size=12)
                 display(fig)
 
-            if self.plot_category == "Performances" and self.plot_name == "Mission":
+            elif self.plot_name == "Mission":
                 mission_viewer.update_layout(
                     {
                         "width": FIGURE_WIDTH,
