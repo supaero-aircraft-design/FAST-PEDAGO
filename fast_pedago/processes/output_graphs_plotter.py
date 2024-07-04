@@ -30,9 +30,6 @@ from fast_pedago.objects.paths import (
 )
 
 
-FIGURE_WIDTH = 650
-FIGURE_HEIGHT = 400
-
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
 # To add a graph, add its plotting function, and 'True' if the graph is
@@ -247,7 +244,6 @@ class OutputGraphsPlotter:
                 fig.update_layout(
                     title=None,
                     autosize=True,
-                    width=FIGURE_WIDTH,
                     margin=go.layout.Margin(
                         l=0,
                         r=20,
@@ -262,7 +258,6 @@ class OutputGraphsPlotter:
                 mission_viewer.update_layout(
                     {
                         "title": None,
-                        "width": FIGURE_WIDTH,
                         "margin": go.layout.Margin(
                             l=0,
                             r=20,
@@ -271,7 +266,8 @@ class OutputGraphsPlotter:
                         ),
                     }
                 )
-                mission_viewer.display()
+                if mission_viewer.missions:
+                    mission_viewer.display()
 
     def _update_selection_data(self, widget, event, data):
         """
