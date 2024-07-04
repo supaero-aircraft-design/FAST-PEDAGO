@@ -17,12 +17,15 @@ from fast_pedago.plots import (
     aircraft_side_view_plot,
     flaps_and_slats_plot,
     wing_plot,
+    BetterMissionViewer,
 )
 from fast_pedago.objects.paths import (
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )
 
+
+FIGURE_WIDTH = 650
 
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
@@ -202,7 +205,7 @@ class OutputGraphsPlotter:
             clear_output()
             fig: go.Figure = None
             if self.plot_category == "Performances" and self.plot_name == "Mission":
-                mission_viewer = oad.MissionViewer()
+                mission_viewer = BetterMissionViewer()
 
             # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
@@ -253,21 +256,33 @@ class OutputGraphsPlotter:
                                 path_to_output_file, sizing_process_to_add, fig=fig
                             )
 
-            # Display the plot:
+            # Display the plots
             if fig:
                 fig.update_layout(
                     autosize=True,
-                    title_font_size=15,
+                    width=FIGURE_WIDTH,
                     margin=go.layout.Margin(
                         l=0,
                         r=20,
                         b=0,
-                        t=22,
+                        t=30,
                     ),
                 )
                 fig.update_annotations(font_size=12)
                 display(fig)
+
             if self.plot_category == "Performances" and self.plot_name == "Mission":
+                mission_viewer.update_layout(
+                    {
+                        "width": FIGURE_WIDTH,
+                        "margin": go.layout.Margin(
+                            l=0,
+                            r=20,
+                            b=0,
+                            t=27,
+                        ),
+                    }
+                )
                 mission_viewer.display()
 
     def _update_selection_data(self, widget, event, data):
