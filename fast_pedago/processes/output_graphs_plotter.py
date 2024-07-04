@@ -239,6 +239,7 @@ class OutputGraphsPlotter:
 
                     elif self.plot_name == "Variables":
                         fig = self.plot_function(path_to_output_file)
+                        break
 
                     else:
                         fig = self.plot_function(
