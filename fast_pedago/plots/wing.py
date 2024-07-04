@@ -721,5 +721,16 @@ def _wing_plot(
         xaxis_title="y",
         yaxis_title="x",
     )
+    fig.update_layout(
+        title=None,
+        autosize=True,
+        width=450,
+        margin=go.layout.Margin(
+            l=0,
+            r=20,
+            b=0,
+            t=30,
+        ),
+    )
 
     return display(widgets.HBox([fig, out]))
