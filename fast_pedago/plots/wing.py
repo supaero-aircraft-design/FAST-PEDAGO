@@ -724,7 +724,6 @@ def _wing_plot(
     fig.update_layout(
         title=None,
         autosize=True,
-        width=450,
         margin=go.layout.Margin(
             l=0,
             r=20,
