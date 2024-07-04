@@ -1,7 +1,3 @@
-# This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
-# Electric Aircraft.
-# Copyright (C) 2022 ISAE-SUPAERO
-
 import logging
 import os
 import os.path as pth
@@ -45,12 +41,14 @@ class Main:
                 "--port=8080 "
                 "--no-browser "
                 "--MappingKernelManager.cull_idle_timeout=7200 "
-                """--VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|xlsx|ico|pdf|json)']" """
+                r"""--VoilaConfiguration.file_whitelist="['.*\."""
+                """(png|jpg|gif|xlsx|ico|pdf|json)']" """
             )
         else:
             command = (
                 "voila "
-                """--VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|xlsx|ico|pdf|json)']" """
+                r"""--VoilaConfiguration.file_whitelist="['.*\."""
+                """s(png|jpg|gif|xlsx|ico|pdf|json)']" """
             )
 
         # To not get an ugly error message when you ctrl+c
@@ -59,12 +57,12 @@ class Main:
         except KeyboardInterrupt:
             exit()
 
-    # ENTRY POINT ==================================================================================
+    # ENTRY POINT ============================================================
     def run(self):
         """Main function."""
         subparsers = self.parser.add_subparsers(title="sub-commands")
 
-        # sub-command for running AeroMAPS -------------------------------------
+        # sub-command for running AeroMAPS -----------------------------------
         parser_run = subparsers.add_parser(
             "run",
             help="run FAST-OAD pedagogical branch",
@@ -78,7 +76,7 @@ class Main:
         )
         parser_run.set_defaults(func=self._run)
 
-        # Parse ------------------------------------------------------------------------------------
+        # Parse --------------------------------------------------------------
         args = self.parser.parse_args()
         try:
             args.func(args)

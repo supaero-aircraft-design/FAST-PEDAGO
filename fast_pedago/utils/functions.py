@@ -1,4 +1,3 @@
-
 import os.path as pth
 
 import openmdao.api as om
@@ -27,62 +26,70 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
         tag="a",
         children=[
             widgets.Image(
-                value=image, 
+                value=image,
                 format=file_extension,
                 layout=widgets.Layout(
                     max_height=max_height,
-                    padding = "0px",
+                    padding="0px",
                 ),
             ),
         ],
     )
-    
 
     return image_widget
 
 
 def _extract_residuals(recorder_database_file_path: str) -> list:
     """
-    From the file path to a recorder data base, extract the value of the relative error of the
-    residuals at each iteration.
+    From the file path to a recorder data base, extract the value of the
+    relative error of the residuals at each iteration.
 
     :param recorder_database_file_path: absolute path to the recorder database
-    :return: two arrays containing the iterations and the associated values of the relative error
+    :return: two arrays containing the iterations and the associated values of
+        the relative error.
     """
 
     case_reader = om.CaseReader(recorder_database_file_path)
 
     # Will only work if the recorder was attached to the base solver
     solver_cases = case_reader.list_cases("root.nonlinear_solver")
-    
+
     # For the display, first iteration will be 1
-    iterations, relative_error = zip(*[
-        (i + 1, case_reader.get_case(case_id).rel_err) 
-        for i, case_id in enumerate(solver_cases)
-        ])
+    iterations, relative_error = zip(
+        *[
+            (i + 1, case_reader.get_case(case_id).rel_err)
+            for i, case_id in enumerate(solver_cases)
+        ]
+    )
 
     return iterations, relative_error
 
 
 def _extract_objective(recorder_database_file_path: str) -> list:
     """
-    From the file path to a recorder data base, extract the value of the objective at each
-    iteration of the driver.
+    From the file path to a recorder data base, extract the value of the
+    objective at each iteration of the driver.
 
     :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the iterations and the associated values of the objective
+    :return: an array containing the iterations and the associated values of
+        the objective.
     """
 
     case_reader = om.CaseReader(recorder_database_file_path)
 
     # Will only work if the recorder was attached to the base solver
     solver_cases = case_reader.list_cases("driver")
-    
+
     # For the display, first iteration will be 1
-    iterations, objective = zip(*[
-        (i + 1, float(list(case_reader.get_case(case_id).get_objectives().values())[0])) 
-        for i, case_id in enumerate(solver_cases)
-    ])
+    iterations, objective = zip(
+        *[
+            (
+                i + 1,
+                float(list(case_reader.get_case(case_id).get_objectives().values())[0]),
+            )
+            for i, case_id in enumerate(solver_cases)
+        ]
+    )
 
     return iterations, objective
 
@@ -91,23 +98,24 @@ def _n2_xdsm_to_vue_template(html_file_path: str):
     html_file = open(html_file_path, "r")
     content = html_file.readlines()
     content = [
-        item
-        .replace("<body>", "<template>")
+        item.replace("<body>", "<template>")
         .replace("</body>", "</template>")
         .replace("body", "div")
         .replace("<head>", "")
         .replace("</head>", "")
         .replace("<!doctype html>", "")
         .replace("</html>", "")
-        .replace('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', "")
+        .replace(
+            '<meta http-equiv="Content-Type" content="text/html;' 'charset=UTF-8">', ""
+        )
         for item in content
     ]
     html_file.close()
-    
+
     # Remove the extension in the file name
-    vue_file_path = html_file_path.replace('.html' , '.vue')
+    vue_file_path = html_file_path.replace(".html", ".vue")
     vue_file = open(vue_file_path, "+w")
     vue_file.writelines(content)
     vue_file.close()
-    
+
     return vue_file_path

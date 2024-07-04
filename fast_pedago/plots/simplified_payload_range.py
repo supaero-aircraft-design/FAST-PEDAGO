@@ -23,8 +23,8 @@ def simplified_payload_range_plot(
     file_formatter=None
 ) -> go.FigureWidget:
     """
-    Returns a figure plot of the payload range diagram of the aircraft. Relies on Breguet's range
-    equation.
+    Returns a figure plot of the payload range diagram of the aircraft. Relies
+    on Breguet's range equation.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
 
@@ -32,8 +32,9 @@ def simplified_payload_range_plot(
     :param flight_data_file_path: path of flight data file
     :param name: name to give to the trace added to the figure
     :param fig: existing figure to which add the plot
-    :param file_formatter: the formatter that defines the format of data file. If not provided,
-                        default format will be assumed.
+    :param file_formatter: the formatter that defines the format of data file.
+        If not provided,
+        default format will be assumed.
     :return: wing plot figure
     """
 
@@ -58,7 +59,7 @@ def simplified_payload_range_plot(
         fig = go.Figure()
 
     # Same color for each aircraft configuration
-    i = int(len(fig.data)/2) % 10
+    i = int(len(fig.data) / 2) % 10
 
     mean_tas, mean_sfc, mean_l_over_d = _extract_value_from_flight_data_file(
         flight_data_file_path=flight_data_file_path
@@ -77,8 +78,9 @@ def simplified_payload_range_plot(
         / 1852.0
     )
 
-    # Readjust so that the design point end up on the [B, D] segment. First find the linear
-    # function that represent the [B, D] segment under the form y = a * x + b.
+    # Readjust so that the design point end up on the [B, D] segment. First
+    # find the linear function that represent the [B, D] segment under the
+    # form y = a * x + b.
 
     coeff_a = (payload_array[0] - payload_array[1]) / (range_array[0] - range_array[1])
     coeff_b = payload_array[0] - coeff_a * range_array[0]
@@ -86,7 +88,9 @@ def simplified_payload_range_plot(
     # ow we readjust the range so that that function match the design point
     k_ra = (nominal_payload - coeff_b) / (coeff_a * nominal_range)
 
-    payload_array_for_display = np.concatenate((np.array([max_payload]), payload_array))
+    payload_array_for_display = np.concatenate(
+        (np.array([max_payload]), payload_array),
+    )
     range_array_for_display = np.concatenate((np.zeros(1), range_array)) / k_ra
 
     scatter_external_bound = go.Scatter(
@@ -121,10 +125,10 @@ def simplified_payload_range_plot(
 
 def _extract_value_from_flight_data_file(
     flight_data_file_path: str,
-    ) -> Tuple[float, float, float]:
+) -> Tuple[float, float, float]:
     """
-    Extract from the flight data point file the average value during cruise to compute Breguet's
-    range equation.
+    Extract from the flight data point file the average value during cruise to
+    compute Breguet's range equation.
 
     :param flight_data_file_path: path of flight data file
     :return: the average speed, sfc and lift-to-drag ratio during cruise

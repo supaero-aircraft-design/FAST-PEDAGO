@@ -1,7 +1,3 @@
-# This file is part of FAST-OAD_CS23-HE : A framework for rapid Overall Aircraft Design of Hybrid
-# Electric Aircraft.
-# Copyright (C) 2022 ISAE-SUPAERO
-
 import ipyvuetify as v
 
 from .input_widgets import (
@@ -26,43 +22,44 @@ class InputsContainer(v.List):
     """
     An input container that can switch to set inputs for MDA and MDO.
     """
+
     def __init__(self, process_launcher: MDAMDOLauncher, **kwargs):
         """
-        :param source_data_file: the path to the source file to initialize the inputs from.
+        :param source_data_file: the path to the source file to initialize *
+            the inputs from.
         """
         super().__init__(**kwargs)
-        
+
         self.process_launcher = process_launcher
 
         self._build_layout()
         self.to_MDA()
 
-    
     def to_MDO(self):
         """
         Changes layout to MDO inputs
         """
         self.children = [self.inputs_header] + self._mdo_input
-        self.launch_button.children =[
+        self.launch_button.children = [
             v.Icon(class_="px-3", children=["fa-plane"]),
             "Launch optimization",
         ]
         self.process_name_field.label = "Optimization name"
-        self.process_name_field.placeholder = "Write a name for your optimization process"
-
+        self.process_name_field.placeholder = (
+            "Write a name for your optimization process"
+        )
 
     def to_MDA(self):
         """
         Changes layout to MDA inputs
         """
         self.children = [self.inputs_header] + self._mda_input
-        self.launch_button.children =[
+        self.launch_button.children = [
             v.Icon(class_="px-3", children=["fa-plane"]),
             "Launch sizing",
         ]
         self.process_name_field.label = "Sizing name"
         self.process_name_field.placeholder = "Write a name for your sizing process"
-
 
     def _build_layout(self):
         """
@@ -71,7 +68,7 @@ class InputsContainer(v.List):
         """
         self.class_ = "pa-0"
         self.expand = True
-        
+
         self._build_layout_mda()
         self._build_layout_mdo()
 
@@ -90,8 +87,11 @@ class InputsContainer(v.List):
             block=True,
             color="#32cd32",
             children=[
-                v.Icon(class_="px-3", children=["fa-plane"]),
-                "Launch sizing"
+                v.Icon(
+                    class_="px-3",
+                    children=["fa-plane"],
+                ),
+                "Launch sizing",
             ],
         )
 
@@ -102,15 +102,27 @@ class InputsContainer(v.List):
             dense=True,
             children=[
                 v.Btn(
-                    v_bind='tooltip.attrs',
-                    v_on='tooltip.on',
-                    children=["MDA"]
+                    v_bind="tooltip.attrs",
+                    v_on="tooltip.on",
+                    children=["MDA"],
                 ),
                 v.Btn(
-                    v_bind='tooltip.attrs',
-                    v_on='tooltip.on',
-                    children=["MDO"])
+                    v_bind="tooltip.attrs",
+                    v_on="tooltip.on",
+                    children=["MDO"],
+                ),
             ],
+        )
+        process_selection_switch_wrapper = v.Tooltip(
+            contained=True,
+            v_slots=[
+                {
+                    "name": "activator",
+                    "variable": "tooltip",
+                    "children": self.process_selection_switch,
+                }
+            ],
+            children=["Swap between analysis and optimization mode"],
         )
 
         self.inputs_header = v.ListItemGroup(
@@ -122,15 +134,7 @@ class InputsContainer(v.List):
                         v.Col(
                             cols=4,
                             children=[
-                               v.Tooltip(
-                                    contained=True,
-                                    v_slots=[{
-                                        'name': 'activator',
-                                        'variable': 'tooltip',
-                                        'children': self.process_selection_switch,
-                                    }],
-                                    children=["Swap between analysis and optimization mode"],
-                                ), 
+                                process_selection_switch_wrapper,
                             ],
                         ),
                         v.Col(
@@ -148,7 +152,6 @@ class InputsContainer(v.List):
             ],
         )
 
-
     def _build_layout_mdo(self):
         """
         Generates the layout for the MDO inputs.
@@ -158,24 +161,23 @@ class InputsContainer(v.List):
             mandatory=True,
             children=[
                 v.Btn(
-                    v_bind='tooltip.attrs',
-                    v_on='tooltip.on',
+                    v_bind="tooltip.attrs",
+                    v_on="tooltip.on",
                     children=["Fuel sizing"],
                 ),
                 v.Btn(
-                    v_bind='tooltip.attrs',
-                    v_on='tooltip.on',
+                    v_bind="tooltip.attrs",
+                    v_on="tooltip.on",
                     children=["MTOW"],
                 ),
                 v.Btn(
-                    v_bind='tooltip.attrs',
-                    v_on='tooltip.on',
+                    v_bind="tooltip.attrs",
+                    v_on="tooltip.on",
                     children=["OWE"],
                 ),
             ],
         )
-        
-        
+
         # Checkboxes to chose which design variable and
         # constraints to use
         self._ar_design_var_checkbox = v.Checkbox(
@@ -192,9 +194,15 @@ class InputsContainer(v.List):
             input_value=False,
             label="Wing span as a constraint",
         )
-        self._sweep_w_design_var_checkbox.on_event("change", self._ensure_one_design_var)
-        self._ar_design_var_checkbox.on_event("change",self. _ensure_one_design_var)
-        
+        self._sweep_w_design_var_checkbox.on_event(
+            "change",
+            self._ensure_one_design_var,
+        )
+        self._ar_design_var_checkbox.on_event(
+            "change",
+            self._ensure_one_design_var,
+        )
+
         # Range sliders to input design variables and constraints
         self._ar_design_var_input = RangeSliderInput(
             min=5,
@@ -213,46 +221,57 @@ class InputsContainer(v.List):
             tooltip="Range of wing sweep angle for the optimization [-]",
         )
         self._wing_span_constraint_max = SliderInput(
-            min=20., 
-            max=100., 
-            step=1, 
+            min=20.0,
+            max=100.0,
+            step=1,
             value=OPT_WING_SPAN_MAX,
-            label="Max wing span", 
-            tooltip="Maximum wing span allowed for the optimization [m]"
+            label="Max wing span",
+            tooltip="Maximum wing span allowed for the optimization [m]",
         )
 
         self._mdo_input = [
-            _InputsCategory("Objective", [
+            _InputsCategory(
+                "Objective",
+                [
                     v.Row(
                         class_="pb-4 pt-2",
                         justify="center",
                         children=[
                             v.Tooltip(
                                 contained=True,
-                                v_slots=[{
-                                    'name': 'activator',
-                                    'variable': 'tooltip',
-                                    'children': self._objective_selection,
-                                }],
+                                v_slots=[
+                                    {
+                                        "name": "activator",
+                                        "variable": "tooltip",
+                                        "children": self._objective_selection,
+                                    }
+                                ],
                                 children=[
                                     "Minimize fuel consumption or MTOW or OWE",
                                 ],
                             ),
                         ],
                     )
-            ], is_open=True),
-            _InputsCategory("Design variables", [
-                self._ar_design_var_checkbox,
-                self._ar_design_var_input,
-                self._sweep_w_design_var_checkbox,
-                self._sweep_w_design_var_input,
-            ]),
-            _InputsCategory("Constraints", [
-                self._wing_span_constraints_checkbox,
-                self._wing_span_constraint_max,
-            ]),    
+                ],
+                is_open=True,
+            ),
+            _InputsCategory(
+                "Design variables",
+                [
+                    self._ar_design_var_checkbox,
+                    self._ar_design_var_input,
+                    self._sweep_w_design_var_checkbox,
+                    self._sweep_w_design_var_input,
+                ],
+            ),
+            _InputsCategory(
+                "Constraints",
+                [
+                    self._wing_span_constraints_checkbox,
+                    self._wing_span_constraint_max,
+                ],
+            ),
         ]
-
 
     def _build_layout_mda(self):
         """
@@ -260,96 +279,108 @@ class InputsContainer(v.List):
         """
         self._n_pax_input = SliderInput(
             min=20,
-            max=400, 
+            max=400,
             step=2,
-            label="NPAX", 
-            tooltip="Number of passengers"
+            label="NPAX",
+            tooltip="Number of passengers",
         )
         self._v_app_input = SliderInput(
-            min=45, 
-            max=170, 
+            min=45,
+            max=170,
             step=1,
-            label="Vapp", 
-            tooltip="Approach speed [kts]"
+            label="Vapp",
+            tooltip="Approach speed [kts]",
         )
         self._cruise_mach_input = SliderInput(
-            min=0., 
-            max=1., 
-            step=0.01, 
-            label="Mcruise", 
-            tooltip="Cruise mach"
+            min=0.0,
+            max=1.0,
+            step=0.01,
+            label="Mcruise",
+            tooltip="Cruise mach",
         )
         self._range_input = SliderInput(
             min=0,
-            max=10000, 
+            max=10000,
             step=100,
-            label="Range", 
-            tooltip="Aircraft range [NM]"
+            label="Range",
+            tooltip="Aircraft range [NM]",
         )
         self._payload_input = SliderInput(
-            min=0, 
-            max=100000, 
+            min=0,
+            max=100000,
             step=1000,
-            label="Payload", 
-            tooltip="Aircraft payload [kg]"
+            label="Payload",
+            tooltip="Aircraft payload [kg]",
         )
         self._max_payload_input = SliderInput(
-            min=0, 
-            max=100000, 
+            min=0,
+            max=100000,
             step=1000,
-            label="Max Payload", 
-            tooltip="Aircraft max payload [kg]"
+            label="Max Payload",
+            tooltip="Aircraft max payload [kg]",
         )
         self._wing_aspect_ratio_input = SliderInput(
-            min=4, 
-            max=25, 
+            min=4,
+            max=25,
             step=1,
-            label="Wing AR", 
-            tooltip="Aspect Ratio of the wing"
+            label="Wing AR",
+            tooltip="Aspect Ratio of the wing",
         )
         self._bpr_input = SliderInput(
-            min=0, 
-            max=25, 
-            step=1, 
+            min=0,
+            max=25,
+            step=1,
             label="BPR",
-            tooltip="ByPass Ratio of the engine"
+            tooltip="ByPass Ratio of the engine",
         )
-        
-        # As can be seen in the parent tab, there is an issue when cruise mach gets too high,
-        # we will display a warning when that value is reached, informing students of what is
-        # done behind the scene
+
+        # As can be seen in the parent tab, there is an issue when cruise mach
+        # gets too high, we will display a warning when that value is reached,
+        # informing students of what is done behind the scene.
         self._snackbar = Snackbar(
-            "The sweep angle of the wing has been adjusted to avoid having compressibility "
-            "drag coefficient too high"
+            "The sweep angle of the wing has been adjusted to avoid having "
+            "compressibility drag coefficient too high"
         )
         self._cruise_mach_input.slider.on_event("change", self._mach_alert)
 
         self._mda_input = [
-            _InputsCategory("TLARs", [
-                self._n_pax_input,
-                self._v_app_input,
-                self._cruise_mach_input,
-                self._range_input,
-            ], is_open=True),
-            _InputsCategory("Weight", [
-                self._payload_input,
-                self._max_payload_input,
-            ]),
-            _InputsCategory("Geometry", [
-                self._wing_aspect_ratio_input,
-            ]),
-            _InputsCategory("Propulsion", [
-                self._bpr_input,
-            ]),
+            _InputsCategory(
+                "TLARs",
+                [
+                    self._n_pax_input,
+                    self._v_app_input,
+                    self._cruise_mach_input,
+                    self._range_input,
+                ],
+                is_open=True,
+            ),
+            _InputsCategory(
+                "Weight",
+                [
+                    self._payload_input,
+                    self._max_payload_input,
+                ],
+            ),
+            _InputsCategory(
+                "Geometry",
+                [
+                    self._wing_aspect_ratio_input,
+                ],
+            ),
+            _InputsCategory(
+                "Propulsion",
+                [
+                    self._bpr_input,
+                ],
+            ),
             self._snackbar,
         ]
 
-    
     def _ensure_one_design_var(self, widget, event, data):
         """
         Ensures that at least one design variable is chosen
         for MDO.
-        
+
         If the user tries to un-tick a checkbox, the other is ticked
         by default.
 
@@ -363,27 +394,25 @@ class InputsContainer(v.List):
                 if not self._sweep_w_design_var_checkbox.v_model:
                     self._sweep_w_design_var_checkbox.v_model = True
 
-
     def _mach_alert(self, widget, event, data):
         """
-        Opens the snackbar to alert the user if the mach is above the value 
+        Opens the snackbar to alert the user if the mach is above the value
         of 0.78 and the snackbar is closedK
 
         To be called with "on_event" method of a widget.
         """
-        if self._cruise_mach_input.slider.v_model > 0.78 and not self._snackbar.v_model:
-            self._snackbar.open_or_close(widget, event, data)
-
+        if self._cruise_mach_input.slider.v_model > 0.78:
+            if not self._snackbar.v_model:
+                self._snackbar.open_or_close(widget, event, data)
 
     def _update_process_name(self, widget, event, data):
         """
         Changes process name when a new name is written
         in the input text field.
 
-        To be used with a "on_event" of a text field ipyvuetify 
+        To be used with a "on_event" of a text field ipyvuetify
         """
         self.process_launcher.process_name = data
-
 
     def disable(self):
         """
@@ -394,8 +423,8 @@ class InputsContainer(v.List):
         self.process_selection_switch.children[1].disabled = True
         self.process_name_field.readonly = True
         self.launch_button.disabled = True
-        self.launch_button.color = ("#FF0000")
-        
+        self.launch_button.color = "#FF0000"
+
         # MDA inputs
         self._n_pax_input.disable()
         self._v_app_input.disable()
@@ -405,7 +434,7 @@ class InputsContainer(v.List):
         self._max_payload_input.disable()
         self._wing_aspect_ratio_input.disable()
         self._bpr_input.disable()
-        
+
         # MDO inputs
         self._objective_selection.children[0].disabled = True
         self._objective_selection.children[1].disabled = True
@@ -416,7 +445,6 @@ class InputsContainer(v.List):
         self._sweep_w_design_var_input.disable()
         self._wing_span_constraints_checkbox.readonly = True
         self._wing_span_constraint_max.disable()
-    
 
     def enable(self):
         """
@@ -426,8 +454,8 @@ class InputsContainer(v.List):
         self.process_selection_switch.children[1].disabled = False
         self.process_name_field.readonly = False
         self.launch_button.disabled = False
-        self.launch_button.color = ("#32cd32")
-        
+        self.launch_button.color = "#32cd32"
+
         # MDA inputs
         self._n_pax_input.enable()
         self._v_app_input.enable()
@@ -437,7 +465,7 @@ class InputsContainer(v.List):
         self._max_payload_input.enable()
         self._wing_aspect_ratio_input.enable()
         self._bpr_input.enable()
-        
+
         # MDO inputs
         self._objective_selection.children[0].disabled = False
         self._objective_selection.children[1].disabled = False
@@ -449,11 +477,9 @@ class InputsContainer(v.List):
         self._wing_span_constraints_checkbox.readonly = False
         self._wing_span_constraint_max.enable()
 
-
-    
     def retrieve_mda_inputs(self):
         """
-        Retrieves inputs from the MDA input widgets and configure the 
+        Retrieves inputs from the MDA input widgets and configure the
         process launcher with it.
         """
         self.process_launcher.set_mda_inputs(
@@ -464,38 +490,39 @@ class InputsContainer(v.List):
             payload=self._payload_input.slider.v_model,
             max_payload=self._max_payload_input.slider.v_model,
             wing_aspect_ratio=self._wing_aspect_ratio_input.slider.v_model,
-            bypass_ratio=self._bpr_input.slider.v_model
+            bypass_ratio=self._bpr_input.slider.v_model,
         )
-
 
     def retrieve_mdo_inputs(self):
         """
-        Retrieves inputs from the MDO input widgets and configure the 
+        Retrieves inputs from the MDO input widgets and configure the
         process launcher with it.
         """
         self.process_launcher.set_mdo_inputs(
-            objective=self._objective_selection.v_model,
-            is_aspect_ratio_design_variable=self._ar_design_var_checkbox.v_model,
-            aspect_ratio_lower_bound=self._ar_design_var_input.slider.v_model[0],
-            aspect_ratio_upper_bound=self._ar_design_var_input.slider.v_model[1],
-            is_wing_sweep_design_variable=self._sweep_w_design_var_checkbox.v_model,
-            wing_sweep_lower_bound=self._sweep_w_design_var_input.slider.v_model[0],
-            wing_sweep_upper_bound=self._sweep_w_design_var_input.slider.v_model[1],
-            is_wing_span_constrained=self._wing_span_constraints_checkbox.v_model,
-            wing_span_upper_bound=self._wing_span_constraint_max.slider.v_model,
+            self._objective_selection.v_model,
+            self._ar_design_var_checkbox.v_model,
+            self._ar_design_var_input.slider.v_model[0],
+            self._ar_design_var_input.slider.v_model[1],
+            self._sweep_w_design_var_checkbox.v_model,
+            self._sweep_w_design_var_input.slider.v_model[0],
+            self._sweep_w_design_var_input.slider.v_model[1],
+            self._wing_span_constraints_checkbox.v_model,
+            self._wing_span_constraint_max.slider.v_model,
         )
-
 
     def set_initial_value_mda(self, source_data_file_name: str):
         """
-        Set the value of the attributes that store the variable for the MDA based on their value
-        in the reference inputs.
-        
-        Also save the source file inputs as an object attribute that we can copy to modify inputs
-        
+        Set the value of the attributes that store the variable for the MDA
+        based on their value in the reference inputs.
+
+        Also save the source file inputs as an object attribute that we can
+        copy to modify inputs.
+
         :param source_data_file_name: the source file to read data from
         """
-        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
+        reference_inputs = self.process_launcher.get_reference_inputs(
+            source_data_file_name
+        )
         self._n_pax_input.slider.v_model = reference_inputs[0]
         self._v_app_input.slider.v_model = reference_inputs[1]
         self._cruise_mach_input.slider.v_model = reference_inputs[2]
@@ -506,38 +533,40 @@ class InputsContainer(v.List):
         self._bpr_input.slider.v_model = reference_inputs[7]
 
 
-
 class _InputsCategory(v.ListGroup):
     """
     Internal class to factorize layout of an input category
     such as weight inputs, geometry inputs, TLARs, etc.
-    
+
     It displays the name of the category as a title and
     the input widgets under it.
     """
-    def __init__(self, 
-            name: str, 
-            inputs: v.VuetifyWidget = [], 
-            is_open: bool = False,
-            **kwargs):
+
+    def __init__(
+        self,
+        name: str,
+        inputs: v.VuetifyWidget = [],
+        is_open: bool = False,
+        **kwargs,
+    ):
         """
         :param name: the name of the category
-        :param inputs: a list of input widgets 
+        :param inputs: a list of input widgets
         :param is_open: True if the group is initially open
         """
         super().__init__(**kwargs)
 
         self.value = is_open
-        self.v_slots = [{
-            'name': 'activator',
-            'children': [
-                v.ListItemTitle(
-                    children=[
-                        name,
-                    ],
-                ),
-            ],
-        }]
-        self.children = [
-            v.ListItem(children=[input]) for input in inputs
+        self.v_slots = [
+            {
+                "name": "activator",
+                "children": [
+                    v.ListItemTitle(
+                        children=[
+                            name,
+                        ],
+                    ),
+                ],
+            }
         ]
+        self.children = [v.ListItem(children=[input]) for input in inputs]

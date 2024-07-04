@@ -24,16 +24,23 @@ def stability_diagram_plot(
     :param aircraft_file_path: path of data file
     :param name: name to give to the trace added to the figure
     :param fig: existing figure to which add the plot
-    :param file_formatter: the formatter that defines the format of data file. If not provided,
-                           default format will be assumed.
+    :param file_formatter: the formatter that defines the format of data file.
+        If not provided,
+        default format will be assumed.
     :return: wing plot figure
     """
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     cl_alpha_wing = variables["data:aerodynamics:aircraft:cruise:CL_alpha"].value[0]
-    cl_max_clean_wing = variables["data:aerodynamics:aircraft:landing:CL_max_clean"].value[0]
-    cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[0]
-    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:cruise:CL_alpha"].value[0]
+    cl_max_clean_wing = variables[
+        "data:aerodynamics:aircraft:landing:CL_max_clean"
+    ].value[0]
+    cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[
+        0
+    ]
+    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:cruise:CL_alpha"].value[
+        0
+    ]
 
     mac = variables["data:geometry:wing:MAC:length"].value[0]
     mac_ht = variables["data:geometry:horizontal_tail:MAC:length"].value[0]
@@ -62,7 +69,9 @@ def stability_diagram_plot(
 
     v1 = 2.0 * pi / 3.0 * fuselage_radius ** 3.0
     v2 = (
-        pi * fuselage_radius ** 2 * (fuselage_length - fuselage_rear_length - fuselage_front_length)
+        pi
+        * fuselage_radius ** 2
+        * (fuselage_length - fuselage_rear_length - fuselage_front_length)
     )
     v3 = 1 / 3.0 * pi * fuselage_radius ** 2 * fuselage_rear_length
     v = v1 + v2 + v3
@@ -98,7 +107,12 @@ def stability_diagram_plot(
     rho = atm.density
 
     def epsilon(cl_wing_function):
-        return -8 * cl_wing_function / (pi ** 3 * aspect_ratio_wing) * (1 + 1 / np.cos(beta))
+        return (
+            -8
+            * cl_wing_function
+            / (pi ** 3 * aspect_ratio_wing)
+            * (1 + 1 / np.cos(beta))
+        )
 
     def lift_equilibrium(alpha_function, surface_ratio_function, mass):
         v_stall = 2 * mass * 9.81 / (rho * area_wing * cl_max_clean_wing * area_wing)
@@ -115,7 +129,11 @@ def stability_diagram_plot(
 
     alpha_initial_guess = 5 * pi / 180 * np.ones(len(surface_ratio))
 
-    alpha = fsolve(lift_equilibrium, alpha_initial_guess, args=(surface_ratio, mtow))
+    alpha = fsolve(
+        lift_equilibrium,
+        alpha_initial_guess,
+        args=(surface_ratio, mtow),
+    )
 
     cl_wing = cl0_wing + alpha * cl_alpha_wing + cl_delta_flaps
     alpha_ht = alpha + epsilon(cl_wing) + ths_deportation
@@ -134,27 +152,49 @@ def stability_diagram_plot(
     x_cg_front_percentage = (x_cg_front - mac_leading_edge) / mac
 
     delta_x_cg = [0, 0]
-    delta_x_cg[0] = np.interp(actual_surface_ratio, surface_ratio, x_cg_front_percentage) * 100
+    delta_x_cg[0] = (
+        np.interp(
+            actual_surface_ratio,
+            surface_ratio,
+            x_cg_front_percentage,
+        )
+        * 100
+    )
     delta_x_cg[1] = (
-        np.interp(actual_surface_ratio, surface_ratio, x_cg_rear_percentage_minus_5perc) * 100
+        np.interp(
+            actual_surface_ratio,
+            surface_ratio,
+            x_cg_rear_percentage_minus_5perc,
+        )
+        * 100
     )
 
     # 2) Negative_ressource :
-    v_mo = 463.0 / 3.6  # Speed see EASA CS25
-    q = 9.81 / (2.0 * v_mo)  # rad/s : rotation speed
+    # Speed see EASA CS25
+    v_mo = 463.0 / 3.6
+    # rad/s : rotation speed
+    q = 9.81 / (2.0 * v_mo)
 
     def lift_equilibrium2(alpha_function, surface_ratio_function, mass):
         left_member = mass * 9.81 / (0.5 * rho * v_mo ** 2 * area_wing)
 
-        cl_w = cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo
+        cl_w = (
+            cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo
+        )
         epsilon_ht = epsilon(cl_w)
-        cl_ht = cl_alpha_ht * (alpha_function + epsilon_ht + ths_deportation + q * mac_ht / v_mo)
+        cl_ht = cl_alpha_ht * (
+            alpha_function + epsilon_ht + ths_deportation + q * mac_ht / v_mo
+        )
 
         right_member = cl_w + surface_ratio_function * cl_ht
 
         return left_member - right_member
 
-    alpha = fsolve(lift_equilibrium2, alpha_initial_guess, args=(surface_ratio, mtow))
+    alpha = fsolve(
+        lift_equilibrium2,
+        alpha_initial_guess,
+        args=(surface_ratio, mtow),
+    )
 
     cl_wing = cl0_wing + alpha * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo
     alpha_ht = alpha + epsilon(cl_wing) + ths_deportation + q * mac_ht / v_mo
@@ -168,9 +208,6 @@ def stability_diagram_plot(
         - 2 * alpha * v / area_wing
     )  # ac near pc
     denominator = cl_wing + surface_ratio * cl_horizontal_tail
-
-    x_cg_front_nressource = numerator / denominator
-    x_cg_front_percentage_nressource = (x_cg_front_nressource - mac_leading_edge) / mac
 
     # Figure
     if fig is None:

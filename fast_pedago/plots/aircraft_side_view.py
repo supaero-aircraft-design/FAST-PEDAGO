@@ -1,32 +1,41 @@
-
 import numpy as np
 import plotly
 import plotly.graph_objects as go
 
-pi = np.pi
-
 from fastoad.io import VariableIO
+
+pi = np.pi
 
 
 # Base colors for the graph
 COLORS = plotly.colors.qualitative.Plotly
 
-NACELLE_POSITION = (
-    0.7  # Nacelle position compared to the leading edge. 0 means that the back of the nacelle is
-)
+# Nacelle position compared to the leading edge. 0 means that the back of the
+# nacelle is aligned with the beginning of the root, 1 means that the
+# beginning of the nacelle is aligned with the kink_x.
+NACELLE_POSITION = 0.7
 
 # Horizontal tail
-HT_HEIGHT = 0.3  # Height of the horizontal tail root compared to the center line of the fuselage. 0.0 means on the
-# center line, 1.0 means at a height same as the radius of the fuselage
-HT_DIHEDRAL = 0.42  # Height of the horizontal tail tip compared to the center line of the fuselage. 0.0 means on the
-# center line, 1.0 means at a height same as the radius of the fuselage
+
+# Height of the horizontal tail root compared to the center line of the
+# fuselage. 0.0 means on the center line, 1.0 means at a height same
+# as the radius of the fuselage.
+HT_HEIGHT = 0.3
+# Height of the horizontal tail tip compared to the center line of the
+# fuselage. 0.0 means on the center line, 1.0 means at a height same
+# as the radius of the fuselage.
+HT_DIHEDRAL = 0.42
+
 
 # Engine
-ENGINE_HEIGHT = 0.5  # Height of the middle of the engine 0.0 means on the center line   1.0 means the middle of the
-# engine is just on the lower line of the aircraft
-WING_ROOT_HEIGHT = (
-    0.2  # Height of the wing root compared to the center line of the fuselage. 0.0 means on the
-)
+
+# Height of the middle of the engine 0.0 means on the center line 1.0 means
+# the middle of the engine is just on the lower line of the aircraft
+ENGINE_HEIGHT = 0.5
+# Height of the wing root compared to the center line of the fuselage. 0.0
+# means on the center line, 1.0 means at a height same as the radius of the
+# fuselage below
+WING_ROOT_HEIGHT = 0.2
 
 
 def aircraft_side_view_plot(
@@ -36,15 +45,17 @@ def aircraft_side_view_plot(
     file_formatter=None,
 ) -> go.FigureWidget:
     """
-    Returns a figure plot of the side view of the aircraft with the engines, the flaps, the slats and the elevator.
+    Returns a figure plot of the side view of the aircraft with the engines,
+    the flaps, the slats and the elevator.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
 
     :param aircraft_file_path: path of data file
     :param name: name to give to the trace added to the figure
     :param fig: existing figure to which add the plot
-    :param file_formatter: the formatter that defines the format of data file. If not provided,
-                           default format will be assumed.
+    :param file_formatter: the formatter that defines the format of data file.
+        If not provided,
+        default format will be assumed.
     :param height : height of the image
     :param width : width of the image
     :return: wing plot figure
@@ -52,20 +63,28 @@ def aircraft_side_view_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     # Wing parameters
-    wing_tip_leading_edge_x = variables["data:geometry:wing:tip:leading_edge:x:local"].value[0]
+    wing_tip_leading_edge_x = variables[
+        "data:geometry:wing:tip:leading_edge:x:local"
+    ].value[0]
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
     wing_kink_chord = variables["data:geometry:wing:kink:chord"].value[0]
-    wing_kink_leading_edge_x = variables["data:geometry:wing:kink:leading_edge:x:local"].value[0]
+    wing_kink_leading_edge_x = variables[
+        "data:geometry:wing:kink:leading_edge:x:local"
+    ].value[0]
     mac25_x_position = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
-    distance_root_mac_chords = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
+    distance_root_mac_chords = variables[
+        "data:geometry:wing:MAC:leading_edge:x:local"
+    ].value[0]
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
 
     # Horizontal tail parameters
     ht_root_chord = variables["data:geometry:horizontal_tail:root:chord"].value[0]
     ht_tip_chord = variables["data:geometry:horizontal_tail:tip:chord"].value[0]
     ht_sweep_0 = variables["data:geometry:horizontal_tail:sweep_0"].value[0]
-    local_ht_25mac_x = variables["data:geometry:horizontal_tail:MAC:at25percent:x:local"].value[0]
+    local_ht_25mac_x = variables[
+        "data:geometry:horizontal_tail:MAC:at25percent:x:local"
+    ].value[0]
     ht_distance_from_wing = variables[
         "data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -75,7 +94,9 @@ def aircraft_side_view_plot(
     vt_root_chord = variables["data:geometry:vertical_tail:root:chord"].value[0]
     vt_tip_chord = variables["data:geometry:vertical_tail:tip:chord"].value[0]
     vt_sweep_0 = variables["data:geometry:vertical_tail:sweep_0"].value[0]
-    local_vt_25mac_x = variables["data:geometry:vertical_tail:MAC:at25percent:x:local"].value[0]
+    local_vt_25mac_x = variables[
+        "data:geometry:vertical_tail:MAC:at25percent:x:local"
+    ].value[0]
     vt_distance_from_wing = variables[
         "data:geometry:vertical_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -84,7 +105,9 @@ def aircraft_side_view_plot(
     # CGs
     wing_25mac_x = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
     wing_mac_length = variables["data:geometry:wing:MAC:length"].value[0]
-    local_wing_mac_le_x = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
+    local_wing_mac_le_x = variables[
+        "data:geometry:wing:MAC:leading_edge:x:local"
+    ].value[0]
 
     # Fuselage parameters
     fuselage_max_height = variables["data:geometry:fuselage:maximum_height"].value[0]
@@ -95,7 +118,6 @@ def aircraft_side_view_plot(
     # Nacelle and pylon values parameters :
     nacelle_diameter = variables["data:geometry:propulsion:nacelle:diameter"].value[0]
     nacelle_length = variables["data:geometry:propulsion:nacelle:length"].value[0]
-    pylon_length = variables["data:geometry:propulsion:pylon:length"]
 
     """
     Side view : x-z
@@ -107,16 +129,24 @@ def aircraft_side_view_plot(
         fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front ** 2
     )
 
-    z_nose_cone = np.linspace(-fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100)
-    x_nose_cone = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone ** 2
+    z_nose_cone = np.linspace(
+        -fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100
+    )
+    x_nose_cone = (
+        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone ** 2
+    )
 
     z_nose_cone = np.append(z_nose_cone, z_nose_cone[0])
     x_nose_cone = np.append(x_nose_cone, x_nose_cone[0])
 
     z_cockpit = np.linspace(
-        fuselage_max_height / 2.0 * 1 / 5, fuselage_max_height / 2.0 * 3.5 / 5, 50
+        fuselage_max_height / 2.0 * 1 / 5,
+        fuselage_max_height / 2.0 * 3.5 / 5,
+        50,
     )
-    x_cockpit = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit ** 2
+    x_cockpit = (
+        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit ** 2
+    )
 
     z_cockpit = np.append(z_cockpit, z_cockpit[-1])
     z_cockpit = np.append(z_cockpit, z_cockpit[0])
@@ -140,24 +170,40 @@ def aircraft_side_view_plot(
     )
 
     r = fuselage_max_height / 8
-    x_fuselage_rear = np.array([fuselage_length - fuselage_rear_length, fuselage_length - r])
+    x_fuselage_rear = np.array(
+        [fuselage_length - fuselage_rear_length, fuselage_length - r]
+    )
 
     z_fuselage_rear = np.array([fuselage_max_height / 2.0, fuselage_max_height / 2.0])
 
     z_centre = fuselage_max_height / 2.0 - r
     x_centre = fuselage_length - r
 
-    z_rear = np.linspace(fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10)
+    z_rear = np.linspace(
+        fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10
+    )
     x_rear = np.sqrt(abs(r ** 2 - (z_rear - z_centre) ** 2)) + x_centre
 
-    x_fuselage_front = np.concatenate((x_fuselage_front, np.flip(x_fuselage_front)))
-    z_fuselage_front = np.concatenate((z_fuselage_front, np.flip(-z_fuselage_front)))
+    x_fuselage_front = np.concatenate(
+        (x_fuselage_front, np.flip(x_fuselage_front)),
+    )
+    z_fuselage_front = np.concatenate(
+        (z_fuselage_front, np.flip(-z_fuselage_front)),
+    )
 
     x_belly = np.array(
-        [fuselage_front_length, fuselage_length - fuselage_rear_length, fuselage_length - r]
+        [
+            fuselage_front_length,
+            fuselage_length - fuselage_rear_length,
+            fuselage_length - r,
+        ]
     )
     z_belly = np.array(
-        [-fuselage_max_height / 2.0, -fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r]
+        [
+            -fuselage_max_height / 2.0,
+            -fuselage_max_height / 2.0,
+            fuselage_max_height / 2.0 - 2 * r,
+        ]
     )
 
     # 2 wing
@@ -172,7 +218,9 @@ def aircraft_side_view_plot(
             0.0,
         ]
     )
-    x_wing = x_wing + (mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord)
+    x_wing = x_wing + (
+        mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord
+    )
 
     z_wing = np.array(
         [
@@ -187,7 +235,9 @@ def aircraft_side_view_plot(
 
     # 3 engine
 
-    x_engine = np.array([-nacelle_length, -nacelle_length, 0, 0, -nacelle_length])
+    x_engine = np.array(
+        [-nacelle_length, -nacelle_length, 0, 0, -nacelle_length],
+    )
 
     x_engine += (
         wing_25mac_x
@@ -256,7 +306,7 @@ def aircraft_side_view_plot(
 
     # Same color for a given aircraft
     # It is divided by 14 since their are 14 scatters
-    i = int(len(fig.data)/11) % 10
+    i = int(len(fig.data) / 11) % 10
 
     scatter_front = go.Scatter(
         x=x_fuselage_front,

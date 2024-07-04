@@ -1,4 +1,3 @@
-
 from .input_widgets import (
     ClearAllButton,
     GitLinksButton,

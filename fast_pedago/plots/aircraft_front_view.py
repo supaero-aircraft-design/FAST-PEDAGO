@@ -2,26 +2,35 @@ import numpy as np
 import plotly
 import plotly.graph_objects as go
 
-pi = np.pi
-
 from fastoad.io import VariableIO
+
+pi = np.pi
 
 
 # Base colors for the graph
 COLORS = plotly.colors.qualitative.Plotly
 
 # Horizontal tail
-HT_HEIGHT = 0.3  # Height of the horizontal tail root compared to the center line of the fuselage. 0.0 means on the
-# center line, 1.0 means at a height same as the radius of the fuselage
-HT_DIHEDRAL = 0.42  # Height of the horizontal tail tip compared to the center line of the fuselage. 0.0 means on the
-# center line, 1.0 means at a height same as the radius of the fuselage
+
+# Height of the horizontal tail root compared to the center line of the
+# fuselage. 0.0 means on the center line, 1.0 means at a height same as
+# the radius of the fuselage
+HT_HEIGHT = 0.3
+# Height of the horizontal tail tip compared to the center line of the
+# fuselage. 0.0 means on the center line, 1.0 means at a height same as
+# the radius of the fuselage
+HT_DIHEDRAL = 0.42
+
 
 # Engine
-ENGINE_HEIGHT = 0.5  # Height of the middle of the engine 0.0 means on the center line   1.0 means the middle of the
-# engine is just on the lower line of the aircraft
-WING_ROOT_HEIGHT = (
-    0.2  # Height of the wing root compared to the center line of the fuselage. 0.0 means on the
-)
+
+# Height of the middle of the engine 0.0 means on the center line
+# 1.0 means the middle of the engine is just on the lower line of the aircraft
+ENGINE_HEIGHT = 0.5
+# Height of the wing root compared to the center line of the fuselage. 0.0
+# means on the center line, 1.0 means at a height same as the radius of the
+# fuselage below
+WING_ROOT_HEIGHT = 0.2
 
 
 def aircraft_front_view_plot(
@@ -31,15 +40,17 @@ def aircraft_front_view_plot(
     file_formatter=None,
 ) -> go.FigureWidget:
     """
-    Returns a figure plot of the front view of the aircraft with the engines, the flaps, the slats and the elevator.
+    Returns a figure plot of the front view of the aircraft with the engines,
+    the flaps, the slats and the elevator.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
 
     :param aircraft_file_path: path of data file
     :param name: name to give to the trace added to the figure
     :param fig: existing figure to which add the plot
-    :param file_formatter: the formatter that defines the format of data file. If not provided,
-                           default format will be assumed.
+    :param file_formatter: the formatter that defines the format of data file.
+        If not provided,
+        default format will be assumed.
     :param height : height of the image
     :param width : width of the image
     :return: wing plot figure
@@ -67,9 +78,15 @@ def aircraft_front_view_plot(
     Front view (y-z)
     """
     # fuselage
-    y_fuselage = np.linspace(-fuselage_max_width / 2.0, fuselage_max_width / 2.0, 100)
+    y_fuselage = np.linspace(
+        -fuselage_max_width / 2.0,
+        fuselage_max_width / 2.0,
+        100,
+    )
     z_fuselage = (
-        np.sqrt(1 - (y_fuselage / (fuselage_max_width / 2.0)) ** 2) * fuselage_max_height / 2.0
+        np.sqrt(1 - (y_fuselage / (fuselage_max_width / 2.0)) ** 2)
+        * fuselage_max_height
+        / 2.0
     )
     y_fuselage2 = y_fuselage
     z_fuselage2 = -z_fuselage
@@ -87,7 +104,9 @@ def aircraft_front_view_plot(
 
     y_wing = np.array(
         [
-            np.sqrt(1 - (z_wing[0] / (fuselage_max_height / 2.0)) ** 2) * fuselage_max_width / 2.0,
+            np.sqrt(1 - (z_wing[0] / (fuselage_max_height / 2.0)) ** 2)
+            * fuselage_max_width
+            / 2.0,
             wing_tip_y,
         ]
     )
@@ -99,9 +118,15 @@ def aircraft_front_view_plot(
     z_engine_center = -fuselage_max_height * ENGINE_HEIGHT
     y_engine_center = nacelle_y
 
-    y_engine, z_engine = _make_circle(y_engine_center, z_engine_center, nacelle_diameter / 2.0)
-    y_engine2, z_engine2 = _make_circle(-y_engine_center, z_engine_center, nacelle_diameter / 2.0)
-    y_engine3, z_engine3 = _make_circle(y_engine_center, z_engine_center, nacelle_diameter / 8.0)
+    y_engine, z_engine = _make_circle(
+        y_engine_center, z_engine_center, nacelle_diameter / 2.0
+    )
+    y_engine2, z_engine2 = _make_circle(
+        -y_engine_center, z_engine_center, nacelle_diameter / 2.0
+    )
+    y_engine3, z_engine3 = _make_circle(
+        y_engine_center, z_engine_center, nacelle_diameter / 8.0
+    )
     y_engine4, z_engine4 = _make_circle(
         -1 * y_engine_center, z_engine_center, nacelle_diameter / 8.0
     )
@@ -116,7 +141,9 @@ def aircraft_front_view_plot(
 
     y_ht = np.array(
         [
-            np.sqrt(1 - (z_ht[0] / (fuselage_max_height / 2.0)) ** 2) * fuselage_max_width / 2.0,
+            np.sqrt(1 - (z_ht[0] / (fuselage_max_height / 2.0)) ** 2)
+            * fuselage_max_width
+            / 2.0,
             ht_span / 2.0,
         ]
     )
@@ -127,7 +154,9 @@ def aircraft_front_view_plot(
     # vt
 
     y_vt = np.array([0, 0])
-    z_vt = np.array([fuselage_max_height / 2.0, fuselage_max_height / 2.0 + vt_span])
+    z_vt = np.array(
+        [fuselage_max_height / 2.0, fuselage_max_height / 2.0 + vt_span],
+    )
 
     # cockpit
 
@@ -158,13 +187,13 @@ def aircraft_front_view_plot(
             fuselage_max_height / 2.0 * 1 / 5,
         ]
     )
-    
+
     if fig is None:
         fig = go.Figure()
-    
+
     # Same color for a given aircraft
     # It is divided by 14 since their are 14 scatters
-    i = int(len(fig.data)/14) % 10
+    i = int(len(fig.data) / 14) % 10
 
     scatter_fuselage = go.Scatter(
         x=y_fuselage,
@@ -346,12 +375,14 @@ def aircraft_front_view_plot(
 def _make_circle(center_x: float, center_y: float, radius: float):
     """
     Inner function used in the functions above
-    returns 2 ndarrays containing a the x and y coordinates of a circle of radius centered in (center_x,center_y)
-    :param center_x : x coordinate of the circle's center
-    :param center_y : y coordinate of the circle's center
-    :param radius : radius of the circle
+    returns 2 ndarrays containing a the x and y coordinates of a circle of
+    radius centered in (center_x,center_y)
 
-    :return : 2 ndarrays with the circle coordinates
+    :param center_x: x coordinate of the circle's center
+    :param center_y: y coordinate of the circle's center
+    :param radius: radius of the circle
+
+    :return: 2 ndarrays with the circle coordinates
     """
 
     x = np.linspace(-radius, radius, 50)
