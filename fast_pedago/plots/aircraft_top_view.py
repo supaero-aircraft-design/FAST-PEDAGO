@@ -240,7 +240,7 @@ def aircraft_top_view_plot(
     x_te_2 = (
         wing_tip_leading_edge_x
         + wing_tip_chord
-        - (wing_tip_y - (wing_root_y + (total_wing_span / 2) * flaps_span_ratio),)
+        - (wing_tip_y - (wing_root_y + (total_wing_span / 2) * flaps_span_ratio))
         * np.tan(trailing_edge_kink_sweep_100_outer * np.pi / 180)
     )
 
