@@ -132,6 +132,7 @@ class _OutputGraph(v.Col):
                 flat=True,
                 children=[
                     v.CardTitle(
+                        class_="pa-3",
                         children=[
                             v.Row(
                                 no_gutters=True,
