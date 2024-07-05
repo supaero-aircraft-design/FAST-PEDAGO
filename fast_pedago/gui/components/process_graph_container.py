@@ -229,7 +229,11 @@ class ProcessGraphContainer(v.Col):
             is_log=False,
         )
 
-        self.snackbar = Snackbar("Process ended!")
+        self.mdo_end_snackbar = Snackbar("Optimization ended.")
+        self.mda_success_snackbar = Snackbar("Analysis converged successfully!")
+        self.mda_failure_snackbar = Snackbar(
+            "Analysis did not converged. Try again with more reasonable values."
+        )
 
         # This is a container to avoid resetting all of the
         # GraphVisualizationContainer children when switching between MDA/MDO
@@ -255,7 +259,9 @@ class ProcessGraphContainer(v.Col):
                     ),
                 ],
             ),
-            self.snackbar,
+            self.mdo_end_snackbar,
+            self.mda_failure_snackbar,
+            self.mda_success_snackbar,
         ]
 
     def _change_display(self, widget, event, data):

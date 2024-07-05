@@ -152,7 +152,7 @@ class Snackbar(v.Snackbar):
             ),
         ]
 
-    def open_or_close(self, widget, event, data):
+    def open_or_close(self, widget=None, event=None, data=None):
         """
         Opens or closes the snackbar depending on its state.
 

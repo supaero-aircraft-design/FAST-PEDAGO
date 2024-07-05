@@ -246,7 +246,13 @@ class AppInterface(v.App):
         self.inputs.enable()
         self.graphs.children[0].disabled = False
         self.graphs.children[1].disabled = False
-        self.process_graph.snackbar.open_or_close(None, None, None)
+        if self.is_MDO:
+            self.process_graph.mdo_end_snackbar.open_or_close()
+        else:
+            if self.process_launcher.get_MDA_success():
+                self.process_graph.mda_success_snackbar.open_or_close()
+            else:
+                self.process_graph.mda_failure_snackbar.open_or_close()
 
     def _launch_process(self, widget, event, data):
         """

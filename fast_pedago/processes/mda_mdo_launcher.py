@@ -24,6 +24,7 @@ from fast_pedago.objects.paths import (
     RECORDER_FILE_SUFFIX,
     DEFAULT_PROCESS_NAME,
 )
+from fast_pedago.utils import _extract_residuals
 
 
 class MDAMDOLauncher:
@@ -57,7 +58,8 @@ class MDAMDOLauncher:
         else:
             # Sets the residuals plotter target_residuals attribute after
             # configuring the MDA
-            self.plotter.target_residuals = self._configure_mda()
+            self.target_residuals = self._configure_mda()
+            self.plotter.target_residuals = self.target_residuals
 
         process_thread = Thread(
             target=self._run_problem,
@@ -419,3 +421,20 @@ class MDAMDOLauncher:
             wing_aspect_ratio,
             bypass_ratio,
         )
+
+    def get_MDA_success(self) -> bool:
+        """
+        Tells if the computed MDA succeeded.
+
+        :return: True if it converged, False either
+        """
+        iterations, relative_error = np.array(
+            _extract_residuals(
+                recorder_database_file_path=self.recorder_database_file_path
+            )
+        )
+
+        for residual in relative_error:
+            if isinstance(residual, float) and residual <= self.target_residuals:
+                return True
+        return False
