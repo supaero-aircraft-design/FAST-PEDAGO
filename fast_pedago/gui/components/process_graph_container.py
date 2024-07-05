@@ -106,8 +106,8 @@ class ProcessGraphContainer(v.Col):
         else:
             active_figure = self._objectives_figure
 
-        main_graph = active_figure.data[0]
-        limit_graph = active_figure.data[1]
+        main_graph: go.Scatter = active_figure.data[0]
+        limit_graph: go.Scatter = active_figure.data[1]
 
         main_graph.x = iterations
         main_graph.y = main
