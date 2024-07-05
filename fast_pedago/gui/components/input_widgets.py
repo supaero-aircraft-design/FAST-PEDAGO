@@ -127,10 +127,11 @@ class Snackbar(v.Snackbar):
         super().__init__(**kwargs)
 
         self.app = True
+        self.timeout = 0
         self.v_model = False
 
         close_snackbar_button = v.Btn(
-            class_="ma-0 pa-0",
+            class_="mx-auto pa-0",
             color="pink",
             text=True,
             children=["Close"],
@@ -139,17 +140,14 @@ class Snackbar(v.Snackbar):
 
         self.children = [
             v.Row(
-                justify="space-between",
+                justify="center",
                 align="center",
                 children=[
                     v.Col(
+                        cols=9,
                         children=[text],
                     ),
-                    v.Col(
-                        class_="pa-0",
-                        cols=2,
-                        children=[close_snackbar_button],
-                    ),
+                    close_snackbar_button,
                 ],
             ),
         ]
