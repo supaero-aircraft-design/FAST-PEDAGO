@@ -280,14 +280,14 @@ class InputsContainer(v.List):
         self._n_pax_input = SliderInput(
             min=20,
             max=400,
-            step=2,
+            step=1,
             label="NPAX",
             tooltip="Number of passengers",
         )
         self._v_app_input = SliderInput(
             min=45,
             max=170,
-            step=1,
+            step=0.1,
             label="Vapp",
             tooltip="Approach speed [kts]",
         )
@@ -301,35 +301,35 @@ class InputsContainer(v.List):
         self._range_input = SliderInput(
             min=0,
             max=10000,
-            step=100,
+            step=10,
             label="Range",
             tooltip="Aircraft range [NM]",
         )
         self._payload_input = SliderInput(
             min=0,
             max=100000,
-            step=1000,
+            step=10,
             label="Payload",
             tooltip="Aircraft payload [kg]",
         )
         self._max_payload_input = SliderInput(
             min=0,
             max=100000,
-            step=1000,
+            step=10,
             label="Max Payload",
             tooltip="Aircraft max payload [kg]",
         )
         self._wing_aspect_ratio_input = SliderInput(
             min=4,
             max=25,
-            step=1,
+            step=0.1,
             label="Wing AR",
             tooltip="Aspect Ratio of the wing",
         )
         self._bpr_input = SliderInput(
             min=0,
             max=25,
-            step=1,
+            step=0.1,
             label="BPR",
             tooltip="ByPass Ratio of the engine",
         )
