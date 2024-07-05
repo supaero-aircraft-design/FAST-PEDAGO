@@ -234,6 +234,11 @@ class ProcessGraphContainer(v.Col):
         self.mda_failure_snackbar = Snackbar(
             "Analysis did not converged. Try again with more reasonable values."
         )
+        self._snackbars = [
+            self.mdo_end_snackbar,
+            self.mda_failure_snackbar,
+            self.mda_success_snackbar,
+        ]
 
         # This is a container to avoid resetting all of the
         # GraphVisualizationContainer children when switching between MDA/MDO
@@ -259,10 +264,7 @@ class ProcessGraphContainer(v.Col):
                     ),
                 ],
             ),
-            self.mdo_end_snackbar,
-            self.mda_failure_snackbar,
-            self.mda_success_snackbar,
-        ]
+        ] + self._snackbars
 
     def _change_display(self, widget, event, data):
         """
@@ -285,6 +287,18 @@ class ProcessGraphContainer(v.Col):
 
             else:
                 self._display.children = [self._objectives_figure]
+
+    def open_snackbar(self, snackbar_to_open: Snackbar):
+        """
+        Opens the chosen snackbar and closes the other one that may still be open.
+
+        :param snackbar_to_open: the snackbar to open.
+        """
+        for snackbar in self._snackbars:
+            if snackbar == snackbar_to_open:
+                snackbar.display()
+            else:
+                snackbar.disappear()
 
 
 class _ProcessFigure(go.FigureWidget):

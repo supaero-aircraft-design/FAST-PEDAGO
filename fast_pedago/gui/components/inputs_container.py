@@ -403,7 +403,7 @@ class InputsContainer(v.List):
         """
         if self._cruise_mach_input.slider.v_model > 0.78:
             if not self._snackbar.v_model:
-                self._snackbar.open_or_close(widget, event, data)
+                self._snackbar.display(widget, event, data)
 
     def _update_process_name(self, widget, event, data):
         """

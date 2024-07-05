@@ -136,7 +136,7 @@ class Snackbar(v.Snackbar):
             text=True,
             children=["Close"],
         )
-        close_snackbar_button.on_event("click", self.open_or_close)
+        close_snackbar_button.on_event("click", self.disappear)
 
         self.children = [
             v.Row(
@@ -152,13 +152,21 @@ class Snackbar(v.Snackbar):
             ),
         ]
 
-    def open_or_close(self, widget=None, event=None, data=None):
+    def display(self, widget=None, event=None, data=None):
         """
-        Opens or closes the snackbar depending on its state.
+        Opens the snackbar.
 
         To be called by the "on_event" of a widget.
         """
-        self.v_model = not self.v_model
+        self.v_model = True
+
+    def disappear(self, widget=None, event=None, data=None):
+        """
+        Closes the snackbar.
+
+        To be called by the "on_event" of a widget.
+        """
+        self.v_model = False
 
 
 class SliderInput(v.Tooltip):
