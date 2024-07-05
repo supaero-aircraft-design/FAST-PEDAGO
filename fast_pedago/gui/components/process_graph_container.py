@@ -20,7 +20,7 @@ XDSM_HTML = "xdsm.html"
 # the back image. Which means it is not generic enough. If no height is
 # specified however the widget will be too big for its container which is
 # not very pretty.
-FIGURE_HEIGHT = 440
+# FIGURE_HEIGHT = 440
 
 
 class ProcessGraphContainer(v.Col):
@@ -132,7 +132,7 @@ class ProcessGraphContainer(v.Col):
         n2_image_path = PathManager.path_to("data", N2_PNG)
         n2_file_path = PathManager.path_to("data", N2_HTML)
 
-        n2_image = _image_from_path(n2_image_path, max_height="50vh")
+        n2_image = _image_from_path(n2_image_path, max_height="60vh")
         n2_image.v_on = "tooltip.on"
         n2_image.on_event(
             "click",
@@ -155,7 +155,7 @@ class ProcessGraphContainer(v.Col):
         xdsm_image_path = PathManager.path_to("data", XDSM_PNG)
         xdsm_file_path = PathManager.path_to("data", XDSM_HTML)
 
-        xdsm_image = _image_from_path(xdsm_image_path, max_height="50vh")
+        xdsm_image = _image_from_path(xdsm_image_path, max_height="60vh")
         xdsm_image.v_on = "tooltip.on"
         xdsm_image.on_event(
             "click", lambda *args: webbrowser.open_new_tab(xdsm_file_path)
@@ -178,6 +178,8 @@ class ProcessGraphContainer(v.Col):
         """
         Builds the layout of the graph visualization container
         """
+        self.class_ = "pe-0"
+
         # TODO: Implement tooltip
         # By defining the buttons this way it is possible to change the button
         # group between MDA/MDO
@@ -231,10 +233,7 @@ class ProcessGraphContainer(v.Col):
 
         # This is a container to avoid resetting all of the
         # GraphVisualizationContainer children when switching between MDA/MDO
-        self._display = v.Row(
-            justify="center",
-            align="center",
-        )
+        self._display = v.Container(class_="mx-auto pa-0")
 
         self.children = [
             v.Row(
@@ -244,7 +243,18 @@ class ProcessGraphContainer(v.Col):
                     self._display_selection_buttons,
                 ],
             ),
-            self._display,
+            v.Row(
+                justify="space-around",
+                align="center",
+                no_gutters=True,
+                children=[
+                    v.Col(
+                        children=[
+                            self._display,
+                        ],
+                    ),
+                ],
+            ),
             self.snackbar,
         ]
 
@@ -302,11 +312,20 @@ class _ProcessFigure(go.FigureWidget):
                 go.Scatter(x=[], y=[], name=main_scatter_name),
                 go.Scatter(x=[], y=[], mode="lines", name=limit_scatter_name),
             ],
-            layout=go.Layout(height=FIGURE_HEIGHT),
             **kwargs,
         )
 
-        self.update_layout(title_text=title, title_x=0.5)
+        self.update_layout(
+            title_text=title,
+            title_x=0.5,
+            autosize=True,
+            margin=go.layout.Margin(
+                l=0,
+                r=20,
+                b=0,
+                t=30,
+            ),
+        )
         self.update_xaxes(title_text=x_axes_label)
         if is_log:
             self.update_yaxes(
