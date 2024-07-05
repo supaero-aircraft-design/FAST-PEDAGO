@@ -309,7 +309,7 @@ class _ProcessFigure(go.FigureWidget):
         """
         super().__init__(
             data=[
-                go.Scatter(x=[], y=[], name=main_scatter_name),
+                go.Scatter(x=[], y=[], mode="lines+markers", name=main_scatter_name),
                 go.Scatter(x=[], y=[], mode="lines", name=limit_scatter_name),
             ],
             **kwargs,
