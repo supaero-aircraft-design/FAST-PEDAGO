@@ -45,6 +45,8 @@ class SourceSelectionContainer(v.Col):
             height="58vh",
             width="70vw",
             hide_delimiters=True,
+            continuous=False,
+            progress=True,
             children=[
                 v.CarouselItem(
                     children=[
@@ -196,14 +198,20 @@ class SourceSelectionContainer(v.Col):
 
         self.children = [
             v.Row(
-                justify="center",
+                justify="space-around",
+                no_gutters=True,
                 children=[
-                    tutorial_carousel,
+                    v.Col(
+                        cols=12,
+                        lg=8,
+                        children=[tutorial_carousel],
+                    ),
                 ],
             ),
             v.Row(
                 class_="mt-10",
                 justify="center",
+                align="bottom",
                 children=[
                     self.source_data_file_selector,
                 ],
