@@ -211,10 +211,10 @@ class SliderInput(v.Tooltip):
             class_="align-center pe-3",
         )
 
-        # Link the values of the slider with the associated text field.
-        # Since v_slots has an known issue in ipyvuetify, this is for
-        # now the best way to do it.
-        widgets.jslink((self.slider, "v_model"), (self._text_field, "v_model"))
+        # When the slider changes, the text changes directly, but it doesn't work the other way to
+        # prevent bugs when typing in the text field.
+        widgets.jsdlink((self.slider, "v_model"), (self._text_field, "v_model"))
+        self._text_field.on_event("change", self._update_slider)
 
         self.v_slots = [
             {
@@ -261,6 +261,25 @@ class SliderInput(v.Tooltip):
         self.children = [
             tooltip,
         ]
+
+    def _update_slider(self, widget, event, data: str):
+        """
+        Bounds the text field values between min and max of the slider,
+        and sets the slider value to the text field value.
+        Also checks if the input is a float,
+        and sets the text field back to former value if it is not the case.
+
+        To be called with "on_event" method of a widget.
+        """
+        if data.replace(".", "", 1).isdigit():
+            data = float(data)
+            if data > self.slider.max:
+                data = self.slider.max
+            elif data < self.slider.min:
+                data = self.slider.min
+            self.slider.v_model = data
+        else:
+            self._text_field.v_model = self.slider.v_model
 
     def disable(self):
         """
