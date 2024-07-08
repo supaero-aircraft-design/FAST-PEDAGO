@@ -22,6 +22,7 @@ from fast_pedago.plots import (
     drag_polar_plot,
     wing_geometry_plot,
     aircraft_geometry_plot,
+    polar_with_L_R_ratio_plot,
     BetterMissionViewer,
 )
 from fast_pedago.objects.paths import (
@@ -81,6 +82,10 @@ GRAPH = {
         ],
         "Drag polar": [
             drag_polar_plot,
+            False,
+        ],
+        "Polar with max L/R": [
+            polar_with_L_R_ratio_plot,
             False,
         ],
     },

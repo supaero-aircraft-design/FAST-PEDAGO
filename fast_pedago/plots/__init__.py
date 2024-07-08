@@ -12,6 +12,7 @@ from .plot_signatures import (
     simplified_payload_range_plot,
     stability_diagram_plot,
     variable_viewer,
+    polar_with_L_R_ratio_plot,
 )
 
 from .better_mission_viewer import BetterMissionViewer
