@@ -40,6 +40,7 @@ class AppInterface(v.App):
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
         self.main_content.children = [self.source_selection]
+        self.output_graphs.hide_graphs()
 
     def _to_main(self):
         """
