@@ -327,8 +327,8 @@ class InputsContainer(v.List):
             tooltip="Aspect Ratio of the wing",
         )
         self._bpr_input = SliderInput(
-            min=0,
-            max=25,
+            min=2,
+            max=15,
             step=0.1,
             label="BPR",
             tooltip="ByPass Ratio of the engine",
