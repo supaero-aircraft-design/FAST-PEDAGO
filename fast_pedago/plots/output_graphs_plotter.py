@@ -7,7 +7,7 @@ import ipywidgets as widgets
 import ipyvuetify as v
 from IPython.display import clear_output, display
 
-from .path_manager import PathManager
+from fast_pedago.processes import PathManager
 from fast_pedago.plots import (
     simplified_payload_range_plot,
     stability_diagram_plot,

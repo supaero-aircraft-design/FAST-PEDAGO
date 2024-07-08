@@ -15,3 +15,5 @@ from .plot_signatures import (
 )
 
 from .better_mission_viewer import BetterMissionViewer
+
+from .output_graphs_plotter import OutputGraphsPlotter, GRAPH
