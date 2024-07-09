@@ -7,7 +7,7 @@ from .components import (
     InputsContainer,
     OutputsGraphsContainer,
     ProcessGraphContainer,
-    SourceSelectionContainer,
+    TutorialContainer,
 )
 from fast_pedago.processes import (
     PathManager,
@@ -39,7 +39,7 @@ class AppInterface(v.App):
         self.drawer.hide()
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
-        self.main_content.children = [self.source_selection]
+        self.main_content.children = [self.tutorial]
         self.output_graphs.hide_graphs()
 
     def _to_main(self):
@@ -74,11 +74,9 @@ class AppInterface(v.App):
         Builds the layout of the app: all the app components (drawer,
         input/output tabs, header, footer, tutorial).
         """
-        # Source selection + home widgets
-        self.source_selection = SourceSelectionContainer()
-        self.source_selection.source_data_file_selector.on_event(
-            "change", self._set_source_data_file
-        )
+        # tutorial widgets
+        self.tutorial = TutorialContainer()
+        self.tutorial.start_button.on_event("click", lambda *args: self._to_main())
 
         # Inputs + process graph widgets
         self.process_graph = ProcessGraphContainer()
@@ -94,6 +92,9 @@ class AppInterface(v.App):
 
         self.inputs = InputsContainer(self.process_launcher)
 
+        self.inputs.source_data_file_selector.on_event(
+            "change", self._set_source_data_file
+        )
         self.inputs.process_selection_switch.on_event(
             "change",
             self._switch_process,
@@ -278,7 +279,6 @@ class AppInterface(v.App):
         To be called by a widget event
         """
         self.inputs.set_initial_value_mda(data)
-        self._to_main()
 
     def _open_or_close_drawer(self, widget, event, data):
         """

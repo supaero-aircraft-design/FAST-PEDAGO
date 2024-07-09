@@ -5,7 +5,7 @@ from .input_widgets import (
     SliderInput,
     RangeSliderInput,
 )
-from fast_pedago.processes import MDAMDOLauncher
+from fast_pedago.processes import MDAMDOLauncher, PathManager
 
 
 # Min and max values for sliders input values
@@ -72,6 +72,14 @@ class InputsContainer(v.List):
         self._build_layout_mda()
         self._build_layout_mdo()
 
+        # This reference file should always be there and is always taken as
+        # reference
+        self.source_data_file_selector = v.Select(
+            hide_details=True,
+            label="Select a reference file",
+            items=PathManager.list_available_reference_file(),
+        )
+
         # Text box to give a name to the run
         self.process_name_field = v.TextField(
             outlined=True,
@@ -126,8 +134,15 @@ class InputsContainer(v.List):
         )
 
         self.inputs_header = v.ListItemGroup(
-            class_="px-2",
+            class_="px-2 pt-1",
             children=[
+                v.Row(
+                    class_="px-3",
+                    align="center",
+                    children=[
+                        self.source_data_file_selector,
+                    ],
+                ),
                 v.Row(
                     align="center",
                     children=[

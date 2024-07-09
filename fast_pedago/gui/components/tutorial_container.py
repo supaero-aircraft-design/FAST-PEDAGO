@@ -13,7 +13,7 @@ N2_GIF = "n2.gif"
 OUTPUTS_GIF = "outputs.gif"
 
 
-class SourceSelectionContainer(v.Col):
+class TutorialContainer(v.Col):
     """
     An container that contains explanations on the app and a source file
     selector to start using the app.
@@ -32,13 +32,10 @@ class SourceSelectionContainer(v.Col):
         """
         self.class_ = "pa-8"
 
-        # This reference file should always be there and is always taken as
-        # reference
-        self.source_data_file_selector = v.Select(
-            outlined=True,
-            hide_details=True,
-            label="Select a reference file",
-            items=PathManager.list_available_reference_file(),
+        self.start_button = v.Btn(
+            color="#32cd32",
+            x_large=True,
+            children=["Start making aircraft"],
         )
 
         tutorial_carousel = v.Carousel(
@@ -209,11 +206,12 @@ class SourceSelectionContainer(v.Col):
                 ],
             ),
             v.Row(
-                class_="mt-10",
-                justify="center",
+                class_="mt-12 pt-12",
+                justify="space-around",
                 align="bottom",
+                no_gutters=True,
                 children=[
-                    self.source_data_file_selector,
+                    self.start_button,
                 ],
             ),
         ]

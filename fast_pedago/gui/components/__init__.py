@@ -8,7 +8,7 @@ from .input_widgets import (
 )
 
 from .process_graph_container import ProcessGraphContainer
-from .source_selection_container import SourceSelectionContainer
+from .tutorial_container import TutorialContainer
 
 from .app_layout import (
     Header,
