@@ -44,8 +44,11 @@ def _polar_with_L_R_ratio_plot(
     cd_short = cd[cd <= 2.0]
     cl_short = cl[cd <= 2.0]
 
-    L_D = [cl_short[i] / cd_short[i] for i in range(len(cd_short))]
-    L_D_max_index = L_D.index(max(L_D))
+    L_D_max_index = [
+        i
+        for i in range(len(cd_short))
+        if cd_short[i] != 0 and cl_short[i] / cd_short[i] == L_D_max
+    ][0]
 
     if fig is None:
         fig = go.Figure()
