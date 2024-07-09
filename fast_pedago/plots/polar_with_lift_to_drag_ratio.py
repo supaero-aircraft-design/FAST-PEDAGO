@@ -62,7 +62,7 @@ def _polar_with_L_R_ratio_plot(
         line=dict(color=COLORS[color_index]),
     )
 
-    scatter_best_lift_to_drag_ratio = go.Scatter(
+    scatter_L_R_max = go.Scatter(
         x=[cd_short[L_D_max_index]],
         y=[cl_short[L_D_max_index]],
         mode="markers",
@@ -83,7 +83,7 @@ def _polar_with_L_R_ratio_plot(
     )
 
     fig.add_trace(scatter)
-    fig.add_trace(scatter_best_lift_to_drag_ratio)
+    fig.add_trace(scatter_L_R_max)
     fig.add_trace(scatter_tangent)
 
     fig = go.FigureWidget(fig)
