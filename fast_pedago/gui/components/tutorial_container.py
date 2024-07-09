@@ -11,6 +11,8 @@ INPUTS_GIF = "inputs.gif"
 LAUNCH_GIF = "launch.gif"
 N2_GIF = "n2.gif"
 OUTPUTS_GIF = "outputs.gif"
+MDA_FIGURE = "MDA.png"
+MDO_FIGURE = "MDO.png"
 
 
 class TutorialContainer(v.Col):
@@ -39,7 +41,7 @@ class TutorialContainer(v.Col):
         )
 
         tutorial_carousel = v.Carousel(
-            height="58vh",
+            height="65vh",
             width="70vw",
             hide_delimiters=True,
             continuous=False,
@@ -81,6 +83,40 @@ class TutorialContainer(v.Col):
                                 v.Html(
                                     tag="div",
                                     children=[Slide.Introduction.NOTA],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                v.CarouselItem(
+                    children=[
+                        v.Row(
+                            style_="font-size: 20px;",
+                            justify="center",
+                            children=[Slide.Process.GLOBAL],
+                        ),
+                        v.Row(
+                            class_="pt-5",
+                            children=[
+                                v.Col(
+                                    cols=6,
+                                    children=[Slide.Process.MDA],
+                                ),
+                                v.Col(
+                                    children=[Slide.Process.MDO],
+                                ),
+                            ],
+                        ),
+                        v.Row(
+                            class_="pt-5",
+                            no_gutters=True,
+                            children=[
+                                v.Col(
+                                    cols=6,
+                                    children=[self._mda_figure],
+                                ),
+                                v.Col(
+                                    children=[self._mdo_figure],
                                 ),
                             ],
                         ),
@@ -206,7 +242,7 @@ class TutorialContainer(v.Col):
                 ],
             ),
             v.Row(
-                class_="mt-12 pt-12",
+                class_="pt-8",
                 justify="space-around",
                 align="bottom",
                 no_gutters=True,
@@ -236,4 +272,10 @@ class TutorialContainer(v.Col):
         )
         self._outputs_gif = _image_from_path(
             PathManager.path_to("tutorial", OUTPUTS_GIF), max_height="35vh"
+        )
+        self._mda_figure = _image_from_path(
+            PathManager.path_to("tutorial", MDA_FIGURE), max_height="35vh"
+        )
+        self._mdo_figure = _image_from_path(
+            PathManager.path_to("tutorial", MDO_FIGURE), max_height="35vh"
         )

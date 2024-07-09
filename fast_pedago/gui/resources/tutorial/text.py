@@ -28,15 +28,15 @@ class Slide:
         )
 
         MDA = (
-            "The first one is a process that, with given inputs, will solve "
+            "- The first one is a process that, with given inputs, will solve "
             "the multidisciplinary couplings using the different nested "
             "solvers in "
             "the model, and compute all outputs."
         )
 
         MDO = (
-            "The second will, with a set of design variables and constraints, "
-            "try to optimize an objective variable."
+            "- The second will, with a set of design variables and constraints, "
+            "try to optimize an objective."
         )
 
     class Inputs:
