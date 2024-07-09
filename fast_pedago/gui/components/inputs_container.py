@@ -78,7 +78,9 @@ class InputsContainer(v.List):
             hide_details=True,
             label="Select a reference file",
             items=PathManager.list_available_reference_file(),
+            v_model=PathManager.reference_aircraft,
         )
+        self.set_initial_value_mda(PathManager.reference_aircraft)
 
         # Text box to give a name to the run
         self.process_name_field = v.TextField(
