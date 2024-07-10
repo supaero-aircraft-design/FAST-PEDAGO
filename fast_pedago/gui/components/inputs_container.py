@@ -436,6 +436,7 @@ class InputsContainer(v.List):
         Disables all inputs components
         to let the user know he can't modify inputs.
         """
+        self.source_data_file_selector.disabled = True
         self.process_selection_switch.children[0].disabled = True
         self.process_selection_switch.children[1].disabled = True
         self.process_name_field.readonly = True
@@ -467,6 +468,7 @@ class InputsContainer(v.List):
         """
         Re-enables inputs after the end of computation.
         """
+        self.source_data_file_selector.disabled = False
         self.process_selection_switch.children[0].disabled = False
         self.process_selection_switch.children[1].disabled = False
         self.process_name_field.readonly = False
