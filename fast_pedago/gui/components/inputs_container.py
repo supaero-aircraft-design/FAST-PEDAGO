@@ -135,6 +135,8 @@ class InputsContainer(v.List):
             children=["Swap between analysis and optimization mode"],
         )
 
+        self.debug = v.Html(tag="div", children=["debug"])
+
         self.inputs_header = v.ListItemGroup(
             class_="px-2 pt-1",
             children=[
@@ -166,6 +168,7 @@ class InputsContainer(v.List):
                     justify="center",
                     children=[self.process_name_field],
                 ),
+                self.debug,
             ],
         )
 
@@ -211,14 +214,6 @@ class InputsContainer(v.List):
             input_value=False,
             label="Wing span as a constraint",
         )
-        self._sweep_w_design_var_checkbox.on_event(
-            "change",
-            self._ensure_one_design_var,
-        )
-        self._ar_design_var_checkbox.on_event(
-            "change",
-            self._ensure_one_design_var,
-        )
 
         # Range sliders to input design variables and constraints
         self._ar_design_var_input = RangeSliderInput(
@@ -245,6 +240,18 @@ class InputsContainer(v.List):
             label="Max wing span",
             tooltip="Maximum wing span allowed for the optimization [m]",
         )
+
+        self._wing_span_constraints_checkbox.on_event(
+            "change", self._activate_wing_span_constraint
+        )
+
+        self._sweep_w_design_var_checkbox.on_event(
+            "change", self._ensure_one_design_var
+        )
+        self._ar_design_var_checkbox.on_event("change", self._ensure_one_design_var)
+
+        self._sweep_w_design_var_input.disable()
+        self._wing_span_constraint_max.disable()
 
         self._mdo_input = [
             _InputsCategory(
@@ -393,6 +400,15 @@ class InputsContainer(v.List):
             self._snackbar,
         ]
 
+    def _activate_wing_span_constraint(self, widget, event, data):
+        """
+        Enables the linked slider if checkbox is checked
+        """
+        if data:
+            self._wing_span_constraint_max.enable()
+        else:
+            self._wing_span_constraint_max.disable()
+
     def _ensure_one_design_var(self, widget, event, data):
         """
         Ensures that at least one design variable is chosen
@@ -403,13 +419,18 @@ class InputsContainer(v.List):
 
         To be called with an "on_event" ipyvuetify component method
         """
+        self._ar_design_var_input.enable()
+        self._sweep_w_design_var_input.enable()
         if not data:
             if widget == self._sweep_w_design_var_checkbox:
                 if not self._ar_design_var_checkbox.v_model:
                     self._ar_design_var_checkbox.v_model = True
-            else:
+                self._sweep_w_design_var_input.disable()
+
+            elif widget == self._ar_design_var_checkbox:
                 if not self._sweep_w_design_var_checkbox.v_model:
                     self._sweep_w_design_var_checkbox.v_model = True
+                self._ar_design_var_input.disable()
 
     def _mach_alert(self, widget, event, data):
         """
