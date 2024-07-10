@@ -76,7 +76,7 @@ class InputsContainer(v.List):
         # reference
         self.source_data_file_selector = v.Select(
             hide_details=True,
-            label="Select a reference file",
+            label="Select a reference aircraft",
             items=PathManager.list_available_reference_file(),
             v_model=PathManager.reference_aircraft,
         )
