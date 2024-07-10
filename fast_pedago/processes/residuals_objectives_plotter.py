@@ -4,10 +4,7 @@ import os
 from time import sleep
 from threading import Event
 
-from fast_pedago.utils import (
-    _extract_objective,
-    _extract_residuals,
-)
+import openmdao as om
 
 
 class ResidualsObjectivesPlotter:
@@ -64,7 +61,7 @@ class ResidualsObjectivesPlotter:
                     # plot them along with the threshold set in the
                     # configuration file
                     iterations, relative_error = np.array(
-                        _extract_residuals(
+                        self._extract_residuals(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
@@ -77,7 +74,7 @@ class ResidualsObjectivesPlotter:
                     # plot them along with the threshold set in the
                     # configuration file
                     iterations, objective = np.array(
-                        _extract_objective(
+                        self._extract_objective(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
@@ -89,3 +86,58 @@ class ResidualsObjectivesPlotter:
                 pass
 
         os.remove(temp_recorder_database_file_path)
+
+    def _extract_residuals(recorder_database_file_path: str) -> list:
+        """
+        From the file path to a recorder data base, extract the value of the
+        relative error of the residuals at each iteration.
+
+        :param recorder_database_file_path: absolute path to the recorder database
+        :return: two arrays containing the iterations and the associated values of
+            the relative error.
+        """
+
+        case_reader = om.CaseReader(recorder_database_file_path)
+
+        # Will only work if the recorder was attached to the base solver
+        solver_cases = case_reader.list_cases("root.nonlinear_solver")
+
+        # For the display, first iteration will be 1
+        iterations, relative_error = zip(
+            *[
+                (i + 1, case_reader.get_case(case_id).rel_err)
+                for i, case_id in enumerate(solver_cases)
+            ]
+        )
+
+        return iterations, relative_error
+
+    def _extract_objective(recorder_database_file_path: str) -> list:
+        """
+        From the file path to a recorder data base, extract the value of the
+        objective at each iteration of the driver.
+
+        :param recorder_database_file_path: absolute path to the recorder database
+        :return: an array containing the iterations and the associated values of
+            the objective.
+        """
+
+        case_reader = om.CaseReader(recorder_database_file_path)
+
+        # Will only work if the recorder was attached to the base solver
+        solver_cases = case_reader.list_cases("driver")
+
+        # For the display, first iteration will be 1
+        iterations, objective = zip(
+            *[
+                (
+                    i + 1,
+                    float(
+                        list(case_reader.get_case(case_id).get_objectives().values())[0]
+                    ),
+                )
+                for i, case_id in enumerate(solver_cases)
+            ]
+        )
+
+        return iterations, objective
