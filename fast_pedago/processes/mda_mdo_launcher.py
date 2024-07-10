@@ -128,6 +128,9 @@ class MDAMDOLauncher:
             orig_output_file_name,
             self.process_name + problem_type + RECORDER_FILE_SUFFIX,
         )
+        # To avoid reading in a wrong file
+        if pth.exists(self.recorder_database_file_path):
+            os.remove(self.recorder_database_file_path)
 
         # We also need to rename the .csv file which contains the mission
         # data. I don't see a proper way to do it other than that since
