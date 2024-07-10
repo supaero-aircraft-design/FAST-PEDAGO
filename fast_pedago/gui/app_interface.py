@@ -5,13 +5,13 @@ from .components import (
     Footer,
     Drawer,
     InputsContainer,
-    OutputsGraphsContainer,
-    ProcessGraphContainer,
+    OutputFiguresContainer,
+    ProcessFiguresContainer,
     TutorialContainer,
 )
 from fast_pedago.processes import (
-    MDAMDOLauncher,
-    ResidualsObjectivesPlotter,
+    ProcessLauncher,
+    ProcessPlotter,
 )
 from fast_pedago.utils import PathManager
 
@@ -31,9 +31,9 @@ class AppInterface(v.App):
 
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher
         # to run MDA/MDO and plot there evolution.
-        self.residuals_objectives_plotter = ResidualsObjectivesPlotter()
-        self.process_launcher = MDAMDOLauncher(
-            self.residuals_objectives_plotter,
+        self.process_plotter = ProcessPlotter()
+        self.process_launcher = ProcessLauncher(
+            self.process_plotter,
         )
 
         self._build_layout()
@@ -47,7 +47,7 @@ class AppInterface(v.App):
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
         self.main_content.children = [self.tutorial]
-        self.output_graphs.hide_graphs()
+        self.output_figures.hide_graphs()
 
     def _to_main(self):
         """
@@ -86,8 +86,8 @@ class AppInterface(v.App):
         self.tutorial.start_button.on_event("click", lambda *args: self._to_main())
 
         # Inputs + process graph widgets
-        self.process_graph = ProcessGraphContainer()
-        self.residuals_objectives_plotter.graph = self.process_graph
+        self.process_figures = ProcessFiguresContainer()
+        self.process_plotter.figure = self.process_figures
 
         self.inputs = InputsContainer(self.process_launcher)
 
@@ -101,7 +101,7 @@ class AppInterface(v.App):
         self.inputs.launch_button.on_event("click", self._launch_process)
 
         # Outputs widgets
-        self.output_graphs = OutputsGraphsContainer()
+        self.output_figures = OutputFiguresContainer()
 
         self.main_content = v.Container(
             class_="pt-0",
@@ -119,13 +119,13 @@ class AppInterface(v.App):
                 v.TabItem(
                     children=[
                         v.Divider(),
-                        self.process_graph,
+                        self.process_figures,
                     ],
                 ),
                 v.TabItem(
                     children=[
                         v.Divider(),
-                        self.output_graphs,
+                        self.output_figures,
                     ],
                 ),
             ],
@@ -221,12 +221,12 @@ class AppInterface(v.App):
         if data == 1:
             self.is_MDO = True
             self.inputs.to_MDO()
-            self.process_graph.to_MDO()
+            self.process_figures.to_MDO()
 
         else:
             self.is_MDO = False
             self.inputs.to_MDA()
-            self.process_graph.to_MDA()
+            self.process_figures.to_MDA()
 
     def _to_process_computation(self):
         """
@@ -238,7 +238,7 @@ class AppInterface(v.App):
 
         # Show a loading widget to make it apparent that a computation is
         # underway.
-        self.process_graph.set_loading("Setting up")
+        self.process_figures.set_loading("Setting up")
 
     def _to_process_results(self):
         """
@@ -248,13 +248,13 @@ class AppInterface(v.App):
         self.graphs.children[0].disabled = False
         self.graphs.children[1].disabled = False
         if self.is_MDO:
-            snackbar_to_open = self.process_graph.mdo_end_snackbar
+            snackbar_to_open = self.process_figures.mdo_end_snackbar
         else:
             if self.process_launcher.get_MDA_success():
-                snackbar_to_open = self.process_graph.mda_success_snackbar
+                snackbar_to_open = self.process_figures.mda_success_snackbar
             else:
-                snackbar_to_open = self.process_graph.mda_failure_snackbar
-        self.process_graph.open_snackbar(snackbar_to_open)
+                snackbar_to_open = self.process_figures.mda_failure_snackbar
+        self.process_figures.open_snackbar(snackbar_to_open)
 
     def _launch_process(self, widget, event, data):
         """
@@ -298,7 +298,7 @@ class AppInterface(v.App):
         # Gets back to source file selection
         self._to_source_selection()
         # Clears the output selection
-        self.output_graphs.output_selection.v_model = []
-        self.output_graphs.hide_graphs()
+        self.output_figures.output_selection.v_model = []
+        self.output_figures.hide_graphs()
 
         PathManager.clear_all_files()

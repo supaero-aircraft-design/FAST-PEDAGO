@@ -7,7 +7,7 @@ from .input_widgets import (
     RangeSliderInput,
 )
 
-from .process_graph_container import ProcessGraphContainer
+from .process_figures_container import ProcessFiguresContainer
 from .tutorial_container import TutorialContainer
 
 from .app_layout import (
@@ -17,4 +17,4 @@ from .app_layout import (
 )
 
 from .inputs_container import InputsContainer
-from .outputs_graphs_container import OutputsGraphsContainer
+from .output_figures_container import OutputFiguresContainer

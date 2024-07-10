@@ -22,7 +22,7 @@ XDSM_HTML = "xdsm.html"
 # FIGURE_HEIGHT = 440
 
 
-class ProcessGraphContainer(v.Col):
+class ProcessFiguresContainer(v.Col):
     """
     A container to display process figures, N2 and XDSM graphs.
     """

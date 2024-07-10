@@ -10,7 +10,7 @@ from fast_pedago.utils import (
 )
 
 
-class ResidualsObjectivesPlotter:
+class ProcessPlotter:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -18,7 +18,7 @@ class ResidualsObjectivesPlotter:
         self.target_residuals = None
 
         # graph to plot on, with a plot function.
-        self.graph = None
+        self.figure = None
 
     def plot(
         self,
@@ -66,10 +66,10 @@ class ResidualsObjectivesPlotter:
                         )
                     )
 
-                    if self.graph:
+                    if self.figure:
                         # If the target residuals haven't been set by the mda
                         # launcher, nothing will be plotted
-                        self.graph.plot(
+                        self.figure.plot(
                             self.iterations, self.relative_error, self.target_residuals
                         )
 
@@ -84,8 +84,8 @@ class ResidualsObjectivesPlotter:
                     )
                     self.min_objective = min(self.objective)
 
-                    if self.graph:
-                        self.graph.plot(
+                    if self.figure:
+                        self.figure.plot(
                             self.iterations, self.objective, self.min_objective
                         )
 

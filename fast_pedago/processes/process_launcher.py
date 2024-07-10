@@ -14,7 +14,7 @@ import openmdao.api as om
 
 import fastoad.api as oad
 
-from . import ResidualsObjectivesPlotter
+from . import ProcessPlotter
 from fast_pedago.utils import (
     _extract_residuals,
     PathManager,
@@ -28,10 +28,10 @@ from fast_pedago.utils import (
 )
 
 
-class MDAMDOLauncher:
-    def __init__(self, plotter: ResidualsObjectivesPlotter, **kwargs):
+class ProcessLauncher:
+    def __init__(self, plotter: ProcessPlotter, **kwargs):
         """
-        :param plotter: the ResidualsObjectivesPlotter to plot with.
+        :param plotter: the ProcessPlotter to plot with.
         """
         super().__init__(**kwargs)
 

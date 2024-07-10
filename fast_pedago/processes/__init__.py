@@ -1,2 +1,2 @@
-from .residuals_objectives_plotter import ResidualsObjectivesPlotter
-from .mda_mdo_launcher import MDAMDOLauncher
+from .process_plotter import ProcessPlotter
+from .process_launcher import ProcessLauncher

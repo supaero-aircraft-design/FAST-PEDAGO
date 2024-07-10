@@ -5,7 +5,7 @@ from .input_widgets import (
     SliderInput,
     RangeSliderInput,
 )
-from fast_pedago.processes import MDAMDOLauncher
+from fast_pedago.processes import ProcessLauncher
 from fast_pedago.utils import PathManager
 
 
@@ -24,7 +24,7 @@ class InputsContainer(v.List):
     An input container that can switch to set inputs for MDA and MDO.
     """
 
-    def __init__(self, process_launcher: MDAMDOLauncher, **kwargs):
+    def __init__(self, process_launcher: ProcessLauncher, **kwargs):
         """
         :param source_data_file: the path to the source file to initialize *
             the inputs from.
