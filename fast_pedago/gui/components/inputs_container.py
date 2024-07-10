@@ -450,7 +450,7 @@ class InputsContainer(v.List):
 
         To be used with a "on_event" of a text field ipyvuetify
         """
-        self.process_launcher.process_name = data
+        self.process_launcher.set_aircraft_name(data)
 
     def disable(self):
         """

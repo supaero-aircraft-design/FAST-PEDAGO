@@ -1,5 +1,6 @@
 import os
 import os.path as pth
+import re
 
 import numpy as np
 
@@ -441,3 +442,12 @@ class MDAMDOLauncher:
             if isinstance(residual, float) and residual <= self.target_residuals:
                 return True
         return False
+
+    def set_aircraft_name(self, name: str):
+        """
+        Sets the process name and remove all non valid characters
+        (authorized characters are letters, numbers and underscores.)
+
+        :param name: the new process name
+        """
+        self.process_name = re.sub("[^A-Za-z0-9_]", "", name)
