@@ -1,3 +1,2 @@
 from .residuals_objectives_plotter import ResidualsObjectivesPlotter
 from .mda_mdo_launcher import MDAMDOLauncher
-from .path_manager import PathManager

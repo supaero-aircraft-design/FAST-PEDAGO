@@ -5,8 +5,7 @@ import ipyvuetify as v
 
 
 from . import Snackbar
-from fast_pedago.utils.functions import _image_from_path
-from fast_pedago.processes import PathManager
+from fast_pedago.utils import _image_from_path, PathManager
 
 
 # Image files

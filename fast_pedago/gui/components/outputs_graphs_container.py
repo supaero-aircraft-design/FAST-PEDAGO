@@ -1,8 +1,8 @@
 import ipyvuetify as v
 
 from .input_widgets import SelectOutput
-from fast_pedago.processes import PathManager
 from fast_pedago.plots import OutputGraphsPlotter, GRAPH
+from fast_pedago.utils import PathManager
 
 
 class OutputsGraphsContainer(v.Col):

@@ -7,7 +7,6 @@ import ipywidgets as widgets
 import ipyvuetify as v
 from IPython.display import clear_output, display
 
-from fast_pedago.processes import PathManager
 from fast_pedago.plots import (
     simplified_payload_range_plot,
     stability_diagram_plot,
@@ -25,7 +24,9 @@ from fast_pedago.plots import (
     polar_with_L_R_ratio_plot,
     BetterMissionViewer,
 )
-from fast_pedago.objects.paths import (
+
+from fast_pedago.utils import (
+    PathManager,
     OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
 )

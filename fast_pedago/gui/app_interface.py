@@ -10,10 +10,10 @@ from .components import (
     TutorialContainer,
 )
 from fast_pedago.processes import (
-    PathManager,
     MDAMDOLauncher,
     ResidualsObjectivesPlotter,
 )
+from fast_pedago.utils import PathManager
 
 
 # As there are margins and padding in the voila template,

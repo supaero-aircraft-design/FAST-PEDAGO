@@ -15,8 +15,9 @@ import openmdao.api as om
 import fastoad.api as oad
 
 from . import ResidualsObjectivesPlotter
-from .path_manager import PathManager
-from fast_pedago.objects.paths import (
+from fast_pedago.utils import (
+    _extract_residuals,
+    PathManager,
     MDA_FILE_SUFFIX,
     MDO_FILE_SUFFIX,
     INPUT_FILE_SUFFIX,
@@ -25,7 +26,6 @@ from fast_pedago.objects.paths import (
     RECORDER_FILE_SUFFIX,
     DEFAULT_PROCESS_NAME,
 )
-from fast_pedago.utils import _extract_residuals
 
 
 class MDAMDOLauncher:

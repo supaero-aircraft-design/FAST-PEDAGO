@@ -5,7 +5,8 @@ from .input_widgets import (
     SliderInput,
     RangeSliderInput,
 )
-from fast_pedago.processes import MDAMDOLauncher, PathManager
+from fast_pedago.processes import MDAMDOLauncher
+from fast_pedago.utils import PathManager
 
 
 # Min and max values for sliders input values

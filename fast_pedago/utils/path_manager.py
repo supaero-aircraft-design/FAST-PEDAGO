@@ -12,7 +12,7 @@ from fast_pedago import (
     source_data_files,
 )
 
-from fast_pedago.objects.paths import (
+from .paths import (
     WORK_DIRECTORY,
     DATA_DIRECTORY,
     INPUTS_DIRECTORY,
