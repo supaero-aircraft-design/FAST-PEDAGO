@@ -11,17 +11,14 @@ from fast_pedago.utils import (
 
 
 class ResidualsObjectivesPlotter:
-    def __init__(self, graph, **kwargs):
-        """
-        :param graph: The ProcessGraphContainer
-            on which to plot the residuals and objectives.
-        """
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.graph = graph
 
         # Target residuals have to be set to plot MDA
         self.target_residuals = None
+
+        # graph to plot on, with a plot function.
+        self.graph = None
 
     def plot(
         self,
@@ -63,27 +60,34 @@ class ResidualsObjectivesPlotter:
                     # Extract the residuals, build a scatter based on them and
                     # plot them along with the threshold set in the
                     # configuration file
-                    iterations, relative_error = np.array(
+                    self.iterations, self.relative_error = np.array(
                         _extract_residuals(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
-                    # If the target residuals haven't been set by the mda
-                    # launcher, nothing will be plotted
-                    self.graph.plot(iterations, relative_error, self.target_residuals)
+
+                    if self.graph:
+                        # If the target residuals haven't been set by the mda
+                        # launcher, nothing will be plotted
+                        self.graph.plot(
+                            self.iterations, self.relative_error, self.target_residuals
+                        )
 
                 else:
                     # Extract the residuals, build a scatter based on them and
                     # plot them along with the threshold set in the
                     # configuration file
-                    iterations, objective = np.array(
+                    self.iterations, self.objective = np.array(
                         _extract_objective(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
-                    min_objective = min(objective)
+                    self.min_objective = min(self.objective)
 
-                    self.graph.plot(iterations, objective, min_objective)
+                    if self.graph:
+                        self.graph.plot(
+                            self.iterations, self.objective, self.min_objective
+                        )
 
             except Exception:
                 pass

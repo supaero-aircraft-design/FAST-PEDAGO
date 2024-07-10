@@ -29,6 +29,13 @@ class AppInterface(v.App):
 
         PathManager.build_paths()
 
+        # Sets the residuals and objectives plotter, and the MDA/MDO launcher
+        # to run MDA/MDO and plot there evolution.
+        self.residuals_objectives_plotter = ResidualsObjectivesPlotter()
+        self.process_launcher = MDAMDOLauncher(
+            self.residuals_objectives_plotter,
+        )
+
         self._build_layout()
         self._to_source_selection()
 
@@ -80,15 +87,7 @@ class AppInterface(v.App):
 
         # Inputs + process graph widgets
         self.process_graph = ProcessGraphContainer()
-
-        # Sets the residuals and objectives plotter, and the MDA/MDO launcher
-        # to run MDA/MDO and plot there evolution.
-        self.residuals_objectives_plotter = ResidualsObjectivesPlotter(
-            self.process_graph
-        )
-        self.process_launcher = MDAMDOLauncher(
-            self.residuals_objectives_plotter,
-        )
+        self.residuals_objectives_plotter.graph = self.process_graph
 
         self.inputs = InputsContainer(self.process_launcher)
 
