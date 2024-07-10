@@ -1,5 +1,6 @@
 import numpy as np
 import shutil
+import os
 from time import sleep
 from threading import Event
 
@@ -86,3 +87,5 @@ class ResidualsObjectivesPlotter:
 
             except Exception:
                 pass
+
+        os.remove(temp_recorder_database_file_path)
