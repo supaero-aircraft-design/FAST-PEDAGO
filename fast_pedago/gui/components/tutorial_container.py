@@ -41,7 +41,7 @@ class TutorialContainer(v.Col):
         )
 
         tutorial_carousel = v.Carousel(
-            height="70vh",
+            height="65vh",
             width="70vw",
             hide_delimiters=True,
             continuous=False,
@@ -279,7 +279,7 @@ class TutorialContainer(v.Col):
         during the layout building.
         """
         self._fast_oad_logo = _image_from_path(
-            PathManager.path_to("resources", FAST_OAD_LOGO), max_height="40vh"
+            PathManager.path_to("resources", FAST_OAD_LOGO), max_height="35vh"
         )
 
         self._inputs_gif = _image_from_path(
