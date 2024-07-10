@@ -41,7 +41,7 @@ class TutorialContainer(v.Col):
         )
 
         tutorial_carousel = v.Carousel(
-            height="65vh",
+            height="70vh",
             width="70vw",
             hide_delimiters=True,
             continuous=False,
@@ -50,12 +50,26 @@ class TutorialContainer(v.Col):
                 v.CarouselItem(
                     children=[
                         v.Row(
+                            class_="mx-5",
                             justify="center",
                             align="center",
                             children=[
                                 v.Html(
+                                    style_="font-size: 20px; font-weight: bolder;",
                                     tag="div",
                                     children=[Slide.Introduction.WELCOME],
+                                ),
+                            ],
+                        ),
+                        v.Row(
+                            class_="mx-5 mt-3",
+                            justify="center",
+                            children=[
+                                v.Html(
+                                    tag="div",
+                                    children=[
+                                        Slide.Introduction.EXPLANATIONS,
+                                    ],
                                 ),
                             ],
                         ),
@@ -91,6 +105,7 @@ class TutorialContainer(v.Col):
                 v.CarouselItem(
                     children=[
                         v.Row(
+                            class_="mx-3",
                             style_="font-size: 20px;",
                             justify="center",
                             children=[Slide.Process.GLOBAL],
@@ -128,14 +143,14 @@ class TutorialContainer(v.Col):
                             justify="center",
                             align="top",
                             children=[
-                                v.Col(cols=2, lg=3),
+                                v.Col(cols=2),
                                 v.Col(
-                                    cols=4,
-                                    lg=3,
+                                    cols=5,
+                                    lg=4,
                                     children=[
                                         v.Html(
                                             class_="mb-6",
-                                            style_="font-size: 25px;",
+                                            style_="font-size: 20px;",
                                             tag="div",
                                             children=[
                                                 Slide.Inputs.EXPLANATIONS,
@@ -156,6 +171,12 @@ class TutorialContainer(v.Col):
                                         v.Html(
                                             tag="div",
                                             children=[Slide.Inputs.DASH_4],
+                                        ),
+                                        v.Html(
+                                            class_="mt-4",
+                                            style_="font-size: 14px; color: red;",
+                                            tag="div",
+                                            children=[Slide.Inputs.WARNING],
                                         ),
                                     ],
                                 ),
@@ -242,7 +263,7 @@ class TutorialContainer(v.Col):
                 ],
             ),
             v.Row(
-                class_="pt-8",
+                class_="pt-5",
                 justify="space-around",
                 align="bottom",
                 no_gutters=True,
@@ -262,7 +283,7 @@ class TutorialContainer(v.Col):
         )
 
         self._inputs_gif = _image_from_path(
-            PathManager.path_to("tutorial", INPUTS_GIF), max_height="70vh"
+            PathManager.path_to("tutorial", INPUTS_GIF), max_height="80vh"
         )
         self._launch_gif = _image_from_path(
             PathManager.path_to("tutorial", LAUNCH_GIF), max_height="50vh"

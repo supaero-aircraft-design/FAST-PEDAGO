@@ -7,12 +7,21 @@ class Slide:
     class Introduction:
         WELCOME = (
             "Welcome! In this app, you are going to "
-            "design a derivative of a reference aircraft of your choice."
+            "design a derivative of a reference aircraft of your choice, and then compare it with "
+            "other designs."
+        )
+
+        EXPLANATIONS = (
+            "As you may have seen, preliminary aircraft design is a matter of loops and couplings, "
+            "that can be very time consuming. To avoid having to make those by hand, FAST-OAD "
+            "computes the loops itself, given a set of input variables. This app is not meant "
+            "to be fully configurable, so you will only be able to use the set of variables "
+            "already chosen."
         )
 
         SELECTION = (
             "When you have finished reading this tutorial, "
-            "please select the source file of a reference aircraft below."
+            "please click on the start button below!"
         )
 
         NOTA = (
@@ -29,7 +38,8 @@ class Slide:
 
         MDA = (
             "- The first one is a process that, with given inputs, will solve "
-            "the multidisciplinary couplings using the different nested "
+            "the multidisciplinary couplings of the modules (aerodynamics, geometry, wing surface "
+            "loop, ...) using the different nested "
             "solvers in "
             "the model, and compute all outputs."
         )
@@ -41,17 +51,25 @@ class Slide:
 
     class Inputs:
         EXPLANATIONS = (
-            "After choosing the source file, you will have to set your inputs:"
+            "After choosing the reference aircraft, you will have to set your inputs:"
         )
         DASH_1 = "- Choose between doing a MDA or a MDO"
         DASH_2 = "- Write a name for the output"
-        DASH_3 = "- Use the sliders and buttons to configure your inputs"
+        DASH_3 = (
+            "- Use the sliders and buttons to configure your inputs (Hints on the inputs names "
+            "and units are displayed above!)"
+        )
         DASH_4 = "- And launch your process !"
+
+        WARNING = (
+            "The inputs that are in MDA section will only apply to MDA process! The same goes "
+            "for MDO."
+        )
 
     class Launch:
         EXPLANATIONS = (
             "When launching, the inputs are retrieved and merged with the "
-            "source file other inputs."
+            "chosen reference aircraft inputs."
             "Then process is set up (association of all the modules together "
             "to make them loop) and the evolution of the process is plotted. "
             "When the graph stops plotting, it is done!"
