@@ -15,7 +15,7 @@ from fast_pedago.utils import _image_from_path, PathManager
 DRAWER_WIDTH = "450px"
 HEADER_HEIGHT = "64px"
 
-# Path of the logos used
+# Logos image files names
 FAST_OAD_TOP_LAYER_LOGO = "logo_fast_oad_top_layer.jpg"
 ISAE_LOGO = "logo_supaero.png"
 AIRBUS_LOGO = "logo_airbus.png"

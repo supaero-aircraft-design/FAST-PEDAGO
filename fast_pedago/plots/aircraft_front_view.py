@@ -1,36 +1,17 @@
 import numpy as np
-import plotly
 import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
+from .plot_constants import (
+    COLORS,
+    HT_HEIGHT,
+    HT_DIHEDRAL,
+    ENGINE_HEIGHT,
+    WING_ROOT_HEIGHT,
+)
+
 pi = np.pi
-
-
-# Base colors for the graph
-COLORS = plotly.colors.qualitative.Plotly
-
-# Horizontal tail
-
-# Height of the horizontal tail root compared to the center line of the
-# fuselage. 0.0 means on the center line, 1.0 means at a height same as
-# the radius of the fuselage
-HT_HEIGHT = 0.3
-# Height of the horizontal tail tip compared to the center line of the
-# fuselage. 0.0 means on the center line, 1.0 means at a height same as
-# the radius of the fuselage
-HT_DIHEDRAL = 0.42
-
-
-# Engine
-
-# Height of the middle of the engine 0.0 means on the center line
-# 1.0 means the middle of the engine is just on the lower line of the aircraft
-ENGINE_HEIGHT = 0.5
-# Height of the wing root compared to the center line of the fuselage. 0.0
-# means on the center line, 1.0 means at a height same as the radius of the
-# fuselage below
-WING_ROOT_HEIGHT = 0.2
 
 
 def _aircraft_front_view_plot(
@@ -74,10 +55,8 @@ def _aircraft_front_view_plot(
     nacelle_diameter = variables["data:geometry:propulsion:nacelle:diameter"].value[0]
     nacelle_y = variables["data:geometry:propulsion:nacelle:y"].value[0]
 
-    """
-    Front view (y-z)
-    """
-    # fuselage
+    # Front view (y-z)
+
     y_fuselage = np.linspace(
         -fuselage_max_width / 2.0,
         fuselage_max_width / 2.0,
@@ -94,7 +73,6 @@ def _aircraft_front_view_plot(
         0, -fuselage_max_height * 1 / 10, fuselage_max_height / 8.0
     )
 
-    # wing
     z_wing = np.array(
         [
             -fuselage_max_height * WING_ROOT_HEIGHT,
@@ -114,7 +92,6 @@ def _aircraft_front_view_plot(
     z_wing2 = 1 * z_wing
     y_wing2 = -1 * y_wing
 
-    # engine
     z_engine_center = -fuselage_max_height * ENGINE_HEIGHT
     y_engine_center = nacelle_y
 
@@ -131,7 +108,6 @@ def _aircraft_front_view_plot(
         -1 * y_engine_center, z_engine_center, nacelle_diameter / 8.0
     )
 
-    # ht
     z_ht = np.array(
         [
             fuselage_max_height * HT_HEIGHT,
@@ -151,14 +127,10 @@ def _aircraft_front_view_plot(
     y_ht2 = -1 * y_ht
     z_ht2 = 1 * z_ht
 
-    # vt
-
     y_vt = np.array([0, 0])
     z_vt = np.array(
         [fuselage_max_height / 2.0, fuselage_max_height / 2.0 + vt_span],
     )
-
-    # cockpit
 
     y_cockpit = np.array(
         [
@@ -193,12 +165,12 @@ def _aircraft_front_view_plot(
 
     # Same color for a given aircraft
     # It is divided by 14 since their are 14 scatters
-    i = int(len(fig.data) / 14) % 10
+    color_index = int(len(fig.data) / 14) % 10
 
     scatter_fuselage = go.Scatter(
         x=y_fuselage,
         y=z_fuselage,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -207,7 +179,7 @@ def _aircraft_front_view_plot(
     scatter_fuselage2 = go.Scatter(
         x=y_fuselage2,
         y=z_fuselage2,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -217,7 +189,7 @@ def _aircraft_front_view_plot(
     scatter_wing = go.Scatter(
         x=y_wing,
         y=z_wing,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -227,7 +199,7 @@ def _aircraft_front_view_plot(
     scatter_wing2 = go.Scatter(
         x=y_wing2,
         y=z_wing2,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -237,7 +209,7 @@ def _aircraft_front_view_plot(
     scatter_engine = go.Scatter(
         x=y_engine,
         y=z_engine,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -247,7 +219,7 @@ def _aircraft_front_view_plot(
     scatter_engine2 = go.Scatter(
         x=y_engine2,
         y=z_engine2,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -257,7 +229,7 @@ def _aircraft_front_view_plot(
     scatter_engine3 = go.Scatter(
         x=y_engine3,
         y=z_engine3,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -267,7 +239,7 @@ def _aircraft_front_view_plot(
     scatter_engine4 = go.Scatter(
         x=y_engine4,
         y=z_engine4,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         fill="tonexty",
         mode="lines",
         name=name,
@@ -278,7 +250,7 @@ def _aircraft_front_view_plot(
     scatter_fuselage3 = go.Scatter(
         x=y_fuselage3,
         y=z_fuselage3,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         fill="tonexty",
         mode="lines",
         name=name,
@@ -289,7 +261,7 @@ def _aircraft_front_view_plot(
     scatter_ht = go.Scatter(
         x=y_ht,
         y=z_ht,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -299,7 +271,7 @@ def _aircraft_front_view_plot(
     scatter_ht2 = go.Scatter(
         x=y_ht2,
         y=z_ht2,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -308,7 +280,7 @@ def _aircraft_front_view_plot(
     scatter_vt = go.Scatter(
         x=y_vt,
         y=z_vt,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -318,7 +290,7 @@ def _aircraft_front_view_plot(
     scatter_cockpit = go.Scatter(
         x=y_cockpit,
         y=z_cockpit,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -328,7 +300,7 @@ def _aircraft_front_view_plot(
     scatter_cockpit2 = go.Scatter(
         x=y_cockpit2,
         y=z_cockpit2,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,

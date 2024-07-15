@@ -100,7 +100,6 @@ class AppInterface(v.App):
         )
         self.inputs.launch_button.on_event("click", self._launch_process)
 
-        # Outputs widgets
         self.output_figures = OutputFiguresContainer()
 
         self.main_content = v.Container(

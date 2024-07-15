@@ -4,14 +4,11 @@ import numpy as np
 import pandas as pd
 import scipy.constants as sc
 
-import plotly
 import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
-
-# Base colors for the graph
-COLORS = plotly.colors.qualitative.Plotly
+from .plot_constants import COLORS
 
 
 def _simplified_payload_range_plot(
@@ -55,12 +52,6 @@ def _simplified_payload_range_plot(
     nominal_range = variables["data:TLAR:range"].value[0]
     nominal_payload = variables["data:weight:aircraft:payload"].value[0]
 
-    if fig is None:
-        fig = go.Figure()
-
-    # Same color for each aircraft configuration
-    i = int(len(fig.data) / 2) % 10
-
     mean_tas, mean_sfc, mean_l_over_d = _extract_value_from_flight_data_file(
         flight_data_file_path=flight_data_file_path
     )
@@ -93,13 +84,19 @@ def _simplified_payload_range_plot(
     )
     range_array_for_display = np.concatenate((np.zeros(1), range_array)) / k_ra
 
+    if fig is None:
+        fig = go.Figure()
+
+    # Same color for each aircraft configuration
+    color_index = int(len(fig.data) / 2) % 10
+
     scatter_external_bound = go.Scatter(
         x=range_array_for_display,
         y=payload_array_for_display,
         mode="lines",
         name=name + " | · = Design",
         legendgroup=name,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
     )
     scatter_nominal_mission = go.Scatter(
         x=[nominal_range],
@@ -107,7 +104,7 @@ def _simplified_payload_range_plot(
         mode="markers",
         legendgroup=name,
         showlegend=False,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
     )
 
     fig.add_trace(scatter_external_bound)

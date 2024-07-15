@@ -11,6 +11,10 @@ from fast_pedago.utils import (
 
 
 class ProcessPlotter:
+    """
+    Recovers process data from .sql file and provides data to plot.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

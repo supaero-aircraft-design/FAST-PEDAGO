@@ -1,14 +1,11 @@
 import numpy as np
-import plotly
 import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
+from .plot_constants import COLORS
+
 pi = np.pi
-
-
-# Base colors for the graph
-COLORS = plotly.colors.qualitative.Plotly
 
 
 def _flaps_and_slats_plot(
@@ -253,12 +250,12 @@ def _flaps_and_slats_plot(
 
     # Same color for a given aircraft
     # It is divided by 14 since their are 14 scatters
-    i = int(len(fig.data) / 6) % 10
+    color_index = int(len(fig.data) / 6) % 10
 
     scatter_wing = go.Scatter(
         x=y,
         y=x,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -267,7 +264,7 @@ def _flaps_and_slats_plot(
         x=y_inboard,
         y=x_inboard,
         mode="lines",
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -276,7 +273,7 @@ def _flaps_and_slats_plot(
         x=y_outboard,
         y=x_outboard,
         mode="lines",
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -285,7 +282,7 @@ def _flaps_and_slats_plot(
         x=y_design_line,
         y=x_design_line,
         mode="lines",
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -293,7 +290,7 @@ def _flaps_and_slats_plot(
     scatter_slats_left = go.Scatter(
         x=y_slats_left,
         y=x_slats_left,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -302,7 +299,7 @@ def _flaps_and_slats_plot(
     scatter_slats_right = go.Scatter(
         x=y_slats_right,
         y=x_slats_right,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,

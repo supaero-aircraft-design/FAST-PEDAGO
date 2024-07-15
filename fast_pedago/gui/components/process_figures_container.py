@@ -14,13 +14,6 @@ N2_HTML = "n2.html"
 XDSM_PNG = "xdsm.png"
 XDSM_HTML = "xdsm.html"
 
-# This is the value of the figure next to the inputs height
-# This value for the height will only work for that particular definition of
-# the back image. Which means it is not generic enough. If no height is
-# specified however the widget will be too big for its container which is
-# not very pretty.
-# FIGURE_HEIGHT = 440
-
 
 class ProcessFiguresContainer(v.Col):
     """

@@ -1,30 +1,17 @@
 import numpy as np
-import plotly
 import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
+from .plot_constants import (
+    COLORS,
+    NACELLE_POSITION,
+    HORIZONTAL_TAIL_ROOT,
+    HORIZONTAL_TAIL_TIP,
+    HORIZONTAL_WIDTH_ELEVATOR,
+)
+
 pi = np.pi
-
-
-# Base colors for the graph
-COLORS = plotly.colors.qualitative.Plotly
-
-# Nacelle position compared to the leading edge. 0 means that the back of the
-# nacelle is aligned with the beginning of the root, 1 means that the
-# beginning of the nacelle is aligned with the kink_x.
-NACELLE_POSITION = 0.7
-
-# Percentage of the tail root concerned by the elevator.
-HORIZONTAL_TAIL_ROOT = 0.3
-# Percentage of the tail tip, at 90 percent of the horizontal tail width,
-# covered by the elevator.
-HORIZONTAL_TAIL_TIP = 0.3
-
-# Elevator
-
-# Percentage of the width of the horizontal tail concerned by the elevator.
-HORIZONTAL_WIDTH_ELEVATOR = 0.85
 
 
 def _aircraft_top_view_plot(
@@ -439,12 +426,12 @@ def _aircraft_top_view_plot(
 
     # Same color for a given aircraft
     # It is divided by 10 since their are 10 scatters
-    i = int(len(fig.data) / 10) % 10
+    color_index = int(len(fig.data) / 10) % 10
 
     scatter_aircraft = go.Scatter(
         x=y_aircraft,
         y=x_aircraft,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -452,7 +439,7 @@ def _aircraft_top_view_plot(
     scatter_left_engine = go.Scatter(
         x=y_engine,
         y=x_engine,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -461,7 +448,7 @@ def _aircraft_top_view_plot(
     scatter_right_engine = go.Scatter(
         x=-y_engine,
         y=x_engine,
-        line=dict(color=COLORS[i]),
+        line=dict(color=COLORS[color_index]),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -471,7 +458,7 @@ def _aircraft_top_view_plot(
         x=y_flaps_inboard,
         y=x_flaps_inboard,
         mode="lines",
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -480,7 +467,7 @@ def _aircraft_top_view_plot(
         x=y_flaps_outboard,
         y=x_flaps_outboard,
         mode="lines",
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -489,7 +476,7 @@ def _aircraft_top_view_plot(
         x=y_design_line,
         y=x_design_line,
         mode="lines",
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -497,7 +484,7 @@ def _aircraft_top_view_plot(
     scatter_slats_left = go.Scatter(
         x=y_slats_left,
         y=x_slats_left,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -506,7 +493,7 @@ def _aircraft_top_view_plot(
     scatter_slats_right = go.Scatter(
         x=y_slats_right,
         y=x_slats_right,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -515,7 +502,7 @@ def _aircraft_top_view_plot(
     scatter_elevator_right = go.Scatter(
         x=y_elevator,
         y=x_elevator,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,
@@ -524,7 +511,7 @@ def _aircraft_top_view_plot(
     scatter_elevator_left = go.Scatter(
         x=-y_elevator,
         y=x_elevator,
-        line=dict(color=COLORS[i], width=1),
+        line=dict(color=COLORS[color_index], width=1),
         mode="lines",
         name=name,
         legendgroup=name,

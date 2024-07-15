@@ -1,3 +1,7 @@
+"""
+Utility functions to use punctually in the code.
+"""
+
 import os.path as pth
 
 import openmdao.api as om

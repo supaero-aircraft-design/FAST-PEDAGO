@@ -29,6 +29,11 @@ from fast_pedago.utils import (
 
 
 class ProcessLauncher:
+    """
+    Manages the process configuration (MDA, MDO, paths to configuration, source, input...) and
+    launches the process.
+    """
+
     def __init__(self, plotter: ProcessPlotter, **kwargs):
         """
         :param plotter: the ProcessPlotter to plot with.

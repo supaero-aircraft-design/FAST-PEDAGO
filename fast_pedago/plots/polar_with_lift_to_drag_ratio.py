@@ -2,14 +2,11 @@ from os import PathLike
 from typing import Union
 
 import numpy as np
-import plotly
 import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
-
-# Base colors for the graph
-COLORS = plotly.colors.qualitative.Plotly
+from .plot_constants import COLORS
 
 
 def _polar_with_L_R_ratio_plot(
