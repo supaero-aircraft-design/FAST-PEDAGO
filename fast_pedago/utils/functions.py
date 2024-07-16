@@ -2,7 +2,10 @@
 Utility functions to use punctually in the code.
 """
 
-import os.path as pth
+from typing import Union
+
+from os import PathLike
+from pathlib import Path
 
 import openmdao.api as om
 
@@ -22,7 +25,7 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
 
     file = open(file_path, "rb")
     # Remove the "." in the extension string
-    file_extension = pth.splitext(file_path)[1].replace(".", "")
+    file_extension = Path(file_path).suffix.replace(".", "")
 
     image = file.read()
     # Encapsulate the image in a "a" tag to be able to provide a "click" event and links
@@ -43,7 +46,7 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     return image_widget
 
 
-def _extract_residuals(recorder_database_file_path: str) -> list:
+def _extract_residuals(recorder_database_file_path: Union[str, PathLike]) -> list:
     """
     From the file path to a recorder data base, extract the value of the
     relative error of the residuals at each iteration.
@@ -53,7 +56,7 @@ def _extract_residuals(recorder_database_file_path: str) -> list:
         the relative error.
     """
 
-    case_reader = om.CaseReader(recorder_database_file_path)
+    case_reader = om.CaseReader(str(recorder_database_file_path))
 
     # Will only work if the recorder was attached to the base solver
     solver_cases = case_reader.list_cases("root.nonlinear_solver")
@@ -69,7 +72,7 @@ def _extract_residuals(recorder_database_file_path: str) -> list:
     return iterations, relative_error
 
 
-def _extract_objective(recorder_database_file_path: str) -> list:
+def _extract_objective(recorder_database_file_path: Union[str, PathLike]) -> list:
     """
     From the file path to a recorder data base, extract the value of the
     objective at each iteration of the driver.
@@ -79,7 +82,7 @@ def _extract_objective(recorder_database_file_path: str) -> list:
         the objective.
     """
 
-    case_reader = om.CaseReader(recorder_database_file_path)
+    case_reader = om.CaseReader(str(recorder_database_file_path))
 
     # Will only work if the recorder was attached to the base solver
     solver_cases = case_reader.list_cases("driver")

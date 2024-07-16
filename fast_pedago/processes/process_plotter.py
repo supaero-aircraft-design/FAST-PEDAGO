@@ -1,12 +1,18 @@
+from typing import Union
+
 import numpy as np
 import shutil
-import os
+
+from os import PathLike
+from pathlib import Path
+
 from time import sleep
 from threading import Event
 
 from fast_pedago.utils import (
     _extract_objective,
     _extract_residuals,
+    RECORDER_FILE_SUFFIX,
 )
 
 
@@ -27,7 +33,7 @@ class ProcessPlotter:
     def plot(
         self,
         process_ended: Event,
-        recorder_database_file_path: str,
+        recorder_database_file_path: Union[str, PathLike],
         is_MDO: bool = False,
     ):
         """
@@ -45,9 +51,9 @@ class ProcessPlotter:
             objectives (MDO) or residuals (MDA)
         """
 
-        temp_recorder_database_file_path = recorder_database_file_path.replace(
-            "_cases.sql",
-            "_temp_cases.sql",
+        temp_recorder_database_file_path = str(recorder_database_file_path).replace(
+            RECORDER_FILE_SUFFIX,
+            "_temp" + RECORDER_FILE_SUFFIX,
         )
 
         while not process_ended.is_set():
@@ -96,4 +102,4 @@ class ProcessPlotter:
             except Exception:
                 pass
 
-        os.remove(temp_recorder_database_file_path)
+        Path.unlink(Path(temp_recorder_database_file_path))

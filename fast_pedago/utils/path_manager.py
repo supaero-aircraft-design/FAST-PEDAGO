@@ -1,5 +1,4 @@
-import os
-import os.path as pth
+from pathlib import Path
 import shutil
 
 from typing import List
@@ -63,15 +62,15 @@ class PathManager:
         path to it.
         Working directory contains input and output files (.xml and .csv).
         """
-        PathManager.working_directory_path = pth.join(os.getcwd(), WORK_DIRECTORY)
-        if not pth.exists(PathManager.working_directory_path):
-            os.mkdir(PathManager.working_directory_path)
+        PathManager.working_directory_path = Path.cwd() / WORK_DIRECTORY
+        if not Path.exists(PathManager.working_directory_path):
+            Path.mkdir(PathManager.working_directory_path)
 
-        PathManager.input_directory_path = pth.join(
-            PathManager.working_directory_path, INPUTS_DIRECTORY
+        PathManager.input_directory_path = (
+            PathManager.working_directory_path / INPUTS_DIRECTORY
         )
-        PathManager.output_directory_path = pth.join(
-            PathManager.working_directory_path, OUTPUTS_DIRECTORY
+        PathManager.output_directory_path = (
+            PathManager.working_directory_path / OUTPUTS_DIRECTORY
         )
 
     @staticmethod
@@ -93,21 +92,20 @@ class PathManager:
         Generates the reference input file with the reference aircraft source file
         and the MDA configuration file if not created, and sets the path to it.
         """
-        PathManager.reference_input_file_path = pth.join(
-            PathManager.working_directory_path,
-            pth.join(INPUTS_DIRECTORY, PathManager.reference_input_file_path),
+        PathManager.reference_input_file_path = (
+            PathManager.working_directory_path
+            / INPUTS_DIRECTORY
+            / PathManager.reference_input_file_path
         )
 
         # Technically, we could simply copy the reference file because I
         # already did the input generation but to be more generic we will
         # do it like this which will make it longer on the first execution.
-        if not pth.exists(PathManager.reference_input_file_path):
+        if not Path.exists(PathManager.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=PathManager.mda_configuration_file_path,
-                source_data_path=pth.join(
-                    pth.dirname(source_data_files.__file__),
-                    PathManager.reference_source_file_name,
-                ),
+                source_data_path=Path(source_data_files.__file__).parent
+                / PathManager.reference_source_file_name,
             )
 
     @staticmethod
@@ -118,9 +116,9 @@ class PathManager:
         Data directory contains configuration files (copied from original
         configuration files), and N2/XDSM graphs
         """
-        PathManager.data_directory_path = pth.join(os.getcwd(), DATA_DIRECTORY)
-        if not pth.exists(PathManager.data_directory_path):
-            os.mkdir(PathManager.data_directory_path)
+        PathManager.data_directory_path = Path.cwd() / DATA_DIRECTORY
+        if not Path.exists(PathManager.data_directory_path):
+            Path.mkdir(PathManager.data_directory_path)
 
         # To make it simpler to handle relative path from the configuration
         # file, instead of using this one directly we will make a copy of it
@@ -141,12 +139,13 @@ class PathManager:
         :param configuration_file_name: the given configuration file.
         :return: the path to the copied configuration file.
         """
-        configuration_file_path = pth.join(
-            PathManager.data_directory_path, configuration_file_name
+        configuration_file_path = (
+            PathManager.data_directory_path / configuration_file_name
         )
-        if not pth.exists(configuration_file_path):
+
+        if not Path.exists(configuration_file_path):
             shutil.copy(
-                pth.join(pth.dirname(configuration.__file__), configuration_file_name),
+                Path(configuration.__file__).parent / configuration_file_name,
                 configuration_file_path,
             )
 
@@ -154,11 +153,11 @@ class PathManager:
 
     @staticmethod
     def _build_resources_directory():
-        PathManager.resources_directory_path = pth.join(
-            pth.dirname(gui.__file__), RESOURCES_DIRECTORY
+        PathManager.resources_directory_path = (
+            Path(gui.__file__).parent / RESOURCES_DIRECTORY
         )
-        PathManager.tutorial_directory_path = pth.join(
-            PathManager.resources_directory_path, TUTORIAL_DIRECTORY
+        PathManager.tutorial_directory_path = (
+            PathManager.resources_directory_path / TUTORIAL_DIRECTORY
         )
 
     @staticmethod
@@ -183,12 +182,12 @@ class PathManager:
         :return: a list of available reference files names
         """
 
-        list_files = os.listdir(pth.dirname(source_data_files.__file__))
+        list_files = Path.iterdir(Path(source_data_files.__file__).parent)
         available_reference_files = []
 
         for file in list_files:
-            if file.endswith(".xml"):
-                associated_sizing_process_name = file.replace(
+            if file.name.endswith(".xml"):
+                associated_sizing_process_name = file.name.replace(
                     SOURCE_FILE_SUFFIX, ""
                 ).replace(SEPARATOR, " ")
                 available_reference_files.append(associated_sizing_process_name)
@@ -204,17 +203,17 @@ class PathManager:
         :return: a list of available process names
         """
 
-        list_files = os.listdir(PathManager.output_directory_path)
+        list_files = Path.iterdir(PathManager.output_directory_path)
         available_sizing_process = []
 
         for file in list_files:
             # Delete the suffix corresponding to the output file and flight
             # data file because that's how they were built. Also, we will
             # ignore the .sql file
-            if file.endswith(".sql"):
+            if file.name.endswith(".sql"):
                 continue
 
-            associated_sizing_process_name = file.replace(
+            associated_sizing_process_name = file.name.replace(
                 OUTPUT_FILE_SUFFIX, ""
             ).replace(FLIGHT_DATA_FILE_SUFFIX, "")
 
@@ -225,9 +224,8 @@ class PathManager:
 
     @staticmethod
     def to_full_source_file_name(source_file: str):
-        return pth.join(
-            pth.dirname(source_data_files.__file__),
-            source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX,
+        return Path(source_data_files.__file__).parent / (
+            source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
         )
 
     @staticmethod
@@ -240,29 +238,27 @@ class PathManager:
         The subdirectories of workdir are not deleted in the process.
         """
         # Remove all input files in the inputs directory
-        input_file_list = os.listdir(PathManager.input_directory_path)
-        for file_name in input_file_list:
-            file_path = pth.join(PathManager.input_directory_path, file_name)
+        input_file_list = Path.iterdir(PathManager.input_directory_path)
+        for file in input_file_list:
 
             # We keep the reference input_file and avoid deleting subdirectory
-            if file_name != PathManager.reference_input_file_name and not pth.isdir(
-                file_path
+            if file.name != PathManager.reference_input_file_name and not Path.is_dir(
+                file
             ):
-                os.remove(file_path)
+                Path.unlink(file)
 
         # Remove all input files in the outputs directory, we can remove all
         # .sql because they are re-generated anyway
-        output_file_list = os.listdir(PathManager.output_directory_path)
-        for file_name in output_file_list:
-            file_path = pth.join(PathManager.output_directory_path, file_name)
+        output_file_list = Path.iterdir(PathManager.output_directory_path)
+        for file in output_file_list:
 
             # We keep the reference input_file and avoid deleting subdirectory
             if (
-                file_name != PathManager.reference_output_file_name
-                and file_name != PathManager.reference_flight_data_file_name
-                and not pth.isdir(file_path)
+                file.name != PathManager.reference_output_file_name
+                and file.name != PathManager.reference_flight_data_file_name
+                and not Path.is_dir(file)
             ):
-                os.remove(file_path)
+                Path.unlink(file)
 
     @staticmethod
     def path_to(folder: str, file: str) -> str:
@@ -288,5 +284,5 @@ class PathManager:
         elif folder == "tutorial":
             folder_path = PathManager.tutorial_directory_path
         else:
-            folder_path == ""
-        return pth.join(folder_path, file)
+            folder_path == Path("")
+        return folder_path / file

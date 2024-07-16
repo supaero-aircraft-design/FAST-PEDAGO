@@ -1,5 +1,4 @@
-import os
-import os.path as pth
+from pathlib import Path
 import re
 
 import numpy as np
@@ -106,37 +105,28 @@ class ProcessLauncher:
                 PathManager.mda_configuration_file_path
             )
 
-        # Save orig file path and name so that we can replace them with the
-        # optim process name
-        orig_input_file_path = self.configurator.input_file_path
-        orig_input_file_name = pth.basename(orig_input_file_path)
-        orig_output_file_path = self.configurator.output_file_path
-        orig_output_file_name = pth.basename(orig_output_file_path)
-
         # Save inputs and outputs file paths
-        self.new_input_file_path = orig_input_file_path.replace(
-            orig_input_file_name,
-            self.process_name + problem_type + INPUT_FILE_SUFFIX,
+        self.input_file_path = PathManager.path_to(
+            "input", self.process_name + problem_type + INPUT_FILE_SUFFIX
         )
-        self.new_output_file_path = orig_output_file_path.replace(
-            orig_output_file_name,
-            self.process_name + problem_type + OUTPUT_FILE_SUFFIX,
+        self.output_file_path = PathManager.path_to(
+            "output", self.process_name + problem_type + OUTPUT_FILE_SUFFIX
         )
 
         # Change the input and output file path in the configurator
-        self.configurator.input_file_path = self.new_input_file_path
-        self.configurator.output_file_path = self.new_output_file_path
+        self.configurator.input_file_path = self.input_file_path
+        self.configurator.output_file_path = self.output_file_path
 
         # The recorder file path is declared with "self" to be able to retrieve
         # it from the plot function in an other thread. There might be better
         # ways to pass it from a thread to an other.
-        self.recorder_database_file_path = orig_output_file_path.replace(
-            orig_output_file_name,
-            self.process_name + problem_type + RECORDER_FILE_SUFFIX,
+        self.recorder_database_file_path = PathManager.path_to(
+            "output", self.process_name + problem_type + RECORDER_FILE_SUFFIX
         )
+
         # To avoid reading in a wrong file
-        if pth.exists(self.recorder_database_file_path):
-            os.remove(self.recorder_database_file_path)
+        if Path.exists(self.recorder_database_file_path):
+            Path.unlink(self.recorder_database_file_path)
 
         # We also need to rename the .csv file which contains the mission
         # data. I don't see a proper way to do it other than that since
@@ -144,12 +134,11 @@ class ProcessLauncher:
         # overwrite like the input and output filepath. There may be a way
         # to do it by modifying the options of the performances
         # components of the problem but it seems too much
-        self.old_mission_data_file_path = orig_output_file_path.replace(
-            orig_output_file_name, "flight_points.csv"
+        self.old_mission_data_file_path = PathManager.path_to(
+            "output", "flight_points.csv"
         )
-        self.new_mission_data_file_path = orig_output_file_path.replace(
-            orig_output_file_name,
-            self.process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX,
+        self.new_mission_data_file_path = PathManager.path_to(
+            "output", self.process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX
         )
 
     def _configure_mdo(self):
@@ -161,7 +150,7 @@ class ProcessLauncher:
         new_inputs = copy.deepcopy(self.reference_inputs)
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
-        new_inputs.save_as(self.new_input_file_path, overwrite=True)
+        new_inputs.save_as(self.input_file_path, overwrite=True)
 
         # Get the problem, no need to write inputs. The fact that the
         # reference was created based on the same configuration we will
@@ -273,7 +262,7 @@ class ProcessLauncher:
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
-        new_inputs.save_as(self.new_input_file_path, overwrite=True)
+        new_inputs.save_as(self.input_file_path, overwrite=True)
 
         # Get the problem, no need to write inputs. The fact that the
         # reference was created based on the same configuration we will
@@ -316,10 +305,10 @@ class ProcessLauncher:
 
         # You can't rename to a file which already exists, so if one already
         # exists we delete it before renaming.
-        if pth.exists(self.new_mission_data_file_path):
-            os.remove(self.new_mission_data_file_path)
+        if Path.exists(self.new_mission_data_file_path):
+            Path.unlink(self.new_mission_data_file_path)
 
-        os.rename(
+        Path.rename(
             self.old_mission_data_file_path,
             self.new_mission_data_file_path,
         )

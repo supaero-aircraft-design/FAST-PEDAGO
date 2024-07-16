@@ -1,6 +1,7 @@
 import logging
+
 import os
-import os.path as pth
+from pathlib import Path
 
 from argparse import (
     ArgumentDefaultsHelpFormatter,
@@ -9,9 +10,7 @@ from argparse import (
 )
 
 
-MAIN_NOTEBOOK_NAME = pth.join(
-    pth.join(pth.dirname(__file__), "notebook"), "FAST_OAD_app.ipynb"
-)
+MAIN_NOTEBOOK_NAME = Path(__file__).parent / "notebook" / "FAST_OAD_app.ipynb"
 
 
 class Main:
