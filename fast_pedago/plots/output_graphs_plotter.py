@@ -22,6 +22,7 @@ from fast_pedago.plots import (
     wing_geometry_plot,
     aircraft_geometry_plot,
     polar_with_L_R_ratio_plot,
+    static_margin_plot,
     BetterMissionViewer,
 )
 
@@ -80,6 +81,10 @@ GRAPH = {
         "Stability diagram": [
             stability_diagram_plot,
             True,
+        ],
+        "Static margin": [
+            static_margin_plot,
+            False,
         ],
         "Drag polar": [
             drag_polar_plot,

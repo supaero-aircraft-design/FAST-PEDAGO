@@ -14,6 +14,7 @@ from .simplified_payload_range import _simplified_payload_range_plot
 from .stability_diagram import _stability_diagram_plot
 from .wing import _wing_plot
 from .polar_with_lift_to_drag_ratio import _polar_with_L_R_ratio_plot
+from .static_margin import _static_margin_plot
 
 import fastoad.api as oad
 
@@ -148,3 +149,12 @@ def polar_with_L_R_ratio_plot(
     fig: go.Figure = None,
 ) -> go.FigureWidget:
     return _polar_with_L_R_ratio_plot(aircraft_file_path, name, fig)
+
+
+def static_margin_plot(
+    aircraft_file_path: str,
+    flight_data_file_path: str,
+    name: str = None,
+    fig: go.Figure = None,
+) -> go.FigureWidget:
+    return _static_margin_plot(aircraft_file_path, name, fig)

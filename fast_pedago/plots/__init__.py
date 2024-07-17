@@ -13,6 +13,7 @@ from .plot_signatures import (
     stability_diagram_plot,
     variable_viewer,
     polar_with_L_R_ratio_plot,
+    static_margin_plot,
 )
 
 from .better_mission_viewer import BetterMissionViewer
