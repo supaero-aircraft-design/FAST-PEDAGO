@@ -46,7 +46,7 @@ class Slide:
 
         MDO = (
             "- The second will, with a set of design variables and constraints, "
-            "try to optimize an objective."
+            "try to optimize an objective by looping MDAs."
         )
 
     class Inputs:

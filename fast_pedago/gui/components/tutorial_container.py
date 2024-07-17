@@ -124,14 +124,13 @@ class TutorialContainer(v.Col):
                         v.Row(
                             class_="pt-5",
                             no_gutters=True,
+                            justify="center",
                             children=[
                                 v.Col(
-                                    cols=6,
+                                    cols=12,
+                                    md=6,
                                     children=[self._mda_figure],
-                                ),
-                                v.Col(
-                                    children=[self._mdo_figure],
-                                ),
+                                )
                             ],
                         ),
                     ],
@@ -295,7 +294,4 @@ class TutorialContainer(v.Col):
         )
         self._mda_figure = _image_from_path(
             PathManager.path_to("tutorial", MDA_FIGURE), max_height="35vh"
-        )
-        self._mdo_figure = _image_from_path(
-            PathManager.path_to("tutorial", MDO_FIGURE), max_height="35vh"
         )
