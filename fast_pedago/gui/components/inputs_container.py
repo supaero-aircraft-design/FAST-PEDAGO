@@ -136,8 +136,6 @@ class InputsContainer(v.List):
             children=["Swap between analysis and optimization mode"],
         )
 
-        self.debug = v.Html(tag="div", children=["debug"])
-
         self.inputs_header = v.ListItemGroup(
             class_="px-2 pt-1",
             children=[
@@ -169,7 +167,6 @@ class InputsContainer(v.List):
                     justify="center",
                     children=[self.process_name_field],
                 ),
-                self.debug,
             ],
         )
 
