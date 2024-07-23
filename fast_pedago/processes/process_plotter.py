@@ -56,9 +56,17 @@ class ProcessPlotter:
             "_temp" + RECORDER_FILE_SUFFIX,
         )
 
+        main = None
+        if is_MDO:
+            limit = None
+        else:
+            # If the target residuals haven't been set by the mda
+            # launcher, nothing will be plotted
+            limit = self.target_residuals
+        iterations = None
+
         while not process_ended.is_set():
             sleep(0.1)
-
             try:
                 # Copy the db file before reading it to avoid reading when an
                 # other thread is writing, which could cause the code to fail.
@@ -67,39 +75,31 @@ class ProcessPlotter:
                 )
 
                 if not is_MDO:
-                    # Extract the residuals, build a scatter based on them and
-                    # plot them along with the threshold set in the
-                    # configuration file
-                    self.iterations, self.relative_error = np.array(
+                    # Here "main" is the residuals.
+                    iterations, main = np.array(
                         _extract_residuals(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
 
-                    if self.figure:
-                        # If the target residuals haven't been set by the mda
-                        # launcher, nothing will be plotted
-                        self.figure.plot(
-                            self.iterations, self.relative_error, self.target_residuals
-                        )
-
                 else:
-                    # Extract the residuals, build a scatter based on them and
-                    # plot them along with the threshold set in the
-                    # configuration file
-                    self.iterations, self.objective = np.array(
+                    # Here "main" is the objective
+                    iterations, main = np.array(
                         _extract_objective(
                             recorder_database_file_path=temp_recorder_database_file_path
                         )
                     )
-                    self.min_objective = min(self.objective)
 
-                    if self.figure:
-                        self.figure.plot(
-                            self.iterations, self.objective, self.min_objective
-                        )
+                if self.figure:
+                    self.figure.plot(iterations, main, limit)
 
             except Exception:
                 pass
+
+        # Plot the min objective reached after the end of the process only
+        if is_MDO:
+            limit = min(main)
+            if self.figure:
+                self.figure.plot(iterations, main, limit)
 
         Path.unlink(Path(temp_recorder_database_file_path))

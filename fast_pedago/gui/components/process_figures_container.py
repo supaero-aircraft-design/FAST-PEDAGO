@@ -83,7 +83,7 @@ class ProcessFiguresContainer(v.Col):
             ),
         ]
 
-    def plot(self, iterations, main, limit):
+    def plot(self, iterations, main, limit=None):
         """
         Plots the graphs on the active figure
 
@@ -91,7 +91,7 @@ class ProcessFiguresContainer(v.Col):
         :param main: the main graph to plot (residuals/objectives), y axis
             values.
         :param limit: a limit to plot (threshold/minimum objective), y axis
-            value.
+            value. Default to None will trace nothing
         """
         if self._is_MDA:
             active_figure = self._residuals_figure
