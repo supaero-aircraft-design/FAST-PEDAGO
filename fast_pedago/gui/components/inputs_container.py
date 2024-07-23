@@ -196,23 +196,6 @@ class InputsContainer(v.List):
             ],
         )
 
-        # Checkboxes to chose which design variable and
-        # constraints to use
-        self._ar_design_var_checkbox = v.Checkbox(
-            class_="ms-4",
-            v_model=True,
-            label="Wing AR as design variable",
-        )
-        self._sweep_w_design_var_checkbox = v.Checkbox(
-            class_="ms-4",
-            v_model=False,
-            label="Wing sweep as design variable",
-        )
-        self._wing_span_constraints_checkbox = v.Checkbox(
-            input_value=False,
-            label="Wing span as a constraint",
-        )
-
         # Range sliders to input design variables and constraints
         self._ar_design_var_input = RangeSliderInput(
             min=5,
@@ -221,6 +204,7 @@ class InputsContainer(v.List):
             range=[OPT_AR_MIN, OPT_AR_MAX],
             label="Min/Max wing AR",
             tooltip="Range of aspect ratio for the optimization [-]",
+            with_checkbox=True,
         )
         self._sweep_w_design_var_input = RangeSliderInput(
             min=5,
@@ -229,27 +213,24 @@ class InputsContainer(v.List):
             range=[OPT_SWEEP_W_MIN, OPT_SWEEP_W_MAX],
             label="Sweep Range",
             tooltip="Range of wing sweep angle for the optimization [-]",
+            with_checkbox=True,
         )
-        self._wing_span_constraint_max = SliderInput(
+        self._wing_span_constraint_input = SliderInput(
             min=20.0,
             max=100.0,
             step=1,
             value=OPT_WING_SPAN_MAX,
             label="Max wing span",
             tooltip="Maximum wing span allowed for the optimization [m]",
+            with_checkbox=True,
         )
 
-        self._wing_span_constraints_checkbox.on_event(
-            "change", self._activate_wing_span_constraint
-        )
-
-        self._sweep_w_design_var_checkbox.on_event(
+        self._sweep_w_design_var_input.checkbox.on_event(
             "change", self._ensure_one_design_var
         )
-        self._ar_design_var_checkbox.on_event("change", self._ensure_one_design_var)
-
-        self._sweep_w_design_var_input.disable()
-        self._wing_span_constraint_max.disable()
+        self._ar_design_var_input.checkbox.on_event(
+            "change", self._ensure_one_design_var
+        )
 
         self._mdo_input = [
             _InputsCategory(
@@ -280,17 +261,14 @@ class InputsContainer(v.List):
             _InputsCategory(
                 "Design variables",
                 [
-                    self._ar_design_var_checkbox,
                     self._ar_design_var_input,
-                    self._sweep_w_design_var_checkbox,
                     self._sweep_w_design_var_input,
                 ],
             ),
             _InputsCategory(
                 "Constraints",
                 [
-                    self._wing_span_constraints_checkbox,
-                    self._wing_span_constraint_max,
+                    self._wing_span_constraint_input,
                 ],
             ),
         ]
@@ -398,15 +376,6 @@ class InputsContainer(v.List):
             self._snackbar,
         ]
 
-    def _activate_wing_span_constraint(self, widget, event, data):
-        """
-        Enables the linked slider if checkbox is checked
-        """
-        if data:
-            self._wing_span_constraint_max.enable()
-        else:
-            self._wing_span_constraint_max.disable()
-
     def _ensure_one_design_var(self, widget, event, data):
         """
         Ensures that at least one design variable is chosen
@@ -417,18 +386,14 @@ class InputsContainer(v.List):
 
         To be called with an "on_event" ipyvuetify component method
         """
-        self._ar_design_var_input.enable()
-        self._sweep_w_design_var_input.enable()
-        if not data:
-            if widget == self._sweep_w_design_var_checkbox:
-                if not self._ar_design_var_checkbox.v_model:
-                    self._ar_design_var_checkbox.v_model = True
-                self._sweep_w_design_var_input.disable()
+        if data:
+            if widget == self._sweep_w_design_var_input.checkbox:
+                if self._ar_design_var_input.checkbox.v_model:
+                    self._ar_design_var_input.checkbox.v_model = False
 
-            elif widget == self._ar_design_var_checkbox:
-                if not self._sweep_w_design_var_checkbox.v_model:
-                    self._sweep_w_design_var_checkbox.v_model = True
-                self._ar_design_var_input.disable()
+            elif widget == self._ar_design_var_input.checkbox:
+                if self._sweep_w_design_var_input.checkbox.v_model:
+                    self._sweep_w_design_var_input.checkbox.v_model = False
 
     def _mach_alert(self, widget, event, data):
         """
@@ -476,12 +441,9 @@ class InputsContainer(v.List):
         self._objective_selection.children[0].disabled = True
         self._objective_selection.children[1].disabled = True
         self._objective_selection.children[2].disabled = True
-        self._ar_design_var_checkbox.readonly = True
         self._ar_design_var_input.disable()
-        self._sweep_w_design_var_checkbox.readonly = True
         self._sweep_w_design_var_input.disable()
-        self._wing_span_constraints_checkbox.readonly = True
-        self._wing_span_constraint_max.disable()
+        self._wing_span_constraint_input.disable()
 
     def enable(self):
         """
@@ -508,12 +470,9 @@ class InputsContainer(v.List):
         self._objective_selection.children[0].disabled = False
         self._objective_selection.children[1].disabled = False
         self._objective_selection.children[2].disabled = False
-        self._ar_design_var_checkbox.readonly = False
         self._ar_design_var_input.enable()
-        self._sweep_w_design_var_checkbox.readonly = False
         self._sweep_w_design_var_input.enable()
-        self._wing_span_constraints_checkbox.readonly = False
-        self._wing_span_constraint_max.enable()
+        self._wing_span_constraint_input.enable()
 
     def retrieve_mda_inputs(self):
         """
@@ -538,14 +497,14 @@ class InputsContainer(v.List):
         """
         self.process_launcher.set_mdo_inputs(
             self._objective_selection.v_model,
-            self._ar_design_var_checkbox.v_model,
+            not self._ar_design_var_input.checkbox.v_model,
             self._ar_design_var_input.slider.v_model[0],
             self._ar_design_var_input.slider.v_model[1],
-            self._sweep_w_design_var_checkbox.v_model,
+            not self._sweep_w_design_var_input.checkbox.v_model,
             self._sweep_w_design_var_input.slider.v_model[0],
             self._sweep_w_design_var_input.slider.v_model[1],
-            self._wing_span_constraints_checkbox.v_model,
-            self._wing_span_constraint_max.slider.v_model,
+            not self._wing_span_constraint_input.checkbox.v_model,
+            self._wing_span_constraint_input.slider.v_model,
         )
 
     def set_initial_value_mda(self, source_data_file_name: str):

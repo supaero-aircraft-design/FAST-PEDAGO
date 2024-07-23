@@ -173,6 +173,9 @@ class SliderInput(v.Tooltip):
     """
     A slider input with a text field for more input possibilities.
     The slider has an optional tooltip to display information.
+
+    The optional checkbox enables or disables the inputs. Beware, it
+    has True and False values switched!
     """
 
     def __init__(
@@ -183,6 +186,7 @@ class SliderInput(v.Tooltip):
         label: str = None,
         tooltip: str = None,
         value: float = 0,
+        with_checkbox: bool = False,
         **kwargs,
     ):
         """
@@ -193,6 +197,8 @@ class SliderInput(v.Tooltip):
         :param tooltip: tooltip to show when label, slider,
             or text field is hovered
         :param value: initial value of the slider
+        :param with_checkbox: if True, adds a checkbox before the label,
+            that disables the input when un-ticked
         """
         super().__init__(**kwargs)
 
@@ -218,6 +224,28 @@ class SliderInput(v.Tooltip):
             class_="align-center pe-3",
         )
 
+        checkbox_container = v.Col(
+            cols="1",
+        )
+
+        self._with_checkbox = with_checkbox
+        if with_checkbox:
+            # false and true values are switched to enable the link between checkbox value and
+            # and slider/text field states later
+            self.checkbox = v.Checkbox(
+                v_model=False,
+                hide_details=True,
+                class_="ma-0 pa-0",
+                false_value=True,
+                true_value=False,
+            )
+            checkbox_container.children = [self.checkbox]
+
+            # Links the checkbox and the slider/text field to enable the slider/text field only when
+            # checkbox is ticked
+            widgets.jslink((self.checkbox, "v_model"), (self.slider, "disabled"))
+            widgets.jslink((self.checkbox, "v_model"), (self._text_field, "disabled"))
+
         # When the slider changes, the text changes directly, but it doesn't work the other way to
         # prevent bugs when typing in the text field.
         widgets.jsdlink((self.slider, "v_model"), (self._text_field, "v_model"))
@@ -234,13 +262,14 @@ class SliderInput(v.Tooltip):
                     class_="my-3",
                     no_gutters=True,
                     children=[
+                        checkbox_container,
                         v.Col(
-                            class_="ps-8 pe-0",
-                            cols=4,
+                            class_="ps-2",
+                            cols=3,
                             children=[
                                 v.Html(
                                     tag="p",
-                                    class_="ma-0",
+                                    class_="my-0 mb-0 mt-1",
                                     children=[label],
                                 ),
                             ],
@@ -296,6 +325,8 @@ class SliderInput(v.Tooltip):
         """
         self.slider.readonly = True
         self._text_field.readonly = True
+        if self._with_checkbox:
+            self.checkbox.readonly = True
 
     def enable(self):
         """
@@ -303,12 +334,17 @@ class SliderInput(v.Tooltip):
         """
         self.slider.readonly = False
         self._text_field.readonly = False
+        if self._with_checkbox:
+            self.checkbox.readonly = False
 
 
 class RangeSliderInput(v.Tooltip):
     """
     A slider input with a text field for more input possibilities.
     The slider has an optional tooltip to display information.
+
+    The optional checkbox enables or disables the input. Beware, it
+    has True and False values switched!
     """
 
     def __init__(
@@ -319,6 +355,7 @@ class RangeSliderInput(v.Tooltip):
         label: str = None,
         tooltip: str = None,
         range: float = 0,
+        with_checkbox: bool = False,
         **kwargs,
     ):
         """
@@ -329,6 +366,8 @@ class RangeSliderInput(v.Tooltip):
         :param tooltip: tooltip to show when label, slider,
             or text field is hovered
         :param value: initial value of the slider
+        :param with_checkbox: if True, adds a checkbox before the label,
+            that disables the input when un-ticked
         """
         super().__init__(**kwargs)
 
@@ -346,6 +385,26 @@ class RangeSliderInput(v.Tooltip):
             class_="align-center pe-3",
         )
 
+        checkbox_container = v.Col(
+            cols="1",
+        )
+
+        self._with_checkbox = with_checkbox
+        if with_checkbox:
+            # false and true values are switched to enable the link between checkbox value and
+            # and slider state later
+            self.checkbox = v.Checkbox(
+                v_model=False,
+                hide_details=True,
+                class_="ma-0 pa-0",
+                false_value=True,
+                true_value=False,
+            )
+            checkbox_container.children = [self.checkbox]
+
+            # Links the checkbox and the slider to enable the slider only when checkbox is ticked
+            widgets.jslink((self.checkbox, "v_model"), (self.slider, "disabled"))
+
         # Unfortunately it is impossible to link the v_model of the slider
         # with two v_models of text fields, as it is done for the SliderInput,
         # since it is impossible to get only a part of the list that is the
@@ -357,17 +416,18 @@ class RangeSliderInput(v.Tooltip):
                 "children": v.Row(
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
-                    class_="pt-6 my-1",
+                    class_="pt-3 my-4",
                     justify="center",
                     no_gutters=True,
                     children=[
+                        checkbox_container,
                         v.Col(
-                            class_="ps-8 pe-0",
+                            class_="ps-2",
                             cols=4,
                             children=[
                                 v.Html(
                                     tag="p",
-                                    class_="ma-0",
+                                    class_="my-0 mb-0 mt-1",
                                     children=[label],
                                 ),
                             ],
@@ -390,12 +450,16 @@ class RangeSliderInput(v.Tooltip):
         Disables the slider to forbid user input.
         """
         self.slider.readonly = True
+        if self._with_checkbox:
+            self.checkbox.readonly = True
 
     def enable(self):
         """
         Re-enables the slider after it has been disabled.
         """
         self.slider.readonly = False
+        if self._with_checkbox:
+            self.checkbox.readonly = False
 
 
 class SelectOutput(v.Select):
