@@ -213,6 +213,7 @@ class SliderInput(v.Tooltip):
             max=max,
             min=min,
             step=step,
+            dense=True,
             hide_details=True,
             class_="align-center pe-3",
         )
@@ -230,32 +231,34 @@ class SliderInput(v.Tooltip):
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     justify="center",
+                    class_="my-3",
+                    no_gutters=True,
                     children=[
                         v.Col(
-                            class_="ps-8 pe-0 py-1",
+                            class_="ps-8 pe-0",
                             cols=4,
                             children=[
                                 v.Html(
                                     tag="p",
+                                    class_="ma-0",
                                     children=[label],
                                 ),
                             ],
                         ),
                         v.Col(
-                            class_="ps-3 py-1",
+                            class_="ps-3",
                             children=[
                                 v.Row(
+                                    no_gutters=True,
                                     children=[
                                         v.Col(
-                                            class_="pa-0",
                                             cols=9,
                                             children=[self.slider],
                                         ),
                                         v.Col(
-                                            class_="pa-0",
                                             children=[self._text_field],
                                         ),
-                                    ]
+                                    ],
                                 ),
                             ],
                         ),
@@ -354,21 +357,23 @@ class RangeSliderInput(v.Tooltip):
                 "children": v.Row(
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
-                    class_="pt-6",
+                    class_="pt-6 my-1",
                     justify="center",
+                    no_gutters=True,
                     children=[
                         v.Col(
-                            class_="ps-8 pe-0 py-1",
+                            class_="ps-8 pe-0",
                             cols=4,
                             children=[
                                 v.Html(
                                     tag="p",
+                                    class_="ma-0",
                                     children=[label],
                                 ),
                             ],
                         ),
                         v.Col(
-                            class_="ps-3 py-1",
+                            class_="ps-3",
                             children=[self.slider],
                         ),
                     ],
