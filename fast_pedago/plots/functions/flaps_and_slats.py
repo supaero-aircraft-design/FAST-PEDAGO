@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
-from .plot_constants import COLORS
+from ..plot_constants import COLORS
 
 pi = np.pi
 

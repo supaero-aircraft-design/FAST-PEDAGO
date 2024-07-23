@@ -16,6 +16,6 @@ from .plot_signatures import (
     static_margin_plot,
 )
 
-from .better_mission_viewer import BetterMissionViewer
+from .functions import BetterMissionViewer
 
 from .output_graphs_plotter import OutputGraphsPlotter, GRAPH

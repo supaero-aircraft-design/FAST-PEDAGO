@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 from fastoad.io import VariableIO
 
-from .plot_constants import COLORS
+from ..plot_constants import COLORS
 
 
 def _simplified_payload_range_plot(
