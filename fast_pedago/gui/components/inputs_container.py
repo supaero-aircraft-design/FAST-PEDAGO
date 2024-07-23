@@ -111,6 +111,7 @@ class InputsContainer(v.List):
             rounded=True,
             mandatory=True,
             dense=True,
+            color="primary",
             children=[
                 v.Btn(
                     v_bind="tooltip.attrs",
@@ -167,6 +168,7 @@ class InputsContainer(v.List):
                     justify="center",
                     children=[self.process_name_field],
                 ),
+                v.Divider(class_="mt-3"),
             ],
         )
 
