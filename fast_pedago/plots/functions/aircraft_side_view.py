@@ -56,7 +56,7 @@ def _aircraft_side_view_plot(
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
 
     # Horizontal tail parameters
-    ht_root_chord = variables["data:geometry:horizontal_tail:root:chord"].value[0]
+    ht_root_chord = variables["data:geometry:horizontal_tail:center:chord"].value[0]
     ht_tip_chord = variables["data:geometry:horizontal_tail:tip:chord"].value[0]
     ht_sweep_0 = variables["data:geometry:horizontal_tail:sweep_0"].value[0]
     local_ht_25mac_x = variables[
