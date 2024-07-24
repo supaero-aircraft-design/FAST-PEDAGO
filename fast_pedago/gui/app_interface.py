@@ -37,11 +37,11 @@ class AppInterface(v.App):
         )
 
         self._build_layout()
-        self._to_source_selection()
+        self._to_tutorial()
 
-    def _to_source_selection(self):
+    def _to_tutorial(self):
         """
-        Displays tutorial and source selection widget.
+        Displays tutorial.
         """
         self.drawer.hide()
         self.header.open_drawer_button.hide()
@@ -132,9 +132,7 @@ class AppInterface(v.App):
         self.graphs.on_event("change", self._switch_tab)
 
         self.header = Header()
-        self.header.fast_oad_logo.on_event(
-            "click", lambda *args: self._to_source_selection()
-        )
+        self.header.fast_oad_logo.on_event("click", lambda *args: self._to_tutorial())
         self.header.open_drawer_button.on_event(
             "click",
             self._open_or_close_drawer,
@@ -295,7 +293,7 @@ class AppInterface(v.App):
         The subdirectories of workdir are not deleted in the process.
         """
         # Gets back to source file selection
-        self._to_source_selection()
+        self._to_tutorial()
         # Clears the output selection
         self.output_figures.output_selection.v_model = []
         self.output_figures.hide_graphs()
