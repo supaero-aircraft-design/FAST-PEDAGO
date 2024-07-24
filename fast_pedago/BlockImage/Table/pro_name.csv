@@ -1,7 +1,0 @@
-﻿Name
-data:propulsion:MTO_thrust
-data:propulsion:rubber_engine:bypass_ratio
-data:propulsion:rubber_engine:design_altitude
-data:propulsion:rubber_engine:maximum_mach
-data:propulsion:rubber_engine:overall_pressure_ratio
-data:propulsion:rubber_engine:turbine_inlet_temperature

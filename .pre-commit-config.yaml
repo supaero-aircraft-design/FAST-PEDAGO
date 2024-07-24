@@ -1,0 +1,29 @@
+repos:
+  - repo: local
+    hooks:
+
+      - id: black
+        name: black
+        language: system
+        entry: black
+        types: [ python ]
+
+      - id: flake8
+        name: flake8
+        language: system
+        entry: flake8
+        types: [ python ]
+
+      - id: sync_doc_requirements
+        name: sync_doc_requirements
+        entry: poetry@1.4.2 export --with doc --without-hashes -o requirements.txt -f requirements.txt
+        language: system
+        pass_filenames: false
+        files: 'poetry.lock'
+
+      - id: nbstripout
+        name: nbstripout
+        description: 'nbstripout: strip output from Jupyter and IPython notebooks'
+        entry: nbstripout
+        language: system
+        types: [ jupyter ]
