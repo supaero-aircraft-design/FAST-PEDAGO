@@ -877,20 +877,14 @@ ipysheet = ">=0.5.0,<1"
 ipywidgets = ">=7.7.0,<8.0.0"
 jsonschema = ">=3.2.0,<5"
 jupyterlab = ">=3.3.0,<4.0.0"
-lxml = [
-    {version = ">=4.6.5,<6", markers = "python_version >= \"3.8\" and python_version < \"3.11\""},
-    {version = ">=4.9.3,<6", markers = "python_version >= \"3.11\" and python_version < \"4.0\""},
-]
+lxml = {version = ">=4.6.5,<6", markers = "python_version >= \"3.8\" and python_version < \"3.11\""}
 notebook = ">=6.0,<7.0"
 numpy = [
     {version = ">=1.22.0,<1.25", markers = "python_version >= \"3.8\" and python_version < \"3.9\""},
     {version = ">=1.23.2,<3", markers = "python_version >= \"3.9\" and python_version < \"3.12\""},
 ]
 openmdao = ">=3.27,<4.0"
-pandas = [
-    {version = ">=1.3.4,<3", markers = "python_version >= \"3.8\" and python_version < \"3.11\""},
-    {version = ">=1.5.3,<3", markers = "python_version >= \"3.11\" and python_version < \"4.0\""},
-]
+pandas = {version = ">=1.3.4,<3", markers = "python_version >= \"3.8\" and python_version < \"3.11\""}
 plotly = ">=5.0.0,<6.0.0"
 pyDOE2 = ">=1.3.0,<2.0.0"
 "ruamel.yaml" = ">=0.15.78,<0.18"
@@ -908,23 +902,19 @@ mpi4py = ["mpi4py (>=3.1.3,<4.0.0)", "mpi4py (>=3.1.4,<4.0.0)", "mpi4py (>=3.1.5
 
 [[package]]
 name = "fast-oad-cs25"
-version = "0.5.0"
+version = "0.6.0"
 description = "FAST-OAD_CS25 is a FAST-OAD plugin with CS25/FAR25-related models."
 category = "main"
 optional = false
-python-versions = "<4.0,>=3.8"
+python-versions = "<3.11,>=3.8"
 files = [
-    {file = "fast_oad_cs25-0.5.0-py3-none-any.whl", hash = "sha256:ed2a65e7d54d31b8cc0a13142aefe44cb800b901dbd414870aa99bafdf03ca36"},
-    {file = "fast_oad_cs25-0.5.0.tar.gz", hash = "sha256:7dec37c043177df777127437072c6ce7a8291b6d9299930556f46cecd89c607e"},
+    {file = "fast_oad_cs25-0.6.0-py3-none-any.whl", hash = "sha256:703a987fd1b043d364508dae55b3a7dc7f207097f502c1172916ecf99b71b73d"},
+    {file = "fast_oad_cs25-0.6.0.tar.gz", hash = "sha256:db51d316f3e9dc4a79e1a7d5e64a97ccc6b1a812ad7defefa1054ae523a233cd"},
 ]
 
 [package.dependencies]
-fast-oad-core = ">=1.7.1,<2.0.0"
-numpy = ">=1.22.0,<2.0.0"
-pandas = ">=1.3.4,<2.0.0"
+fast-oad-core = ">=1.7.3,<2.0.0"
 pyparsing = ">=3.0.0,<4.0.0"
-scipy = ">=1.9.3,<2.0.0"
-stdatm = ">=0.4,<0.5"
 
 [[package]]
 name = "fastjsonschema"
@@ -2307,7 +2297,6 @@ files = [
 numpy = [
     {version = ">=1.20.3", markers = "python_version < \"3.10\""},
     {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
-    {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
 ]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
@@ -2668,10 +2657,7 @@ files = [
 [package.dependencies]
 astroid = ">=3.2.4,<=3.3.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-dill = [
-    {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\""},
-]
+dill = {version = ">=0.2", markers = "python_version < \"3.11\""}
 isort = ">=4.2.5,<5.13.0 || >5.13.0,<6"
 mccabe = ">=0.6,<0.8"
 platformdirs = ">=2.2.0"
@@ -4416,5 +4402,5 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.8, <3.12"
-content-hash = "90e19acfa09f5ccf52d5d8ddd8c5b450bcf25a82669ec2106fa3e06f70d81724"
+python-versions = ">=3.8, <3.11"
+content-hash = "f46b6b1c64a76583e28335b6607ed0c810f2551710af446bd4e289e5b498eb97"
