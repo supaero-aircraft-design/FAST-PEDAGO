@@ -11,8 +11,6 @@ from ..plot_constants import (
     WING_ROOT_HEIGHT,
 )
 
-pi = np.pi
-
 
 def _aircraft_front_view_plot(
     aircraft_file_path: str,

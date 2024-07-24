@@ -12,8 +12,6 @@ from ..plot_constants import (
     WING_ROOT_HEIGHT,
 )
 
-pi = np.pi
-
 
 def _aircraft_side_view_plot(
     aircraft_file_path: str,
@@ -237,8 +235,8 @@ def _aircraft_side_view_plot(
     x_vt = np.array(
         [
             0.0,
-            vt_span * np.tan(vt_sweep_0 * pi / 180),
-            vt_span * np.tan(vt_sweep_0 * pi / 180) + vt_tip_chord,
+            vt_span * np.tan(vt_sweep_0 * np.pi / 180),
+            vt_span * np.tan(vt_sweep_0 * np.pi / 180) + vt_tip_chord,
             vt_root_chord,
             0.0,
         ]
@@ -259,8 +257,8 @@ def _aircraft_side_view_plot(
     x_ht = np.array(
         [
             0.0,
-            ht_span / 2.0 * np.tan(ht_sweep_0 * pi / 180),
-            ht_tip_chord + ht_span / 2.0 * np.tan(ht_sweep_0 * pi / 180),
+            ht_span / 2.0 * np.tan(ht_sweep_0 * np.pi / 180),
+            ht_tip_chord + ht_span / 2.0 * np.tan(ht_sweep_0 * np.pi / 180),
             ht_root_chord,
             0.0,
         ]

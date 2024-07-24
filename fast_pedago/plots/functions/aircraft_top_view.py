@@ -11,8 +11,6 @@ from ..plot_constants import (
     HORIZONTAL_WIDTH_ELEVATOR,
 )
 
-pi = np.pi
-
 
 def _aircraft_top_view_plot(
     aircraft_file_path: str,

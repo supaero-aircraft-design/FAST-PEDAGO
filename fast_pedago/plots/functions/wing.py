@@ -6,8 +6,6 @@ from IPython.display import display
 
 from fastoad.io import VariableIO
 
-pi = np.pi
-
 
 def _wing_plot(
     aircraft_file_path: str,
