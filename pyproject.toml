@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "FAST-PEDAGO"
-version = "0.2.0"
+version = "1.0.0"
 readme = "README.md"
 description = ""
 authors = [
     "Ousmane SY <Ousmane.SY@isae-supaero.fr>",
     "Eric MONTSERRAT ROBLES <Eric.MONTSERRAT-ROBLES@student.isae-supaero.fr>",
-    "Florent LUTZ <Florent.LUTZ2@isae-supaero.fr>"
+    "Florent LUTZ <Florent.LUTZ2@isae-supaero.fr>",
+    "Marien GIORDANI <Marien.GIORDANI@isae-supaero.fr>",
 ]
 exclude = ["**/tests/**"]
 
@@ -29,9 +30,10 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Physics"
 ]
 
