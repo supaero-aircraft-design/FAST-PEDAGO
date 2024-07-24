@@ -292,13 +292,13 @@ class ProcessLauncher:
 
         :param is_MDO: runs the driver if MDO, and the model if MDA.
         """
-        if is_MDO:
-            self.problem.run_driver()
-        else:
-            # Run the problem and write output. Catch warning for cleaner
-            # interface
-            with warnings.catch_warnings():
-                warnings.simplefilter(action="ignore", category=FutureWarning)
+        # Run the problem and write output. Catch warning for cleaner
+        # interface
+        with warnings.catch_warnings():
+            warnings.simplefilter(action="ignore", category=FutureWarning)
+            if is_MDO:
+                self.problem.run_driver()
+            else:
                 self.problem.run_model()
 
         self.problem.write_outputs()
