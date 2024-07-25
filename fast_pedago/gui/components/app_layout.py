@@ -45,6 +45,7 @@ class Drawer(v.NavigationDrawer):
         self.clipped = True
         self.width = DRAWER_WIDTH
         self.v_model = True
+        self.hide_overlay = True
 
         # The content attributes will be used to change the components
         # displayed easily.
