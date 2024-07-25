@@ -5,12 +5,11 @@ from stdatm import Atmosphere
 
 from scipy.optimize import fsolve
 
-pi = np.pi
 
 # Undefined constants by FAST-OAD so plausible values have been chosen
 cl0_wing = 0.15
 cm0_wing = -0.2
-ths_deportation = -5 * pi / 180  # rad
+ths_deportation = -5 * np.pi / 180  # rad
 
 
 def _stability_diagram_plot(
@@ -67,13 +66,13 @@ def _stability_diagram_plot(
     )
     fuselage_rear_length = variables["data:geometry:fuselage:rear_length"].value[0]
 
-    v1 = 2.0 * pi / 3.0 * fuselage_radius ** 3.0
+    v1 = 2.0 * np.pi / 3.0 * fuselage_radius ** 3.0
     v2 = (
-        pi
+        np.pi
         * fuselage_radius ** 2
         * (fuselage_length - fuselage_rear_length - fuselage_front_length)
     )
-    v3 = 1 / 3.0 * pi * fuselage_radius ** 2 * fuselage_rear_length
+    v3 = 1 / 3.0 * np.pi * fuselage_radius ** 2 * fuselage_rear_length
     v = v1 + v2 + v3
 
     # Sh/S
@@ -81,11 +80,11 @@ def _stability_diagram_plot(
     actual_surface_ratio = area_ht / area_wing
 
     # beta calculation (geometry):
-    beta = np.arctan2(span_wing / 2.0 * pi / 4.0, x_ht_form_wing)
+    beta = np.arctan2(span_wing / 2.0 * np.pi / 4.0, x_ht_form_wing)
 
     # 1) Neutral point calculation (rear limit):
 
-    ht_effectiveness = 1 - cl_alpha_wing * 8 / (pi ** 3 * aspect_ratio_wing) * (
+    ht_effectiveness = 1 - cl_alpha_wing * 8 / (np.pi ** 3 * aspect_ratio_wing) * (
         1 + 1 / np.cos(beta)
     )
     numerator = (
@@ -110,7 +109,7 @@ def _stability_diagram_plot(
         return (
             -8
             * cl_wing_function
-            / (pi ** 3 * aspect_ratio_wing)
+            / (np.pi ** 3 * aspect_ratio_wing)
             * (1 + 1 / np.cos(beta))
         )
 
@@ -127,7 +126,7 @@ def _stability_diagram_plot(
 
         return left_member - right_member
 
-    alpha_initial_guess = 5 * pi / 180 * np.ones(len(surface_ratio))
+    alpha_initial_guess = 5 * np.pi / 180 * np.ones(len(surface_ratio))
 
     alpha = fsolve(
         lift_equilibrium,

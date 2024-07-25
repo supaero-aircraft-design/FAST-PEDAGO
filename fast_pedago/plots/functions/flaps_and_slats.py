@@ -5,8 +5,6 @@ from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
 
-pi = np.pi
-
 
 def _flaps_and_slats_plot(
     aircraft_file_path: str,

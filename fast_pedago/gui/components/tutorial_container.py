@@ -33,12 +33,6 @@ class TutorialContainer(v.Col):
         """
         self.class_ = "pa-8"
 
-        self.start_button = v.Btn(
-            color="#32cd32",
-            x_large=True,
-            children=["Start making aircraft"],
-        )
-
         tutorial_carousel = v.Carousel(
             height="65vh",
             width="70vw",
@@ -73,11 +67,6 @@ class TutorialContainer(v.Col):
                             ],
                         ),
                         v.Row(
-                            justify="center",
-                            align="center",
-                            children=[self._fast_oad_logo],
-                        ),
-                        v.Row(
                             class_="px-12",
                             justify="center",
                             align="center",
@@ -87,6 +76,11 @@ class TutorialContainer(v.Col):
                                     children=[Slide.Introduction.SELECTION],
                                 ),
                             ],
+                        ),
+                        v.Row(
+                            justify="center",
+                            align="center",
+                            children=[self._fast_oad_logo],
                         ),
                         v.Row(
                             class_="px-12",
@@ -258,15 +252,6 @@ class TutorialContainer(v.Col):
                         lg=8,
                         children=[tutorial_carousel],
                     ),
-                ],
-            ),
-            v.Row(
-                class_="pt-5",
-                justify="space-around",
-                align="bottom",
-                no_gutters=True,
-                children=[
-                    self.start_button,
                 ],
             ),
         ]

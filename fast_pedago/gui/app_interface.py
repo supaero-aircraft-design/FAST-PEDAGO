@@ -37,12 +37,13 @@ class AppInterface(v.App):
         )
 
         self._build_layout()
-        self._to_source_selection()
+        self._to_tutorial()
 
-    def _to_source_selection(self):
+    def _to_tutorial(self):
         """
-        Displays tutorial and source selection widget.
+        Displays tutorial.
         """
+        self.footer.start_button.show()
         self.drawer.hide()
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
@@ -54,6 +55,7 @@ class AppInterface(v.App):
         Displays main window, with input drawer and tabs to change
         between residuals/objectives graph and output figures.
         """
+        self.footer.start_button.hide()
         self.drawer.show()
         self.header.open_drawer_button.show()
         self.padding_column.show()
@@ -83,7 +85,6 @@ class AppInterface(v.App):
         """
         # tutorial widgets
         self.tutorial = TutorialContainer()
-        self.tutorial.start_button.on_event("click", lambda *args: self._to_main())
 
         # Inputs + process graph widgets
         self.process_figures = ProcessFiguresContainer()
@@ -132,9 +133,7 @@ class AppInterface(v.App):
         self.graphs.on_event("change", self._switch_tab)
 
         self.header = Header()
-        self.header.fast_oad_logo.on_event(
-            "click", lambda *args: self._to_source_selection()
-        )
+        self.header.fast_oad_logo.on_event("click", lambda *args: self._to_tutorial())
         self.header.open_drawer_button.on_event(
             "click",
             self._open_or_close_drawer,
@@ -149,6 +148,9 @@ class AppInterface(v.App):
             "click",
             self._open_or_close_drawer,
         )
+
+        self.footer = Footer()
+        self.footer.start_button.on_event("click", lambda *args: self._to_main())
 
         self.to_outputs_button = v.Btn(
             color="primary",
@@ -206,7 +208,7 @@ class AppInterface(v.App):
                     ),
                 ],
             ),
-            Footer(),
+            self.footer,
         ]
 
     def _switch_process(self, widget, event, data):
@@ -295,7 +297,7 @@ class AppInterface(v.App):
         The subdirectories of workdir are not deleted in the process.
         """
         # Gets back to source file selection
-        self._to_source_selection()
+        self._to_tutorial()
         # Clears the output selection
         self.output_figures.output_selection.v_model = []
         self.output_figures.hide_graphs()
