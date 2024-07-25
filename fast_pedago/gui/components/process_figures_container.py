@@ -83,7 +83,7 @@ class ProcessFiguresContainer(v.Col):
             ),
         ]
 
-    def plot(self, iterations, main, limit=None):
+    def plot(self, iterations, main, limit=None, is_aircraft_green: bool = False):
         """
         Plots the graphs on the active figure
 
@@ -92,6 +92,7 @@ class ProcessFiguresContainer(v.Col):
             values.
         :param limit: a limit to plot (threshold/minimum objective), y axis
             value. Default to None will trace nothing
+        :param is_aircraft_green: if true, the main graph will be green.
         """
         if self._is_MDA:
             active_figure = self._residuals_figure
@@ -106,7 +107,10 @@ class ProcessFiguresContainer(v.Col):
 
         limit_graph.x = iterations
         limit_graph.y = [limit for _ in iterations]
-
+        if is_aircraft_green:
+            main_graph.line.color = "green"
+        else:
+            main_graph.line.color = "blue"
         self._display.children = [active_figure]
 
     # TODO: Implement the generation of the graphs

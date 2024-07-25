@@ -35,6 +35,7 @@ class ProcessPlotter:
         process_ended: Event,
         recorder_database_file_path: Union[str, PathLike],
         is_MDO: bool = False,
+        aircraft_name: str = None,
     ):
         """
         Plots the relative error of each iteration during MDA process, and the
@@ -48,11 +49,17 @@ class ProcessPlotter:
             process data
         :param is_MDA: boolean indicating if the program should plot
             objectives (MDO) or residuals (MDA)
+        :param aircraft_name: name of the aircraft to plot, if it contains green
+            the plot will be green
         """
 
         temp_recorder_database_file_path = str(recorder_database_file_path).replace(
             RECORDER_FILE_SUFFIX,
             "_temp" + RECORDER_FILE_SUFFIX,
+        )
+
+        is_aircraft_green = (
+            "green" in aircraft_name.lower() or "vert" in aircraft_name.lower()
         )
 
         main = None
@@ -97,8 +104,8 @@ class ProcessPlotter:
                     # "iterations" is the abscissa value, "main" is either the residuals or the
                     # objectives, and "limit" is either the targeted residuals or the minimum
                     # objective reached.
-                    self.figure.plot(iterations, main, limit)
-
+                    self.figure.plot(iterations, main, limit, is_aircraft_green)
+           
             except Exception:
                 pass
 
@@ -106,6 +113,6 @@ class ProcessPlotter:
         if is_MDO:
             limit = min(main)
             if self.figure:
-                self.figure.plot(iterations, main, limit)
+                self.figure.plot(iterations, main, limit, is_aircraft_green)
 
         Path.unlink(Path(temp_recorder_database_file_path))

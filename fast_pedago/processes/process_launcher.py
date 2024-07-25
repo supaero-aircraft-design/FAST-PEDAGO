@@ -24,6 +24,7 @@ from fast_pedago.utils import (
     FLIGHT_DATA_FILE_SUFFIX,
     RECORDER_FILE_SUFFIX,
     DEFAULT_PROCESS_NAME,
+    SEPARATOR,
 )
 
 
@@ -69,7 +70,12 @@ class ProcessLauncher:
         )
         plotting_thread = Thread(
             target=self.plotter.plot,
-            args=(process_ended, self.recorder_database_file_path, is_MDO),
+            args=(
+                process_ended,
+                self.recorder_database_file_path,
+                is_MDO,
+                self.process_name,
+            ),
         )
 
         process_thread.start()
@@ -253,9 +259,9 @@ class ProcessLauncher:
 
         new_inputs["data:geometry:wing:aspect_ratio"].value = self.wing_aspect_ratio
 
-        new_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.bypass_ratio
+        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = (
+            self.bypass_ratio
+        )
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
@@ -432,4 +438,4 @@ class ProcessLauncher:
 
         :param name: the new process name
         """
-        self.process_name = re.sub("[^A-Za-z0-9_]", "", name)
+        self.process_name = re.sub("[^A-Za-z0-9_]", "", name.replace(" ", SEPARATOR))
