@@ -9,10 +9,13 @@ from pathlib import Path
 from time import sleep
 from threading import Event
 
+import fastoad.api as oad
+
 from fast_pedago.utils import (
     _extract_objective,
     _extract_residuals,
     RECORDER_FILE_SUFFIX,
+    PathManager,
 )
 
 
@@ -23,9 +26,6 @@ class ProcessPlotter:
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        # Target residuals have to be set to plot MDA
-        self.target_residuals = None
 
         # graph to plot on, with a plot function.
         self.figure = None
@@ -38,8 +38,7 @@ class ProcessPlotter:
     ):
         """
         Plots the relative error of each iteration during MDA process, and the
-        relative error threshold (The threshold 'target_residuals' have to be
-        set externally after configuring MDA), or plots the objectives of each
+        relative error threshold, or plots the objectives of each
         iteration and the minimum objective reached during an MDO process.
         This method is made to be used in a separated thread from the main
         MDA/MDO process
@@ -60,9 +59,13 @@ class ProcessPlotter:
         if is_MDO:
             limit = None
         else:
-            # If the target residuals haven't been set by the mda
-            # launcher, nothing will be plotted
-            limit = self.target_residuals
+            # Extract the target residuals from the MDA configuration file
+            mda_configurator = oad.FASTOADProblemConfigurator(
+                PathManager.mda_configuration_file_path
+            )
+            mda_problem = mda_configurator.get_problem()
+            limit = mda_problem.model.nonlinear_solver.options["rtol"]
+
         iterations = None
 
         while not process_ended.is_set():
@@ -91,6 +94,9 @@ class ProcessPlotter:
                     )
 
                 if self.figure:
+                    # "iterations" is the abscissa value, "main" is either the residuals or the
+                    # objectives, and "limit" is either the targeted residuals or the minimum
+                    # objective reached.
                     self.figure.plot(iterations, main, limit)
 
             except Exception:

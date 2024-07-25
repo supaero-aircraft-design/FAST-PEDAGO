@@ -61,10 +61,7 @@ class ProcessLauncher:
         if is_MDO:
             self._configure_mdo()
         else:
-            # Sets the residuals plotter target_residuals attribute after
-            # configuring the MDA
-            self.target_residuals = self._configure_mda()
-            self.plotter.target_residuals = self.target_residuals
+            self._configure_mda()
 
         process_thread = Thread(
             target=self._run_problem,
@@ -270,20 +267,11 @@ class ProcessLauncher:
         self.problem = self.configurator.get_problem(read_inputs=True)
         self.problem.setup()
 
-        # Save target residuals
-        # The "target_residuals" and recorder file path are declared with
-        # "self" to be able to retrieve them from the plot function in an
-        # other thread.
-        # There might be better ways to pass them from a thread to an other.
-        target_residuals = self.problem.model.nonlinear_solver.options["rtol"]
-
         model = self.problem.model
 
         self.recorder = om.SqliteRecorder(self.recorder_database_file_path)
         model.nonlinear_solver.add_recorder(self.recorder)
         model.nonlinear_solver.recording_options["record_solver_residuals"] = True
-
-        return target_residuals
 
     def _run_problem(self, is_MDO: bool = False):
         """
