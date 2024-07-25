@@ -195,16 +195,45 @@ class Footer(v.Footer):
         buttons.
         """
         self.padless = True
+        self.outlined = True
         self.app = True
         self.color = "white"
+
+        self.start_button = v.Btn(
+            color="#32cd32",
+            x_large=True,
+            children=["Start making aircraft"],
+        )
 
         self.children = [
             v.Row(
                 align="center",
-                justify="end",
+                justify="center",
+                no_gutters=True,
                 children=[
-                    v.Col(cols="1", children=[self._isae_logo]),
-                    v.Col(class_="pe-6", cols=2, children=[self._airbus_logo]),
+                    v.Col(),
+                    v.Col(
+                        children=[
+                            v.Row(justify="center", children=[self.start_button]),
+                        ]
+                    ),
+                    v.Col(
+                        children=[
+                            v.Row(
+                                align="center",
+                                justify="end",
+                                no_gutters=True,
+                                children=[
+                                    v.Col(cols=3, children=[self._isae_logo]),
+                                    v.Col(
+                                        class_="pe-6",
+                                        cols=7,
+                                        children=[self._airbus_logo],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
                 ],
             ),
         ]
@@ -217,6 +246,7 @@ class Footer(v.Footer):
         # Get ISAE logo
         self._isae_logo = _image_from_path(
             PathManager.path_to("resources", ISAE_LOGO),
+            max_height="10vh",
         )
         # Sets the link to supaero website, to open in a new tab
         self._isae_logo.attributes = {
@@ -226,7 +256,7 @@ class Footer(v.Footer):
 
         # Get Airbus logo
         self._airbus_logo = _image_from_path(
-            PathManager.path_to("resources", AIRBUS_LOGO)
+            PathManager.path_to("resources", AIRBUS_LOGO), max_height="10vh"
         )
         # Sets the link to airbus website, to open in a new tab
         self._airbus_logo.attributes = {

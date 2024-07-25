@@ -43,6 +43,7 @@ class AppInterface(v.App):
         """
         Displays tutorial.
         """
+        self.footer.start_button.show()
         self.drawer.hide()
         self.header.open_drawer_button.hide()
         self.padding_column.hide()
@@ -54,6 +55,7 @@ class AppInterface(v.App):
         Displays main window, with input drawer and tabs to change
         between residuals/objectives graph and output figures.
         """
+        self.footer.start_button.hide()
         self.drawer.show()
         self.header.open_drawer_button.show()
         self.padding_column.show()
@@ -83,7 +85,6 @@ class AppInterface(v.App):
         """
         # tutorial widgets
         self.tutorial = TutorialContainer()
-        self.tutorial.start_button.on_event("click", lambda *args: self._to_main())
 
         # Inputs + process graph widgets
         self.process_figures = ProcessFiguresContainer()
@@ -148,6 +149,9 @@ class AppInterface(v.App):
             self._open_or_close_drawer,
         )
 
+        self.footer = Footer()
+        self.footer.start_button.on_event("click", lambda *args: self._to_main())
+
         self.to_outputs_button = v.Btn(
             color="primary",
             children=[
@@ -204,7 +208,7 @@ class AppInterface(v.App):
                     ),
                 ],
             ),
-            Footer(),
+            self.footer,
         ]
 
     def _switch_process(self, widget, event, data):
