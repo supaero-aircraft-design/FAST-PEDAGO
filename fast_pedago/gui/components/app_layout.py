@@ -165,7 +165,7 @@ class Header(v.AppBar):
         )
         self.fast_oad_logo.v_on = "tooltip.on"
         self._fast_oad_logo_wrapper = v.Tooltip(
-            absolute=True,
+            bottom=True,
             v_slots=[
                 {
                     "name": "activator",
@@ -173,7 +173,7 @@ class Header(v.AppBar):
                     "children": self.fast_oad_logo,
                 }
             ],
-            children=["Return to source file selection"],
+            children=["Return to tutorial"],
         )
 
 
