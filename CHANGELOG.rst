@@ -2,6 +2,15 @@
 Changelog
 =========
 
+Version 1.0.1
+==================
+
+- Updated FAST-OAD CS25 plugin to last version (was causing errors on plots that used wrong parameters names) by @Mokyoslurp
+- Tutorial layout adjustements for smaller screens by @Mokyoslurp
+- Spaces in the inputted aircraft name are remplaced by underscores rather than being erased by @aeomath
+- Removed dark overlay appearing on small screens when starting the app by @Mokyoslurp
+- Minor code refactors by @Mokyoslurp 
+
 Version 1.0.0
 ==================
 
