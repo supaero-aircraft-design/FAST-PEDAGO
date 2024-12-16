@@ -46,7 +46,7 @@ classifiers = [
 # doing again the commit including changes in docs/requirements.txt will succeed.
 python = ">=3.8, <3.11"
 fast-oad-cs25 = ">=0.6.0"
-fast-oad-core = ">=1.7.3"
+fast-oad-core = "1.7.4"
 ipywidgets = "7.7.2"
 ipyvuetify = "1.9.4"
 appmode = "0.9.0"
