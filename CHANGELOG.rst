@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 1.0.2
+==================
+
+- Froze version of FAST-OAD-core by @florentLutz
+
 Version 1.0.1
 ==================
 
