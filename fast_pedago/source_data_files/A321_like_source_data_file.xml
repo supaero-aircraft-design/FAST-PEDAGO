@@ -91,6 +91,7 @@
       </static_margin>
     </handling_qualities>
     <load_case>
+      <gust_intensity>0.5</gust_intensity>
       <lc1>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
         <Vc_EAS units="m/s" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
@@ -277,8 +278,8 @@
     <propulsion>
       <rubber_engine>
         <SFC>
-          <k_cr is_input="True">1.0<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
-          <k_sl is_input="True">1.0<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
+          <k_cr is_input="True">0.8<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
+          <k_sl is_input="True">0.8<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
         </SFC>
       </rubber_engine>
     </propulsion>
