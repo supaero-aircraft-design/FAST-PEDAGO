@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 1.0.3
+==================
+
+- Adjust parameters for A321 use-case by @florentLutz
+
 Version 1.0.2
 ==================
 
