@@ -25,7 +25,6 @@ class BetterMissionViewer(MissionViewer):
         """
 
         with self._output_widget:
-
             clear_output(wait=True)
 
             x_name = self._x_widget.value
@@ -34,7 +33,6 @@ class BetterMissionViewer(MissionViewer):
             fig = None
 
             for mission_name in self.missions:
-
                 if fig is None:
                     fig = go.Figure()
                 x = self.missions[mission_name][x_name]

@@ -46,9 +46,7 @@ class InputsContainer(v.List):
             "Launch optimization",
         ]
         self.process_name_field.label = "Optimization name"
-        self.process_name_field.placeholder = (
-            "Write a name for your optimization process"
-        )
+        self.process_name_field.placeholder = "Write a name for your optimization process"
 
     def to_MDA(self):
         """
@@ -227,12 +225,8 @@ class InputsContainer(v.List):
             with_checkbox=True,
         )
 
-        self._sweep_w_design_var_input.checkbox.on_event(
-            "change", self._ensure_one_design_var
-        )
-        self._ar_design_var_input.checkbox.on_event(
-            "change", self._ensure_one_design_var
-        )
+        self._sweep_w_design_var_input.checkbox.on_event("change", self._ensure_one_design_var)
+        self._ar_design_var_input.checkbox.on_event("change", self._ensure_one_design_var)
 
         self._mdo_input = [
             _InputsCategory(
@@ -519,9 +513,7 @@ class InputsContainer(v.List):
 
         :param source_data_file_name: the source file to read data from
         """
-        reference_inputs = self.process_launcher.get_reference_inputs(
-            source_data_file_name
-        )
+        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
         self._n_pax_input.slider.v_model = reference_inputs[0]
         self._v_app_input.slider.v_model = reference_inputs[1]
         self._cruise_mach_input.slider.v_model = reference_inputs[2]

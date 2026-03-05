@@ -92,9 +92,7 @@ class AppInterface(v.App):
 
         self.inputs = InputsContainer(self.process_launcher)
 
-        self.inputs.source_data_file_selector.on_event(
-            "change", self._set_source_data_file
-        )
+        self.inputs.source_data_file_selector.on_event("change", self._set_source_data_file)
         self.inputs.process_selection_switch.on_event(
             "change",
             self._switch_process,

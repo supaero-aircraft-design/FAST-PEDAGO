@@ -10,11 +10,7 @@ from ..plot_constants import COLORS
 
 
 def _polar_with_L_R_ratio_plot(
-    aircraft_file_path: Union[str, PathLike],
-    name=None,
-    fig=None,
-    *,
-    file_formatter=None
+    aircraft_file_path: Union[str, PathLike], name=None, fig=None, *, file_formatter=None
 ) -> go.FigureWidget:
     """
     Returns a figure plot of the aircraft drag polar.
@@ -42,9 +38,7 @@ def _polar_with_L_R_ratio_plot(
     cl_short = cl[cd <= 2.0]
 
     L_D_max_index = [
-        i
-        for i in range(len(cd_short))
-        if cd_short[i] != 0 and cl_short[i] / cd_short[i] == L_D_max
+        i for i in range(len(cd_short)) if cd_short[i] != 0 and cl_short[i] / cd_short[i] == L_D_max
     ][0]
 
     if fig is None:
@@ -88,8 +82,6 @@ def _polar_with_L_R_ratio_plot(
 
     fig = go.FigureWidget(fig)
 
-    fig.update_layout(
-        title_text="Drag Polar", title_x=0.5, xaxis_title="Cd", yaxis_title="Cl"
-    )
+    fig.update_layout(title_text="Drag Polar", title_x=0.5, xaxis_title="Cd", yaxis_title="Cl")
 
     return fig

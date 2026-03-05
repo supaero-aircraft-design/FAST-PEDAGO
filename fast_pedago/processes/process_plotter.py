@@ -58,9 +58,7 @@ class ProcessPlotter:
             "_temp" + RECORDER_FILE_SUFFIX,
         )
 
-        is_aircraft_green = (
-            "green" in aircraft_name.lower() or "vert" in aircraft_name.lower()
-        )
+        is_aircraft_green = "green" in aircraft_name.lower() or "vert" in aircraft_name.lower()
 
         main = None
         if is_MDO:
@@ -80,9 +78,7 @@ class ProcessPlotter:
             try:
                 # Copy the db file before reading it to avoid reading when an
                 # other thread is writing, which could cause the code to fail.
-                shutil.copyfile(
-                    recorder_database_file_path, temp_recorder_database_file_path
-                )
+                shutil.copyfile(recorder_database_file_path, temp_recorder_database_file_path)
 
                 if not is_MDO:
                     # Here "main" is the residuals.
@@ -105,7 +101,7 @@ class ProcessPlotter:
                     # objectives, and "limit" is either the targeted residuals or the minimum
                     # objective reached.
                     self.figure.plot(iterations, main, limit, is_aircraft_green)
-           
+
             except Exception:
                 pass
 

@@ -137,9 +137,7 @@ class ProcessLauncher:
         # overwrite like the input and output filepath. There may be a way
         # to do it by modifying the options of the performances
         # components of the problem but it seems too much
-        self.old_mission_data_file_path = PathManager.path_to(
-            "output", "flight_points.csv"
-        )
+        self.old_mission_data_file_path = PathManager.path_to("output", "flight_points.csv")
         self.new_mission_data_file_path = PathManager.path_to(
             "output", self.process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX
         )
@@ -202,15 +200,9 @@ class ProcessLauncher:
         self.problem.setup()
 
         # Ran the case with the proper mission and go those coefficient
-        self.problem.set_val(
-            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975
-        )
-        self.problem.set_val(
-            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993
-        )
-        self.problem.set_val(
-            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055
-        )
+        self.problem.set_val(name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975)
+        self.problem.set_val(name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993)
+        self.problem.set_val(name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055)
 
         driver = self.problem.driver
 
@@ -259,9 +251,7 @@ class ProcessLauncher:
 
         new_inputs["data:geometry:wing:aspect_ratio"].value = self.wing_aspect_ratio
 
-        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = (
-            self.bypass_ratio
-        )
+        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = self.bypass_ratio
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
@@ -369,9 +359,7 @@ class ProcessLauncher:
         :return: a list of int or float inputs from the source file
         """
         # Read the source data file
-        source_data_file_path = PathManager.to_full_source_file_name(
-            source_data_file_name
-        )
+        source_data_file_path = PathManager.to_full_source_file_name(source_data_file_name)
         self.reference_inputs = oad.DataFile(source_data_file_path)
 
         n_pax = self.reference_inputs["data:TLAR:NPAX"].value[0]
@@ -396,12 +384,8 @@ class ProcessLauncher:
             self.reference_inputs["data:weight:aircraft:max_payload"].units,
             "kg",
         )
-        wing_aspect_ratio = self.reference_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value[0]
-        bypass_ratio = self.reference_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value[0]
+        wing_aspect_ratio = self.reference_inputs["data:geometry:wing:aspect_ratio"].value[0]
+        bypass_ratio = self.reference_inputs["data:propulsion:rubber_engine:bypass_ratio"].value[0]
 
         return (
             n_pax,
@@ -421,9 +405,7 @@ class ProcessLauncher:
         :return: True if it converged, False either
         """
         iterations, relative_error = np.array(
-            _extract_residuals(
-                recorder_database_file_path=self.recorder_database_file_path
-            )
+            _extract_residuals(recorder_database_file_path=self.recorder_database_file_path)
         )
 
         for residual in relative_error:

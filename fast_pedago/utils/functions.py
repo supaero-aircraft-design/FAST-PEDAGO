@@ -63,10 +63,7 @@ def _extract_residuals(recorder_database_file_path: Union[str, PathLike]) -> lis
 
     # For the display, first iteration will be 1
     iterations, relative_error = zip(
-        *[
-            (i + 1, case_reader.get_case(case_id).rel_err)
-            for i, case_id in enumerate(solver_cases)
-        ]
+        *[(i + 1, case_reader.get_case(case_id).rel_err) for i, case_id in enumerate(solver_cases)]
     )
 
     return iterations, relative_error

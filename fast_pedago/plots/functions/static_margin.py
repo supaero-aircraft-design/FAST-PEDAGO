@@ -153,13 +153,7 @@ def _NACA_4_digits(
     yt = (
         5
         * t
-        * (
-            0.2969 * np.sqrt(x)
-            - 0.1260 * x
-            - 0.3516 * (x ** 2)
-            + 0.2843 * (x ** 3)
-            - 0.1015 * (x ** 4)
-        )
+        * (0.2969 * np.sqrt(x) - 0.1260 * x - 0.3516 * (x**2) + 0.2843 * (x**3) - 0.1015 * (x**4))
     )
 
     pi = round(p * nb_points)
@@ -168,7 +162,7 @@ def _NACA_4_digits(
     yc[pi:] = ((m) / ((1 - p) ** 2)) * ((1 - 2 * p) + 2 * x[pi:] * p - (x[pi:] ** 2))
 
     ycp = np.array(x)
-    ycp[0:pi] = (2 * m / (p ** 2)) * (p - x[0:pi])
+    ycp[0:pi] = (2 * m / (p**2)) * (p - x[0:pi])
     ycp[pi:] = ((2 * m) / ((1 - p) ** 2)) * (p - x[pi:])
 
     theta = np.arctan(ycp)

@@ -149,9 +149,7 @@ class OutputGraphsPlotter:
             label="This graph only displays one output, please choose one.",
         )
         self.file_selector.on_event("click", self._update_selection_data)
-        self.file_selector.on_event(
-            "change", lambda widget, event, data: self._base_plot(data)
-        )
+        self.file_selector.on_event("change", lambda widget, event, data: self._base_plot(data))
         self.file_selector.hide()
 
         self.output_display = v.Container(
@@ -223,7 +221,6 @@ class OutputGraphsPlotter:
             # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
-
                     path_to_output_file = PathManager.path_to(
                         "output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
@@ -235,9 +232,7 @@ class OutputGraphsPlotter:
 
                     # Mission plot works differently
                     if self.plot_name == "Mission":
-                        mission_viewer.add_mission(
-                            path_to_flight_data_file, sizing_process_to_add
-                        )
+                        mission_viewer.add_mission(path_to_flight_data_file, sizing_process_to_add)
 
                     else:
                         fig = self.plot_function(

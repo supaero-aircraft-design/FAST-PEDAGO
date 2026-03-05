@@ -67,9 +67,7 @@ def simplified_payload_range_plot(
     name: str = None,
     fig: go.Figure = None,
 ) -> go.FigureWidget:
-    return _simplified_payload_range_plot(
-        aircraft_file_path, flight_data_file_path, name, fig
-    )
+    return _simplified_payload_range_plot(aircraft_file_path, flight_data_file_path, name, fig)
 
 
 def stability_diagram_plot(

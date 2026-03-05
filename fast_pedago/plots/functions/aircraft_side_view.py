@@ -38,28 +38,20 @@ def _aircraft_side_view_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     # Wing parameters
-    wing_tip_leading_edge_x = variables[
-        "data:geometry:wing:tip:leading_edge:x:local"
-    ].value[0]
+    wing_tip_leading_edge_x = variables["data:geometry:wing:tip:leading_edge:x:local"].value[0]
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
     wing_kink_chord = variables["data:geometry:wing:kink:chord"].value[0]
-    wing_kink_leading_edge_x = variables[
-        "data:geometry:wing:kink:leading_edge:x:local"
-    ].value[0]
+    wing_kink_leading_edge_x = variables["data:geometry:wing:kink:leading_edge:x:local"].value[0]
     mac25_x_position = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
-    distance_root_mac_chords = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    distance_root_mac_chords = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
 
     # Horizontal tail parameters
     ht_root_chord = variables["data:geometry:horizontal_tail:center:chord"].value[0]
     ht_tip_chord = variables["data:geometry:horizontal_tail:tip:chord"].value[0]
     ht_sweep_0 = variables["data:geometry:horizontal_tail:sweep_0"].value[0]
-    local_ht_25mac_x = variables[
-        "data:geometry:horizontal_tail:MAC:at25percent:x:local"
-    ].value[0]
+    local_ht_25mac_x = variables["data:geometry:horizontal_tail:MAC:at25percent:x:local"].value[0]
     ht_distance_from_wing = variables[
         "data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -69,9 +61,7 @@ def _aircraft_side_view_plot(
     vt_root_chord = variables["data:geometry:vertical_tail:root:chord"].value[0]
     vt_tip_chord = variables["data:geometry:vertical_tail:tip:chord"].value[0]
     vt_sweep_0 = variables["data:geometry:vertical_tail:sweep_0"].value[0]
-    local_vt_25mac_x = variables[
-        "data:geometry:vertical_tail:MAC:at25percent:x:local"
-    ].value[0]
+    local_vt_25mac_x = variables["data:geometry:vertical_tail:MAC:at25percent:x:local"].value[0]
     vt_distance_from_wing = variables[
         "data:geometry:vertical_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -80,9 +70,7 @@ def _aircraft_side_view_plot(
     # CGs
     wing_25mac_x = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
     wing_mac_length = variables["data:geometry:wing:MAC:length"].value[0]
-    local_wing_mac_le_x = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    local_wing_mac_le_x = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
 
     # Fuselage parameters
     fuselage_max_height = variables["data:geometry:fuselage:maximum_height"].value[0]
@@ -101,15 +89,11 @@ def _aircraft_side_view_plot(
 
     z_fuselage_front = np.flip(np.linspace(0, fuselage_max_height / 2, 10))
     x_fuselage_front = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front ** 2
+        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front**2
     )
 
-    z_nose_cone = np.linspace(
-        -fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100
-    )
-    x_nose_cone = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone ** 2
-    )
+    z_nose_cone = np.linspace(-fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100)
+    x_nose_cone = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone**2
 
     z_nose_cone = np.append(z_nose_cone, z_nose_cone[0])
     x_nose_cone = np.append(x_nose_cone, x_nose_cone[0])
@@ -119,9 +103,7 @@ def _aircraft_side_view_plot(
         fuselage_max_height / 2.0 * 3.5 / 5,
         50,
     )
-    x_cockpit = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit ** 2
-    )
+    x_cockpit = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit**2
 
     z_cockpit = np.append(z_cockpit, z_cockpit[-1])
     z_cockpit = np.append(z_cockpit, z_cockpit[0])
@@ -145,19 +127,15 @@ def _aircraft_side_view_plot(
     )
 
     r = fuselage_max_height / 8
-    x_fuselage_rear = np.array(
-        [fuselage_length - fuselage_rear_length, fuselage_length - r]
-    )
+    x_fuselage_rear = np.array([fuselage_length - fuselage_rear_length, fuselage_length - r])
 
     z_fuselage_rear = np.array([fuselage_max_height / 2.0, fuselage_max_height / 2.0])
 
     z_centre = fuselage_max_height / 2.0 - r
     x_centre = fuselage_length - r
 
-    z_rear = np.linspace(
-        fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10
-    )
-    x_rear = np.sqrt(abs(r ** 2 - (z_rear - z_centre) ** 2)) + x_centre
+    z_rear = np.linspace(fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10)
+    x_rear = np.sqrt(abs(r**2 - (z_rear - z_centre) ** 2)) + x_centre
 
     x_fuselage_front = np.concatenate(
         (x_fuselage_front, np.flip(x_fuselage_front)),
@@ -193,9 +171,7 @@ def _aircraft_side_view_plot(
             0.0,
         ]
     )
-    x_wing = x_wing + (
-        mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord
-    )
+    x_wing = x_wing + (mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord)
 
     z_wing = np.array(
         [

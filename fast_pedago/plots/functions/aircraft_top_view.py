@@ -37,12 +37,8 @@ def _aircraft_top_view_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     # Wing parameters
-    wing_kink_leading_edge_x = variables[
-        "data:geometry:wing:kink:leading_edge:x:local"
-    ].value[0]
-    wing_tip_leading_edge_x = variables[
-        "data:geometry:wing:tip:leading_edge:x:local"
-    ].value[0]
+    wing_kink_leading_edge_x = variables["data:geometry:wing:kink:leading_edge:x:local"].value[0]
+    wing_tip_leading_edge_x = variables["data:geometry:wing:tip:leading_edge:x:local"].value[0]
     wing_root_y = variables["data:geometry:wing:root:y"].value[0]
     wing_kink_y = variables["data:geometry:wing:kink:y"].value[0]
     wing_tip_y = variables["data:geometry:wing:tip:y"].value[0]
@@ -53,9 +49,7 @@ def _aircraft_top_view_plot(
     nacelle_length = variables["data:geometry:propulsion:nacelle:length"].value[0]
     nacelle_y = variables["data:geometry:propulsion:nacelle:y"].value[0]
 
-    trailing_edge_kink_sweep_100_outer = variables[
-        "data:geometry:wing:sweep_100_outer"
-    ].value[0]
+    trailing_edge_kink_sweep_100_outer = variables["data:geometry:wing:sweep_100_outer"].value[0]
     slat_chord_ratio = variables["data:geometry:slat:chord_ratio"].value[0]
     slat_span_ratio = variables["data:geometry:slat:span_ratio"].value[0]
     total_wing_span = variables["data:geometry:wing:span"].value[0]
@@ -63,9 +57,7 @@ def _aircraft_top_view_plot(
     flaps_chord_ratio = variables["data:geometry:flap:chord_ratio"].value[0]
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
     mac25_x_position = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
-    distance_root_mac_chords = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    distance_root_mac_chords = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
 
     # Wing
     y_wing = np.array(
@@ -138,9 +130,7 @@ def _aircraft_top_view_plot(
     fuselage_rear_length = variables["data:geometry:fuselage:rear_length"].value[0]
 
     y_fuselage = np.linspace(0, fuselage_max_width / 2, 10)
-    x_fuselage = (
-        fuselage_front_length / (0.5 * fuselage_max_width) ** 2 * y_fuselage ** 2
-    )  # parabola
+    x_fuselage = fuselage_front_length / (0.5 * fuselage_max_width) ** 2 * y_fuselage**2  # parabola
     x_fuselage = np.append(
         x_fuselage,
         np.array(
@@ -172,9 +162,7 @@ def _aircraft_top_view_plot(
     # Inboard flap
     # Part of the code dedicated to the inboard flap
 
-    y_flaps_inboard = np.array(
-        [wing_kink_y, wing_kink_y, wing_root_y, wing_root_y, wing_kink_y]
-    )
+    y_flaps_inboard = np.array([wing_kink_y, wing_kink_y, wing_root_y, wing_root_y, wing_kink_y])
     y_flaps_inboard = np.concatenate((-y_flaps_inboard, y_flaps_inboard))
 
     x_flaps_inboard = np.array(
@@ -259,10 +247,7 @@ def _aircraft_top_view_plot(
     x_design_line = np.array([wing_root_chord])
 
     x_design_line = (
-        x_design_line
-        + mac25_x_position
-        - 0.25 * mean_aerodynamic_chord
-        - distance_root_mac_chords
+        x_design_line + mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
     )
     # pylint: disable=invalid-name # that's a common naming
     x_design_line = np.concatenate((x_design_line, x_design_line))
@@ -302,20 +287,14 @@ def _aircraft_top_view_plot(
             slat_x_root,
         ]
     )
-    x_slats_left += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_slats_left += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
     x_slats_right = x_slats_left
 
     # CGs
     wing_25mac_x = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
     wing_mac_length = variables["data:geometry:wing:MAC:length"].value[0]
-    local_wing_mac_le_x = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
-    local_ht_25mac_x = variables[
-        "data:geometry:horizontal_tail:MAC:at25percent:x:local"
-    ].value[0]
+    local_wing_mac_le_x = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
+    local_ht_25mac_x = variables["data:geometry:horizontal_tail:MAC:at25percent:x:local"].value[0]
     ht_distance_from_wing = variables[
         "data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -339,31 +318,21 @@ def _aircraft_top_view_plot(
     tg_alpha = (y_fuselage[-3] - y_fuselage[-2]) / (x_fuselage[-2] - x_fuselage[-3])
 
     ht_root_tip_x_percent = (
-        x_ht[2]
-        - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_100 * np.pi / 180)
-    ) - (
-        x_ht[1]
-        - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_0 * np.pi / 180)
-    )
+        x_ht[2] - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_100 * np.pi / 180)
+    ) - (x_ht[1] - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_0 * np.pi / 180))
     # Constants used for the computation. Root chord at X percent of the
     # horizontal tail width (depending on the value of the parameter
     # "HORIZONTAL_WIDTH_ELEVATOR").
 
     delta_l = (
         ht_root_chord
-        - np.tan(ht_sweep_0 * np.pi / 180)
-        * (fuselage_max_width / 4.0 + x_ht_position * tg_alpha)
-    ) / (
-        1 + np.tan(ht_sweep_0 * np.pi / 180) * tg_alpha
-    )  # constants used for the computation
+        - np.tan(ht_sweep_0 * np.pi / 180) * (fuselage_max_width / 4.0 + x_ht_position * tg_alpha)
+    ) / (1 + np.tan(ht_sweep_0 * np.pi / 180) * tg_alpha)  # constants used for the computation
 
-    delta_y_tot = tg_alpha * (
-        x_ht_position + delta_l
-    )  # constants used for the computation
+    delta_y_tot = tg_alpha * (x_ht_position + delta_l)  # constants used for the computation
 
     delta_x = (
-        x_ht_position * ht_span / 2.0
-        - x_virtual_ht_leading_edge * fuselage_max_width / 4.0
+        x_ht_position * ht_span / 2.0 - x_virtual_ht_leading_edge * fuselage_max_width / 4.0
     ) / (ht_span / 2.0 + x_virtual_ht_leading_edge * tg_alpha)
     # constants used for the computation
 
@@ -374,14 +343,10 @@ def _aircraft_top_view_plot(
             x_fuselage[-2] - delta_x,
             x_ht[3] - delta_l * HORIZONTAL_TAIL_ROOT,
             x_ht[2]
-            - (1 - HORIZONTAL_WIDTH_ELEVATOR)
-            * y_ht[1]
-            * np.tan(ht_sweep_100 * np.pi / 180)
+            - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_100 * np.pi / 180)
             - HORIZONTAL_TAIL_TIP * ht_root_tip_x_percent,
             x_ht[2]
-            - (1 - HORIZONTAL_WIDTH_ELEVATOR)
-            * y_ht[1]
-            * np.tan(ht_sweep_100 * np.pi / 180),
+            - (1 - HORIZONTAL_WIDTH_ELEVATOR) * y_ht[1] * np.tan(ht_sweep_100 * np.pi / 180),
             x_fuselage[-2] - delta_x,
         ]
     )
@@ -404,7 +369,7 @@ def _aircraft_top_view_plot(
 
     y_rear = np.flip(np.linspace(0, fuselage_max_width / 4, 10))
 
-    x_rear = fuselage_length + (x_elev - fuselage_length) / y_elev ** 2 * y_rear ** 2
+    x_rear = fuselage_length + (x_elev - fuselage_length) / y_elev**2 * y_rear**2
 
     x_fuselage = np.concatenate((x_fuselage, x_rear))
     y_fuselage = np.concatenate((y_fuselage, y_rear))

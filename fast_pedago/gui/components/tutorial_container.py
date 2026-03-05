@@ -271,9 +271,7 @@ class TutorialContainer(v.Col):
         self._launch_gif = _image_from_path(
             PathManager.path_to("tutorial", LAUNCH_GIF), max_height="50vh"
         )
-        self._n2_gif = _image_from_path(
-            PathManager.path_to("tutorial", N2_GIF), max_height="50vh"
-        )
+        self._n2_gif = _image_from_path(PathManager.path_to("tutorial", N2_GIF), max_height="50vh")
         self._outputs_gif = _image_from_path(
             PathManager.path_to("tutorial", OUTPUTS_GIF), max_height="35vh"
         )

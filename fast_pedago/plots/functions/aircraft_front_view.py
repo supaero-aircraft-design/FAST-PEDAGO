@@ -61,9 +61,7 @@ def _aircraft_front_view_plot(
         100,
     )
     z_fuselage = (
-        np.sqrt(1 - (y_fuselage / (fuselage_max_width / 2.0)) ** 2)
-        * fuselage_max_height
-        / 2.0
+        np.sqrt(1 - (y_fuselage / (fuselage_max_width / 2.0)) ** 2) * fuselage_max_height / 2.0
     )
     y_fuselage2 = y_fuselage
     z_fuselage2 = -z_fuselage
@@ -80,9 +78,7 @@ def _aircraft_front_view_plot(
 
     y_wing = np.array(
         [
-            np.sqrt(1 - (z_wing[0] / (fuselage_max_height / 2.0)) ** 2)
-            * fuselage_max_width
-            / 2.0,
+            np.sqrt(1 - (z_wing[0] / (fuselage_max_height / 2.0)) ** 2) * fuselage_max_width / 2.0,
             wing_tip_y,
         ]
     )
@@ -93,15 +89,9 @@ def _aircraft_front_view_plot(
     z_engine_center = -fuselage_max_height * ENGINE_HEIGHT
     y_engine_center = nacelle_y
 
-    y_engine, z_engine = _make_circle(
-        y_engine_center, z_engine_center, nacelle_diameter / 2.0
-    )
-    y_engine2, z_engine2 = _make_circle(
-        -y_engine_center, z_engine_center, nacelle_diameter / 2.0
-    )
-    y_engine3, z_engine3 = _make_circle(
-        y_engine_center, z_engine_center, nacelle_diameter / 8.0
-    )
+    y_engine, z_engine = _make_circle(y_engine_center, z_engine_center, nacelle_diameter / 2.0)
+    y_engine2, z_engine2 = _make_circle(-y_engine_center, z_engine_center, nacelle_diameter / 2.0)
+    y_engine3, z_engine3 = _make_circle(y_engine_center, z_engine_center, nacelle_diameter / 8.0)
     y_engine4, z_engine4 = _make_circle(
         -1 * y_engine_center, z_engine_center, nacelle_diameter / 8.0
     )
@@ -115,9 +105,7 @@ def _aircraft_front_view_plot(
 
     y_ht = np.array(
         [
-            np.sqrt(1 - (z_ht[0] / (fuselage_max_height / 2.0)) ** 2)
-            * fuselage_max_width
-            / 2.0,
+            np.sqrt(1 - (z_ht[0] / (fuselage_max_height / 2.0)) ** 2) * fuselage_max_width / 2.0,
             ht_span / 2.0,
         ]
     )
@@ -356,7 +344,7 @@ def _make_circle(center_x: float, center_y: float, radius: float):
     """
 
     x = np.linspace(-radius, radius, 50)
-    y = np.sqrt(radius ** 2 - x ** 2)
+    y = np.sqrt(radius**2 - x**2)
     x = np.concatenate((x, np.flip(x)))
     y = np.concatenate((y, -y))
 

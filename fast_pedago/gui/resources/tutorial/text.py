@@ -50,9 +50,7 @@ class Slide:
         )
 
     class Inputs:
-        EXPLANATIONS = (
-            "After choosing the reference aircraft, you will have to set your inputs:"
-        )
+        EXPLANATIONS = "After choosing the reference aircraft, you will have to set your inputs:"
         DASH_1 = "- Choose between doing a MDA or a MDO"
         DASH_2 = "- Write a name for the output"
         DASH_3 = (
