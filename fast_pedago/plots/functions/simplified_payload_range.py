@@ -69,6 +69,15 @@ def _simplified_payload_range_plot(
         / 1852.0
     )
 
+    # For aircraft optimized for fuel, point D might be mathematically negative. We do a check a
+    # posteriori.
+    if payload_array[1] < 0:
+        new_range = np.interp(0, payload_array[:-1], range_array[:-1])
+        payload_array[1] = 0
+        range_array[1] = new_range
+        payload_array[2] = 0
+        range_array[2] = new_range
+
     # Readjust so that the design point end up on the [B, D] segment. First
     # find the linear function that represent the [B, D] segment under the
     # form y = a * x + b.
