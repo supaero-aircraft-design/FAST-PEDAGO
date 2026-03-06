@@ -1036,6 +1036,7 @@
                         0.03353318616106758<!--drag coefficient at maximum lift/drag ratio in cruise conditions--></optimal_CD>
                     <optimal_CL>
                         0.54<!--lift coefficient at maximum lift/drag ratio in cruise conditions--></optimal_CL>
+                    <oswald_coefficient is_input="True">0.778<!--Oswald coefficient for cruise conditions--></oswald_coefficient>
                 </cruise>
                 <landing>
                     <CL_max>
@@ -1050,6 +1051,7 @@
                     <reynolds>17537607.346195042</reynolds>
                 </landing>
                 <low_speed>
+                    <oswald_coefficient is_input="True">0.841<!--Oswald coefficient for low speed conditions--></oswald_coefficient>
                     <CD>[0.022081372046169997, 0.022083107124465533,
                         0.02209009298951226, 0.022102438353920367, 0.022120251930300035,
                         0.02214364243126147, 0.022172718569414843, 0.022207589057370365,

@@ -171,12 +171,14 @@
       <aircraft>
         <cruise>
           <CL0 is_input="True">0.1</CL0>
+          <oswald_coefficient is_input="True">0.778<!--Oswald coefficient for cruise conditions--></oswald_coefficient>
         </cruise>
         <landing>
           <CL_max_clean_2D is_input="True">1.94<!--maximum lift coefficient of 2D average profile in landing conditions without high-lift devices--></CL_max_clean_2D>
         </landing>
         <low_speed>
           <CL0 is_input="True">0.2</CL0>
+          <oswald_coefficient is_input="True">0.841<!--Oswald coefficient for low speed conditions--></oswald_coefficient>
         </low_speed>
         <takeoff>
           <mach is_input="True">0.2<!--considered Mach number for takeoff phase--></mach>

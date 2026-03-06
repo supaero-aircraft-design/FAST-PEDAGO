@@ -281,7 +281,7 @@ class InputsContainer(v.List):
         """
         self._n_pax_input = SliderInput(
             min=20,
-            max=400,
+            max=450,
             step=1,
             label="NPAX",
             tooltip="Number of passengers",
