@@ -100,8 +100,6 @@ class ProcessPlotter:
                     # "iterations" is the abscissa value, "main" is either the residuals or the
                     # objectives, and "limit" is either the targeted residuals or the minimum
                     # objective reached.
-                    print(iterations)
-                    print(main)
                     self.figure.plot(iterations, main, limit, is_aircraft_green)
 
             except Exception:

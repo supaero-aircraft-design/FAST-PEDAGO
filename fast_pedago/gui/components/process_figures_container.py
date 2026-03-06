@@ -111,6 +111,11 @@ class ProcessFiguresContainer(v.Col):
             main_graph.line.color = "green"
         else:
             main_graph.line.color = "blue"
+
+        # This causes a flickering of the residuals display, but at least it updates it. Some
+        # package change appear to have broken the possibility to dynamically update the data in
+        # plotly figures. This is a solution that works
+        self._display.children = []
         self._display.children = [active_figure]
 
     # TODO: Implement the generation of the graphs
