@@ -1,10 +1,10 @@
 <FASTOAD_model>
   <data>
     <TLAR>
-      <NPAX is_input="True">200.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
-      <approach_speed units="kn" is_input="True">132.0<!--top-level requirement: approach speed--></approach_speed>
-      <cruise_mach is_input="True">0.75<!--top-level requirement: cruise Mach number--></cruise_mach>
-      <range units="NM" is_input="True">3000.0<!--top-level requirement: design range--></range>
+      <NPAX is_input="True">430.0<!--top-level requirement: number of passengers, assuming a classic eco/business class repartition--></NPAX>
+      <approach_speed units="kn" is_input="True">147.0<!--top-level requirement: approach speed--></approach_speed>
+      <cruise_mach is_input="True">0.85<!--top-level requirement: cruise Mach number--></cruise_mach>
+      <range units="NM" is_input="True">6750.0<!--top-level requirement: design range--></range>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -19,18 +19,18 @@
         </crew_count>
         <seats>
           <economical>
-            <count_by_row is_input="True">6.0<!--number of economical class seats along width--></count_by_row>
-            <length units="m" is_input="True">0.86<!--length of economical class seats--></length>
+            <count_by_row is_input="True">10.0<!--number of economical class seats along width--></count_by_row>
+            <length units="m" is_input="True">0.94<!--length of economical class seats--></length>
             <width units="m" is_input="True">0.46<!--width of economical class seats--></width>
           </economical>
         </seats>
       </cabin>
       <flap>
         <chord_ratio is_input="True">0.197<!--mean value of (flap chord)/(section chord)--></chord_ratio>
-        <span_ratio is_input="True">0.8<!--ratio (width of flaps)/(total span)--></span_ratio>
+        <span_ratio is_input="True">0.6<!--ratio (width of flaps)/(total span)--></span_ratio>
       </flap>
       <horizontal_tail>
-        <aspect_ratio is_input="True">4.28778048454<!--aspect ratio of horizontal tail--></aspect_ratio>
+        <aspect_ratio is_input="True">4.82<!--aspect ratio of horizontal tail--></aspect_ratio>
         <sweep_25 units="deg" is_input="True">28.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
         <taper_ratio is_input="True">0.3<!--taper ratio of horizontal tail--></taper_ratio>
         <thickness_ratio is_input="True">0.1<!--thickness ratio of horizontal tail--></thickness_ratio>
@@ -47,15 +47,15 @@
         <span_ratio is_input="True">0.9<!--ratio (width of slats)/(total span)--></span_ratio>
       </slat>
       <vertical_tail>
-        <aspect_ratio is_input="True">1.74462618632<!--aspect ratio of vertical tail--></aspect_ratio>
+        <aspect_ratio is_input="True">1.75<!--aspect ratio of vertical tail--></aspect_ratio>
         <sweep_25 units="deg" is_input="True">35.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
         <taper_ratio is_input="True">0.3<!--taper ratio of vertical tail--></taper_ratio>
-        <thickness_ratio is_input="True">0.1<!--thickness ratio of vertical tail--></thickness_ratio>
+        <thickness_ratio is_input="True">0.11<!--thickness ratio of vertical tail--></thickness_ratio>
       </vertical_tail>
       <wing>
-        <aspect_ratio is_input="True">10.5<!--wing aspect ratio--></aspect_ratio>
-        <sweep_25 units="deg" is_input="True">24.54<!--sweep angle at 25% chord of wing--></sweep_25>
-        <virtual_taper_ratio is_input="True">0.313<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
+        <aspect_ratio is_input="True">9.5<!--wing aspect ratio--></aspect_ratio>
+        <sweep_25 units="deg" is_input="True">35.0<!--sweep angle at 25% chord of wing--></sweep_25>
+        <virtual_taper_ratio is_input="True">0.6<!--taper ratio of wing computed from virtual chord--></virtual_taper_ratio>
         <kink>
           <span_ratio is_input="True">0.375<!--ratio (Y-position of kink)/(semi-span)--></span_ratio>
         </kink>
@@ -74,15 +74,15 @@
       </wing>
     </geometry>
     <propulsion>
-      <MTO_thrust units="N" is_input="True">117880.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
+      <MTO_thrust units="N" is_input="True">431500.0<!--maximum thrust of one engine at sea level--></MTO_thrust>
       <rubber_engine>
-        <bypass_ratio is_input="True">5.5<!--bypass ratio for rubber engine model--></bypass_ratio>
+        <bypass_ratio is_input="True">9.6<!--bypass ratio for rubber engine model--></bypass_ratio>
         <delta_t4_climb is_input="True">-50.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_climb>
         <delta_t4_cruise is_input="True">-100.0<!--As it is a delta, unit is K or &#176;C, but is not specified to avoid OpenMDAO making unwanted conversion--></delta_t4_cruise>
-        <design_altitude units="m" is_input="True">10058.4<!--design altitude for rubber engine model--></design_altitude>
-        <maximum_mach is_input="True">0.85<!--maximum Mach number for rubber engine model--></maximum_mach>
-        <overall_pressure_ratio is_input="True">32.6<!--Overall pressure ratio for rubber engine model--></overall_pressure_ratio>
-        <turbine_inlet_temperature units="K" is_input="True">1633.0<!--design turbine inlet temperature (T4) for rubber engine model--></turbine_inlet_temperature>
+        <design_altitude units="m" is_input="True">11500.0<!--design altitude for rubber engine model--></design_altitude>
+        <maximum_mach is_input="True">0.9<!--maximum Mach number for rubber engine model--></maximum_mach>
+        <overall_pressure_ratio is_input="True">50.0<!--Overall pressure ratio for rubber engine model--></overall_pressure_ratio>
+        <turbine_inlet_temperature units="degK" is_input="True">1800.0<!--design turbine inlet temperature (T4) for rubber engine model--></turbine_inlet_temperature>
       </rubber_engine>
     </propulsion>
     <handling_qualities>
@@ -93,13 +93,13 @@
     <load_case>
       <lc1>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 1 (gust with minimum aircraft mass)--></U_gust>
-        <Vc_EAS units="m/s" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
-        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 1 (gust with minimum aircraft mass)--></altitude>
+        <Vc_EAS units="kn" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
+        <altitude units="ft" is_input="True">20000.0<!--altitude for sizing load case 1 (gust with minimum aircraft mass)--></altitude>
       </lc1>
       <lc2>
         <U_gust units="m/s" is_input="True">15.25<!--gust vertical speed for sizing load case 2 (gust with maximum aircraft mass)--></U_gust>
-        <Vc_EAS units="kn" is_input="True">728.9416846652267<!--equivalent air speed for sizing load case 2 (gust with maximum aircraft mass)--></Vc_EAS>
-        <altitude units="ft" is_input="True">65616.79790026246<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
+        <Vc_EAS units="kn" is_input="True">375.0<!--equivalent air speed for sizing load case 1 (gust with minimum aircraft mass)--></Vc_EAS>
+        <altitude units="ft" is_input="True">20000.0<!--altitude for sizing load case 2 (gust with maximum aircraft mass)--></altitude>
       </lc2>
     </load_case>
     <mission>
@@ -122,14 +122,14 @@
           <distance units="NM" is_input="True">200.0<!--distance to travel during diversion in sizing mission--></distance>
         </diversion>
         <holding>
-          <duration units="min" is_input="True">45.0<!--duration of holding phase in sizing mission--></duration>
+          <duration units="min" is_input="True">30.0<!--duration of holding phase in sizing mission--></duration>
         </holding>
         <initial_climb>
           <thrust_rate is_input="True">1.0<!--Input defined by the mission.--></thrust_rate>
         </initial_climb>
         <landing>
-          <flap_angle units="deg" is_input="True">30.0<!--flap angle during landing phase in sizing mission--></flap_angle>
-          <slat_angle units="deg" is_input="True">20.0<!--slat angle during landing phase in sizing mission--></slat_angle>
+          <flap_angle units="deg" is_input="True">40.0<!--flap angle during landing phase in sizing mission--></flap_angle>
+          <slat_angle units="deg" is_input="True">22.0<!--slat angle during landing phase in sizing mission--></slat_angle>
         </landing>
         <start>
           <altitude units="ft" is_input="True">0.0<!--Input defined by the mission.--></altitude>
@@ -155,29 +155,29 @@
         </taxi_out>
         <main_route>
           <cruise>
-            <altitude units="ft" is_input="True">35000.0<!--altitude during cruise phase in sizing mission--></altitude>
+            <altitude units="ft" is_input="True">37000.0<!--altitude during cruise phase in sizing mission--></altitude>
           </cruise>
         </main_route>
       </sizing>
     </mission>
     <weight>
       <aircraft>
-        <max_payload units="kg" is_input="True">20000.0<!--max payload weight--></max_payload>
-        <payload units="kg" is_input="True">18000.0<!--_inp_data:weight:aircraft:payload--></payload>
+        <max_payload units="kg" is_input="True">68000.0<!--max payload weight--></max_payload>
+        <payload units="kg" is_input="True">54000.0<!--_inp_data:weight:aircraft:payload--></payload>
       </aircraft>
     </weight>
     <aerodynamics>
       <aircraft>
         <cruise>
           <CL0 is_input="True">0.1</CL0>
-          <oswald_coefficient is_input="False">0.8087821391661171<!--Oswald coefficient for cruise conditions--></oswald_coefficient>
+          <oswald_coefficient>0.9</oswald_coefficient>
         </cruise>
         <landing>
           <CL_max_clean_2D is_input="True">1.94<!--maximum lift coefficient of 2D average profile in landing conditions without high-lift devices--></CL_max_clean_2D>
         </landing>
         <low_speed>
           <CL0 is_input="True">0.2</CL0>
-          <oswald_coefficient is_input="False">0.8374178902662085<!--Oswald coefficient for low speed conditions--></oswald_coefficient>
+          <oswald_coefficient>0.9</oswald_coefficient>
         </low_speed>
         <takeoff>
           <mach is_input="True">0.2<!--considered Mach number for takeoff phase--></mach>
@@ -235,7 +235,7 @@
     <weight>
       <aircraft>
         <CG>
-          <range is_input="True">0.3<!--distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
+          <range is_input="True">0.25<!--distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
           <aft>
             <MAC_position>
               <margin is_input="True">0.05<!--Added margin for getting most aft CG position, as ratio of mean aerodynamic chord--></margin>
@@ -279,8 +279,8 @@
     <propulsion>
       <rubber_engine>
         <SFC>
-          <k_cr is_input="True">1.0<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
-          <k_sl is_input="True">1.0<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
+          <k_cr is_input="True">0.78<!--correction ratio to apply to the computed SFC at cruise ceiling--></k_cr>
+          <k_sl is_input="True">0.78<!--correction ratio to apply to the computed SFC at sea level--></k_sl>
         </SFC>
       </rubber_engine>
     </propulsion>
@@ -291,7 +291,7 @@
             <k is_input="True">1.0<!--correction ratio to apply to computed drag coefficient in cruise conditions--></k>
             <offset is_input="True">0.0<!--correction offset to apply to computed drag coefficient in cruise conditions--></offset>
             <compressibility>
-              <characteristic_mach_increment is_input="True">0.018<!--Increment to apply to the computed characteristic Mach (where compressibility drag is 20 d.c.)--></characteristic_mach_increment>
+              <characteristic_mach_increment is_input="True">0.05<!--Increment to apply to the computed characteristic Mach (where compressibility drag is 20 d.c.)--></characteristic_mach_increment>
               <max_value is_input="True">0.5<!--maximum authorized value for compressibility drag. Allows to prevent the model from overestimating the compressibility effect, especially for aircraft models after year 2000.--></max_value>
             </compressibility>
             <winglet_effect>
@@ -325,7 +325,7 @@
           </CD>
           <CL>
             <multi_slotted_flap_effect>
-              <k is_input="True">1.0<!--correction ratio to apply to computed additional lift from flap to take into account multiple slots flaps--></k>
+              <k is_input="True">1.5<!--correction ratio to apply to computed additional lift from flap to take into account multiple slots flaps--></k>
             </multi_slotted_flap_effect>
           </CL>
         </landing>
@@ -335,19 +335,19 @@
       <airframe>
         <flight_controls>
           <mass>
-            <k is_input="True">1.0<!--flight controls (A4): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--flight controls (A4): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--flight controls (A4): correction offset to be applied on computed mass--></offset>
           </mass>
         </flight_controls>
         <fuselage>
           <mass>
-            <k is_input="True">1.1<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--fuselage (A2): correction offset to be applied on computed mass--></offset>
           </mass>
         </fuselage>
         <horizontal_tail>
           <mass>
-            <k is_input="True">1.08<!--horizontal tail (A31): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--horizontal tail (A31): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--horizontal tail (A31): correction offset to be applied on computed mass--></offset>
           </mass>
         </horizontal_tail>
@@ -371,13 +371,13 @@
         </pylon>
         <vertical_tail>
           <mass>
-            <k is_input="True">1.0<!--vertical tail (A32): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--vertical tail (A32): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--vertical tail (A32): correction offset to be applied on computed mass--></offset>
           </mass>
         </vertical_tail>
         <wing>
           <mass>
-            <k is_input="True">1.0<!--wing (A1): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--wing (A1): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--wing (A1): correction offset to be applied on computed mass--></offset>
           </mass>
           <bending_sizing>

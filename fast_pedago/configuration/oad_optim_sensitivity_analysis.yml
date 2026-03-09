@@ -56,3 +56,6 @@ model:
 model_options:
   "*":
     use_inner_solver: false
+
+submodels:
+  service.aerodynamics.oswald_coefficient: null
