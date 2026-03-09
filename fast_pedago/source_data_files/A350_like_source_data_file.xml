@@ -19,8 +19,8 @@
         </crew_count>
         <seats>
           <economical>
-            <count_by_row is_input="True">6.0<!--number of economical class seats along width--></count_by_row>
-            <length units="m" is_input="True">0.71<!--length of economical class seats--></length>
+            <count_by_row is_input="True">10.0<!--number of economical class seats along width--></count_by_row>
+            <length units="m" is_input="True">0.94<!--length of economical class seats--></length>
             <width units="m" is_input="True">0.46<!--width of economical class seats--></width>
           </economical>
         </seats>
@@ -170,14 +170,14 @@
       <aircraft>
         <cruise>
           <CL0 is_input="True">0.1</CL0>
-          <oswald_coefficient>1.</oswald_coefficient>
+          <oswald_coefficient>0.9</oswald_coefficient>
         </cruise>
         <landing>
           <CL_max_clean_2D is_input="True">1.94<!--maximum lift coefficient of 2D average profile in landing conditions without high-lift devices--></CL_max_clean_2D>
         </landing>
         <low_speed>
           <CL0 is_input="True">0.2</CL0>
-          <oswald_coefficient>1.</oswald_coefficient>
+          <oswald_coefficient>0.9</oswald_coefficient>
         </low_speed>
         <takeoff>
           <mach is_input="True">0.2<!--considered Mach number for takeoff phase--></mach>
@@ -235,7 +235,7 @@
     <weight>
       <aircraft>
         <CG>
-          <range is_input="True">0.3<!--distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
+          <range is_input="True">0.25<!--distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
           <aft>
             <MAC_position>
               <margin is_input="True">0.05<!--Added margin for getting most aft CG position, as ratio of mean aerodynamic chord--></margin>
@@ -335,19 +335,19 @@
       <airframe>
         <flight_controls>
           <mass>
-            <k is_input="True">1.0<!--flight controls (A4): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--flight controls (A4): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--flight controls (A4): correction offset to be applied on computed mass--></offset>
           </mass>
         </flight_controls>
         <fuselage>
           <mass>
-            <k is_input="True">1.11<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--fuselage (A2): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--fuselage (A2): correction offset to be applied on computed mass--></offset>
           </mass>
         </fuselage>
         <horizontal_tail>
           <mass>
-            <k is_input="True">1.08<!--horizontal tail (A31): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--horizontal tail (A31): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--horizontal tail (A31): correction offset to be applied on computed mass--></offset>
           </mass>
         </horizontal_tail>
@@ -371,13 +371,13 @@
         </pylon>
         <vertical_tail>
           <mass>
-            <k is_input="True">1.0<!--vertical tail (A32): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--vertical tail (A32): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--vertical tail (A32): correction offset to be applied on computed mass--></offset>
           </mass>
         </vertical_tail>
         <wing>
           <mass>
-            <k is_input="True">1.0<!--wing (A1): correction ratio to be applied on computed mass--></k>
+            <k is_input="True">0.85<!--wing (A1): correction ratio to be applied on computed mass--></k>
             <offset units="kg" is_input="True">0.0<!--wing (A1): correction offset to be applied on computed mass--></offset>
           </mass>
           <bending_sizing>
