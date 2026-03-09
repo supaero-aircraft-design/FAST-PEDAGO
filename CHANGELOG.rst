@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 1.0.4
+==================
+
+- Addition of the A350 reference case  by @florentLutz
+- Minor fix to the payload range diagram by @florentLutz
+
 Version 1.0.3
 ==================
 
