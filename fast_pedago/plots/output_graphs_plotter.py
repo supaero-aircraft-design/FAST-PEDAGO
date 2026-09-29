@@ -223,7 +223,6 @@ class OutputGraphsPlotter:
             # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
-
                     path_to_output_file = PathManager.path_to(
                         "output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,

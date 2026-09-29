@@ -356,7 +356,7 @@ def _make_circle(center_x: float, center_y: float, radius: float):
     """
 
     x = np.linspace(-radius, radius, 50)
-    y = np.sqrt(radius ** 2 - x ** 2)
+    y = np.sqrt(radius**2 - x**2)
     x = np.concatenate((x, np.flip(x)))
     y = np.concatenate((y, -y))
 

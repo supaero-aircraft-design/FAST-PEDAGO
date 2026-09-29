@@ -14,7 +14,7 @@ def _polar_with_L_R_ratio_plot(
     name=None,
     fig=None,
     *,
-    file_formatter=None
+    file_formatter=None,
 ) -> go.FigureWidget:
     """
     Returns a figure plot of the aircraft drag polar.

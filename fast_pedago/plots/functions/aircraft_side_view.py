@@ -101,14 +101,14 @@ def _aircraft_side_view_plot(
 
     z_fuselage_front = np.flip(np.linspace(0, fuselage_max_height / 2, 10))
     x_fuselage_front = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front ** 2
+        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front**2
     )
 
     z_nose_cone = np.linspace(
         -fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100
     )
     x_nose_cone = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone ** 2
+        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone**2
     )
 
     z_nose_cone = np.append(z_nose_cone, z_nose_cone[0])
@@ -119,9 +119,7 @@ def _aircraft_side_view_plot(
         fuselage_max_height / 2.0 * 3.5 / 5,
         50,
     )
-    x_cockpit = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit ** 2
-    )
+    x_cockpit = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_cockpit**2
 
     z_cockpit = np.append(z_cockpit, z_cockpit[-1])
     z_cockpit = np.append(z_cockpit, z_cockpit[0])
@@ -157,7 +155,7 @@ def _aircraft_side_view_plot(
     z_rear = np.linspace(
         fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10
     )
-    x_rear = np.sqrt(abs(r ** 2 - (z_rear - z_centre) ** 2)) + x_centre
+    x_rear = np.sqrt(abs(r**2 - (z_rear - z_centre) ** 2)) + x_centre
 
     x_fuselage_front = np.concatenate(
         (x_fuselage_front, np.flip(x_fuselage_front)),

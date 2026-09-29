@@ -139,7 +139,7 @@ def _aircraft_top_view_plot(
 
     y_fuselage = np.linspace(0, fuselage_max_width / 2, 10)
     x_fuselage = (
-        fuselage_front_length / (0.5 * fuselage_max_width) ** 2 * y_fuselage ** 2
+        fuselage_front_length / (0.5 * fuselage_max_width) ** 2 * y_fuselage**2
     )  # parabola
     x_fuselage = np.append(
         x_fuselage,
@@ -404,7 +404,7 @@ def _aircraft_top_view_plot(
 
     y_rear = np.flip(np.linspace(0, fuselage_max_width / 4, 10))
 
-    x_rear = fuselage_length + (x_elev - fuselage_length) / y_elev ** 2 * y_rear ** 2
+    x_rear = fuselage_length + (x_elev - fuselage_length) / y_elev**2 * y_rear**2
 
     x_fuselage = np.concatenate((x_fuselage, x_rear))
     y_fuselage = np.concatenate((y_fuselage, y_rear))

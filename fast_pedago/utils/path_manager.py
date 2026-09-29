@@ -240,7 +240,6 @@ class PathManager:
         # Remove all input files in the inputs directory
         input_file_list = Path.iterdir(PathManager.input_directory_path)
         for file in input_file_list:
-
             # We keep the reference input_file and avoid deleting subdirectory
             if file.name != PathManager.reference_input_file_name and not Path.is_dir(
                 file
@@ -251,7 +250,6 @@ class PathManager:
         # .sql because they are re-generated anyway
         output_file_list = Path.iterdir(PathManager.output_directory_path)
         for file in output_file_list:
-
             # We keep the reference input_file and avoid deleting subdirectory
             if (
                 file.name != PathManager.reference_output_file_name

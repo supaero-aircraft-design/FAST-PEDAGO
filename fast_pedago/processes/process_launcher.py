@@ -259,9 +259,9 @@ class ProcessLauncher:
 
         new_inputs["data:geometry:wing:aspect_ratio"].value = self.wing_aspect_ratio
 
-        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = (
-            self.bypass_ratio
-        )
+        new_inputs[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value = self.bypass_ratio
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students

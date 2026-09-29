@@ -66,13 +66,13 @@ def _stability_diagram_plot(
     )
     fuselage_rear_length = variables["data:geometry:fuselage:rear_length"].value[0]
 
-    v1 = 2.0 * np.pi / 3.0 * fuselage_radius ** 3.0
+    v1 = 2.0 * np.pi / 3.0 * fuselage_radius**3.0
     v2 = (
         np.pi
-        * fuselage_radius ** 2
+        * fuselage_radius**2
         * (fuselage_length - fuselage_rear_length - fuselage_front_length)
     )
-    v3 = 1 / 3.0 * np.pi * fuselage_radius ** 2 * fuselage_rear_length
+    v3 = 1 / 3.0 * np.pi * fuselage_radius**2 * fuselage_rear_length
     v = v1 + v2 + v3
 
     # Sh/S
@@ -84,7 +84,7 @@ def _stability_diagram_plot(
 
     # 1) Neutral point calculation (rear limit):
 
-    ht_effectiveness = 1 - cl_alpha_wing * 8 / (np.pi ** 3 * aspect_ratio_wing) * (
+    ht_effectiveness = 1 - cl_alpha_wing * 8 / (np.pi**3 * aspect_ratio_wing) * (
         1 + 1 / np.cos(beta)
     )
     numerator = (
@@ -109,7 +109,7 @@ def _stability_diagram_plot(
         return (
             -8
             * cl_wing_function
-            / (np.pi ** 3 * aspect_ratio_wing)
+            / (np.pi**3 * aspect_ratio_wing)
             * (1 + 1 / np.cos(beta))
         )
 
@@ -175,7 +175,7 @@ def _stability_diagram_plot(
     q = 9.81 / (2.0 * v_mo)
 
     def lift_equilibrium2(alpha_function, surface_ratio_function, mass):
-        left_member = mass * 9.81 / (0.5 * rho * v_mo ** 2 * area_wing)
+        left_member = mass * 9.81 / (0.5 * rho * v_mo**2 * area_wing)
 
         cl_w = (
             cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo

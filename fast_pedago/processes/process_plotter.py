@@ -105,7 +105,7 @@ class ProcessPlotter:
                     # objectives, and "limit" is either the targeted residuals or the minimum
                     # objective reached.
                     self.figure.plot(iterations, main, limit, is_aircraft_green)
-           
+
             except Exception:
                 pass
 
