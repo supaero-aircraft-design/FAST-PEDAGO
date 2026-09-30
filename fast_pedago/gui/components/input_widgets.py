@@ -28,10 +28,10 @@ class ClearAllButton(v.Tooltip):
 
         self.button = v.Btn(
             v_on="tooltip.on",
-            x_large=True,
+            size="x-large",
             icon=True,
             color="error",
-            children=[v.Icon(children=["fa-trash"])],
+            children=[v.Icon(children=["mdi-delete"])],
         )
 
         # The button has to be encapsulated by the tooltip
@@ -68,11 +68,11 @@ class GitLinksButton(v.Menu):
                     v_bind="button.attrs",
                     v_on="button.on",
                     icon=True,
-                    x_large=True,
+                    size="x-large",
                     children=[
                         v.Icon(
-                            x_large=True,
-                            children=["fa-github"],
+                            size="x-large",
+                            children=["mdi-github"],
                         ),
                     ],
                 ),
@@ -81,6 +81,7 @@ class GitLinksButton(v.Menu):
         self.children = [
             v.List(
                 class_="pa-0",
+                style_="width: 150px; overflow: hidden;",
                 children=[
                     _GitLinkButtonItem(GITHUB_FAST_CORE, "FAST-OAD_core"),
                     _GitLinkButtonItem(GITHUB_FAST_CS25, "FAST-OAD_cs25"),
@@ -105,13 +106,26 @@ class _GitLinkButtonItem(v.ListItem):
 
         self.class_ = "pa-0"
         self.children = [
-            v.Btn(
-                text=True,
-                href=href,
+            v.Html(
+                tag="a",
+                attributes={
+                    "href": href,
+                    "target": "_blank",
+                    "rel": "noopener noreferrer",
+                },
+                style_="""
+                    display: block;
+                    width: 100%;
+                    padding: 8px 16px;
+                    text-align: left;
+                    text-decoration: none;
+                    color: inherit;
+                    cursor: pointer;
+                """,
                 children=[
                     text,
                 ],
-            ),
+            )
         ]
 
 
@@ -126,7 +140,6 @@ class Snackbar(v.Snackbar):
         """
         super().__init__(**kwargs)
 
-        self.app = True
         self.timeout = 0
         self.v_model = False
 

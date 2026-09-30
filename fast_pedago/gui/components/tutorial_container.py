@@ -280,17 +280,24 @@ class TutorialContainer(v.Col):
         )
 
         self.children = [
-            v.Row(
-                justify="space-around",
-                no_gutters=True,
+            v.Container(
+                fluid=True,
+                style_="height: 100%;",
                 children=[
-                    v.Col(
-                        cols=12,
-                        lg=8,
-                        children=[tutorial_carousel],
+                    v.Row(
+                        style_="margin-top: 10px;",
+                        justify="space-around",
+                        no_gutters=True,
+                        children=[
+                            v.Col(
+                                cols=12,
+                                lg=8,
+                                children=[tutorial_carousel],
+                            ),
+                        ],
                     ),
                 ],
-            ),
+            )
         ]
 
     def _load_images(self):
