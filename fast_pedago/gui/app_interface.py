@@ -116,13 +116,13 @@ class AppInterface(v.App):
             children=[
                 v.Tab(children=["Inputs"]),
                 v.Tab(children=["Outputs"]),
-                v.TabItem(
+                v.WindowItem(
                     children=[
                         v.Divider(),
                         self.process_figures,
                     ],
                 ),
-                v.TabItem(
+                v.WindowItem(
                     children=[
                         v.Divider(),
                         self.output_figures,

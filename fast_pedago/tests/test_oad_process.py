@@ -146,7 +146,7 @@ def test_optimization():
         CONFIGURATION_FILE_FOLDER_PATH / "oad_optim_sensitivity_analysis.yml"
     )
     ref_inputs = (
-            SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
+        SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
     )
 
     problem = configurator.get_problem()
@@ -171,7 +171,9 @@ def test_optimization():
         lower=0.0,
         upper=50.0,
     )
-    problem.model.add_objective(name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4)
+    problem.model.add_objective(
+        name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
+    )
 
     problem.setup()
     problem.run_driver()

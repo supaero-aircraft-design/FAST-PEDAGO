@@ -137,7 +137,7 @@ class InputsContainer(v.List):
             children=["Swap between analysis and optimization mode"],
         )
 
-        self.inputs_header = v.ListItemGroup(
+        self.inputs_header = v.ListItem(
             class_="px-2 pt-1",
             children=[
                 v.Row(

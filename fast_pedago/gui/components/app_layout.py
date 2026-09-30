@@ -226,6 +226,7 @@ class Footer(v.Footer):
                                 no_gutters=True,
                                 children=[
                                     v.Col(cols=3, children=[self._isae_logo]),
+                                    v.Col(),
                                     v.Col(
                                         class_="pe-6",
                                         cols=7,
