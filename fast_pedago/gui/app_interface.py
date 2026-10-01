@@ -139,6 +139,7 @@ class AppInterface(v.App):
                     value="inputs",
                     children=[
                         v.Divider(),
+                        v.Spacer(),
                         self.process_figures,
                     ],
                 ),
@@ -146,6 +147,7 @@ class AppInterface(v.App):
                     value="outputs",
                     children=[
                         v.Divider(),
+                        v.Spacer(),
                         self.output_figures,
                     ],
                 ),

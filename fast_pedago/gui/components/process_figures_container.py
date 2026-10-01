@@ -262,7 +262,7 @@ class ProcessFiguresContainer(v.Col):
             ),
         ] + self._snackbars
 
-    def _change_display(self,change):
+    def _change_display(self, change):
         """
         Changes the display to a figure, N2 or XDSM graph,
         or opens a web page with N2/XDSM graphs
