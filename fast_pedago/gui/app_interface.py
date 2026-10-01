@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 # As there are margins and padding in the voila template,
 # I have to adjust the padding considering both the spacings
 # in the voila template and the other components sizes.
-TOP_PADDING = "36px"
+TOP_PADDING = "76px"
 LEFT_PADDING = "426px"
 
 
@@ -30,6 +30,9 @@ class AppInterface(v.App):
         super().__init__(**kwargs)
 
         PathManager.build_paths()
+
+        # The process toggle starts on MDA and only reports later changes
+        self.is_MDO = False
 
         # Sets the residuals and objectives plotter, and the MDA/MDO launcher
         # to run MDA/MDO and plot there evolution.
@@ -69,7 +72,7 @@ class AppInterface(v.App):
         Hides the drawer when on outputs tabs, and show it when on
         inputs tab.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
         data = change["new"]
 
@@ -98,8 +101,9 @@ class AppInterface(v.App):
 
         self.inputs = InputsContainer(self.process_launcher)
 
-        self.inputs.source_data_file_selector.on_event(
-            "change", self._set_source_data_file
+        self.inputs.source_data_file_selector.observe(
+            self._set_source_data_file,
+            names="v_model",
         )
         self.inputs.process_selection_switch.observe(
             self._switch_process,
@@ -117,7 +121,7 @@ class AppInterface(v.App):
 
         self.graphs_tabs = v.Tabs(
             v_model="inputs",
-            centered=True,
+            align_tabs="center",
             grow=True,
             hide_slider=True,
             children=[
@@ -251,7 +255,7 @@ class AppInterface(v.App):
         Switch display between MDA and MDO depending on process selection
         button state.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
         data = change["new"]
 
@@ -271,8 +275,8 @@ class AppInterface(v.App):
         When a process is on-going, blocks the inputs and set a loading screen.
         """
         self.inputs.disable()
-        self.graphs.children[0].disabled = True
-        self.graphs.children[1].disabled = True
+        for tab in self.graphs_tabs.children:
+            tab.disabled = True
 
         # Show a loading widget to make it apparent that a computation is
         # underway.
@@ -283,8 +287,8 @@ class AppInterface(v.App):
         Re-enables input widgets after the end of a MDA/MDO process.
         """
         self.inputs.enable()
-        self.graphs.children[0].disabled = False
-        self.graphs.children[1].disabled = False
+        for tab in self.graphs_tabs.children:
+            tab.disabled = False
         if self.is_MDO:
             snackbar_to_open = self.process_figures.mdo_end_snackbar
         else:
@@ -309,13 +313,13 @@ class AppInterface(v.App):
         self.process_launcher.launch_processes(self.is_MDO)
         self._to_process_results()
 
-    def _set_source_data_file(self, widget, event, data):
+    def _set_source_data_file(self, change):
         """
         Sets the reference file name to use
 
-        To be called by a widget event
+        To be called with "observe" method of a widget.
         """
-        self.inputs.set_initial_value_mda(data)
+        self.inputs.set_initial_value_mda(change["new"])
 
     def _open_or_close_drawer(self, widget, event, data):
         """

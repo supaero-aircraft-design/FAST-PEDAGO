@@ -137,7 +137,7 @@ class ProcessFiguresContainer(v.Col):
 
         self._n2_widget = v.Tooltip(
             contained=True,
-            bottom=True,
+            location="bottom",
             v_slots=[
                 {
                     "name": "activator",
@@ -159,7 +159,7 @@ class ProcessFiguresContainer(v.Col):
 
         self._xdsm_widget = v.Tooltip(
             contained=True,
-            bottom=True,
+            location="bottom",
             v_slots=[
                 {
                     "name": "activator",
@@ -180,6 +180,7 @@ class ProcessFiguresContainer(v.Col):
         # By defining the buttons this way it is possible to change the button
         # group between MDA/MDO
         self._specific_button = v.Btn(
+            value=0,
             children=["Residuals"],
             tooltip=(
                 "Displays a graph of the evolution of residuals with the "
@@ -188,16 +189,18 @@ class ProcessFiguresContainer(v.Col):
         )
 
         self._display_selection_buttons = v.BtnToggle(
-            v_model="toggle_exclusive",
+            v_model=0,
             mandatory=True,
-            dense=True,
+            density="compact",
             children=[
                 self._specific_button,
                 v.Btn(
+                    value=1,
                     children=["N2"],
                     tooltip="Displays the N2 diagram of the sizing process",
                 ),
                 v.Btn(
+                    value=2,
                     children=["XDSM"],
                     tooltip="Displays the XDSM diagram of the sizing process",
                 ),
@@ -267,12 +270,11 @@ class ProcessFiguresContainer(v.Col):
         Changes the display to a figure, N2 or XDSM graph,
         or opens a web page with N2/XDSM graphs
 
-        To be called by an "on_event" of an ipyvuetify widget
+        To be called with "observe" method of a widget.
         """
         data = change["new"]
 
-        # None: Residuals/Objective 1: N2 2: N2(browser)
-        # 3: XDSM 4: XDSM(browser)
+        # 0: Residuals/Objective 1: N2 2: XDSM
         if data == 1:
             self._display.children = [self._n2_widget]
 

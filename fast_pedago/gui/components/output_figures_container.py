@@ -25,7 +25,7 @@ class OutputFiguresContainer(v.Col):
         self._performances_graph = _OutputGraph("Performances")
 
         self.output_selection.on_event("click", self._browse_available_process)
-        self.output_selection.on_event("change", self._update_data)
+        self.output_selection.observe(self._update_data, names="v_model")
         self.hide_graphs()
 
         self.children = [
@@ -35,7 +35,7 @@ class OutputFiguresContainer(v.Col):
             ),
             v.Row(
                 class_="mb-12",
-                align="top",
+                align="start",
                 children=[
                     self._geometry_graph,
                     self._mass_graph,
@@ -66,13 +66,14 @@ class OutputFiguresContainer(v.Col):
         self._mass_graph.show()
         self._performances_graph.show()
 
-    def _update_data(self, widget, event, data):
+    def _update_data(self, change):
         """
         Updates the graphs when a new aircraft is selected or removed.
         If no aircraft is selected, hides the graphs.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
+        data = change["new"]
         if data:
             self.show_graphs()
 
@@ -116,21 +117,20 @@ class _OutputGraph(v.Col):
 
         self.plotter = OutputGraphsPlotter()
         select = v.Select(
-            dense=True,
+            density="compact",
             hide_details=True,
             items=list(GRAPH[title]),
             v_model=list(GRAPH[title])[0],
         )
-        select.on_event(
-            "change",
-            lambda widget, event, data: self.plotter.change_graph(title, data),
+        select.observe(
+            lambda change: self.plotter.change_graph(title, change["new"]),
+            names="v_model",
         )
         self.plotter.change_graph(title, list(GRAPH[title])[0])
 
         self.children = [
             v.Card(
-                outlined=True,
-                flat=True,
+                variant="outlined",
                 children=[
                     v.CardTitle(
                         class_="pa-3",

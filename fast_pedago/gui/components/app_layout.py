@@ -12,7 +12,8 @@ from fast_pedago.utils import _image_from_path, PathManager
 
 
 # Components sizes
-DRAWER_WIDTH = "450px"
+# Vuetify 3 parses the drawer width as a number of pixels
+DRAWER_WIDTH = 450
 HEADER_HEIGHT = "64px"
 
 # Logos image files names
@@ -41,10 +42,9 @@ class Drawer(v.NavigationDrawer):
         """
         Generates the drawer layout.
         """
-        self.clipped = True
         self.width = DRAWER_WIDTH
         self.v_model = True
-        self.hide_overlay = True
+        self.scrim = False
 
         # The content attributes will be used to change the components
         # displayed easily.
@@ -59,7 +59,7 @@ class Drawer(v.NavigationDrawer):
             class_="me-5 hidden-lg-and-up",
             icon=True,
             children=[
-                v.Icon(children=["mdi-clock-outline"]),
+                v.Icon(children=["mdi-close"]),
             ],
         )
 
@@ -97,7 +97,6 @@ class Header(v.AppBar):
         buttons.
         """
         self.class_ = "px-5"
-        self.fixed = True
         self.color = "white"
 
         self.open_drawer_button = v.Btn(
@@ -165,7 +164,7 @@ class Header(v.AppBar):
         )
         self.fast_oad_logo.v_on = "tooltip.on"
         self._fast_oad_logo_wrapper = v.Tooltip(
-            bottom=True,
+            location="bottom",
             v_slots=[
                 {
                     "name": "activator",

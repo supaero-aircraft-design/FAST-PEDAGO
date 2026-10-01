@@ -150,7 +150,7 @@ class TutorialContainer(v.Col):
                             children=[
                                 v.Row(
                                     justify="center",
-                                    align="top",
+                                    align="start",
                                     children=[
                                         v.Col(cols=2),
                                         v.Col(
