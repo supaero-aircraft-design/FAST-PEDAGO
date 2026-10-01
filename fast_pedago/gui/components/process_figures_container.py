@@ -203,9 +203,9 @@ class ProcessFiguresContainer(v.Col):
                 ),
             ],
         )
-        self._display_selection_buttons.on_event(
-            "change",
+        self._display_selection_buttons.observe(
             self._change_display,
+            names="v_model",
         )
 
         self._residuals_figure = _ProcessFigure(
@@ -262,13 +262,15 @@ class ProcessFiguresContainer(v.Col):
             ),
         ] + self._snackbars
 
-    def _change_display(self, widget, event, data):
+    def _change_display(self,change):
         """
         Changes the display to a figure, N2 or XDSM graph,
         or opens a web page with N2/XDSM graphs
 
         To be called by an "on_event" of an ipyvuetify widget
         """
+        data = change["new"]
+
         # None: Residuals/Objective 1: N2 2: N2(browser)
         # 3: XDSM 4: XDSM(browser)
         if data == 1:

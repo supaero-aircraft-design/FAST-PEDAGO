@@ -59,7 +59,7 @@ class Drawer(v.NavigationDrawer):
             class_="me-5 hidden-lg-and-up",
             icon=True,
             children=[
-                v.Icon(children=["fa-times"]),
+                v.Icon(children=["mdi-clock-outline"]),
             ],
         )
 

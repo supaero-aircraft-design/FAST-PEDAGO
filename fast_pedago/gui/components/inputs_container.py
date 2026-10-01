@@ -42,7 +42,7 @@ class InputsContainer(v.List):
         """
         self.children = [self.inputs_header] + self._mdo_input
         self.launch_button.children = [
-            v.Icon(class_="px-3", children=["fa-plane"]),
+            v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch optimization",
         ]
         self.process_name_field.label = "Optimization name"
@@ -56,7 +56,7 @@ class InputsContainer(v.List):
         """
         self.children = [self.inputs_header] + self._mda_input
         self.launch_button.children = [
-            v.Icon(class_="px-3", children=["fa-plane"]),
+            v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch sizing",
         ]
         self.process_name_field.label = "Sizing name"
@@ -100,7 +100,7 @@ class InputsContainer(v.List):
             children=[
                 v.Icon(
                     class_="px-3",
-                    children=["fa-plane"],
+                    children=["mdi-airplane-cog"],
                 ),
                 "Launch sizing",
             ],
@@ -108,17 +108,20 @@ class InputsContainer(v.List):
 
         # Create a button to trigger the MDO "mode"
         self.process_selection_switch = v.BtnToggle(
-            rounded=True,
+            v_model="MDA",
             mandatory=True,
-            dense=True,
             color="primary",
+            density="compact",
+            rounded=True,
             children=[
                 v.Btn(
+                    value="MDA",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDA"],
                 ),
                 v.Btn(
+                    value="MDO",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDO"],
@@ -544,7 +547,7 @@ class _InputsCategory(v.ListGroup):
     def __init__(
         self,
         name: str,
-        inputs: v.VuetifyWidget = [],
+        inputs: v.VuetifyWidget = None,
         is_open: bool = False,
         **kwargs,
     ):
@@ -555,15 +558,18 @@ class _InputsCategory(v.ListGroup):
         """
         super().__init__(**kwargs)
 
-        self.value = is_open
+        if inputs is None:
+            inputs = []
+
+        self.v_model = is_open
         self.v_slots = [
             {
                 "name": "activator",
+                "variable": "x",
                 "children": [
-                    v.ListItemTitle(
-                        children=[
-                            name,
-                        ],
+                    v.ListItem(
+                        v_bind="x.props",
+                        title=name,
                     ),
                 ],
             }

@@ -35,8 +35,8 @@ class PathManager:
     the other components that need it.
     """
 
-    working_directory_path = ""
-    data_directory_path = ""
+    working_directory_path: Path = Path("")
+    data_directory_path: Path = Path("")
 
     reference_aircraft = ""
     reference_input_file_name = ""
@@ -44,16 +44,16 @@ class PathManager:
     reference_source_file_name = ""
     reference_flight_data_file_name = ""
 
-    reference_input_file_path = ""
+    reference_input_file_path: Path = Path("")
 
-    mda_configuration_file_path = ""
-    mdo_configuration_file_path = ""
+    mda_configuration_file_path: Path = Path("")
+    mdo_configuration_file_path: Path = Path("")
 
-    input_directory_path = ""
-    output_directory_path = ""
+    input_directory_path: Path = Path("")
+    output_directory_path: Path = Path("")
 
-    resources_directory_path = ""
-    tutorial_directory_path = ""
+    resources_directory_path: Path = Path("")
+    tutorial_directory_path: Path = Path("")
 
     @staticmethod
     def _build_working_directory():
@@ -282,5 +282,5 @@ class PathManager:
         elif folder == "tutorial":
             folder_path = PathManager.tutorial_directory_path
         else:
-            folder_path == Path("")
-        return folder_path / file
+            folder_path = Path("")
+        return (folder_path / file).as_posix()
