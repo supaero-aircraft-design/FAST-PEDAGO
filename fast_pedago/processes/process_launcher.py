@@ -128,8 +128,8 @@ class ProcessLauncher:
         )
 
         # To avoid reading in a wrong file
-        if Path.exists(self.recorder_database_file_path):
-            Path.unlink(self.recorder_database_file_path)
+        if Path(self.recorder_database_file_path).exists():
+            Path(self.recorder_database_file_path).unlink()
 
         # We also need to rename the .csv file which contains the mission
         # data. I don't see a proper way to do it other than that since
@@ -299,11 +299,10 @@ class ProcessLauncher:
 
         # You can't rename to a file which already exists, so if one already
         # exists we delete it before renaming.
-        if Path.exists(self.new_mission_data_file_path):
-            Path.unlink(self.new_mission_data_file_path)
+        if Path(self.new_mission_data_file_path).exists():
+            Path(self.new_mission_data_file_path).unlink()
 
-        Path.rename(
-            self.old_mission_data_file_path,
+        Path(self.old_mission_data_file_path).rename(
             self.new_mission_data_file_path,
         )
 
