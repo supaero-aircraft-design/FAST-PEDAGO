@@ -425,8 +425,9 @@ class ProcessLauncher:
             )
         )
 
+        target_residuals = self.problem.model.nonlinear_solver.options["rtol"]
         for residual in relative_error:
-            if isinstance(residual, float) and residual <= self.target_residuals:
+            if isinstance(residual, float) and residual <= target_residuals:
                 return True
         return False
 
