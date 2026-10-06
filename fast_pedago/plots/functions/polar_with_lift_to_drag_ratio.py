@@ -31,11 +31,11 @@ def _polar_with_L_R_ratio_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     # pylint: disable=invalid-name # that's a common naming
-    cd = np.asarray(variables["data:aerodynamics:aircraft:cruise:CD"].value)
+    cd = np.asarray(variables["data:aerodynamics:aircraft:high_speed:CD"].value)
     # pylint: disable=invalid-name # that's a common naming
-    cl = np.asarray(variables["data:aerodynamics:aircraft:cruise:CL"].value)
+    cl = np.asarray(variables["data:aerodynamics:aircraft:high_speed:CL"].value)
 
-    L_D_max = variables["data:aerodynamics:aircraft:cruise:L_D_max"].value[0]
+    L_D_max = variables["data:aerodynamics:aircraft:high_speed:L_D_max"].value[0]
 
     # TODO: remove filtering one models provide proper bounds
     cd_short = cd[cd <= 2.0]

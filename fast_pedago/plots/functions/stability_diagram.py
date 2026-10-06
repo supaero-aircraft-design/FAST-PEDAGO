@@ -30,14 +30,14 @@ def _stability_diagram_plot(
     """
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
-    cl_alpha_wing = variables["data:aerodynamics:aircraft:cruise:CL_alpha"].value[0]
+    cl_alpha_wing = variables["data:aerodynamics:aircraft:high_speed:CL_alpha"].value[0]
     cl_max_clean_wing = variables[
         "data:aerodynamics:aircraft:landing:CL_max_clean"
     ].value[0]
     cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[
         0
     ]
-    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:cruise:CL_alpha"].value[
+    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:high_speed:CL_alpha"].value[
         0
     ]
 

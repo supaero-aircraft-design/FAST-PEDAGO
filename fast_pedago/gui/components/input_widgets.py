@@ -370,7 +370,7 @@ class RangeSliderInput(v.Tooltip):
         step: float = 10,
         label: str = None,
         tooltip: str = None,
-        range: float = 0,
+        range: [float, float] = 0,
         with_checkbox: bool = False,
         **kwargs,
     ):

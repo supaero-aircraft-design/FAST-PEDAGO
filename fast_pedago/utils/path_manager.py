@@ -5,12 +5,6 @@ from typing import List
 
 import fastoad.api as oad
 
-from fast_pedago import (
-    configuration,
-    gui,
-    source_data_files,
-)
-
 from .paths import (
     WORK_DIRECTORY,
     DATA_DIRECTORY,
@@ -104,7 +98,7 @@ class PathManager:
         if not Path.exists(PathManager.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=PathManager.mda_configuration_file_path,
-                source_data_path=Path(source_data_files.__file__).parent
+                source_data_path=Path(__file__).parent.parent / "source_data_files"
                 / PathManager.reference_source_file_name,
             )
 
@@ -145,7 +139,7 @@ class PathManager:
 
         if not Path.exists(configuration_file_path):
             shutil.copy(
-                Path(configuration.__file__).parent / configuration_file_name,
+                Path(__file__).parent.parent / "configuration" / configuration_file_name,
                 configuration_file_path,
             )
 
@@ -154,7 +148,7 @@ class PathManager:
     @staticmethod
     def _build_resources_directory():
         PathManager.resources_directory_path = (
-            Path(gui.__file__).parent / RESOURCES_DIRECTORY
+            Path(__file__).parent.parent / "gui" / RESOURCES_DIRECTORY
         )
         PathManager.tutorial_directory_path = (
             PathManager.resources_directory_path / TUTORIAL_DIRECTORY
@@ -182,7 +176,7 @@ class PathManager:
         :return: a list of available reference files names
         """
 
-        list_files = Path.iterdir(Path(source_data_files.__file__).parent)
+        list_files = Path.iterdir(Path(__file__).parent.parent / "source_data_files")
         available_reference_files = []
 
         for file in list_files:
@@ -224,7 +218,7 @@ class PathManager:
 
     @staticmethod
     def to_full_source_file_name(source_file: str):
-        return Path(source_data_files.__file__).parent / (
+        return Path(__file__).parent.parent / "source_data_files" / (
             source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
         )
 
