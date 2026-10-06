@@ -68,6 +68,11 @@ class InputsContainer(v.List):
         launch button, and button to switch from MDA to MDO.
         """
         self.class_ = "pa-0"
+        self.style_ = """
+            width: 100%;
+            min-width: 0;
+            scrollbar-gutter: stable;
+        """
 
         self._build_layout_mda()
         self._build_layout_mdo()
@@ -130,12 +135,14 @@ class InputsContainer(v.List):
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDA"],
+                    style_="width: max-content;"
                 ),
                 v.Btn(
                     value="MDO",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDO"],
+                    style_="width: max-content;"
                 ),
             ],
         )
@@ -165,13 +172,12 @@ class InputsContainer(v.List):
                     align="center",
                     children=[
                         v.Col(
-                            cols=4,
+                            cols="auto",
                             children=[
                                 process_selection_switch_wrapper,
                             ],
                         ),
                         v.Col(
-                            cols=8,
                             children=[self.launch_button],
                         ),
                     ],
