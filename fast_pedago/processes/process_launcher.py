@@ -178,6 +178,7 @@ class ProcessLauncher:
         if self.is_aspect_ratio_design_variable:
             self.problem.model.add_design_var(
                 name="data:geometry:wing:aspect_ratio",
+                units="unitless",
                 lower=self.aspect_ratio_lower_bound,
                 upper=self.aspect_ratio_upper_bound,
             )
@@ -203,13 +204,13 @@ class ProcessLauncher:
 
         # Ran the case with the proper mission and go those coefficient
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975
+            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975, units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993
+            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993, units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055
+            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055, units="unitless",
         )
 
         driver = self.problem.driver
