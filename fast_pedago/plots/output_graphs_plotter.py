@@ -24,6 +24,7 @@ from fast_pedago.plots import (
     polar_with_L_R_ratio_plot,
     static_margin_plot,
     BetterMissionViewer,
+    residuals_viewer_plot,
 )
 
 from fast_pedago.utils import (
@@ -45,6 +46,10 @@ GRAPH = {
         "Variables": [
             variable_viewer,
             True,
+        ],
+        "Residuals": [
+            residuals_viewer_plot,
+            False,
         ],
     },
     "Geometry": {

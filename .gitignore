@@ -23,6 +23,7 @@ tmp/
 
 # Solver recorded data
 *.sql
+!reference_aircraft_cases.sql
 
 # Project files
 .ropeproject

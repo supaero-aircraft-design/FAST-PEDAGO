@@ -37,9 +37,9 @@ def _stability_diagram_plot(
     cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[
         0
     ]
-    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:high_speed:CL_alpha"].value[
-        0
-    ]
+    cl_alpha_ht = variables[
+        "data:aerodynamics:horizontal_tail:high_speed:CL_alpha"
+    ].value[0]
 
     mac = variables["data:geometry:wing:MAC:length"].value[0]
     mac_ht = variables["data:geometry:horizontal_tail:MAC:length"].value[0]

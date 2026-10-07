@@ -19,7 +19,9 @@ class BetterMissionViewer(MissionViewer):
         """
         self.layout = layout
 
-    def _show_plot(self, change=None, layout_dict=None, *, layout_overwrite=False, **kwargs):
+    def _show_plot(
+        self, change=None, layout_dict=None, *, layout_overwrite=False, **kwargs
+    ):
         """
         Updates and shows the plots
         """

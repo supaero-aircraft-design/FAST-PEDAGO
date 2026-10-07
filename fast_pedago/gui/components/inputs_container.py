@@ -135,14 +135,14 @@ class InputsContainer(v.List):
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDA"],
-                    style_="width: max-content;"
+                    style_="width: max-content;",
                 ),
                 v.Btn(
                     value="MDO",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDO"],
-                    style_="width: max-content;"
+                    style_="width: max-content;",
                 ),
             ],
         )

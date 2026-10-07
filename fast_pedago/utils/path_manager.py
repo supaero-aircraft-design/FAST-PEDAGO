@@ -20,6 +20,7 @@ from .paths import (
     SOURCE_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
     SEPARATOR,
+    RECORDER_FILE_SUFFIX,
 )
 
 
@@ -37,6 +38,7 @@ class PathManager:
     reference_output_file_name = ""
     reference_source_file_name = ""
     reference_flight_data_file_name = ""
+    reference_sql_file_name = ""
 
     reference_input_file_path: Path = Path("")
 
@@ -79,6 +81,7 @@ class PathManager:
         PathManager.reference_flight_data_file_name = build_name(
             FLIGHT_DATA_FILE_SUFFIX
         )
+        PathManager.reference_sql_file_name = build_name(RECORDER_FILE_SUFFIX)
 
     @staticmethod
     def _build_reference_input_file():
@@ -98,7 +101,8 @@ class PathManager:
         if not Path.exists(PathManager.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=PathManager.mda_configuration_file_path,
-                source_data_path=Path(__file__).parent.parent / "source_data_files"
+                source_data_path=Path(__file__).parent.parent
+                / "source_data_files"
                 / PathManager.reference_source_file_name,
             )
 
@@ -139,7 +143,9 @@ class PathManager:
 
         if not Path.exists(configuration_file_path):
             shutil.copy(
-                Path(__file__).parent.parent / "configuration" / configuration_file_name,
+                Path(__file__).parent.parent
+                / "configuration"
+                / configuration_file_name,
                 configuration_file_path,
             )
 
@@ -218,8 +224,10 @@ class PathManager:
 
     @staticmethod
     def to_full_source_file_name(source_file: str):
-        return Path(__file__).parent.parent / "source_data_files" / (
-            source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
+        return (
+            Path(__file__).parent.parent
+            / "source_data_files"
+            / (source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX)
         )
 
     @staticmethod
@@ -248,6 +256,7 @@ class PathManager:
             if (
                 file.name != PathManager.reference_output_file_name
                 and file.name != PathManager.reference_flight_data_file_name
+                and file.name != PathManager.reference_sql_file_name
                 and not Path.is_dir(file)
             ):
                 Path.unlink(file)

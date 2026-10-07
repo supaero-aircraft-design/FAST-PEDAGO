@@ -16,6 +16,7 @@ from .functions import (
     _stability_diagram_plot,
     _static_margin_plot,
     _wing_plot,
+    _residuals_viewer,
 )
 
 import fastoad.api as oad
@@ -160,3 +161,14 @@ def static_margin_plot(
     fig: go.Figure = None,
 ) -> go.FigureWidget:
     return _static_margin_plot(aircraft_file_path, name, fig)
+
+
+# TODO: this should probably use the path to the .sql file directly but that would mean updating all
+#  signatures
+def residuals_viewer_plot(
+    aircraft_file_path: str,
+    flight_data_file_path: str,
+    name: str = None,
+    fig: go.Figure = None,
+) -> go.FigureWidget:
+    return _residuals_viewer(aircraft_file_path, name, fig)

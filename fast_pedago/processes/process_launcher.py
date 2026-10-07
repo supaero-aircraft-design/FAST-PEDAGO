@@ -204,20 +204,34 @@ class ProcessLauncher:
 
         # Ran the case with the proper mission and go those coefficient
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975, units="unitless",
+            name="settings:mission:sizing:breguet:climb:mass_ratio",
+            val=0.975,
+            units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993, units="unitless",
+            name="settings:mission:sizing:breguet:descent:mass_ratio",
+            val=0.993,
+            units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055, units="unitless",
+            name="settings:mission:sizing:breguet:reserve:mass_ratio",
+            val=0.055,
+            units="unitless",
         )
 
         driver = self.problem.driver
 
         self.recorder = om.SqliteRecorder(self.recorder_database_file_path)
         driver.add_recorder(self.recorder)
+
+        # Turn everything off so that .sql are as light as possible.
         driver.recording_options["record_objectives"] = True
+        driver.recording_options["record_constraints"] = False
+        driver.recording_options["record_desvars"] = False
+        driver.recording_options["record_residuals"] = False
+        driver.recording_options["record_inputs"] = False
+        driver.recording_options["record_outputs"] = False
+        driver.recording_options["record_solver_options"] = False
 
     def _configure_mda(self) -> float:
         """
@@ -279,6 +293,10 @@ class ProcessLauncher:
         self.recorder = om.SqliteRecorder(self.recorder_database_file_path)
         model.nonlinear_solver.add_recorder(self.recorder)
         model.nonlinear_solver.recording_options["record_solver_residuals"] = True
+        model.nonlinear_solver.recording_options["record_abs_error"] = True
+        model.nonlinear_solver.recording_options["record_rel_error"] = True
+        model.nonlinear_solver.recording_options["record_outputs"] = False
+        model.nonlinear_solver.recording_options["record_inputs"] = False
 
     def _run_problem(self, is_MDO: bool = False):
         """
