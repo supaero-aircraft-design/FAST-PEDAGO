@@ -17,6 +17,7 @@ from .functions import (
     _static_margin_plot,
     _wing_plot,
     _residuals_viewer,
+    _objectives_viewer,
 )
 
 import fastoad.api as oad
@@ -172,3 +173,12 @@ def residuals_viewer_plot(
     fig: go.Figure = None,
 ) -> go.FigureWidget:
     return _residuals_viewer(aircraft_file_path, name, fig)
+
+
+def objectives_viewer_plot(
+    aircraft_file_path: str,
+    flight_data_file_path: str,
+    name: str = None,
+    fig: go.Figure = None,
+) -> go.FigureWidget:
+    return _objectives_viewer(aircraft_file_path, name, fig)

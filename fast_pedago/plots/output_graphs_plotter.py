@@ -25,6 +25,7 @@ from fast_pedago.plots import (
     static_margin_plot,
     BetterMissionViewer,
     residuals_viewer_plot,
+    objectives_viewer_plot,
 )
 
 from fast_pedago.utils import (
@@ -49,6 +50,10 @@ GRAPH = {
         ],
         "Residuals": [
             residuals_viewer_plot,
+            False,
+        ],
+        "Objectives": [
+            objectives_viewer_plot,
             False,
         ],
     },

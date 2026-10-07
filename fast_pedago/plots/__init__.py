@@ -15,6 +15,7 @@ from .plot_signatures import (
     polar_with_L_R_ratio_plot,
     static_margin_plot,
     residuals_viewer_plot,
+    objectives_viewer_plot,
 )
 
 from .functions import BetterMissionViewer
@@ -38,6 +39,7 @@ __all__ = [
     "polar_with_L_R_ratio_plot",
     "static_margin_plot",
     "residuals_viewer_plot",
+    "objectives_viewer_plot",
     "BetterMissionViewer",
     "OutputGraphsPlotter",
     "GRAPH",

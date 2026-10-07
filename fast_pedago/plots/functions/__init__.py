@@ -9,6 +9,7 @@ from .static_margin import _static_margin_plot
 from .wing import _wing_plot
 from .better_mission_viewer import BetterMissionViewer
 from .residuals_viewer import _residuals_viewer
+from .objectives_viewer import _objectives_viewer
 
 __all__ = [
     "_aircraft_front_view_plot",
@@ -22,4 +23,5 @@ __all__ = [
     "_wing_plot",
     "BetterMissionViewer",
     "_residuals_viewer",
+    "_objectives_viewer",
 ]

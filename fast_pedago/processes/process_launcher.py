@@ -230,8 +230,8 @@ class ProcessLauncher:
         driver.recording_options["record_desvars"] = False
         driver.recording_options["record_residuals"] = False
         driver.recording_options["record_inputs"] = False
-        driver.recording_options["record_outputs"] = False
-        driver.recording_options["record_solver_options"] = False
+        # Contrarily to what OpenMDAO documentation says, this is required ...
+        driver.recording_options["record_outputs"] = True
 
     def _configure_mda(self) -> float:
         """
