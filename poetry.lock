@@ -1365,14 +1365,14 @@ test = ["solara[pytest]"]
 
 [[package]]
 name = "ipyvuetify"
-version = "3.0.0"
+version = "3.1.0"
 description = "Jupyter widgets based on vuetify UI components"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "ipyvuetify-3.0.0-py2.py3-none-any.whl", hash = "sha256:11a615ff49e0176fd4662e0a947ed015938b85b32b3185cebd6f9af06aa5f441"},
-    {file = "ipyvuetify-3.0.0.tar.gz", hash = "sha256:265402700632d2c31257824cd266211cdbae755b80343a145881f97acdcb53ab"},
+    {file = "ipyvuetify-3.1.0-py2.py3-none-any.whl", hash = "sha256:89167a48e238f2115d167a5454e5d5fd6e9a6cfe3d484c55db82bee1fccec044"},
+    {file = "ipyvuetify-3.1.0.tar.gz", hash = "sha256:2ba4db45b4da8d056e1ee5124c61d2e5812c3e4a8fb4c9832db95501b85e3b98"},
 ]
 
 [package.dependencies]
@@ -5447,4 +5447,4 @@ type = ["pytest-mypy (>=1.0.1) ; platform_python_implementation != \"PyPy\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "f7ac3374f514ff58b674eacf0923b118516a70960def6a6c097ae38aec43eec7"
+content-hash = "2662cb92d6af57cc601a660691be63e5706fb4f7520b58d124e97cf9af144d9b"
