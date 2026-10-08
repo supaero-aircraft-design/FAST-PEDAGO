@@ -1,6 +1,5 @@
 import webbrowser
 
-import plotly.graph_objects as go
 import ipyvuetify as v
 
 
@@ -36,20 +35,12 @@ class ProcessFiguresContainer(v.Col):
         Changes the buttons texts and the figure displayed to MDO
         """
         self._is_MDA = False
-        self._specific_button.children = ["Objectives"]
-        self._specific_button.tooltip = "Displays a graph of the evolution "
-        "of the objective reached at each function call"
-        self._display.children = [self._objectives_figure]
 
     def to_MDA(self):
         """
         Changes the buttons texts and the figure displayed to MDA
         """
         self._is_MDA = True
-        self._specific_button.children = ["Residuals"]
-        self._specific_button.tooltip = "Displays a graph of the evolution "
-        "of residuals with the number of iterations"
-        self._display.children = [self._residuals_figure]
 
     def set_loading(self, message):
         """
@@ -58,7 +49,6 @@ class ProcessFiguresContainer(v.Col):
 
         :param message: a message to display
         """
-        self._display_selection_buttons.v_model = 0
         self._display.children = [
             v.Col(
                 children=[
@@ -82,36 +72,6 @@ class ProcessFiguresContainer(v.Col):
                 ],
             ),
         ]
-
-    def plot(self, iterations, main, limit=None, is_aircraft_green: bool = False):
-        """
-        Plots the graphs on the active figure
-
-        :param iterations: the x axis values
-        :param main: the main graph to plot (residuals/objectives), y axis
-            values.
-        :param limit: a limit to plot (threshold/minimum objective), y axis
-            value. Default to None will trace nothing
-        :param is_aircraft_green: if true, the main graph will be green.
-        """
-        if self._is_MDA:
-            active_figure = self._residuals_figure
-        else:
-            active_figure = self._objectives_figure
-
-        main_graph: go.Scatter = active_figure.data[0]
-        limit_graph: go.Scatter = active_figure.data[1]
-
-        main_graph.x = iterations
-        main_graph.y = main
-
-        limit_graph.x = iterations
-        limit_graph.y = [limit for _ in iterations]
-        if is_aircraft_green:
-            main_graph.line.color = "green"
-        else:
-            main_graph.line.color = "blue"
-        self._display.children = [active_figure]
 
     # TODO: Implement the generation of the graphs
     def _generate_n2_xdsm(self):
@@ -176,31 +136,18 @@ class ProcessFiguresContainer(v.Col):
         """
         self.class_ = "pe-0"
 
-        # TODO: Implement tooltip
-        # By defining the buttons this way it is possible to change the button
-        # group between MDA/MDO
-        self._specific_button = v.Btn(
-            value=0,
-            children=["Residuals"],
-            tooltip=(
-                "Displays a graph of the evolution of residuals with the "
-                "number of iterations"
-            ),
-        )
-
         self._display_selection_buttons = v.BtnToggle(
             v_model=0,
             mandatory=True,
             density="compact",
             children=[
-                self._specific_button,
                 v.Btn(
-                    value=1,
+                    value=0,
                     children=["N2"],
                     tooltip="Displays the N2 diagram of the sizing process",
                 ),
                 v.Btn(
-                    value=2,
+                    value=1,
                     children=["XDSM"],
                     tooltip="Displays the XDSM diagram of the sizing process",
                 ),
@@ -209,23 +156,6 @@ class ProcessFiguresContainer(v.Col):
         self._display_selection_buttons.observe(
             self._change_display,
             names="v_model",
-        )
-
-        self._residuals_figure = _ProcessFigure(
-            main_scatter_name="Relative error",
-            limit_scatter_name="Threshold",
-            title="Evolution of the residuals",
-            x_axes_label="Number of iterations",
-            y_axes_label="Relative value of residuals",
-        )
-
-        self._objectives_figure = _ProcessFigure(
-            main_scatter_name="Objective",
-            limit_scatter_name="Optimized value",
-            title="Evolution of the objective",
-            x_axes_label="Number of function calls",
-            y_axes_label="Objective value (10-4 kg)",
-            is_log=False,
         )
 
         self.mdo_end_snackbar = Snackbar("Optimization ended.")
@@ -242,6 +172,7 @@ class ProcessFiguresContainer(v.Col):
         # This is a container to avoid resetting all of the
         # GraphVisualizationContainer children when switching between MDA/MDO
         self._display = v.Container(class_="mx-auto pa-0")
+        self._display.children = [self._n2_widget]
 
         self.children = [
             v.Row(
@@ -274,19 +205,12 @@ class ProcessFiguresContainer(v.Col):
         """
         data = change["new"]
 
-        # 0: Residuals/Objective 1: N2 2: XDSM
-        if data == 1:
+        # 0: N2 1: XDSM
+        if data == 0:
             self._display.children = [self._n2_widget]
 
-        elif data == 2:
+        elif data == 1:
             self._display.children = [self._xdsm_widget]
-
-        else:
-            if self._is_MDA:
-                self._display.children = [self._residuals_figure]
-
-            else:
-                self._display.children = [self._objectives_figure]
 
     def open_snackbar(self, snackbar_to_open: Snackbar):
         """
@@ -299,62 +223,3 @@ class ProcessFiguresContainer(v.Col):
                 snackbar.display()
             else:
                 snackbar.disappear()
-
-
-class _ProcessFigure(go.FigureWidget):
-    """
-    A widget to prepare the layout used to plot residuals and
-    objectives.
-    """
-
-    def __init__(
-        self,
-        main_scatter_name: str,
-        limit_scatter_name: str,
-        title: str,
-        x_axes_label: str,
-        y_axes_label: str,
-        is_log: bool = True,
-        **kwargs,
-    ):
-        """
-        :param main_scatter_name: label for the main plot (residuals or
-            objective).
-        :param limit_scatter_name: label for the relative error threshold or
-            the minimum objective reached.
-        :param title: title of the plot.
-        :param x_axes_label: label of the x axes.
-        :param y_axes_label: label of the y axes.
-        :param is_log: true if y is a log axis.
-        """
-        super().__init__(
-            data=[
-                go.Scatter(x=[], y=[], mode="lines+markers", name=main_scatter_name),
-                go.Scatter(x=[], y=[], mode="lines", name=limit_scatter_name),
-            ],
-            **kwargs,
-        )
-
-        self.update_layout(
-            title_text=title,
-            title_x=0.5,
-            autosize=True,
-            margin=go.layout.Margin(
-                l=0,
-                r=20,
-                b=0,
-                t=30,
-            ),
-        )
-        self.update_xaxes(title_text=x_axes_label)
-        if is_log:
-            self.update_yaxes(
-                title_text=y_axes_label,
-                type="log",
-                range=[-7.0, 1.0],
-            )
-        else:
-            self.update_yaxes(
-                title_text=y_axes_label,
-                type="log",
-            )

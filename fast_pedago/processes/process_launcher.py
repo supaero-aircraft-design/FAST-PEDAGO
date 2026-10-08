@@ -3,9 +3,6 @@ import re
 
 import numpy as np
 
-from threading import Thread, Event
-from time import sleep
-
 import copy
 import warnings
 
@@ -13,7 +10,6 @@ import openmdao.api as om
 
 import fastoad.api as oad
 
-from . import ProcessPlotter
 from fast_pedago.utils import (
     _extract_residuals,
     PathManager,
@@ -34,14 +30,10 @@ class ProcessLauncher:
     launches the process.
     """
 
-    def __init__(self, plotter: ProcessPlotter, **kwargs):
-        """
-        :param plotter: the ProcessPlotter to plot with.
-        """
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self.process_name = DEFAULT_PROCESS_NAME
-        self.plotter = plotter
 
     def launch_processes(self, is_MDO: bool = False):
         """
@@ -52,10 +44,6 @@ class ProcessLauncher:
         :param is_MDO: defines if the process is MDO or MDA
             to launch the correct process
         """
-        # Initialize event to synchronize the process thread and the plotting
-        # thread
-        process_ended = Event()
-
         self._configure_paths(is_MDO)
 
         # If the switch is off, MDA, else MDO
@@ -64,29 +52,7 @@ class ProcessLauncher:
         else:
             self._configure_mda()
 
-        process_thread = Thread(
-            target=self._run_problem,
-            args=(is_MDO,),
-        )
-        plotting_thread = Thread(
-            target=self.plotter.plot,
-            args=(
-                process_ended,
-                self.recorder_database_file_path,
-                is_MDO,
-                self.process_name,
-            ),
-        )
-
-        process_thread.start()
-        plotting_thread.start()
-
-        process_thread.join()
-        # This line is to make sure the plotting ends after the process and
-        # plots everything
-        sleep(1)
-        process_ended.set()
-        plotting_thread.join()
+        self._run_problem(is_MDO)
 
     def _configure_paths(self, is_MDO: bool = False):
         """
@@ -315,6 +281,7 @@ class ProcessLauncher:
                 self.problem.run_model()
 
         self.problem.write_outputs()
+        self.problem.cleanup()
 
         # You can't rename to a file which already exists, so if one already
         # exists we delete it before renaming.

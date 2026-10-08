@@ -11,7 +11,6 @@ from .components import (
 )
 from fast_pedago.processes import (
     ProcessLauncher,
-    ProcessPlotter,
 )
 from fast_pedago.utils import PathManager
 import logging
@@ -34,12 +33,8 @@ class AppInterface(v.App):
         # The process toggle starts on MDA and only reports later changes
         self.is_MDO = False
 
-        # Sets the residuals and objectives plotter, and the MDA/MDO launcher
-        # to run MDA/MDO and plot there evolution.
-        self.process_plotter = ProcessPlotter()
-        self.process_launcher = ProcessLauncher(
-            self.process_plotter,
-        )
+        # Sets MDA/MDO launcher to run MDA/MDO.
+        self.process_launcher = ProcessLauncher()
 
         self._build_layout()
         self._to_tutorial()
@@ -97,7 +92,6 @@ class AppInterface(v.App):
 
         # Inputs + process graph widgets
         self.process_figures = ProcessFiguresContainer()
-        self.process_plotter.figure = self.process_figures
 
         self.inputs = InputsContainer(self.process_launcher)
 
@@ -280,7 +274,7 @@ class AppInterface(v.App):
 
         # Show a loading widget to make it apparent that a computation is
         # underway.
-        self.process_figures.set_loading("Setting up")
+        self.process_figures.set_loading("Setting up and running")
 
     def _to_process_results(self):
         """
@@ -297,6 +291,10 @@ class AppInterface(v.App):
             else:
                 snackbar_to_open = self.process_figures.mda_failure_snackbar
         self.process_figures.open_snackbar(snackbar_to_open)
+        # This resets the view to what was displayed before the run was launched.
+        self.process_figures._change_display(
+            {"new": self.process_figures._display_selection_buttons.v_model}
+        )
 
     def _launch_process(self, widget, event, data):
         """

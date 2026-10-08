@@ -1,6 +1,5 @@
 import os
 import pathlib
-import pytest
 
 from ..functions.wing import _wing_plot
 

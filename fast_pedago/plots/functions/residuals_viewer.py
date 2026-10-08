@@ -36,7 +36,7 @@ def _residuals_viewer(
     if fig is None:
         fig = go.Figure()
 
-    if not type(aircraft_file_path) is str:
+    if type(aircraft_file_path) is not str:
         aircraft_file_path = str(aircraft_file_path)
 
     # We check if it is an MDA based on the contents of the SQL file otherwise we might miss the
