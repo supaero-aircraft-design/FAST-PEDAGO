@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import sys
 from argparse import (
     ArgumentDefaultsHelpFormatter,
@@ -8,7 +9,8 @@ from argparse import (
 )
 from pathlib import Path
 
-MAIN_NOTEBOOK_NAME = Path(__file__).parent / "notebook" / "FAST_OAD_app.ipynb"
+MAIN_NOTEBOOK_NAME = "FAST_OAD_app.ipynb"
+MAIN_NOTEBOOK_PATH = Path(__file__).parent / "notebook" / MAIN_NOTEBOOK_NAME
 
 
 class Main:
@@ -29,7 +31,7 @@ class Main:
     def _run(args):
         """Run FAST pedagogical branch locally or with server configuration."""
         machine = "server" if args.server else "local"
-        print(MAIN_NOTEBOOK_NAME)
+        print(MAIN_NOTEBOOK_PATH)
         if machine == "server":
             command = (
                 "voila "
@@ -48,16 +50,31 @@ class Main:
 
         # To not get an ugly error message when you ctrl+c
         try:
-            os.system(command + str(MAIN_NOTEBOOK_NAME))  # noqa: S605 this is a literal string, it can be considered safe.
+            os.system(command + str(MAIN_NOTEBOOK_PATH))  # noqa: S605 this is a literal string, it can be considered safe.
         except KeyboardInterrupt:
             sys.exit()
+
+    @staticmethod
+    def _copy_notebook(args):
+        # Should be a pathlib Path already
+        requested_destination = args.destination
+        if requested_destination.exists() and not requested_destination.is_dir():
+            print("Input path should be the path to a directory. Exiting")
+            raise SystemExit(1)
+
+        requested_destination.mkdir(parents=True, exist_ok=True)
+
+        shutil.copy(MAIN_NOTEBOOK_PATH, args.destination)
+        print("You may now run Jupyter with:")
+        print(f'   jupyter lab "{MAIN_NOTEBOOK_NAME}"')
+        return 0
 
     # ENTRY POINT ============================================================
     def run(self):
         """Main function."""
         subparsers = self.parser.add_subparsers(title="sub-commands")
 
-        # sub-command for running AeroMAPS -----------------------------------
+        # sub-command for running FAST-PEDAGO -----------------------------------
         parser_run = subparsers.add_parser(
             "run",
             help="run FAST-OAD pedagogical branch",
@@ -70,6 +87,22 @@ class Main:
             help="to be used if ran on server",
         )
         parser_run.set_defaults(func=self._run)
+
+        # subcommand for copying the notebook ----------------------------------
+        parser_copy = subparsers.add_parser(
+            "copy_notebook",
+            help="copy notebook to target directory to run without voila",
+            description="copy notebook to target directory to run without voila",
+        )
+
+        parser_copy.add_argument(
+            "-d",
+            "--destination",
+            type=Path,
+            required=True,
+            help="Location in which to copy the notebook.",
+        )
+        parser_copy.set_defaults(func=self._copy_notebook)
 
         # Parse --------------------------------------------------------------
         args = self.parser.parse_args()
