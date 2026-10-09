@@ -542,8 +542,8 @@ class InputsContainer(v.List):
             self._sweep_w_design_var_input.slider.v_model[1],
             self._wing_span_constraint_input.slider.v_model,
             is_aspect_ratio_design_variable=not self._ar_design_var_input.checkbox.v_model,
-            is_wing_span_constrained=not self._sweep_w_design_var_input.checkbox.v_model,
-            is_wing_sweep_design_variable=not self._wing_span_constraint_input.checkbox.v_model,
+            is_wing_span_constrained=not self._wing_span_constraint_input.checkbox.v_model,
+            is_wing_sweep_design_variable=not self._sweep_w_design_var_input.checkbox.v_model,
         )
 
     def set_initial_value_mda(self, source_data_file_name: str):
