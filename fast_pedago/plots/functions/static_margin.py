@@ -1,6 +1,5 @@
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
@@ -35,7 +34,7 @@ def _static_margin_plot(
     CG_range = variables["settings:weight:aircraft:CG:range"].value[0]
     static_margin = variables["data:handling_qualities:static_margin"].value[0]
 
-    xu, yu, xl, yl = _NACA_4_digits(2, 4, round(100 * mean_thickness))
+    xu, yu, xl, yl = _naca_4_digits(2, 4, round(100 * mean_thickness))
 
     x_CG_aft = CG_aft
     x_CG_fwd = x_CG_aft - CG_range
@@ -52,7 +51,7 @@ def _static_margin_plot(
     scatter_upper_airfoil_surface = go.Scatter(
         x=xu,
         y=yu,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -61,7 +60,7 @@ def _static_margin_plot(
         x=xl,
         y=yl,
         mode="lines",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -70,7 +69,7 @@ def _static_margin_plot(
         x=[x_CG_fwd, x_CG_aft],
         y=[0, 0],
         mode="lines +markers",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -80,7 +79,7 @@ def _static_margin_plot(
         y=[0],
         mode="markers",
         marker_symbol="x",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -103,7 +102,7 @@ def _static_margin_plot(
         text=name + "-Aerodynamic center",
     )
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     fig.add_trace(scatter_upper_airfoil_surface)
     fig.add_trace(scatter_lower_airfoil_surface)
@@ -123,7 +122,7 @@ def _static_margin_plot(
     return fig
 
 
-def _NACA_4_digits(
+def _naca_4_digits(
     max_camber: int,
     max_camber_distance: int,
     max_thickness: int,
@@ -153,13 +152,7 @@ def _NACA_4_digits(
     yt = (
         5
         * t
-        * (
-            0.2969 * np.sqrt(x)
-            - 0.1260 * x
-            - 0.3516 * (x**2)
-            + 0.2843 * (x**3)
-            - 0.1015 * (x**4)
-        )
+        * (0.2969 * np.sqrt(x) - 0.1260 * x - 0.3516 * (x**2) + 0.2843 * (x**3) - 0.1015 * (x**4))
     )
 
     pi = round(p * nb_points)

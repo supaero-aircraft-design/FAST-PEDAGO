@@ -1,8 +1,9 @@
 import ipyvuetify as v
 
-from .input_widgets import SelectOutput
-from fast_pedago.plots import OutputGraphsPlotter, GRAPH
+from fast_pedago.plots import GRAPH, OutputGraphsPlotter
 from fast_pedago.utils import PathManager
+
+from .input_widgets import SelectOutput
 
 
 class OutputFiguresContainer(v.Col):
@@ -101,7 +102,7 @@ class _OutputGraph(v.Col):
     of the same category.
     """
 
-    def __init__(self, title, is_full_screen: bool = False, **kwargs):
+    def __init__(self, title, *, is_full_screen: bool = False, **kwargs):
         """
         :param title: The title of the card. Corresponds to a graph category.
         :param is_full_screen: if True, the card will take all the screen
@@ -120,13 +121,13 @@ class _OutputGraph(v.Col):
             density="compact",
             hide_details=True,
             items=list(GRAPH[title]),
-            v_model=list(GRAPH[title])[0],
+            v_model=next(iter(GRAPH[title])),
         )
         select.observe(
             lambda change: self.plotter.change_graph(title, change["new"]),
             names="v_model",
         )
-        self.plotter.change_graph(title, list(GRAPH[title])[0])
+        self.plotter.change_graph(title, next(iter(GRAPH[title])))
 
         self.children = [
             v.Card(

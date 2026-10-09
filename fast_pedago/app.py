@@ -1,14 +1,12 @@
 import logging
-
 import os
-from pathlib import Path
-
+import sys
 from argparse import (
     ArgumentDefaultsHelpFormatter,
     ArgumentParser,
     RawDescriptionHelpFormatter,
 )
-
+from pathlib import Path
 
 MAIN_NOTEBOOK_NAME = Path(__file__).parent / "notebook" / "FAST_OAD_app.ipynb"
 
@@ -19,9 +17,7 @@ class Main:
     """
 
     def __init__(self):
-        class _CustomFormatter(
-            RawDescriptionHelpFormatter, ArgumentDefaultsHelpFormatter
-        ):
+        class _CustomFormatter(RawDescriptionHelpFormatter, ArgumentDefaultsHelpFormatter):
             pass
 
         self.parser = ArgumentParser(
@@ -52,9 +48,9 @@ class Main:
 
         # To not get an ugly error message when you ctrl+c
         try:
-            os.system(command + str(MAIN_NOTEBOOK_NAME))
+            os.system(command + str(MAIN_NOTEBOOK_NAME))  # noqa: S605 this is a literal string, it can be considered safe.
         except KeyboardInterrupt:
-            exit()
+            sys.exit()
 
     # ENTRY POINT ============================================================
     def run(self):

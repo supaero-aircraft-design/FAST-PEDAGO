@@ -1,11 +1,10 @@
 import pathlib
 
-import plotly.graph_objects as go
-import plotly.colors as cols
-
 import openmdao.api as om
+import plotly.colors as cols
+import plotly.graph_objects as go
 
-from fast_pedago.utils import RECORDER_FILE_SUFFIX, OUTPUT_FILE_SUFFIX
+from fast_pedago.utils import OUTPUT_FILE_SUFFIX, RECORDER_FILE_SUFFIX
 
 COLS = cols.DEFAULT_PLOTLY_COLORS
 
@@ -54,9 +53,7 @@ def _objectives_viewer(
                 *[
                     (
                         i + 1,
-                        list(case_reader.get_case(case_id).get_objectives().values())[
-                            0
-                        ].item(),
+                        next(iter(case_reader.get_case(case_id).get_objectives().values())).item(),
                     )
                     for i, case_id in enumerate(solver_cases)
                 ]
@@ -72,7 +69,7 @@ def _objectives_viewer(
                 name="Objective",
                 legendgrouptitle_text=name,
                 legendgroup=name,
-                line=dict(color=scatter_color),
+                line={"color": scatter_color},
             )
             fig.add_trace(objective_scatter)
 

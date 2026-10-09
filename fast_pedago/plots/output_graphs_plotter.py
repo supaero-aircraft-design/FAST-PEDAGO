@@ -1,39 +1,35 @@
-from typing import List, Union
-from typing import Callable
+from collections.abc import Callable
 
-import plotly.graph_objects as go
-
-import ipywidgets as widgets
 import ipyvuetify as v
+import ipywidgets as widgets
+import plotly.graph_objects as go
 from IPython.display import clear_output, display
 
-from fast_pedago.plots import (
-    simplified_payload_range_plot,
-    stability_diagram_plot,
-    aircraft_top_view_plot,
+from fast_pedago.plots.functions.better_mission_viewer import BetterMissionViewer
+from fast_pedago.plots.plot_signatures import (
     aircraft_front_view_plot,
+    aircraft_geometry_plot,
     aircraft_side_view_plot,
+    aircraft_top_view_plot,
+    drag_polar_plot,
     flaps_and_slats_plot,
-    wing_plot,
-    variable_viewer,
     mass_breakdown_bar_plot,
     mass_breakdown_sun_plot,
-    drag_polar_plot,
-    wing_geometry_plot,
-    aircraft_geometry_plot,
-    polar_with_L_R_ratio_plot,
-    static_margin_plot,
-    BetterMissionViewer,
-    residuals_viewer_plot,
     objectives_viewer_plot,
+    polar_with_l_d_ratio_plot,
+    residuals_viewer_plot,
+    simplified_payload_range_plot,
+    stability_diagram_plot,
+    static_margin_plot,
+    variable_viewer,
+    wing_geometry_plot,
+    wing_plot,
 )
-
 from fast_pedago.utils import (
-    PathManager,
-    OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
+    OUTPUT_FILE_SUFFIX,
+    PathManager,
 )
-
 
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
@@ -101,7 +97,7 @@ GRAPH = {
             False,
         ],
         "Polar with max L/R": [
-            polar_with_L_R_ratio_plot,
+            polar_with_l_d_ratio_plot,
             False,
         ],
     },
@@ -193,7 +189,8 @@ class OutputGraphsPlotter:
         :param plot_name: the name of the new figure to plot.
             (standard name taken from GRAPH constant)
         """
-        if plot_category in list(GRAPH):
+
+        if plot_category in list(GRAPH):  # noqa: SIM102
             if plot_name in list(GRAPH[plot_category]):
                 self.plot_category = plot_category
                 self.plot_name = plot_name
@@ -207,7 +204,7 @@ class OutputGraphsPlotter:
 
         self.plot()
 
-    def plot(self, data: List[str] = None):
+    def plot(self, data: list[str] | None = None):
         """
         Plots the given data on the current figure.
 
@@ -220,7 +217,7 @@ class OutputGraphsPlotter:
             self.file_selector.items = data
         self._base_plot(self.data)
 
-    def _base_plot(self, data: Union[str, List[str]]):
+    def _base_plot(self, data: str | list[str]):
         """
         Base function to plot data. Add all aircraft to the given plot.
 
@@ -229,10 +226,7 @@ class OutputGraphsPlotter:
         # data contains a list of outputs or a single output, depending on the
         # graph. If there is no data, the rest of the code will be enough to
         # clear the screen.
-        if isinstance(data, str):
-            sizing_process_to_display = [data]
-        else:
-            sizing_process_to_display = data
+        sizing_process_to_display = [data] if isinstance(data, str) else data
 
         with self.output:
             # Clear actual graphs :
@@ -255,9 +249,7 @@ class OutputGraphsPlotter:
 
                     # Mission plot works differently
                     if self.plot_name == "Mission":
-                        mission_viewer.add_mission(
-                            path_to_flight_data_file, sizing_process_to_add
-                        )
+                        mission_viewer.add_mission(path_to_flight_data_file, sizing_process_to_add)
 
                     else:
                         fig = self.plot_function(

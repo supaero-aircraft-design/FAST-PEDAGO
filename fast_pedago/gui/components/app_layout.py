@@ -4,12 +4,12 @@ Contains the main layout of the app : header, footer, drawer layouts.
 
 import ipyvuetify as v
 
-from .input_widgets import (
-    GitLinksButton,
-    ClearAllButton,
-)
-from fast_pedago.utils import _image_from_path, PathManager
+from fast_pedago.utils import PathManager, _image_from_path
 
+from .input_widgets import (
+    ClearAllButton,
+    GitLinksButton,
+)
 
 # Components sizes
 # Vuetify 3 parses the drawer width as a number of pixels
@@ -219,9 +219,7 @@ class Footer(v.Footer):
                             v.Col(
                                 cols=4,
                                 children=[
-                                    v.Row(
-                                        justify="center", children=[self.start_button]
-                                    ),
+                                    v.Row(justify="center", children=[self.start_button]),
                                 ],
                             ),
                             v.Col(

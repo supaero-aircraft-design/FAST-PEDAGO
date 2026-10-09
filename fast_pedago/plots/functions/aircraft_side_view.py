@@ -1,19 +1,18 @@
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import (
     COLORS,
-    NACELLE_POSITION,
-    HT_HEIGHT,
-    HT_DIHEDRAL,
     ENGINE_HEIGHT,
+    HT_DIHEDRAL,
+    HT_HEIGHT,
+    NACELLE_POSITION,
     WING_ROOT_HEIGHT,
 )
 
 
-def _aircraft_side_view_plot(
+def _aircraft_side_view_plot(  # noqa: PLR0915
     aircraft_file_path: str,
     name=None,
     fig=None,
@@ -38,28 +37,20 @@ def _aircraft_side_view_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     # Wing parameters
-    wing_tip_leading_edge_x = variables[
-        "data:geometry:wing:tip:leading_edge:x:local"
-    ].value[0]
+    wing_tip_leading_edge_x = variables["data:geometry:wing:tip:leading_edge:x:local"].value[0]
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
     wing_kink_chord = variables["data:geometry:wing:kink:chord"].value[0]
-    wing_kink_leading_edge_x = variables[
-        "data:geometry:wing:kink:leading_edge:x:local"
-    ].value[0]
+    wing_kink_leading_edge_x = variables["data:geometry:wing:kink:leading_edge:x:local"].value[0]
     mac25_x_position = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
-    distance_root_mac_chords = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    distance_root_mac_chords = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
 
     # Horizontal tail parameters
     ht_root_chord = variables["data:geometry:horizontal_tail:center:chord"].value[0]
     ht_tip_chord = variables["data:geometry:horizontal_tail:tip:chord"].value[0]
     ht_sweep_0 = variables["data:geometry:horizontal_tail:sweep_0"].value[0]
-    local_ht_25mac_x = variables[
-        "data:geometry:horizontal_tail:MAC:at25percent:x:local"
-    ].value[0]
+    local_ht_25mac_x = variables["data:geometry:horizontal_tail:MAC:at25percent:x:local"].value[0]
     ht_distance_from_wing = variables[
         "data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -69,9 +60,7 @@ def _aircraft_side_view_plot(
     vt_root_chord = variables["data:geometry:vertical_tail:root:chord"].value[0]
     vt_tip_chord = variables["data:geometry:vertical_tail:tip:chord"].value[0]
     vt_sweep_0 = variables["data:geometry:vertical_tail:sweep_0"].value[0]
-    local_vt_25mac_x = variables[
-        "data:geometry:vertical_tail:MAC:at25percent:x:local"
-    ].value[0]
+    local_vt_25mac_x = variables["data:geometry:vertical_tail:MAC:at25percent:x:local"].value[0]
     vt_distance_from_wing = variables[
         "data:geometry:vertical_tail:MAC:at25percent:x:from_wingMAC25"
     ].value[0]
@@ -80,9 +69,7 @@ def _aircraft_side_view_plot(
     # CGs
     wing_25mac_x = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
     wing_mac_length = variables["data:geometry:wing:MAC:length"].value[0]
-    local_wing_mac_le_x = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    local_wing_mac_le_x = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
 
     # Fuselage parameters
     fuselage_max_height = variables["data:geometry:fuselage:maximum_height"].value[0]
@@ -104,12 +91,8 @@ def _aircraft_side_view_plot(
         fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_fuselage_front**2
     )
 
-    z_nose_cone = np.linspace(
-        -fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100
-    )
-    x_nose_cone = (
-        fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone**2
-    )
+    z_nose_cone = np.linspace(-fuselage_max_height / 8.0, fuselage_max_height / 8.0, 100)
+    x_nose_cone = fuselage_front_length / (0.5 * fuselage_max_height) ** 2 * z_nose_cone**2
 
     z_nose_cone = np.append(z_nose_cone, z_nose_cone[0])
     x_nose_cone = np.append(x_nose_cone, x_nose_cone[0])
@@ -143,18 +126,14 @@ def _aircraft_side_view_plot(
     )
 
     r = fuselage_max_height / 8
-    x_fuselage_rear = np.array(
-        [fuselage_length - fuselage_rear_length, fuselage_length - r]
-    )
+    x_fuselage_rear = np.array([fuselage_length - fuselage_rear_length, fuselage_length - r])
 
     z_fuselage_rear = np.array([fuselage_max_height / 2.0, fuselage_max_height / 2.0])
 
     z_centre = fuselage_max_height / 2.0 - r
     x_centre = fuselage_length - r
 
-    z_rear = np.linspace(
-        fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10
-    )
+    z_rear = np.linspace(fuselage_max_height / 2.0, fuselage_max_height / 2.0 - 2 * r, 10)
     x_rear = np.sqrt(abs(r**2 - (z_rear - z_centre) ** 2)) + x_centre
 
     x_fuselage_front = np.concatenate(
@@ -191,9 +170,7 @@ def _aircraft_side_view_plot(
             0.0,
         ]
     )
-    x_wing = x_wing + (
-        mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord
-    )
+    x_wing = x_wing + (mac25_x_position - distance_root_mac_chords - 0.25 * mean_aerodynamic_chord)
 
     z_wing = np.array(
         [
@@ -284,7 +261,7 @@ def _aircraft_side_view_plot(
     scatter_front = go.Scatter(
         x=x_fuselage_front,
         y=z_fuselage_front,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -293,7 +270,7 @@ def _aircraft_side_view_plot(
     scatter_middle = go.Scatter(
         x=x_fuselage_middle,
         y=z_fuselage_middle,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -303,7 +280,7 @@ def _aircraft_side_view_plot(
     scatter_fuselage_rear = go.Scatter(
         x=x_fuselage_rear,
         y=z_fuselage_rear,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -313,7 +290,7 @@ def _aircraft_side_view_plot(
     scatter_rear = go.Scatter(
         x=x_rear,
         y=z_rear,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -323,7 +300,7 @@ def _aircraft_side_view_plot(
     scatter_belly = go.Scatter(
         x=x_belly,
         y=z_belly,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -333,7 +310,7 @@ def _aircraft_side_view_plot(
     scatter_wing = go.Scatter(
         x=x_wing,
         y=z_wing,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -344,7 +321,7 @@ def _aircraft_side_view_plot(
         x=x_engine,
         y=z_engine,
         fill="tonexty",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -354,7 +331,7 @@ def _aircraft_side_view_plot(
     scatter_ht = go.Scatter(
         x=x_ht,
         y=z_ht,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         fill="tonexty",
         mode="lines",
         name=name,
@@ -365,7 +342,7 @@ def _aircraft_side_view_plot(
     scatter_vt = go.Scatter(
         x=x_vt,
         y=z_vt,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -375,7 +352,7 @@ def _aircraft_side_view_plot(
     scatter_nose_cone = go.Scatter(
         x=x_nose_cone,
         y=z_nose_cone,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         fill="tonexty",
         mode="lines",
         name=name,
@@ -386,7 +363,7 @@ def _aircraft_side_view_plot(
     scatter_cockpit = go.Scatter(
         x=x_cockpit,
         y=z_cockpit,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -405,7 +382,7 @@ def _aircraft_side_view_plot(
     fig.add_trace(scatter_ht)
     fig.add_trace(scatter_nose_cone)
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     if name is None:
         fig.update_layout(
@@ -421,5 +398,4 @@ def _aircraft_side_view_plot(
             xaxis_title="y",
             yaxis_title="z",
         )
-    fig = go.FigureWidget(fig)
-    return fig
+    return go.FigureWidget(fig)

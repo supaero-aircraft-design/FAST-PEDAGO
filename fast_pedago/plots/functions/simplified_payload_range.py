@@ -1,11 +1,7 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
-import scipy.constants as sc
-
 import plotly.graph_objects as go
-
+import scipy.constants as sc
 from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
@@ -105,7 +101,7 @@ def _simplified_payload_range_plot(
         mode="lines",
         name=name + " | · = Design",
         legendgroup=name,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
     scatter_nominal_mission = go.Scatter(
         x=[nominal_range],
@@ -113,7 +109,7 @@ def _simplified_payload_range_plot(
         mode="markers",
         legendgroup=name,
         showlegend=False,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
 
     fig.add_trace(scatter_external_bound)
@@ -131,7 +127,7 @@ def _simplified_payload_range_plot(
 
 def _extract_value_from_flight_data_file(
     flight_data_file_path: str,
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     """
     Extract from the flight data point file the average value during cruise to
     compute Breguet's range equation.
@@ -141,16 +137,11 @@ def _extract_value_from_flight_data_file(
     """
 
     flight_data = pd.read_csv(flight_data_file_path, index_col=0)
-    cruise_flight_data = flight_data.loc[
-        flight_data["name"] == "sizing:main_route:cruise"
-    ]
+    cruise_flight_data = flight_data.loc[flight_data["name"] == "sizing:main_route:cruise"]
 
     mean_sfc = float(np.mean(cruise_flight_data["sfc [kg/N/s]"].to_numpy()))
     mean_l_over_d = float(
-        np.mean(
-            cruise_flight_data["CL [-]"].to_numpy()
-            / cruise_flight_data["CD [-]"].to_numpy()
-        )
+        np.mean(cruise_flight_data["CL [-]"].to_numpy() / cruise_flight_data["CD [-]"].to_numpy())
     )
     # Actually constant over the flight
     mean_tas = float(cruise_flight_data["true_airspeed [m/s]"].to_numpy()[0])

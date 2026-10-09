@@ -1,19 +1,21 @@
+import logging
+
 import ipyvuetify as v
 
+from fast_pedago.processes import (
+    ProcessLauncher,
+)
+from fast_pedago.utils import PathManager
+
 from .components import (
-    Header,
-    Footer,
     Drawer,
+    Footer,
+    Header,
     InputsContainer,
     OutputFiguresContainer,
     ProcessFiguresContainer,
     TutorialContainer,
 )
-from fast_pedago.processes import (
-    ProcessLauncher,
-)
-from fast_pedago.utils import PathManager
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -256,13 +258,13 @@ class AppInterface(v.App):
         # If the button toggle is on 1, switch to MDO
         if data == "MDO":
             self.is_MDO = True
-            self.inputs.to_MDO()
-            self.process_figures.to_MDO()
+            self.inputs.to_mdo()
+            self.process_figures.to_mdo()
 
         else:
             self.is_MDO = False
-            self.inputs.to_MDA()
-            self.process_figures.to_MDA()
+            self.inputs.to_mda()
+            self.process_figures.to_mda()
 
     def _to_process_computation(self):
         """
@@ -285,11 +287,10 @@ class AppInterface(v.App):
             tab.disabled = False
         if self.is_MDO:
             snackbar_to_open = self.process_figures.mdo_end_snackbar
+        elif self.process_launcher.get_mda_success():
+            snackbar_to_open = self.process_figures.mda_success_snackbar
         else:
-            if self.process_launcher.get_MDA_success():
-                snackbar_to_open = self.process_figures.mda_success_snackbar
-            else:
-                snackbar_to_open = self.process_figures.mda_failure_snackbar
+            snackbar_to_open = self.process_figures.mda_failure_snackbar
         self.process_figures.open_snackbar(snackbar_to_open)
         # This resets the view to what was displayed before the run was launched.
         self.process_figures._change_display(
@@ -308,7 +309,7 @@ class AppInterface(v.App):
             self.inputs.retrieve_mdo_inputs()
         else:
             self.inputs.retrieve_mda_inputs()
-        self.process_launcher.launch_processes(self.is_MDO)
+        self.process_launcher.launch_processes(is_mdo=self.is_MDO)
         self._to_process_results()
 
     def _set_source_data_file(self, change):

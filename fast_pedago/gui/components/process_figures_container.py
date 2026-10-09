@@ -2,10 +2,9 @@ import webbrowser
 
 import ipyvuetify as v
 
+from fast_pedago.utils import PathManager, _image_from_path
 
 from . import Snackbar
-from fast_pedago.utils import _image_from_path, PathManager
-
 
 # Image files
 N2_PNG = "n2.png"
@@ -28,19 +27,19 @@ class ProcessFiguresContainer(v.Col):
 
         self._generate_n2_xdsm()
         self._build_layout()
-        self.to_MDA()
+        self.to_mda()
 
-    def to_MDO(self):
+    def to_mdo(self):
         """
         Changes the buttons texts and the figure displayed to MDO
         """
-        self._is_MDA = False
+        self._is_mda = False
 
-    def to_MDA(self):
+    def to_mda(self):
         """
         Changes the buttons texts and the figure displayed to MDA
         """
-        self._is_MDA = True
+        self._is_mda = True
 
     def set_loading(self, message):
         """
@@ -81,10 +80,8 @@ class ProcessFiguresContainer(v.Col):
         generating them, we check if they exist.
         """
 
-        # N2 and XDSM images are wrapped in a tooltip to indicate to click on
-        # them.
-        # This is because it is impossible to load directly the .html into a
-        # frame (bugs)
+        # N2 and XDSM images are wrapped in a tooltip to indicate to click on them.
+        # This is because it is impossible to load directly the .html into a frame
         n2_image_path = PathManager.path_to("data", N2_PNG)
         n2_file_path = PathManager.path_to("data", N2_HTML)
 
@@ -113,9 +110,7 @@ class ProcessFiguresContainer(v.Col):
 
         xdsm_image = _image_from_path(xdsm_image_path, max_height="60vh")
         xdsm_image.v_on = "tooltip.on"
-        xdsm_image.on_event(
-            "click", lambda *args: webbrowser.open_new_tab(xdsm_file_path)
-        )
+        xdsm_image.on_event("click", lambda *args: webbrowser.open_new_tab(xdsm_file_path))
 
         self._xdsm_widget = v.Tooltip(
             contained=True,
@@ -175,26 +170,15 @@ class ProcessFiguresContainer(v.Col):
         self._display.children = [self._n2_widget]
 
         self.children = [
-            v.Row(
-                class_="pb-4 pt-2",
-                justify="center",
-                children=[
-                    self._display_selection_buttons,
-                ],
-            ),
+            v.Row(class_="pb-4 pt-2", justify="center", children=[self._display_selection_buttons]),
             v.Row(
                 justify="space-around",
                 align="center",
                 no_gutters=True,
-                children=[
-                    v.Col(
-                        children=[
-                            self._display,
-                        ],
-                    ),
-                ],
+                children=[v.Col(children=[self._display])],
             ),
-        ] + self._snackbars
+            *self._snackbars,
+        ]
 
     def _change_display(self, change):
         """

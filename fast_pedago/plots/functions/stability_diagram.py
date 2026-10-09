@@ -1,10 +1,8 @@
+import numpy as np
 import plotly.graph_objects as go
 from fastoad.io import VariableIO
-import numpy as np
-from stdatm import Atmosphere
-
 from scipy.optimize import fsolve
-
+from stdatm import Atmosphere
 
 # Undefined constants by FAST-OAD so plausible values have been chosen
 cl0_wing = 0.15
@@ -12,7 +10,7 @@ cm0_wing = -0.2
 ths_deportation = -5 * np.pi / 180  # rad
 
 
-def _stability_diagram_plot(
+def _stability_diagram_plot(  # noqa: PLR0915
     aircraft_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
@@ -31,15 +29,9 @@ def _stability_diagram_plot(
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
     cl_alpha_wing = variables["data:aerodynamics:aircraft:high_speed:CL_alpha"].value[0]
-    cl_max_clean_wing = variables[
-        "data:aerodynamics:aircraft:landing:CL_max_clean"
-    ].value[0]
-    cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[
-        0
-    ]
-    cl_alpha_ht = variables[
-        "data:aerodynamics:horizontal_tail:high_speed:CL_alpha"
-    ].value[0]
+    cl_max_clean_wing = variables["data:aerodynamics:aircraft:landing:CL_max_clean"].value[0]
+    cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[0]
+    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:high_speed:CL_alpha"].value[0]
 
     mac = variables["data:geometry:wing:MAC:length"].value[0]
     mac_ht = variables["data:geometry:horizontal_tail:MAC:length"].value[0]
@@ -106,12 +98,7 @@ def _stability_diagram_plot(
     rho = atm.density
 
     def epsilon(cl_wing_function):
-        return (
-            -8
-            * cl_wing_function
-            / (np.pi**3 * aspect_ratio_wing)
-            * (1 + 1 / np.cos(beta))
-        )
+        return -8 * cl_wing_function / (np.pi**3 * aspect_ratio_wing) * (1 + 1 / np.cos(beta))
 
     def lift_equilibrium(alpha_function, surface_ratio_function, mass):
         v_stall = 2 * mass * 9.81 / (rho * area_wing * cl_max_clean_wing * area_wing)
@@ -177,13 +164,9 @@ def _stability_diagram_plot(
     def lift_equilibrium2(alpha_function, surface_ratio_function, mass):
         left_member = mass * 9.81 / (0.5 * rho * v_mo**2 * area_wing)
 
-        cl_w = (
-            cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo
-        )
+        cl_w = cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo
         epsilon_ht = epsilon(cl_w)
-        cl_ht = cl_alpha_ht * (
-            alpha_function + epsilon_ht + ths_deportation + q * mac_ht / v_mo
-        )
+        cl_ht = cl_alpha_ht * (alpha_function + epsilon_ht + ths_deportation + q * mac_ht / v_mo)
 
         right_member = cl_w + surface_ratio_function * cl_ht
 
@@ -217,14 +200,14 @@ def _stability_diagram_plot(
     scatter_ac = go.Scatter(
         x=x_cg_rear_percentage * 100,
         y=surface_ratio * 100,
-        line=dict(color="darkslateblue"),
+        line={"color": "darkslateblue"},
         mode="lines",
         name="Neutral point",
     )
     scatter_ac2 = go.Scatter(
         x=x_cg_rear_percentage_minus_5perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="blue"),
+        line={"color": "blue"},
         mode="lines",
         name="Neutral point - 5%",
     )
@@ -232,14 +215,14 @@ def _stability_diagram_plot(
     scatter_ac3 = go.Scatter(
         x=x_cg_rear_percentage_minus_10perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="lightblue"),
+        line={"color": "lightblue"},
         mode="lines",
         name="Neutral point - 10%",
     )
     scatter_ac4 = go.Scatter(
         x=x_cg_rear_percentage_minus_15perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="gray"),
+        line={"color": "gray"},
         mode="lines",
         name="Neutral point - 15%",
     )
@@ -247,7 +230,7 @@ def _stability_diagram_plot(
     scatter_trim_mtow = go.Scatter(
         x=x_cg_front_percentage * 100,
         y=surface_ratio * 100,
-        line=dict(color="yellow"),
+        line={"color": "yellow"},
         mode="lines",
         name="Forward limit (trim on glide)",
     )
@@ -255,7 +238,7 @@ def _stability_diagram_plot(
     scatter_actual = go.Scatter(
         x=delta_x_cg,
         y=[actual_surface_ratio * 100, actual_surface_ratio * 100],
-        line=dict(color="orange"),
+        line={"color": "orange"},
         mode="lines",
         name="CG stability range",
     )

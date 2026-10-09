@@ -1,14 +1,13 @@
+import ipyvuetify as v
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from ipywidgets import widgets
-import ipyvuetify as v
 from IPython.display import display
-
 from fastoad.io import VariableIO
+from ipywidgets import widgets
 
 
-def _wing_plot(
+def _wing_plot(  # noqa: PLR0915
     aircraft_file_path: str,
     name=None,
     fig=None,
@@ -32,12 +31,8 @@ def _wing_plot(
     """
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
-    wing_kink_leading_edge_x = variables[
-        "data:geometry:wing:kink:leading_edge:x:local"
-    ].value[0]
-    wing_tip_leading_edge_x = variables[
-        "data:geometry:wing:tip:leading_edge:x:local"
-    ].value[0]
+    wing_kink_leading_edge_x = variables["data:geometry:wing:kink:leading_edge:x:local"].value[0]
+    wing_tip_leading_edge_x = variables["data:geometry:wing:tip:leading_edge:x:local"].value[0]
     wing_root_y = variables["data:geometry:wing:root:y"].value[0]
     wing_kink_y = variables["data:geometry:wing:kink:y"].value[0]
     wing_tip_y = variables["data:geometry:wing:tip:y"].value[0]
@@ -45,17 +40,13 @@ def _wing_plot(
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_kink_chord = variables["data:geometry:wing:kink:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
-    trailing_edge_kink_sweep_100_outer = variables[
-        "data:geometry:wing:sweep_100_outer"
-    ].value[0]
+    trailing_edge_kink_sweep_100_outer = variables["data:geometry:wing:sweep_100_outer"].value[0]
     sweep_0 = variables["data:geometry:wing:sweep_0"].value[0]
     total_wing_span = variables["data:geometry:wing:span"].value[0]
     mean_aerodynamic_chord = variables["data:geometry:wing:MAC:length"].value[0]
     mean_aerodynamic_chord_y_global = variables["data:geometry:wing:MAC:y"].value[0]
     mac25_x_position = variables["data:geometry:wing:MAC:at25percent:x"].value[0]
-    distance_root_mac_chords = variables[
-        "data:geometry:wing:MAC:leading_edge:x:local"
-    ].value[0]
+    distance_root_mac_chords = variables["data:geometry:wing:MAC:leading_edge:x:local"].value[0]
 
     # 1) overall wing
     # Part of the code dedicated to the geometry of the general wing
@@ -98,9 +89,7 @@ def _wing_plot(
     # The line representing the fuselage axis in y=0
     y_fuselage = np.array([0, 0])
     x_fuselage = np.array([-wing_root_chord * 0.2, wing_root_chord * 1.6])
-    x_fuselage += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_fuselage += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 5) Tip (L3)
     # The line along the tip of the wing
@@ -120,9 +109,7 @@ def _wing_plot(
     # The line joining the fuselage axis and the line X1
     y_fuselage_to_tip = np.array([total_wing_span / 2, wing_tip_y * 1.03])
     x_fuselage_to_tip = np.array([0.0, 0.0])
-    x_fuselage_to_tip += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_fuselage_to_tip += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 7bis) Half span (Y3)
     # The line joining representing the span of the half wing
@@ -133,12 +120,8 @@ def _wing_plot(
     # 8) Break
     # The line representing the kink (the break) of the wing
     y_break = np.array([wing_kink_y, wing_kink_y])
-    x_break = np.array(
-        [wing_kink_leading_edge_x, wing_kink_leading_edge_x + wing_kink_chord * 1.7]
-    )
-    x_break += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_break = np.array([wing_kink_leading_edge_x, wing_kink_leading_edge_x + wing_kink_chord * 1.7])
+    x_break += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 9) MAC
     # The line representing the mean aerodynamic chord of the wing
@@ -158,13 +141,9 @@ def _wing_plot(
 
     # 10) Perpendiculaire Down Break
     # The upper line perpendicular to the break line
-    y_perp_down = np.array(
-        [wing_kink_y, wing_kink_y + (wing_tip_y - wing_kink_y) * 0.25]
-    )
+    y_perp_down = np.array([wing_kink_y, wing_kink_y + (wing_tip_y - wing_kink_y) * 0.25])
     x_perp_down = np.array([wing_kink_leading_edge_x, wing_kink_leading_edge_x])
-    x_perp_down += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_perp_down += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 11) Perpendiculaire Up Break
     # The lower line perpendicular to the break line
@@ -175,9 +154,7 @@ def _wing_plot(
             wing_kink_leading_edge_x + wing_kink_chord,
         ]
     )
-    x_perp_up += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_perp_up += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 12) Kink chord (L2)
     # The line representing the kink chord of the wing
@@ -187,9 +164,7 @@ def _wing_plot(
             wing_kink_y + (wing_tip_y - wing_kink_y) * 0.25,
         ]
     )
-    x_l2 = np.array(
-        [wing_kink_leading_edge_x, wing_kink_leading_edge_x + wing_kink_chord]
-    )
+    x_l2 = np.array([wing_kink_leading_edge_x, wing_kink_leading_edge_x + wing_kink_chord])
     x_l2 += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 13) Kink to leading edge (X2)
@@ -234,9 +209,7 @@ def _wing_plot(
         ]
     )
     x_down_mac = np.array([distance_root_mac_chords, distance_root_mac_chords])
-    x_down_mac += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_down_mac += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 17) X0
     # The line parallel to the fuselage axis and joining the line Y3 with the
@@ -268,9 +241,7 @@ def _wing_plot(
             - wing_kink_y * np.tan(np.pi * trailing_edge_kink_sweep_100_outer / 180),
         ]
     )
-    x_continuity1 += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_continuity1 += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 20) Continuity leading edge
     # The line representing the continuity of the leading edge until the
@@ -282,9 +253,7 @@ def _wing_plot(
             0 - wing_root_y * np.tan(np.pi * sweep_0 / 180),
         ]
     )
-    x_continuity2 += (
-        mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
-    )
+    x_continuity2 += mac25_x_position - 0.25 * mean_aerodynamic_chord - distance_root_mac_chords
 
     # 21) L1
     # The line joining the two previous continuity lines at the root level
@@ -316,7 +285,7 @@ def _wing_plot(
     scatter = go.Scatter(
         x=y,
         y=x,
-        line=dict(color="#636efa", width=3),
+        line={"color": "#636efa", "width": 3},
         mode="lines",
         name=name,
         showlegend=False,
@@ -325,7 +294,7 @@ def _wing_plot(
     scatter_fuselage = go.Scatter(
         x=y_fuselage,
         y=x_fuselage,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -334,7 +303,7 @@ def _wing_plot(
     scatter_l3 = go.Scatter(
         x=y_l3,
         y=x_l3,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -343,7 +312,7 @@ def _wing_plot(
     scatter_x1 = go.Scatter(
         x=y_x1,
         y=x_x1,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -352,7 +321,7 @@ def _wing_plot(
     scatter_fuselage_to_tip = go.Scatter(
         x=y_fuselage_to_tip,
         y=x_fuselage_to_tip,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -361,7 +330,7 @@ def _wing_plot(
     scatter_y3 = go.Scatter(
         x=y_y3,
         y=x_y3,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -370,7 +339,7 @@ def _wing_plot(
     scatter_break = go.Scatter(
         x=y_break,
         y=x_break,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -379,7 +348,7 @@ def _wing_plot(
     scatter_mac = go.Scatter(
         x=y_mac,
         y=x_mac,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -388,7 +357,7 @@ def _wing_plot(
     scatter_perp_up = go.Scatter(
         x=y_perp_up,
         y=x_perp_up,
-        line=dict(color="grey"),
+        line={"color": "grey"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -397,7 +366,7 @@ def _wing_plot(
     scatter_perp_down = go.Scatter(
         x=y_perp_down,
         y=x_perp_down,
-        line=dict(color="grey"),
+        line={"color": "grey"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -406,7 +375,7 @@ def _wing_plot(
     scatter_l2 = go.Scatter(
         x=y_l2,
         y=x_l2,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -415,7 +384,7 @@ def _wing_plot(
     scatter_x2 = go.Scatter(
         x=y_x2,
         y=x_x2,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -424,7 +393,7 @@ def _wing_plot(
     scatter_y2 = go.Scatter(
         x=y_y2,
         y=x_y2,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -433,7 +402,7 @@ def _wing_plot(
     scatter_y0 = go.Scatter(
         x=y_y0,
         y=x_y0,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -442,7 +411,7 @@ def _wing_plot(
     scatter_down_mac = go.Scatter(
         x=y_down_mac,
         y=x_down_mac,
-        line=dict(color="gray"),
+        line={"color": "gray"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -451,7 +420,7 @@ def _wing_plot(
     scatter_x0 = go.Scatter(
         x=y_x0,
         y=x_x0,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -460,7 +429,7 @@ def _wing_plot(
     scatter_l0 = go.Scatter(
         x=y_l0,
         y=x_l0,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -469,7 +438,7 @@ def _wing_plot(
     scatter_continuity1 = go.Scatter(
         x=y_continuity1,
         y=x_continuity1,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -478,7 +447,7 @@ def _wing_plot(
     scatter_continuity2 = go.Scatter(
         x=y_continuity2,
         y=x_continuity2,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -487,7 +456,7 @@ def _wing_plot(
     scatter_l1 = go.Scatter(
         x=y_l1,
         y=x_l1,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -496,7 +465,7 @@ def _wing_plot(
     scatter_y1 = go.Scatter(
         x=y_y1,
         y=x_y1,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,

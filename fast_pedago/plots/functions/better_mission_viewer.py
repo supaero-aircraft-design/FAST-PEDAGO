@@ -1,7 +1,5 @@
 import plotly.graph_objects as go
 from IPython.display import clear_output, display
-
-
 from fastoad.gui import MissionViewer
 
 
@@ -19,9 +17,7 @@ class BetterMissionViewer(MissionViewer):
         """
         self.layout = layout
 
-    def _show_plot(
-        self, change=None, layout_dict=None, *, layout_overwrite=False, **kwargs
-    ):
+    def _show_plot(self, change=None, layout_dict=None, *, layout_overwrite=False, **kwargs):
         """
         Updates and shows the plots
         """
