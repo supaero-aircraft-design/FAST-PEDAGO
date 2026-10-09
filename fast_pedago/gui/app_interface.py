@@ -11,15 +11,16 @@ from .components import (
 )
 from fast_pedago.processes import (
     ProcessLauncher,
-    ProcessPlotter,
 )
 from fast_pedago.utils import PathManager
+import logging
 
+_LOGGER = logging.getLogger(__name__)
 
 # As there are margins and padding in the voila template,
 # I have to adjust the padding considering both the spacings
 # in the voila template and the other components sizes.
-TOP_PADDING = "36px"
+TOP_PADDING = "76px"
 LEFT_PADDING = "426px"
 
 
@@ -29,12 +30,11 @@ class AppInterface(v.App):
 
         PathManager.build_paths()
 
-        # Sets the residuals and objectives plotter, and the MDA/MDO launcher
-        # to run MDA/MDO and plot there evolution.
-        self.process_plotter = ProcessPlotter()
-        self.process_launcher = ProcessLauncher(
-            self.process_plotter,
-        )
+        # The process toggle starts on MDA and only reports later changes
+        self.is_MDO = False
+
+        # Sets MDA/MDO launcher to run MDA/MDO.
+        self.process_launcher = ProcessLauncher()
 
         self._build_layout()
         self._to_tutorial()
@@ -62,14 +62,16 @@ class AppInterface(v.App):
         self.drawer.content.children = [self.inputs]
         self.main_content.children = [self.graphs]
 
-    def _switch_tab(self, widget, event, data):
+    def _switch_tab(self, change):
         """
         Hides the drawer when on outputs tabs, and show it when on
         inputs tab.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
-        if data == 1:
+        data = change["new"]
+
+        if data == "outputs":
             self.drawer.hide()
             self.header.open_drawer_button.hide()
             self.padding_column.hide()
@@ -77,6 +79,8 @@ class AppInterface(v.App):
             self.drawer.show()
             self.header.open_drawer_button.show()
             self.padding_column.show()
+
+        self.graphs_window.v_model = data
 
     def _build_layout(self):
         """
@@ -88,16 +92,16 @@ class AppInterface(v.App):
 
         # Inputs + process graph widgets
         self.process_figures = ProcessFiguresContainer()
-        self.process_plotter.figure = self.process_figures
 
         self.inputs = InputsContainer(self.process_launcher)
 
-        self.inputs.source_data_file_selector.on_event(
-            "change", self._set_source_data_file
+        self.inputs.source_data_file_selector.observe(
+            self._set_source_data_file,
+            names="v_model",
         )
-        self.inputs.process_selection_switch.on_event(
-            "change",
+        self.inputs.process_selection_switch.observe(
             self._switch_process,
+            names="v_model",
         )
         self.inputs.launch_button.on_event("click", self._launch_process)
 
@@ -109,28 +113,57 @@ class AppInterface(v.App):
             fill_height=True,
         )
 
-        self.graphs = v.Tabs(
-            centered=True,
+        self.graphs_tabs = v.Tabs(
+            v_model="inputs",
+            align_tabs="center",
             grow=True,
             hide_slider=True,
             children=[
-                v.Tab(children=["Inputs"]),
-                v.Tab(children=["Outputs"]),
-                v.TabItem(
+                v.Tab(
+                    value="inputs",
+                    children=["Inputs"],
+                ),
+                v.Tab(
+                    value="outputs",
+                    children=["Outputs"],
+                ),
+            ],
+        )
+
+        self.graphs_window = v.Window(
+            v_model="inputs",
+            children=[
+                v.WindowItem(
+                    value="inputs",
                     children=[
                         v.Divider(),
+                        v.Spacer(),
                         self.process_figures,
                     ],
                 ),
-                v.TabItem(
+                v.WindowItem(
+                    value="outputs",
                     children=[
                         v.Divider(),
+                        v.Spacer(),
                         self.output_figures,
                     ],
                 ),
             ],
         )
-        self.graphs.on_event("change", self._switch_tab)
+
+        self.graphs = v.Container(
+            fluid=True,
+            children=[
+                self.graphs_tabs,
+                self.graphs_window,
+            ],
+        )
+
+        self.graphs_tabs.observe(
+            self._switch_tab,
+            names="v_model",
+        )
 
         self.header = Header()
         self.header.fast_oad_logo.on_event("click", lambda *args: self._to_tutorial())
@@ -156,14 +189,14 @@ class AppInterface(v.App):
             color="primary",
             children=[
                 "Outputs",
-                v.Icon(class_="ps-2", children=["fa-angle-right"]),
+                v.Icon(class_="ps-2", children=["mdi-angle-right"]),
             ],
         )
 
         self.to_inputs_button = v.Btn(
             color="primary",
             children=[
-                v.Icon(class_="pe-2", children=["fa-angle-left"]),
+                v.Icon(class_="pe-2", children=["mdi-angle-left"]),
                 "Inputs",
             ],
         )
@@ -211,15 +244,17 @@ class AppInterface(v.App):
             self.footer,
         ]
 
-    def _switch_process(self, widget, event, data):
+    def _switch_process(self, change):
         """
         Switch display between MDA and MDO depending on process selection
         button state.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
+        data = change["new"]
+
         # If the button toggle is on 1, switch to MDO
-        if data == 1:
+        if data == "MDO":
             self.is_MDO = True
             self.inputs.to_MDO()
             self.process_figures.to_MDO()
@@ -234,20 +269,20 @@ class AppInterface(v.App):
         When a process is on-going, blocks the inputs and set a loading screen.
         """
         self.inputs.disable()
-        self.graphs.children[0].disabled = True
-        self.graphs.children[1].disabled = True
+        for tab in self.graphs_tabs.children:
+            tab.disabled = True
 
         # Show a loading widget to make it apparent that a computation is
         # underway.
-        self.process_figures.set_loading("Setting up")
+        self.process_figures.set_loading("Setting up and running")
 
     def _to_process_results(self):
         """
         Re-enables input widgets after the end of a MDA/MDO process.
         """
         self.inputs.enable()
-        self.graphs.children[0].disabled = False
-        self.graphs.children[1].disabled = False
+        for tab in self.graphs_tabs.children:
+            tab.disabled = False
         if self.is_MDO:
             snackbar_to_open = self.process_figures.mdo_end_snackbar
         else:
@@ -256,6 +291,10 @@ class AppInterface(v.App):
             else:
                 snackbar_to_open = self.process_figures.mda_failure_snackbar
         self.process_figures.open_snackbar(snackbar_to_open)
+        # This resets the view to what was displayed before the run was launched.
+        self.process_figures._change_display(
+            {"new": self.process_figures._display_selection_buttons.v_model}
+        )
 
     def _launch_process(self, widget, event, data):
         """
@@ -272,13 +311,13 @@ class AppInterface(v.App):
         self.process_launcher.launch_processes(self.is_MDO)
         self._to_process_results()
 
-    def _set_source_data_file(self, widget, event, data):
+    def _set_source_data_file(self, change):
         """
         Sets the reference file name to use
 
-        To be called by a widget event
+        To be called with "observe" method of a widget.
         """
-        self.inputs.set_initial_value_mda(data)
+        self.inputs.set_initial_value_mda(change["new"])
 
     def _open_or_close_drawer(self, widget, event, data):
         """

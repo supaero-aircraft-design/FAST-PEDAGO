@@ -12,7 +12,8 @@ from fast_pedago.utils import _image_from_path, PathManager
 
 
 # Components sizes
-DRAWER_WIDTH = "450px"
+# Vuetify 3 parses the drawer width as a number of pixels
+DRAWER_WIDTH = 450
 HEADER_HEIGHT = "64px"
 
 # Logos image files names
@@ -41,11 +42,9 @@ class Drawer(v.NavigationDrawer):
         """
         Generates the drawer layout.
         """
-        self.app = True
-        self.clipped = True
         self.width = DRAWER_WIDTH
         self.v_model = True
-        self.hide_overlay = True
+        self.scrim = False
 
         # The content attributes will be used to change the components
         # displayed easily.
@@ -60,7 +59,7 @@ class Drawer(v.NavigationDrawer):
             class_="me-5 hidden-lg-and-up",
             icon=True,
             children=[
-                v.Icon(children=["fa-times"]),
+                v.Icon(children=["mdi-close"]),
             ],
         )
 
@@ -98,13 +97,12 @@ class Header(v.AppBar):
         buttons.
         """
         self.class_ = "px-5"
-        self.fixed = True
         self.color = "white"
 
         self.open_drawer_button = v.Btn(
             class_="hidden-lg-and-up",
             icon=True,
-            x_large=True,
+            size="x-large",
             children=[
                 v.AppBarNavIcon(),
             ],
@@ -166,7 +164,7 @@ class Header(v.AppBar):
         )
         self.fast_oad_logo.v_on = "tooltip.on"
         self._fast_oad_logo_wrapper = v.Tooltip(
-            bottom=True,
+            location="bottom",
             v_slots=[
                 {
                     "name": "activator",
@@ -195,48 +193,61 @@ class Footer(v.Footer):
         followed by FAST-OAD logo, github links buttons and utility
         buttons.
         """
-        self.padless = True
-        self.outlined = True
-        self.app = True
+        self.class_ = "pa-0"
         self.color = "white"
 
         self.start_button = v.Btn(
             color="#32cd32",
-            x_large=True,
+            size="x-large",
             children=["Start making aircraft"],
         )
 
         self.children = [
-            v.Row(
-                align="center",
-                justify="center",
-                no_gutters=True,
+            v.Container(
+                fluid=True,
+                class_="pa-0",
                 children=[
-                    v.Col(),
-                    v.Col(
+                    v.Row(
+                        style_="width: 100%;",
+                        align="center",
+                        justify="center",
+                        no_gutters=True,
                         children=[
-                            v.Row(justify="center", children=[self.start_button]),
-                        ]
-                    ),
-                    v.Col(
-                        children=[
-                            v.Row(
-                                align="center",
-                                justify="end",
-                                no_gutters=True,
+                            v.Col(
+                                cols=4,
+                            ),
+                            v.Col(
+                                cols=4,
                                 children=[
-                                    v.Col(cols=3, children=[self._isae_logo]),
-                                    v.Col(
-                                        class_="pe-6",
-                                        cols=7,
-                                        children=[self._airbus_logo],
+                                    v.Row(
+                                        justify="center", children=[self.start_button]
+                                    ),
+                                ],
+                            ),
+                            v.Col(
+                                cols=4,
+                                children=[
+                                    v.Row(
+                                        align="center",
+                                        justify="end",
+                                        no_gutters=True,
+                                        children=[
+                                            v.Spacer(),
+                                            v.Col(cols=3, children=[self._isae_logo]),
+                                            v.Spacer(),
+                                            v.Col(
+                                                class_="pe-6",
+                                                cols=7,
+                                                children=[self._airbus_logo],
+                                            ),
+                                        ],
                                     ),
                                 ],
                             ),
                         ],
                     ),
                 ],
-            ),
+            )
         ]
 
     def _load_images(self):

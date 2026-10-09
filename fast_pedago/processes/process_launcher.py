@@ -3,9 +3,6 @@ import re
 
 import numpy as np
 
-from threading import Thread, Event
-from time import sleep
-
 import copy
 import warnings
 
@@ -13,7 +10,6 @@ import openmdao.api as om
 
 import fastoad.api as oad
 
-from . import ProcessPlotter
 from fast_pedago.utils import (
     _extract_residuals,
     PathManager,
@@ -34,14 +30,10 @@ class ProcessLauncher:
     launches the process.
     """
 
-    def __init__(self, plotter: ProcessPlotter, **kwargs):
-        """
-        :param plotter: the ProcessPlotter to plot with.
-        """
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self.process_name = DEFAULT_PROCESS_NAME
-        self.plotter = plotter
 
     def launch_processes(self, is_MDO: bool = False):
         """
@@ -52,10 +44,6 @@ class ProcessLauncher:
         :param is_MDO: defines if the process is MDO or MDA
             to launch the correct process
         """
-        # Initialize event to synchronize the process thread and the plotting
-        # thread
-        process_ended = Event()
-
         self._configure_paths(is_MDO)
 
         # If the switch is off, MDA, else MDO
@@ -64,29 +52,7 @@ class ProcessLauncher:
         else:
             self._configure_mda()
 
-        process_thread = Thread(
-            target=self._run_problem,
-            args=(is_MDO,),
-        )
-        plotting_thread = Thread(
-            target=self.plotter.plot,
-            args=(
-                process_ended,
-                self.recorder_database_file_path,
-                is_MDO,
-                self.process_name,
-            ),
-        )
-
-        process_thread.start()
-        plotting_thread.start()
-
-        process_thread.join()
-        # This line is to make sure the plotting ends after the process and
-        # plots everything
-        sleep(1)
-        process_ended.set()
-        plotting_thread.join()
+        self._run_problem(is_MDO)
 
     def _configure_paths(self, is_MDO: bool = False):
         """
@@ -128,8 +94,8 @@ class ProcessLauncher:
         )
 
         # To avoid reading in a wrong file
-        if Path.exists(self.recorder_database_file_path):
-            Path.unlink(self.recorder_database_file_path)
+        if Path(self.recorder_database_file_path).exists():
+            Path(self.recorder_database_file_path).unlink()
 
         # We also need to rename the .csv file which contains the mission
         # data. I don't see a proper way to do it other than that since
@@ -178,6 +144,7 @@ class ProcessLauncher:
         if self.is_aspect_ratio_design_variable:
             self.problem.model.add_design_var(
                 name="data:geometry:wing:aspect_ratio",
+                units="unitless",
                 lower=self.aspect_ratio_lower_bound,
                 upper=self.aspect_ratio_upper_bound,
             )
@@ -203,20 +170,34 @@ class ProcessLauncher:
 
         # Ran the case with the proper mission and go those coefficient
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:climb:mass_ratio", val=0.975
+            name="settings:mission:sizing:breguet:climb:mass_ratio",
+            val=0.975,
+            units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:descent:mass_ratio", val=0.993
+            name="settings:mission:sizing:breguet:descent:mass_ratio",
+            val=0.993,
+            units="unitless",
         )
         self.problem.set_val(
-            name="settings:mission:sizing:breguet:reserve:mass_ratio", val=0.055
+            name="settings:mission:sizing:breguet:reserve:mass_ratio",
+            val=0.055,
+            units="unitless",
         )
 
         driver = self.problem.driver
 
         self.recorder = om.SqliteRecorder(self.recorder_database_file_path)
         driver.add_recorder(self.recorder)
+
+        # Turn everything off so that .sql are as light as possible.
         driver.recording_options["record_objectives"] = True
+        driver.recording_options["record_constraints"] = False
+        driver.recording_options["record_desvars"] = False
+        driver.recording_options["record_residuals"] = False
+        driver.recording_options["record_inputs"] = False
+        # Contrarily to what OpenMDAO documentation says, this is required ...
+        driver.recording_options["record_outputs"] = True
 
     def _configure_mda(self) -> float:
         """
@@ -259,9 +240,9 @@ class ProcessLauncher:
 
         new_inputs["data:geometry:wing:aspect_ratio"].value = self.wing_aspect_ratio
 
-        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = (
-            self.bypass_ratio
-        )
+        new_inputs[
+            "data:propulsion:rubber_engine:bypass_ratio"
+        ].value = self.bypass_ratio
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
@@ -278,6 +259,10 @@ class ProcessLauncher:
         self.recorder = om.SqliteRecorder(self.recorder_database_file_path)
         model.nonlinear_solver.add_recorder(self.recorder)
         model.nonlinear_solver.recording_options["record_solver_residuals"] = True
+        model.nonlinear_solver.recording_options["record_abs_error"] = True
+        model.nonlinear_solver.recording_options["record_rel_error"] = True
+        model.nonlinear_solver.recording_options["record_outputs"] = False
+        model.nonlinear_solver.recording_options["record_inputs"] = False
 
     def _run_problem(self, is_MDO: bool = False):
         """
@@ -296,14 +281,14 @@ class ProcessLauncher:
                 self.problem.run_model()
 
         self.problem.write_outputs()
+        self.problem.cleanup()
 
         # You can't rename to a file which already exists, so if one already
         # exists we delete it before renaming.
-        if Path.exists(self.new_mission_data_file_path):
-            Path.unlink(self.new_mission_data_file_path)
+        if Path(self.new_mission_data_file_path).exists():
+            Path(self.new_mission_data_file_path).unlink()
 
-        Path.rename(
-            self.old_mission_data_file_path,
+        Path(self.old_mission_data_file_path).rename(
             self.new_mission_data_file_path,
         )
 
@@ -426,8 +411,9 @@ class ProcessLauncher:
             )
         )
 
+        target_residuals = self.problem.model.nonlinear_solver.options["rtol"]
         for residual in relative_error:
-            if isinstance(residual, float) and residual <= self.target_residuals:
+            if isinstance(residual, float) and residual <= target_residuals:
                 return True
         return False
 

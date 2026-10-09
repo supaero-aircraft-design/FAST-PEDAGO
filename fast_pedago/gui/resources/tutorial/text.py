@@ -71,8 +71,8 @@ class Slide:
             "When launching, the inputs are retrieved and merged with the "
             "chosen reference aircraft inputs."
             "Then process is set up (association of all the modules together "
-            "to make them loop) and the evolution of the process is plotted. "
-            "When the graph stops plotting, it is done!"
+            "to make them loop) and launched. Inputs are locked until the "
+            "process is done. When the N2 and XDSM re-appears, it is done!"
         )
 
     class Configuration:

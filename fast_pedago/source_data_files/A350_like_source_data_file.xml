@@ -155,7 +155,7 @@
         </taxi_out>
         <main_route>
           <cruise>
-            <altitude units="ft" is_input="True">37000.0<!--altitude during cruise phase in sizing mission--></altitude>
+            <altitude_input units="ft" is_input="True">37000.0<!--altitude during cruise phase in sizing mission--></altitude_input>
           </cruise>
         </main_route>
       </sizing>
@@ -168,10 +168,10 @@
     </weight>
     <aerodynamics>
       <aircraft>
-        <cruise>
+        <high_speed>
           <CL0 is_input="True">0.1</CL0>
           <oswald_coefficient>0.9</oswald_coefficient>
-        </cruise>
+        </high_speed>
         <landing>
           <CL_max_clean_2D is_input="True">1.94<!--maximum lift coefficient of 2D average profile in landing conditions without high-lift devices--></CL_max_clean_2D>
         </landing>
@@ -286,7 +286,7 @@
     </propulsion>
     <aerodynamics>
       <aircraft>
-        <cruise>
+        <high_speed>
           <CD>
             <k is_input="True">1.0<!--correction ratio to apply to computed drag coefficient in cruise conditions--></k>
             <offset is_input="True">0.0<!--correction offset to apply to computed drag coefficient in cruise conditions--></offset>
@@ -307,7 +307,7 @@
               <offset is_input="True">0.0<!--offset to apply to defined cl range (which goes by default from 0.0 to 1.5) in cruise polar computation--></offset>
             </winglet_effect>
           </CL>
-        </cruise>
+        </high_speed>
         <landing>
           <CL_max>
             <landing_gear_effect>

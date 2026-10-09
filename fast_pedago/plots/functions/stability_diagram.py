@@ -30,16 +30,16 @@ def _stability_diagram_plot(
     """
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
-    cl_alpha_wing = variables["data:aerodynamics:aircraft:cruise:CL_alpha"].value[0]
+    cl_alpha_wing = variables["data:aerodynamics:aircraft:high_speed:CL_alpha"].value[0]
     cl_max_clean_wing = variables[
         "data:aerodynamics:aircraft:landing:CL_max_clean"
     ].value[0]
     cl_delta_flaps = variables["data:aerodynamics:high_lift_devices:landing:CL"].value[
         0
     ]
-    cl_alpha_ht = variables["data:aerodynamics:horizontal_tail:cruise:CL_alpha"].value[
-        0
-    ]
+    cl_alpha_ht = variables[
+        "data:aerodynamics:horizontal_tail:high_speed:CL_alpha"
+    ].value[0]
 
     mac = variables["data:geometry:wing:MAC:length"].value[0]
     mac_ht = variables["data:geometry:horizontal_tail:MAC:length"].value[0]
@@ -66,13 +66,13 @@ def _stability_diagram_plot(
     )
     fuselage_rear_length = variables["data:geometry:fuselage:rear_length"].value[0]
 
-    v1 = 2.0 * np.pi / 3.0 * fuselage_radius ** 3.0
+    v1 = 2.0 * np.pi / 3.0 * fuselage_radius**3.0
     v2 = (
         np.pi
-        * fuselage_radius ** 2
+        * fuselage_radius**2
         * (fuselage_length - fuselage_rear_length - fuselage_front_length)
     )
-    v3 = 1 / 3.0 * np.pi * fuselage_radius ** 2 * fuselage_rear_length
+    v3 = 1 / 3.0 * np.pi * fuselage_radius**2 * fuselage_rear_length
     v = v1 + v2 + v3
 
     # Sh/S
@@ -84,7 +84,7 @@ def _stability_diagram_plot(
 
     # 1) Neutral point calculation (rear limit):
 
-    ht_effectiveness = 1 - cl_alpha_wing * 8 / (np.pi ** 3 * aspect_ratio_wing) * (
+    ht_effectiveness = 1 - cl_alpha_wing * 8 / (np.pi**3 * aspect_ratio_wing) * (
         1 + 1 / np.cos(beta)
     )
     numerator = (
@@ -109,7 +109,7 @@ def _stability_diagram_plot(
         return (
             -8
             * cl_wing_function
-            / (np.pi ** 3 * aspect_ratio_wing)
+            / (np.pi**3 * aspect_ratio_wing)
             * (1 + 1 / np.cos(beta))
         )
 
@@ -175,7 +175,7 @@ def _stability_diagram_plot(
     q = 9.81 / (2.0 * v_mo)
 
     def lift_equilibrium2(alpha_function, surface_ratio_function, mass):
-        left_member = mass * 9.81 / (0.5 * rho * v_mo ** 2 * area_wing)
+        left_member = mass * 9.81 / (0.5 * rho * v_mo**2 * area_wing)
 
         cl_w = (
             cl0_wing + alpha_function * cl_alpha_wing + cl_delta_flaps + q * mac / v_mo

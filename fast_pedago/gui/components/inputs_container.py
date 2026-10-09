@@ -42,7 +42,7 @@ class InputsContainer(v.List):
         """
         self.children = [self.inputs_header] + self._mdo_input
         self.launch_button.children = [
-            v.Icon(class_="px-3", children=["fa-plane"]),
+            v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch optimization",
         ]
         self.process_name_field.label = "Optimization name"
@@ -56,7 +56,7 @@ class InputsContainer(v.List):
         """
         self.children = [self.inputs_header] + self._mda_input
         self.launch_button.children = [
-            v.Icon(class_="px-3", children=["fa-plane"]),
+            v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch sizing",
         ]
         self.process_name_field.label = "Sizing name"
@@ -68,10 +68,24 @@ class InputsContainer(v.List):
         launch button, and button to switch from MDA to MDO.
         """
         self.class_ = "pa-0"
-        self.expand = True
+        self.style_ = """
+            width: 100%;
+            min-width: 0;
+            scrollbar-gutter: stable;
+        """
 
         self._build_layout_mda()
         self._build_layout_mdo()
+
+        # In Vuetify 3 the open groups are held by the list. It only reports
+        # changes through "update:opened", so the state is echoed back to keep
+        # the groups toggleable.
+        self.opened = [
+            category.value
+            for category in self._mda_input + self._mdo_input
+            if isinstance(category, _InputsCategory) and category.is_open
+        ]
+        self.on_event("update:opened", self._update_opened)
 
         # This reference file should always be there and is always taken as
         # reference
@@ -83,15 +97,17 @@ class InputsContainer(v.List):
         )
         self.set_initial_value_mda(PathManager.reference_aircraft)
 
-        # Text box to give a name to the run
+        # Text box to give a name to the run. Without an initial v_model,
+        # ipyvue does not bind it and the typed name never reaches Python.
         self.process_name_field = v.TextField(
-            outlined=True,
+            v_model="",
+            variant="outlined",
             hide_details=True,
-            dense=True,
+            density="compact",
             label="Sizing name",
             placeholder="Write a name for your sizing process",
         )
-        self.process_name_field.on_event("change", self._update_process_name)
+        self.process_name_field.observe(self._update_process_name, names="v_model")
 
         # Create a button to launch the sizing
         self.launch_button = v.Btn(
@@ -100,7 +116,7 @@ class InputsContainer(v.List):
             children=[
                 v.Icon(
                     class_="px-3",
-                    children=["fa-plane"],
+                    children=["mdi-airplane-cog"],
                 ),
                 "Launch sizing",
             ],
@@ -108,20 +124,25 @@ class InputsContainer(v.List):
 
         # Create a button to trigger the MDO "mode"
         self.process_selection_switch = v.BtnToggle(
-            rounded=True,
+            v_model="MDA",
             mandatory=True,
-            dense=True,
             color="primary",
+            density="compact",
+            rounded=True,
             children=[
                 v.Btn(
+                    value="MDA",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDA"],
+                    style_="width: max-content;",
                 ),
                 v.Btn(
+                    value="MDO",
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MDO"],
+                    style_="width: max-content;",
                 ),
             ],
         )
@@ -137,7 +158,7 @@ class InputsContainer(v.List):
             children=["Swap between analysis and optimization mode"],
         )
 
-        self.inputs_header = v.ListItemGroup(
+        self.inputs_header = v.ListItem(
             class_="px-2 pt-1",
             children=[
                 v.Row(
@@ -151,13 +172,12 @@ class InputsContainer(v.List):
                     align="center",
                     children=[
                         v.Col(
-                            cols=4,
+                            cols="auto",
                             children=[
                                 process_selection_switch_wrapper,
                             ],
                         ),
                         v.Col(
-                            cols=8,
                             children=[self.launch_button],
                         ),
                     ],
@@ -176,21 +196,25 @@ class InputsContainer(v.List):
         """
         Generates the layout for the MDO inputs.
         """
+        # The value is the objective index expected by the process launcher
         self._objective_selection = v.BtnToggle(
-            v_model="toggle_exclusive",
+            v_model=0,
             mandatory=True,
             children=[
                 v.Btn(
+                    value=0,
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["Fuel sizing"],
                 ),
                 v.Btn(
+                    value=1,
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["MTOW"],
                 ),
                 v.Btn(
+                    value=2,
                     v_bind="tooltip.attrs",
                     v_on="tooltip.on",
                     children=["OWE"],
@@ -227,11 +251,11 @@ class InputsContainer(v.List):
             with_checkbox=True,
         )
 
-        self._sweep_w_design_var_input.checkbox.on_event(
-            "change", self._ensure_one_design_var
+        self._sweep_w_design_var_input.checkbox.observe(
+            self._ensure_one_design_var, names="v_model"
         )
-        self._ar_design_var_input.checkbox.on_event(
-            "change", self._ensure_one_design_var
+        self._ar_design_var_input.checkbox.observe(
+            self._ensure_one_design_var, names="v_model"
         )
 
         self._mdo_input = [
@@ -343,7 +367,7 @@ class InputsContainer(v.List):
             "The sweep angle of the wing has been adjusted to avoid having "
             "compressibility drag coefficient too high"
         )
-        self._cruise_mach_input.slider.on_event("change", self._mach_alert)
+        self._cruise_mach_input.slider.observe(self._mach_alert, names="v_model")
 
         self._mda_input = [
             _InputsCategory(
@@ -378,7 +402,15 @@ class InputsContainer(v.List):
             self._snackbar,
         ]
 
-    def _ensure_one_design_var(self, widget, event, data):
+    def _update_opened(self, widget, event, data):
+        """
+        Keeps track of the open input categories.
+
+        To be called with "on_event" method of a widget.
+        """
+        self.opened = data
+
+    def _ensure_one_design_var(self, change):
         """
         Ensures that at least one design variable is chosen
         for MDO.
@@ -386,9 +418,10 @@ class InputsContainer(v.List):
         If the user tries to un-tick a checkbox, the other is ticked
         by default.
 
-        To be called with an "on_event" ipyvuetify component method
+        To be called with "observe" method of a widget.
         """
-        if data:
+        widget = change["owner"]
+        if change["new"]:
             if widget == self._sweep_w_design_var_input.checkbox:
                 if self._ar_design_var_input.checkbox.v_model:
                     self._ar_design_var_input.checkbox.v_model = False
@@ -397,25 +430,25 @@ class InputsContainer(v.List):
                 if self._sweep_w_design_var_input.checkbox.v_model:
                     self._sweep_w_design_var_input.checkbox.v_model = False
 
-    def _mach_alert(self, widget, event, data):
+    def _mach_alert(self, change):
         """
         Opens the snackbar to alert the user if the mach is above the value
-        of 0.78 and the snackbar is closedK
+        of 0.78 and the snackbar is closed.
 
-        To be called with "on_event" method of a widget.
+        To be called with "observe" method of a widget.
         """
         if self._cruise_mach_input.slider.v_model > 0.78:
             if not self._snackbar.v_model:
-                self._snackbar.display(widget, event, data)
+                self._snackbar.display()
 
-    def _update_process_name(self, widget, event, data):
+    def _update_process_name(self, change):
         """
         Changes process name when a new name is written
         in the input text field.
 
-        To be used with a "on_event" of a text field ipyvuetify
+        To be called with "observe" method of a widget.
         """
-        self.process_launcher.set_aircraft_name(data)
+        self.process_launcher.set_aircraft_name(change["new"])
 
     def disable(self):
         """
@@ -544,7 +577,7 @@ class _InputsCategory(v.ListGroup):
     def __init__(
         self,
         name: str,
-        inputs: v.VuetifyWidget = [],
+        inputs: v.VuetifyWidget = None,
         is_open: bool = False,
         **kwargs,
     ):
@@ -555,15 +588,20 @@ class _InputsCategory(v.ListGroup):
         """
         super().__init__(**kwargs)
 
-        self.value = is_open
+        if inputs is None:
+            inputs = []
+
+        # Opening is driven by the parent list "opened" prop in Vuetify 3
+        self.value = name
+        self.is_open = is_open
         self.v_slots = [
             {
                 "name": "activator",
+                "variable": "x",
                 "children": [
-                    v.ListItemTitle(
-                        children=[
-                            name,
-                        ],
+                    v.ListItem(
+                        v_bind="x.props",
+                        title=name,
                     ),
                 ],
             }

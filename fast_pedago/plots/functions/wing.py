@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from ipywidgets import widgets
+import ipyvuetify as v
 from IPython.display import display
 
 from fastoad.io import VariableIO
@@ -730,4 +731,17 @@ def _wing_plot(
         ),
     )
 
-    return display(widgets.HBox([fig, out]))
+    container = v.Row(
+        children=[
+            v.Col(
+                cols=8,
+                children=[fig],
+            ),
+            v.Col(
+                cols=4,
+                children=[out],
+            ),
+        ],
+    )
+
+    return display(container)

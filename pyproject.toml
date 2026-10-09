@@ -1,17 +1,9 @@
-[tool.poetry]
+# Project metadata (PEP 621) ===============================================
+[project]
 name = "FAST-PEDAGO"
-version = "1.0.4"
+description = "Lightweight interface to perform simplified OAD analysis using FAST-OAD"
 readme = "README.md"
-description = ""
-authors = [
-    "Ousmane SY <Ousmane.SY@isae-supaero.fr>",
-    "Eric MONTSERRAT ROBLES <Eric.MONTSERRAT-ROBLES@student.isae-supaero.fr>",
-    "Florent LUTZ <Florent.LUTZ2@isae-supaero.fr>",
-    "Marien GIORDANI <Marien.GIORDANI@isae-supaero.fr>",
-]
-exclude = ["**/tests/**"]
-
-homepage = "https://github.com/supaero-aircraft-design/FAST-PEDAGO"
+license = "GPL-3.0-only"
 keywords = [
     "aircraft",
     "design",
@@ -19,7 +11,39 @@ keywords = [
     "teaching",
     "educational"
 ]
-license = "GPL-3.0-only"
+authors = [
+    {name = "Ousmane SY", email = "Ousmane.SY@isae-supaero.fr"},
+    {name = "Eric MONTSERRAT ROBLES"},
+    {name = "Marien GIORDANI"}
+]
+maintainers = [
+    {name = "Florent LUTZ", email = "Florent.LUTZ2@isae-supaero.fr"},
+]
+requires-python = ">=3.10,<3.15"
+
+# User dependencies ------------------------------------------------------------
+dependencies = [
+    "fast-oad-core>=1.10.0",
+    "fast-oad-cs25>=0.9.1",
+    "ipywidgets>=7.7.2",
+    "ipyvuetify>=3.0.0",
+    "appmode>=0.9.0",
+    "voila>=0.3.7",
+    "click>=8.0.3",
+    "lxml_html_clean",
+]
+
+[project.urls]
+homepage = "https://github.com/supaero-aircraft-design/FAST-PEDAGO"
+
+
+# Poetry settings ==============================================================
+[tool.poetry]
+requires-poetry = ">=2.0" # You should upgrade poetry to v2 using 'pipx upgrade poetry'
+version = "1.0.4"
+exclude = ["**/tests/**"]
+
+#  Suitable classifiers based on python requirement and license are not automatically added if classifiers are statically defined in the project section
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -30,38 +54,25 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Physics"
 ]
-
-[tool.poetry.dependencies]
-# IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
-# ReadTheDocs to be able to compile the documentation.
-# A pre-commit hook has been added to do this task. As a result, any modification
-# of poetry.lock file will modify docs/requirements.txt and make
-# the commit fail because "files were modified by this hook". In that case,
-# doing again the commit including changes in docs/requirements.txt will succeed.
-python = ">=3.8, <3.11"
-fast-oad-cs25 = ">=0.6.0"
-fast-oad-core = "1.7.4"
-ipywidgets = "7.7.2"
-ipyvuetify = "1.9.4"
-appmode = "0.9.0"
-voila = "0.3.7"
-click = "8.0.3"
-lxml_html_clean = "*"
 
 [tool.poetry.group.dev.dependencies]
 wheel = "*"
 tabula = "*"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^5.2"
-pytest-cov = "*"
-nbval = "*"
+pytest = "^9.0"
+pytest-cov = "^7.0"
+coverage = { version = "^7.0", extras = ["toml"] }
+nbval = "^0.11"
+wrapt = "^2.0.1"
 
 [tool.poetry.group.doc.dependencies]
 sphinx = "*"
@@ -69,13 +80,22 @@ sphinx-rtd-theme = "*"
 sphinxcontrib-bibtex = "*"
 
 [tool.poetry.group.lint.dependencies]
-pre-commit = "*"
-black = { version = "21.9b0", extras = ["jupyter"], allow-prereleases = true } # if version is changed, please change it also in .pre-commit-config.yaml file.
-pylint = "*"
+ruff = ">0.15.0, <0.16.0"
 
+# Packaging system =============================================================
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = [
+    "poetry-core>=2.0.0,<3.0.0",
+    "poetry-dynamic-versioning>=1.0.0,<2.0.0"
+ ]
+build-backend = "poetry_dynamic_versioning.backend"
 
-[tool.poetry.scripts]
+# Pytest settings ==============================================================
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "--cov-report term-missing --cov-report html --verbose"
+testpaths = ["src"]
+norecursedirs = ["dist", "build", ".tox", ".ipynb_checkpoints"]
+
+[project.scripts]
     fast-pedago = "fast_pedago.app:main"

@@ -24,6 +24,8 @@ from fast_pedago.plots import (
     polar_with_L_R_ratio_plot,
     static_margin_plot,
     BetterMissionViewer,
+    residuals_viewer_plot,
+    objectives_viewer_plot,
 )
 
 from fast_pedago.utils import (
@@ -45,6 +47,14 @@ GRAPH = {
         "Variables": [
             variable_viewer,
             True,
+        ],
+        "Residuals": [
+            residuals_viewer_plot,
+            False,
+        ],
+        "Objectives": [
+            objectives_viewer_plot,
+            False,
         ],
     },
     "Geometry": {
@@ -144,14 +154,15 @@ class OutputGraphsPlotter:
 
         # A file selection widget for graphs that can
         # only display one output.
+        # An initial v_model is needed for ipyvue to sync the selection
         self.file_selector = v.Select(
+            v_model=None,
             class_="pa-0 ma-0",
             label="This graph only displays one output, please choose one.",
         )
         self.file_selector.on_event("click", self._update_selection_data)
-        self.file_selector.on_event(
-            "change", lambda widget, event, data: self._base_plot(data)
-        )
+        self._is_plotting = False
+        self.file_selector.observe(self._on_file_selection, names="v_model")
         self.file_selector.hide()
 
         self.output_display = v.Container(
@@ -162,6 +173,16 @@ class OutputGraphsPlotter:
                 self.output,
             ],
         )
+
+    def _on_file_selection(self, change):
+        """
+        Plots the output picked in the single output selector.
+
+        To be called with "observe" method of a widget.
+        """
+        # The selector is also set while plotting, which must not replot
+        if not self._is_plotting:
+            self._base_plot(change["new"])
 
     def change_graph(self, plot_category: str, plot_name: str):
         """
@@ -223,7 +244,6 @@ class OutputGraphsPlotter:
             # Add every aircraft to the plot :
             for sizing_process_to_add in sizing_process_to_display:
                 if sizing_process_to_add:
-
                     path_to_output_file = PathManager.path_to(
                         "output",
                         sizing_process_to_add + OUTPUT_FILE_SUFFIX,
@@ -247,7 +267,9 @@ class OutputGraphsPlotter:
                             fig=fig,
                         )
                         if self.is_single_output:
+                            self._is_plotting = True
                             self.file_selector.v_model = sizing_process_to_add
+                            self._is_plotting = False
                             break
 
             # Display the plots

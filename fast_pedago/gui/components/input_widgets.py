@@ -24,14 +24,14 @@ class ClearAllButton(v.Tooltip):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.bottom = True
+        self.location = "bottom"
 
         self.button = v.Btn(
             v_on="tooltip.on",
-            x_large=True,
+            size="x-large",
             icon=True,
             color="error",
-            children=[v.Icon(children=["fa-trash"])],
+            children=[v.Icon(children=["mdi-delete"])],
         )
 
         # The button has to be encapsulated by the tooltip
@@ -56,7 +56,6 @@ class GitLinksButton(v.Menu):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.offset_y = True
         self.rounded = True
         self.open_on_hover = True
 
@@ -68,11 +67,11 @@ class GitLinksButton(v.Menu):
                     v_bind="button.attrs",
                     v_on="button.on",
                     icon=True,
-                    x_large=True,
+                    size="x-large",
                     children=[
                         v.Icon(
-                            x_large=True,
-                            children=["fa-github"],
+                            size="x-large",
+                            children=["mdi-github"],
                         ),
                     ],
                 ),
@@ -81,6 +80,7 @@ class GitLinksButton(v.Menu):
         self.children = [
             v.List(
                 class_="pa-0",
+                style_="width: 150px; overflow: hidden;",
                 children=[
                     _GitLinkButtonItem(GITHUB_FAST_CORE, "FAST-OAD_core"),
                     _GitLinkButtonItem(GITHUB_FAST_CS25, "FAST-OAD_cs25"),
@@ -105,13 +105,26 @@ class _GitLinkButtonItem(v.ListItem):
 
         self.class_ = "pa-0"
         self.children = [
-            v.Btn(
-                text=True,
-                href=href,
+            v.Html(
+                tag="a",
+                attributes={
+                    "href": href,
+                    "target": "_blank",
+                    "rel": "noopener noreferrer",
+                },
+                style_="""
+                    display: block;
+                    width: 100%;
+                    padding: 8px 16px;
+                    text-align: left;
+                    text-decoration: none;
+                    color: inherit;
+                    cursor: pointer;
+                """,
                 children=[
                     text,
                 ],
-            ),
+            )
         ]
 
 
@@ -126,14 +139,14 @@ class Snackbar(v.Snackbar):
         """
         super().__init__(**kwargs)
 
-        self.app = True
-        self.timeout = 0
+        # -1 keeps the snackbar open until closed, 0 closes it at once in Vuetify 3
+        self.timeout = -1
         self.v_model = False
 
         close_snackbar_button = v.Btn(
             class_="mx-auto pa-0",
             color="pink",
-            text=True,
+            variant="text",
             children=["Close"],
         )
         close_snackbar_button.on_event("click", self.disappear)
@@ -205,7 +218,7 @@ class SliderInput(v.Tooltip):
         self._text_field = v.TextField(
             v_model=value,
             class_="mt-0 pt-0",
-            style_="width: 60px",
+            style_="width: 72px",
             variant="outlined",
             density="compact",
             hide_details=True,
@@ -219,7 +232,7 @@ class SliderInput(v.Tooltip):
             max=max,
             min=min,
             step=step,
-            dense=True,
+            density="compact",
             hide_details=True,
             class_="align-center pe-3",
         )
@@ -249,7 +262,9 @@ class SliderInput(v.Tooltip):
         # When the slider changes, the text changes directly, but it doesn't work the other way to
         # prevent bugs when typing in the text field.
         widgets.jsdlink((self.slider, "v_model"), (self._text_field, "v_model"))
-        self._text_field.on_event("change", self._update_slider)
+        # Vuetify 3 text fields no longer emit "change", so commit on blur or Enter
+        self._text_field.on_event("blur", self._update_slider)
+        self._text_field.on_event("keyup.enter", self._update_slider)
 
         self.v_slots = [
             {
@@ -281,7 +296,7 @@ class SliderInput(v.Tooltip):
                                     no_gutters=True,
                                     children=[
                                         v.Col(
-                                            cols=9,
+                                            cols=8,
                                             children=[self.slider],
                                         ),
                                         v.Col(
@@ -300,7 +315,7 @@ class SliderInput(v.Tooltip):
             tooltip,
         ]
 
-    def _update_slider(self, widget, event, data: str):
+    def _update_slider(self, widget, event, data):
         """
         Bounds the text field values between min and max of the slider,
         and sets the slider value to the text field value.
@@ -309,6 +324,7 @@ class SliderInput(v.Tooltip):
 
         To be called with "on_event" method of a widget.
         """
+        data = str(self._text_field.v_model)
         if data.replace(".", "", 1).isdigit():
             data = float(data)
             if data > self.slider.max:
@@ -354,7 +370,7 @@ class RangeSliderInput(v.Tooltip):
         step: float = 10,
         label: str = None,
         tooltip: str = None,
-        range: float = 0,
+        range: [float, float] = 0,
         with_checkbox: bool = False,
         **kwargs,
     ):
@@ -378,7 +394,7 @@ class RangeSliderInput(v.Tooltip):
             max=max,
             min=min,
             step=step,
-            dense=True,
+            density="compact",
             thumb_label="always",
             thumb_size=24,
             hide_details=True,
@@ -474,15 +490,18 @@ class SelectOutput(v.Select):
         """
         super().__init__(**kwargs)
 
-        self.outlined = True
+        self.variant = "outlined"
         self.clearable = True
         self.hide_details = True
 
+        # An initial v_model is needed for ipyvue to sync the selection
         if is_single_output:
+            self.v_model = None
             self.label = "Select a main output file to display"
         else:
+            self.v_model = []
             self.label = "Select output files for comparison"
             self.multiple = True
             self.chips = True
-            self.deletable_chips = True
+            self.closable_chips = True
             self.hide_selected = True

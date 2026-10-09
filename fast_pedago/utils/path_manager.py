@@ -5,12 +5,6 @@ from typing import List
 
 import fastoad.api as oad
 
-from fast_pedago import (
-    configuration,
-    gui,
-    source_data_files,
-)
-
 from .paths import (
     WORK_DIRECTORY,
     DATA_DIRECTORY,
@@ -26,6 +20,7 @@ from .paths import (
     SOURCE_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
     SEPARATOR,
+    RECORDER_FILE_SUFFIX,
 )
 
 
@@ -35,25 +30,26 @@ class PathManager:
     the other components that need it.
     """
 
-    working_directory_path = ""
-    data_directory_path = ""
+    working_directory_path: Path = Path("")
+    data_directory_path: Path = Path("")
 
     reference_aircraft = ""
     reference_input_file_name = ""
     reference_output_file_name = ""
     reference_source_file_name = ""
     reference_flight_data_file_name = ""
+    reference_sql_file_name = ""
 
-    reference_input_file_path = ""
+    reference_input_file_path: Path = Path("")
 
-    mda_configuration_file_path = ""
-    mdo_configuration_file_path = ""
+    mda_configuration_file_path: Path = Path("")
+    mdo_configuration_file_path: Path = Path("")
 
-    input_directory_path = ""
-    output_directory_path = ""
+    input_directory_path: Path = Path("")
+    output_directory_path: Path = Path("")
 
-    resources_directory_path = ""
-    tutorial_directory_path = ""
+    resources_directory_path: Path = Path("")
+    tutorial_directory_path: Path = Path("")
 
     @staticmethod
     def _build_working_directory():
@@ -85,6 +81,7 @@ class PathManager:
         PathManager.reference_flight_data_file_name = build_name(
             FLIGHT_DATA_FILE_SUFFIX
         )
+        PathManager.reference_sql_file_name = build_name(RECORDER_FILE_SUFFIX)
 
     @staticmethod
     def _build_reference_input_file():
@@ -104,7 +101,8 @@ class PathManager:
         if not Path.exists(PathManager.reference_input_file_path):
             oad.generate_inputs(
                 configuration_file_path=PathManager.mda_configuration_file_path,
-                source_data_path=Path(source_data_files.__file__).parent
+                source_data_path=Path(__file__).parent.parent
+                / "source_data_files"
                 / PathManager.reference_source_file_name,
             )
 
@@ -145,7 +143,9 @@ class PathManager:
 
         if not Path.exists(configuration_file_path):
             shutil.copy(
-                Path(configuration.__file__).parent / configuration_file_name,
+                Path(__file__).parent.parent
+                / "configuration"
+                / configuration_file_name,
                 configuration_file_path,
             )
 
@@ -154,7 +154,7 @@ class PathManager:
     @staticmethod
     def _build_resources_directory():
         PathManager.resources_directory_path = (
-            Path(gui.__file__).parent / RESOURCES_DIRECTORY
+            Path(__file__).parent.parent / "gui" / RESOURCES_DIRECTORY
         )
         PathManager.tutorial_directory_path = (
             PathManager.resources_directory_path / TUTORIAL_DIRECTORY
@@ -182,7 +182,7 @@ class PathManager:
         :return: a list of available reference files names
         """
 
-        list_files = Path.iterdir(Path(source_data_files.__file__).parent)
+        list_files = Path.iterdir(Path(__file__).parent.parent / "source_data_files")
         available_reference_files = []
 
         for file in list_files:
@@ -224,8 +224,10 @@ class PathManager:
 
     @staticmethod
     def to_full_source_file_name(source_file: str):
-        return Path(source_data_files.__file__).parent / (
-            source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX
+        return (
+            Path(__file__).parent.parent
+            / "source_data_files"
+            / (source_file.replace(" ", SEPARATOR) + SOURCE_FILE_SUFFIX)
         )
 
     @staticmethod
@@ -240,7 +242,6 @@ class PathManager:
         # Remove all input files in the inputs directory
         input_file_list = Path.iterdir(PathManager.input_directory_path)
         for file in input_file_list:
-
             # We keep the reference input_file and avoid deleting subdirectory
             if file.name != PathManager.reference_input_file_name and not Path.is_dir(
                 file
@@ -251,11 +252,11 @@ class PathManager:
         # .sql because they are re-generated anyway
         output_file_list = Path.iterdir(PathManager.output_directory_path)
         for file in output_file_list:
-
             # We keep the reference input_file and avoid deleting subdirectory
             if (
                 file.name != PathManager.reference_output_file_name
                 and file.name != PathManager.reference_flight_data_file_name
+                and file.name != PathManager.reference_sql_file_name
                 and not Path.is_dir(file)
             ):
                 Path.unlink(file)
@@ -284,5 +285,5 @@ class PathManager:
         elif folder == "tutorial":
             folder_path = PathManager.tutorial_directory_path
         else:
-            folder_path == Path("")
-        return folder_path / file
+            folder_path = Path("")
+        return (folder_path / file).as_posix()
