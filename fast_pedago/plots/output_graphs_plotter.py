@@ -5,6 +5,7 @@ import ipywidgets as widgets
 import plotly.graph_objects as go
 from IPython.display import clear_output, display
 
+from fast_pedago.plots.functions.better_mission_viewer import BetterMissionViewer
 from fast_pedago.plots.plot_signatures import (
     aircraft_front_view_plot,
     aircraft_geometry_plot,
@@ -24,7 +25,6 @@ from fast_pedago.plots.plot_signatures import (
     wing_geometry_plot,
     wing_plot,
 )
-from fast_pedago.plots.functions.better_mission_viewer import BetterMissionViewer
 from fast_pedago.utils import (
     FLIGHT_DATA_FILE_SUFFIX,
     OUTPUT_FILE_SUFFIX,
