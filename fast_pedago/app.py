@@ -58,12 +58,11 @@ class Main:
     def _copy_notebook(args):
         # Should be a pathlib Path already
         requested_destination = args.destination
-        if not requested_destination.is_dir():
+        if requested_destination.exists() and not requested_destination.is_dir():
             print("Input path should be the path to a directory. Exiting")
-            return 1
+            raise SystemExit(1)
 
-        if not requested_destination.exists():
-            requested_destination.mkdir(parents=True, exist_ok=True)
+        requested_destination.mkdir(parents=True, exist_ok=True)
 
         shutil.copy(MAIN_NOTEBOOK_PATH, args.destination)
         print("You may now run Jupyter with:")
