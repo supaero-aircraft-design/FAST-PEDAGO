@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 1.1.0
+==================
+- Updated versions of FAST-OAD and ipyvuetify by @florentLutz
+- Added more Ruff linting rules by @florentLutz
+- Added a new command for simple access to notebook by @florentLutz
+
 Version 1.0.4
 ==================
 
