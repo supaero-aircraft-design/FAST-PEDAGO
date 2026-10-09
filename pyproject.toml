@@ -12,12 +12,12 @@ keywords = [
     "educational"
 ]
 authors = [
-    {name = "Ousmane SY", email = "Ousmane.SY@isae-supaero.fr>"},
+    {name = "Ousmane SY", email = "Ousmane.SY@isae-supaero.fr"},
     {name = "Eric MONTSERRAT ROBLES"},
     {name = "Marien GIORDANI"}
 ]
 maintainers = [
-    {name = "Florent LUTZ", email = "Florent.LUTZ2@isae-supaero.fr>"},
+    {name = "Florent LUTZ", email = "Florent.LUTZ2@isae-supaero.fr"},
 ]
 requires-python = ">=3.10,<3.15"
 
