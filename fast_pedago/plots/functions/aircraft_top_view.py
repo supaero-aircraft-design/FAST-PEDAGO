@@ -1,14 +1,13 @@
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import (
     COLORS,
-    NACELLE_POSITION,
     HORIZONTAL_TAIL_ROOT,
     HORIZONTAL_TAIL_TIP,
     HORIZONTAL_WIDTH_ELEVATOR,
+    NACELLE_POSITION,
 )
 
 

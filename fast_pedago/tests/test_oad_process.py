@@ -1,7 +1,8 @@
-import pytest
 import pathlib
 from shutil import rmtree
+
 import fastoad.api as oad
+import pytest
 
 RESULTS_FOLDER_PATH = pathlib.Path(__file__).parent / "results"
 SOURCE_DATA_FILES_FOLDER_PATH = (

@@ -1,11 +1,10 @@
 import pathlib
 
-import plotly.graph_objects as go
-import plotly.colors as cols
-
 import openmdao.api as om
+import plotly.colors as cols
+import plotly.graph_objects as go
 
-from fast_pedago.utils import RECORDER_FILE_SUFFIX, OUTPUT_FILE_SUFFIX
+from fast_pedago.utils import OUTPUT_FILE_SUFFIX, RECORDER_FILE_SUFFIX
 
 COLS = cols.DEFAULT_PLOTLY_COLORS
 

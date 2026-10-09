@@ -1,14 +1,11 @@
 import logging
-
 import os
-from pathlib import Path
-
 from argparse import (
     ArgumentDefaultsHelpFormatter,
     ArgumentParser,
     RawDescriptionHelpFormatter,
 )
-
+from pathlib import Path
 
 MAIN_NOTEBOOK_NAME = Path(__file__).parent / "notebook" / "FAST_OAD_app.ipynb"
 

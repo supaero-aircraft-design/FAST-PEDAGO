@@ -1,7 +1,5 @@
 import plotly.graph_objects as go
 from IPython.display import clear_output, display
-
-
 from fastoad.gui import MissionViewer
 
 

@@ -1,16 +1,14 @@
 from os import PathLike
-from typing import Union
 
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
 
 
 def _polar_with_L_R_ratio_plot(
-    aircraft_file_path: Union[str, PathLike],
+    aircraft_file_path: str | PathLike,
     name=None,
     fig=None,
     *,

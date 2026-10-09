@@ -4,6 +4,7 @@ aircraft_file_path, flight_data_file_path, name, fig, and return go.FigureWidget
 so they can be plotted using the same base function.
 """
 
+import fastoad.api as oad
 import plotly.graph_objects as go
 
 from .functions import (
@@ -11,17 +12,14 @@ from .functions import (
     _aircraft_side_view_plot,
     _aircraft_top_view_plot,
     _flaps_and_slats_plot,
+    _objectives_viewer,
     _polar_with_L_R_ratio_plot,
+    _residuals_viewer,
     _simplified_payload_range_plot,
     _stability_diagram_plot,
     _static_margin_plot,
     _wing_plot,
-    _residuals_viewer,
-    _objectives_viewer,
 )
-
-import fastoad.api as oad
-
 
 # TODO: Have a decorator to convert an aircraft name directly into aircraft_file_path and
 # TODO: flight_data_file_path to avoid having long signatures ?

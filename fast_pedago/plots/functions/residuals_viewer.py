@@ -1,10 +1,9 @@
 import pathlib
 
+import openmdao.api as om
 import plotly.graph_objects as go
 
-import openmdao.api as om
-
-from fast_pedago.utils import RECORDER_FILE_SUFFIX, OUTPUT_FILE_SUFFIX
+from fast_pedago.utils import OUTPUT_FILE_SUFFIX, RECORDER_FILE_SUFFIX
 
 
 def _residuals_viewer(

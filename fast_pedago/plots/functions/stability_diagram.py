@@ -1,10 +1,8 @@
+import numpy as np
 import plotly.graph_objects as go
 from fastoad.io import VariableIO
-import numpy as np
-from stdatm import Atmosphere
-
 from scipy.optimize import fsolve
-
+from stdatm import Atmosphere
 
 # Undefined constants by FAST-OAD so plausible values have been chosen
 cl0_wing = 0.15

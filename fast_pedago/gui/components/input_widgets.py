@@ -2,9 +2,8 @@
 Contains input widgets presets such as buttons, selection dropdowns or sliders.
 """
 
-import ipywidgets as widgets
 import ipyvuetify as v
-
+import ipywidgets as widgets
 
 # Github links
 GITHUB_FAST_CORE = "https://github.com/fast-aircraft-design/FAST-OAD"

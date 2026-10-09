@@ -1,11 +1,8 @@
-from typing import Tuple
 
 import numpy as np
 import pandas as pd
-import scipy.constants as sc
-
 import plotly.graph_objects as go
-
+import scipy.constants as sc
 from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
@@ -131,7 +128,7 @@ def _simplified_payload_range_plot(
 
 def _extract_value_from_flight_data_file(
     flight_data_file_path: str,
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     """
     Extract from the flight data point file the average value during cruise to
     compute Breguet's range equation.

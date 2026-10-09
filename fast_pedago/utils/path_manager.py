@@ -1,26 +1,24 @@
-from pathlib import Path
 import shutil
-
-from typing import List
+from pathlib import Path
 
 import fastoad.api as oad
 
 from .paths import (
-    WORK_DIRECTORY,
     DATA_DIRECTORY,
+    FLIGHT_DATA_FILE_SUFFIX,
     INPUTS_DIRECTORY,
-    OUTPUTS_DIRECTORY,
-    RESOURCES_DIRECTORY,
-    TUTORIAL_DIRECTORY,
+    INPUT_FILE_SUFFIX,
     MDA_CONFIGURATION_FILE,
     MDO_CONFIGURATION_FILE,
-    REFERENCE_AIRCRAFT,
-    INPUT_FILE_SUFFIX,
+    OUTPUTS_DIRECTORY,
     OUTPUT_FILE_SUFFIX,
-    SOURCE_FILE_SUFFIX,
-    FLIGHT_DATA_FILE_SUFFIX,
-    SEPARATOR,
     RECORDER_FILE_SUFFIX,
+    REFERENCE_AIRCRAFT,
+    RESOURCES_DIRECTORY,
+    SEPARATOR,
+    SOURCE_FILE_SUFFIX,
+    TUTORIAL_DIRECTORY,
+    WORK_DIRECTORY,
 )
 
 
@@ -30,8 +28,8 @@ class PathManager:
     the other components that need it.
     """
 
-    working_directory_path: Path = Path("")
-    data_directory_path: Path = Path("")
+    working_directory_path: Path = Path()
+    data_directory_path: Path = Path()
 
     reference_aircraft = ""
     reference_input_file_name = ""
@@ -40,16 +38,16 @@ class PathManager:
     reference_flight_data_file_name = ""
     reference_sql_file_name = ""
 
-    reference_input_file_path: Path = Path("")
+    reference_input_file_path: Path = Path()
 
-    mda_configuration_file_path: Path = Path("")
-    mdo_configuration_file_path: Path = Path("")
+    mda_configuration_file_path: Path = Path()
+    mdo_configuration_file_path: Path = Path()
 
-    input_directory_path: Path = Path("")
-    output_directory_path: Path = Path("")
+    input_directory_path: Path = Path()
+    output_directory_path: Path = Path()
 
-    resources_directory_path: Path = Path("")
-    tutorial_directory_path: Path = Path("")
+    resources_directory_path: Path = Path()
+    tutorial_directory_path: Path = Path()
 
     @staticmethod
     def _build_working_directory():
@@ -174,7 +172,7 @@ class PathManager:
         PathManager._build_resources_directory()
 
     @staticmethod
-    def list_available_reference_file() -> List[str]:
+    def list_available_reference_file() -> list[str]:
         """
         Parses the name of all the file in the source files folder and scan
         for reference file that can be selected for the rest of the analysis
@@ -195,7 +193,7 @@ class PathManager:
         return available_reference_files
 
     @staticmethod
-    def list_available_process_results() -> List[str]:
+    def list_available_process_results() -> list[str]:
         """
         Parses the name of all the file in the output folder and scan for the
         one that would match the results of an OAD sizing process.
@@ -285,5 +283,5 @@ class PathManager:
         elif folder == "tutorial":
             folder_path = PathManager.tutorial_directory_path
         else:
-            folder_path = Path("")
+            folder_path = Path()
         return (folder_path / file).as_posix()

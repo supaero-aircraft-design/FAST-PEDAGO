@@ -1,11 +1,10 @@
+import ipyvuetify as v
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from ipywidgets import widgets
-import ipyvuetify as v
 from IPython.display import display
-
 from fastoad.io import VariableIO
+from ipywidgets import widgets
 
 
 def _wing_plot(

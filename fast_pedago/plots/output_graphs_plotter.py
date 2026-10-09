@@ -1,39 +1,35 @@
-from typing import List, Union
-from typing import Callable
+from collections.abc import Callable
 
-import plotly.graph_objects as go
-
-import ipywidgets as widgets
 import ipyvuetify as v
+import ipywidgets as widgets
+import plotly.graph_objects as go
 from IPython.display import clear_output, display
 
 from fast_pedago.plots import (
-    simplified_payload_range_plot,
-    stability_diagram_plot,
-    aircraft_top_view_plot,
+    BetterMissionViewer,
     aircraft_front_view_plot,
+    aircraft_geometry_plot,
     aircraft_side_view_plot,
+    aircraft_top_view_plot,
+    drag_polar_plot,
     flaps_and_slats_plot,
-    wing_plot,
-    variable_viewer,
     mass_breakdown_bar_plot,
     mass_breakdown_sun_plot,
-    drag_polar_plot,
-    wing_geometry_plot,
-    aircraft_geometry_plot,
-    polar_with_L_R_ratio_plot,
-    static_margin_plot,
-    BetterMissionViewer,
-    residuals_viewer_plot,
     objectives_viewer_plot,
+    polar_with_L_R_ratio_plot,
+    residuals_viewer_plot,
+    simplified_payload_range_plot,
+    stability_diagram_plot,
+    static_margin_plot,
+    variable_viewer,
+    wing_geometry_plot,
+    wing_plot,
 )
-
 from fast_pedago.utils import (
-    PathManager,
-    OUTPUT_FILE_SUFFIX,
     FLIGHT_DATA_FILE_SUFFIX,
+    OUTPUT_FILE_SUFFIX,
+    PathManager,
 )
-
 
 # When a new graph is added, it should be added to the dict, and then
 # be plotted in the Plotter.
@@ -207,7 +203,7 @@ class OutputGraphsPlotter:
 
         self.plot()
 
-    def plot(self, data: List[str] = None):
+    def plot(self, data: list[str] = None):
         """
         Plots the given data on the current figure.
 
@@ -220,7 +216,7 @@ class OutputGraphsPlotter:
             self.file_selector.items = data
         self._base_plot(self.data)
 
-    def _base_plot(self, data: Union[str, List[str]]):
+    def _base_plot(self, data: str | list[str]):
         """
         Base function to plot data. Add all aircraft to the given plot.
 

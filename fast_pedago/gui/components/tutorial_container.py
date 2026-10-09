@@ -1,7 +1,7 @@
 import ipyvuetify as v
 
 from fast_pedago.gui.resources import Slide
-from fast_pedago.utils import _image_from_path, PathManager
+from fast_pedago.utils import PathManager, _image_from_path
 
 # Image files
 FAST_OAD_LOGO = "logo_fast_oad_main_menu.jpg"

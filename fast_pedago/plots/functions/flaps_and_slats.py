@@ -1,6 +1,5 @@
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS

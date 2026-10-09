@@ -1,13 +1,13 @@
 import ipyvuetify as v
 
-from .input_widgets import (
-    Snackbar,
-    SliderInput,
-    RangeSliderInput,
-)
 from fast_pedago.processes import ProcessLauncher
 from fast_pedago.utils import PathManager
 
+from .input_widgets import (
+    RangeSliderInput,
+    SliderInput,
+    Snackbar,
+)
 
 # Min and max values for sliders input values
 OPT_AR_MIN = 9.0

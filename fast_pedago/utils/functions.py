@@ -2,15 +2,12 @@
 Utility functions to use punctually in the code.
 """
 
-from typing import Union
-
 from os import PathLike
 from pathlib import Path
 
-import openmdao.api as om
-
-import ipywidgets as widgets
 import ipyvuetify as v
+import ipywidgets as widgets
+import openmdao.api as om
 
 
 def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
@@ -46,7 +43,7 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     return image_widget
 
 
-def _extract_residuals(recorder_database_file_path: Union[str, PathLike]) -> list:
+def _extract_residuals(recorder_database_file_path: str | PathLike) -> list:
     """
     From the file path to a recorder data base, extract the value of the
     relative error of the residuals at each iteration.
@@ -72,7 +69,7 @@ def _extract_residuals(recorder_database_file_path: Union[str, PathLike]) -> lis
     return iterations, relative_error
 
 
-def _extract_objective(recorder_database_file_path: Union[str, PathLike]) -> list:
+def _extract_objective(recorder_database_file_path: str | PathLike) -> list:
     """
     From the file path to a recorder data base, extract the value of the
     objective at each iteration of the driver.

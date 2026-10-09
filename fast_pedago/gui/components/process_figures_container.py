@@ -2,10 +2,9 @@ import webbrowser
 
 import ipyvuetify as v
 
+from fast_pedago.utils import PathManager, _image_from_path
 
 from . import Snackbar
-from fast_pedago.utils import _image_from_path, PathManager
-
 
 # Image files
 N2_PNG = "n2.png"

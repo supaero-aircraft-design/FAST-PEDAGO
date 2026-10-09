@@ -1,14 +1,13 @@
 import numpy as np
 import plotly.graph_objects as go
-
 from fastoad.io import VariableIO
 
 from ..plot_constants import (
     COLORS,
-    NACELLE_POSITION,
-    HT_HEIGHT,
-    HT_DIHEDRAL,
     ENGINE_HEIGHT,
+    HT_DIHEDRAL,
+    HT_HEIGHT,
+    NACELLE_POSITION,
     WING_ROOT_HEIGHT,
 )
 

@@ -1,26 +1,23 @@
-from pathlib import Path
-import re
-
-import numpy as np
-
 import copy
+import re
 import warnings
-
-import openmdao.api as om
+from pathlib import Path
 
 import fastoad.api as oad
+import numpy as np
+import openmdao.api as om
 
 from fast_pedago.utils import (
-    _extract_residuals,
-    PathManager,
+    DEFAULT_PROCESS_NAME,
+    FLIGHT_DATA_FILE_SUFFIX,
+    INPUT_FILE_SUFFIX,
     MDA_FILE_SUFFIX,
     MDO_FILE_SUFFIX,
-    INPUT_FILE_SUFFIX,
     OUTPUT_FILE_SUFFIX,
-    FLIGHT_DATA_FILE_SUFFIX,
     RECORDER_FILE_SUFFIX,
-    DEFAULT_PROCESS_NAME,
     SEPARATOR,
+    PathManager,
+    _extract_residuals,
 )
 
 
