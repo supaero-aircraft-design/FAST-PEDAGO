@@ -112,9 +112,7 @@ class ProcessFiguresContainer(v.Col):
 
         xdsm_image = _image_from_path(xdsm_image_path, max_height="60vh")
         xdsm_image.v_on = "tooltip.on"
-        xdsm_image.on_event(
-            "click", lambda *args: webbrowser.open_new_tab(xdsm_file_path)
-        )
+        xdsm_image.on_event("click", lambda *args: webbrowser.open_new_tab(xdsm_file_path))
 
         self._xdsm_widget = v.Tooltip(
             contained=True,

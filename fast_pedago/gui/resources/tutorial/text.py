@@ -20,8 +20,7 @@ class Slide:
         )
 
         SELECTION = (
-            "When you have finished reading this tutorial, "
-            "please click on the start button below!"
+            "When you have finished reading this tutorial, please click on the start button below!"
         )
 
         NOTA = (
@@ -50,9 +49,7 @@ class Slide:
         )
 
     class Inputs:
-        EXPLANATIONS = (
-            "After choosing the reference aircraft, you will have to set your inputs:"
-        )
+        EXPLANATIONS = "After choosing the reference aircraft, you will have to set your inputs:"
         DASH_1 = "- Choose between doing a MDA or a MDO"
         DASH_2 = "- Write a name for the output"
         DASH_3 = (

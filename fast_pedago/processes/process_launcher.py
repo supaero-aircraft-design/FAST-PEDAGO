@@ -20,6 +20,8 @@ from fast_pedago.utils import (
     _extract_residuals,
 )
 
+COMPRESSIBILITY_MACH_NUMBER = 0.78
+
 
 class ProcessLauncher:
     """
@@ -32,35 +34,35 @@ class ProcessLauncher:
 
         self.process_name = DEFAULT_PROCESS_NAME
 
-    def launch_processes(self, is_MDO: bool = False):
+    def launch_processes(self, *, is_mdo: bool = False):
         """
         Launches the chosen process (MDA or MDO), and launches
         the plot of residuals or objectives depending on the main
         process.
 
-        :param is_MDO: defines if the process is MDO or MDA
+        :param is_mdo: defines if the process is MDO or MDA
             to launch the correct process
         """
-        self._configure_paths(is_MDO)
+        self._configure_paths(is_mdo=is_mdo)
 
         # If the switch is off, MDA, else MDO
-        if is_MDO:
+        if is_mdo:
             self._configure_mdo()
         else:
             self._configure_mda()
 
-        self._run_problem(is_MDO)
+        self._run_problem(is_mdo=is_mdo)
 
-    def _configure_paths(self, is_MDO: bool = False):
+    def _configure_paths(self, *, is_mdo: bool = False):
         """
         Create a new FAST-OAD problem based on the reference configuration
         file.
         Sets the paths to inputs/outputs files.
         The files names and the configuration depend on the type of process.
 
-        :param is_MDO: true if the process is a MDO.
+        :param is_mdo: true if the process is a MDO.
         """
-        if is_MDO:
+        if is_mdo:
             problem_type = MDO_FILE_SUFFIX
             self.configurator = oad.FASTOADProblemConfigurator(
                 PathManager.mdo_configuration_file_path
@@ -100,9 +102,7 @@ class ProcessLauncher:
         # overwrite like the input and output filepath. There may be a way
         # to do it by modifying the options of the performances
         # components of the problem but it seems too much
-        self.old_mission_data_file_path = PathManager.path_to(
-            "output", "flight_points.csv"
-        )
+        self.old_mission_data_file_path = PathManager.path_to("output", "flight_points.csv")
         self.new_mission_data_file_path = PathManager.path_to(
             "output", self.process_name + problem_type + FLIGHT_DATA_FILE_SUFFIX
         )
@@ -219,8 +219,8 @@ class ProcessLauncher:
         # mach number with a message to let the student know about it. We'll
         # keep the product M_cr * cos(phi_25) constant at the value obtain with
         # M_cr = 0.78 and phi_25 = 24.54 deg
-        if self.cruise_mach > 0.78:
-            cos_phi_25 = 0.78 / self.cruise_mach * np.cos(np.deg2rad(24.54))
+        if self.cruise_mach > COMPRESSIBILITY_MACH_NUMBER:
+            cos_phi_25 = COMPRESSIBILITY_MACH_NUMBER / self.cruise_mach * np.cos(np.deg2rad(24.54))
             phi_25 = np.arccos(cos_phi_25)
             new_inputs["data:geometry:wing:sweep_25"].value = phi_25
             new_inputs["data:geometry:wing:sweep_25"].units = "rad"
@@ -237,9 +237,7 @@ class ProcessLauncher:
 
         new_inputs["data:geometry:wing:aspect_ratio"].value = self.wing_aspect_ratio
 
-        new_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value = self.bypass_ratio
+        new_inputs["data:propulsion:rubber_engine:bypass_ratio"].value = self.bypass_ratio
 
         # Save as the new input file. We overwrite always, may need to put a
         # warning for students
@@ -261,18 +259,18 @@ class ProcessLauncher:
         model.nonlinear_solver.recording_options["record_outputs"] = False
         model.nonlinear_solver.recording_options["record_inputs"] = False
 
-    def _run_problem(self, is_MDO: bool = False):
+    def _run_problem(self, *, is_mdo: bool = False):
         """
         Runs the MDA or MDO pre-configured problem, and finish by
         renaming the mission data file and closing the problem recorder.
 
-        :param is_MDO: runs the driver if MDO, and the model if MDA.
+        :param is_mdo: runs the driver if MDO, and the model if MDA.
         """
         # Run the problem and write output. Catch warning for cleaner
         # interface
         with warnings.catch_warnings():
             warnings.simplefilter(action="ignore", category=FutureWarning)
-            if is_MDO:
+            if is_mdo:
                 self.problem.run_driver()
             else:
                 self.problem.run_model()
@@ -292,17 +290,18 @@ class ProcessLauncher:
         # Shut down the recorder so we can delete the .sql file later
         self.recorder.shutdown()
 
-    def set_mdo_inputs(
+    def set_mdo_inputs(  # noqa: PLR0913
         self,
         objective: int,
-        is_aspect_ratio_design_variable: bool,
         aspect_ratio_lower_bound: float,
         aspect_ratio_upper_bound: float,
-        is_wing_sweep_design_variable: bool,
         wing_sweep_lower_bound: float,
         wing_sweep_upper_bound: float,
-        is_wing_span_constrained: bool,
         wing_span_upper_bound: float,
+        *,
+        is_aspect_ratio_design_variable: bool,
+        is_wing_sweep_design_variable: bool,
+        is_wing_span_constrained: bool,
     ):
         """
         Sets the MDO inputs as variables to use it later in in the MDO
@@ -323,7 +322,7 @@ class ProcessLauncher:
         n_pax: int,
         v_app: float,
         cruise_mach: float,
-        range: float,
+        design_range: float,
         payload: float,
         max_payload: float,
         wing_aspect_ratio: float,
@@ -336,7 +335,7 @@ class ProcessLauncher:
         self.n_pax = n_pax
         self.v_app = v_app
         self.cruise_mach = cruise_mach
-        self.range = range
+        self.range = design_range
         self.payload = payload
         self.max_payload = max_payload
         self.wing_aspect_ratio = wing_aspect_ratio
@@ -351,9 +350,7 @@ class ProcessLauncher:
         :return: a list of int or float inputs from the source file
         """
         # Read the source data file
-        source_data_file_path = PathManager.to_full_source_file_name(
-            source_data_file_name
-        )
+        source_data_file_path = PathManager.to_full_source_file_name(source_data_file_name)
         self.reference_inputs = oad.DataFile(source_data_file_path)
 
         n_pax = self.reference_inputs["data:TLAR:NPAX"].value[0]
@@ -363,7 +360,7 @@ class ProcessLauncher:
             "kn",
         )
         cruise_mach = self.reference_inputs["data:TLAR:cruise_mach"].value[0]
-        range = om.convert_units(
+        design_range = om.convert_units(
             self.reference_inputs["data:TLAR:range"].value[0],
             self.reference_inputs["data:TLAR:range"].units,
             "NM",
@@ -378,34 +375,28 @@ class ProcessLauncher:
             self.reference_inputs["data:weight:aircraft:max_payload"].units,
             "kg",
         )
-        wing_aspect_ratio = self.reference_inputs[
-            "data:geometry:wing:aspect_ratio"
-        ].value[0]
-        bypass_ratio = self.reference_inputs[
-            "data:propulsion:rubber_engine:bypass_ratio"
-        ].value[0]
+        wing_aspect_ratio = self.reference_inputs["data:geometry:wing:aspect_ratio"].value[0]
+        bypass_ratio = self.reference_inputs["data:propulsion:rubber_engine:bypass_ratio"].value[0]
 
         return (
             n_pax,
             v_app,
             cruise_mach,
-            range,
+            design_range,
             payload,
             max_payload,
             wing_aspect_ratio,
             bypass_ratio,
         )
 
-    def get_MDA_success(self) -> bool:
+    def get_mda_success(self) -> bool:
         """
         Tells if the computed MDA succeeded.
 
         :return: True if it converged, False either
         """
-        iterations, relative_error = np.array(
-            _extract_residuals(
-                recorder_database_file_path=self.recorder_database_file_path
-            )
+        _, relative_error = np.array(
+            _extract_residuals(recorder_database_file_path=self.recorder_database_file_path)
         )
 
         target_residuals = self.problem.model.nonlinear_solver.options["rtol"]

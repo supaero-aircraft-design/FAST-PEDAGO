@@ -60,12 +60,8 @@ class PathManager:
         if not Path.exists(PathManager.working_directory_path):
             Path.mkdir(PathManager.working_directory_path)
 
-        PathManager.input_directory_path = (
-            PathManager.working_directory_path / INPUTS_DIRECTORY
-        )
-        PathManager.output_directory_path = (
-            PathManager.working_directory_path / OUTPUTS_DIRECTORY
-        )
+        PathManager.input_directory_path = PathManager.working_directory_path / INPUTS_DIRECTORY
+        PathManager.output_directory_path = PathManager.working_directory_path / OUTPUTS_DIRECTORY
 
     @staticmethod
     def _sets_reference_files():
@@ -76,9 +72,7 @@ class PathManager:
         PathManager.reference_input_file_name = build_name(INPUT_FILE_SUFFIX)
         PathManager.reference_output_file_name = build_name(OUTPUT_FILE_SUFFIX)
         PathManager.reference_source_file_name = build_name(SOURCE_FILE_SUFFIX)
-        PathManager.reference_flight_data_file_name = build_name(
-            FLIGHT_DATA_FILE_SUFFIX
-        )
+        PathManager.reference_flight_data_file_name = build_name(FLIGHT_DATA_FILE_SUFFIX)
         PathManager.reference_sql_file_name = build_name(RECORDER_FILE_SUFFIX)
 
     @staticmethod
@@ -135,15 +129,11 @@ class PathManager:
         :param configuration_file_name: the given configuration file.
         :return: the path to the copied configuration file.
         """
-        configuration_file_path = (
-            PathManager.data_directory_path / configuration_file_name
-        )
+        configuration_file_path = PathManager.data_directory_path / configuration_file_name
 
         if not Path.exists(configuration_file_path):
             shutil.copy(
-                Path(__file__).parent.parent
-                / "configuration"
-                / configuration_file_name,
+                Path(__file__).parent.parent / "configuration" / configuration_file_name,
                 configuration_file_path,
             )
 
@@ -185,9 +175,9 @@ class PathManager:
 
         for file in list_files:
             if file.name.endswith(".xml"):
-                associated_sizing_process_name = file.name.replace(
-                    SOURCE_FILE_SUFFIX, ""
-                ).replace(SEPARATOR, " ")
+                associated_sizing_process_name = file.name.replace(SOURCE_FILE_SUFFIX, "").replace(
+                    SEPARATOR, " "
+                )
                 available_reference_files.append(associated_sizing_process_name)
 
         return available_reference_files
@@ -211,9 +201,9 @@ class PathManager:
             if file.name.endswith(".sql"):
                 continue
 
-            associated_sizing_process_name = file.name.replace(
-                OUTPUT_FILE_SUFFIX, ""
-            ).replace(FLIGHT_DATA_FILE_SUFFIX, "")
+            associated_sizing_process_name = file.name.replace(OUTPUT_FILE_SUFFIX, "").replace(
+                FLIGHT_DATA_FILE_SUFFIX, ""
+            )
 
             if associated_sizing_process_name not in available_sizing_process:
                 available_sizing_process.append(associated_sizing_process_name)
@@ -241,9 +231,7 @@ class PathManager:
         input_file_list = Path.iterdir(PathManager.input_directory_path)
         for file in input_file_list:
             # We keep the reference input_file and avoid deleting subdirectory
-            if file.name != PathManager.reference_input_file_name and not Path.is_dir(
-                file
-            ):
+            if file.name != PathManager.reference_input_file_name and not Path.is_dir(file):
                 Path.unlink(file)
 
         # Remove all input files in the outputs directory, we can remove all
@@ -251,12 +239,11 @@ class PathManager:
         output_file_list = Path.iterdir(PathManager.output_directory_path)
         for file in output_file_list:
             # We keep the reference input_file and avoid deleting subdirectory
-            if (
-                file.name != PathManager.reference_output_file_name
-                and file.name != PathManager.reference_flight_data_file_name
-                and file.name != PathManager.reference_sql_file_name
-                and not Path.is_dir(file)
-            ):
+            if file.name not in {
+                PathManager.reference_output_file_name,
+                PathManager.reference_flight_data_file_name,
+                PathManager.reference_sql_file_name,
+            } and not Path.is_dir(file):
                 Path.unlink(file)
 
     @staticmethod

@@ -16,7 +16,7 @@ from fast_pedago.plots import (
     mass_breakdown_bar_plot,
     mass_breakdown_sun_plot,
     objectives_viewer_plot,
-    polar_with_L_R_ratio_plot,
+    polar_with_l_d_ratio_plot,
     residuals_viewer_plot,
     simplified_payload_range_plot,
     stability_diagram_plot,
@@ -97,7 +97,7 @@ GRAPH = {
             False,
         ],
         "Polar with max L/R": [
-            polar_with_L_R_ratio_plot,
+            polar_with_l_d_ratio_plot,
             False,
         ],
     },
@@ -189,7 +189,8 @@ class OutputGraphsPlotter:
         :param plot_name: the name of the new figure to plot.
             (standard name taken from GRAPH constant)
         """
-        if plot_category in list(GRAPH):
+
+        if plot_category in list(GRAPH):  # noqa: SIM102
             if plot_name in list(GRAPH[plot_category]):
                 self.plot_category = plot_category
                 self.plot_name = plot_name
@@ -203,7 +204,7 @@ class OutputGraphsPlotter:
 
         self.plot()
 
-    def plot(self, data: list[str] = None):
+    def plot(self, data: list[str] | None = None):
         """
         Plots the given data on the current figure.
 
@@ -225,10 +226,7 @@ class OutputGraphsPlotter:
         # data contains a list of outputs or a single output, depending on the
         # graph. If there is no data, the rest of the code will be enough to
         # clear the screen.
-        if isinstance(data, str):
-            sizing_process_to_display = [data]
-        else:
-            sizing_process_to_display = data
+        sizing_process_to_display = [data] if isinstance(data, str) else data
 
         with self.output:
             # Clear actual graphs :
@@ -251,9 +249,7 @@ class OutputGraphsPlotter:
 
                     # Mission plot works differently
                     if self.plot_name == "Mission":
-                        mission_viewer.add_mission(
-                            path_to_flight_data_file, sizing_process_to_add
-                        )
+                        mission_viewer.add_mission(path_to_flight_data_file, sizing_process_to_add)
 
                     else:
                         fig = self.plot_function(

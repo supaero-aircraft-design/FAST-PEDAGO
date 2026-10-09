@@ -5,9 +5,7 @@ import fastoad.api as oad
 import pytest
 
 RESULTS_FOLDER_PATH = pathlib.Path(__file__).parent / "results"
-SOURCE_DATA_FILES_FOLDER_PATH = (
-    pathlib.Path(__file__).parent.parent / "source_data_files"
-)
+SOURCE_DATA_FILES_FOLDER_PATH = pathlib.Path(__file__).parent.parent / "source_data_files"
 CONFIGURATION_FILE_FOLDER_PATH = pathlib.Path(__file__).parent.parent / "configuration"
 
 
@@ -114,9 +112,7 @@ def test_reference(cleanup):
     configurator = oad.FASTOADProblemConfigurator(
         CONFIGURATION_FILE_FOLDER_PATH / "oad_sizing_sensitivity_analysis.yml"
     )
-    ref_inputs = (
-        SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
-    )
+    ref_inputs = SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
 
     problem = configurator.get_problem()
 
@@ -146,9 +142,7 @@ def test_optimization():
     configurator = oad.FASTOADProblemConfigurator(
         CONFIGURATION_FILE_FOLDER_PATH / "oad_optim_sensitivity_analysis.yml"
     )
-    ref_inputs = (
-        SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
-    )
+    ref_inputs = SOURCE_DATA_FILES_FOLDER_PATH / "reference_aircraft_source_data_file.xml"
 
     problem = configurator.get_problem()
 
@@ -172,9 +166,7 @@ def test_optimization():
         lower=0.0,
         upper=50.0,
     )
-    problem.model.add_objective(
-        name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4
-    )
+    problem.model.add_objective(name="data:weight:aircraft:MTOW", units="kg", scaler=1e-4)
 
     problem.setup()
     problem.run_driver()

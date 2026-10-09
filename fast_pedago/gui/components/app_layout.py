@@ -219,9 +219,7 @@ class Footer(v.Footer):
                             v.Col(
                                 cols=4,
                                 children=[
-                                    v.Row(
-                                        justify="center", children=[self.start_button]
-                                    ),
+                                    v.Row(justify="center", children=[self.start_button]),
                                 ],
                             ),
                             v.Col(

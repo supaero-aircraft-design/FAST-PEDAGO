@@ -53,9 +53,7 @@ def _objectives_viewer(
                 *[
                     (
                         i + 1,
-                        list(case_reader.get_case(case_id).get_objectives().values())[
-                            0
-                        ].item(),
+                        list(case_reader.get_case(case_id).get_objectives().values())[0].item(),
                     )
                     for i, case_id in enumerate(solver_cases)
                 ]

@@ -1,5 +1,4 @@
 from .functions import (
-    _extract_objective,
     _extract_residuals,
     _image_from_path,
 )
@@ -49,7 +48,6 @@ __all__ = [
     "TUTORIAL_DIRECTORY",
     "WORK_DIRECTORY",
     "PathManager",
-    "_extract_objective",
     "_extract_residuals",
     "_image_from_path",
 ]

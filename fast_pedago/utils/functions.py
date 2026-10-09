@@ -2,6 +2,7 @@
 Utility functions to use punctually in the code.
 """
 
+import pathlib
 from os import PathLike
 from pathlib import Path
 
@@ -20,13 +21,14 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     :return: an Image widget
     """
 
-    file = open(file_path, "rb")
     # Remove the "." in the extension string
     file_extension = Path(file_path).suffix.replace(".", "")
 
-    image = file.read()
+    with pathlib.Path(file_path).open() as file:
+        image = file.read()
+
     # Encapsulate the image in a "a" tag to be able to provide a "click" event and links
-    image_widget = v.Html(
+    return v.Html(
         tag="a",
         children=[
             widgets.Image(
@@ -39,8 +41,6 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
             ),
         ],
     )
-
-    return image_widget
 
 
 def _extract_residuals(recorder_database_file_path: str | PathLike) -> list:
@@ -60,39 +60,7 @@ def _extract_residuals(recorder_database_file_path: str | PathLike) -> list:
 
     # For the display, first iteration will be 1
     iterations, relative_error = zip(
-        *[
-            (i + 1, case_reader.get_case(case_id).rel_err)
-            for i, case_id in enumerate(solver_cases)
-        ]
+        *[(i + 1, case_reader.get_case(case_id).rel_err) for i, case_id in enumerate(solver_cases)]
     )
 
     return iterations, relative_error
-
-
-def _extract_objective(recorder_database_file_path: str | PathLike) -> list:
-    """
-    From the file path to a recorder data base, extract the value of the
-    objective at each iteration of the driver.
-
-    :param recorder_database_file_path: absolute path to the recorder database
-    :return: an array containing the iterations and the associated values of
-        the objective.
-    """
-
-    case_reader = om.CaseReader(str(recorder_database_file_path))
-
-    # Will only work if the recorder was attached to the base solver
-    solver_cases = case_reader.list_cases("driver")
-
-    # For the display, first iteration will be 1
-    iterations, objective = zip(
-        *[
-            (
-                i + 1,
-                float(list(case_reader.get_case(case_id).get_objectives().values())[0]),
-            )
-            for i, case_id in enumerate(solver_cases)
-        ]
-    )
-
-    return iterations, objective

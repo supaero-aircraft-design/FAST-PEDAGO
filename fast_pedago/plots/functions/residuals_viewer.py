@@ -46,9 +46,7 @@ def _residuals_viewer(
     if hypothetical_sql_file_path.exists():
         case_reader = om.CaseReader(hypothetical_sql_file_path.as_posix())
         if "root.nonlinear_solver" in case_reader.list_sources(out_stream=None):
-            solver_cases = case_reader.list_cases(
-                "root.nonlinear_solver", out_stream=None
-            )
+            solver_cases = case_reader.list_cases("root.nonlinear_solver", out_stream=None)
             iterations, relative_error = zip(
                 *[
                     (i + 1, case_reader.get_case(case_id).rel_err)
@@ -69,9 +67,7 @@ def _residuals_viewer(
                 for solver in case_reader.solver_metadata.keys()
                 if "root" in solver and "Nonlinear" in solver
             ]
-            rtol = case_reader.solver_metadata[root_non_linear_solver[0]][
-                "solver_options"
-            ]["rtol"]
+            rtol = case_reader.solver_metadata[root_non_linear_solver[0]]["solver_options"]["rtol"]
             fig.add_hline(
                 rtol,
                 line_width=2,

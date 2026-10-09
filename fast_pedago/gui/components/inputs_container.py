@@ -46,9 +46,7 @@ class InputsContainer(v.List):
             "Launch optimization",
         ]
         self.process_name_field.label = "Optimization name"
-        self.process_name_field.placeholder = (
-            "Write a name for your optimization process"
-        )
+        self.process_name_field.placeholder = "Write a name for your optimization process"
 
     def to_MDA(self):
         """
@@ -254,9 +252,7 @@ class InputsContainer(v.List):
         self._sweep_w_design_var_input.checkbox.observe(
             self._ensure_one_design_var, names="v_model"
         )
-        self._ar_design_var_input.checkbox.observe(
-            self._ensure_one_design_var, names="v_model"
-        )
+        self._ar_design_var_input.checkbox.observe(self._ensure_one_design_var, names="v_model")
 
         self._mdo_input = [
             _InputsCategory(
@@ -532,14 +528,14 @@ class InputsContainer(v.List):
         """
         self.process_launcher.set_mdo_inputs(
             self._objective_selection.v_model,
-            not self._ar_design_var_input.checkbox.v_model,
             self._ar_design_var_input.slider.v_model[0],
             self._ar_design_var_input.slider.v_model[1],
-            not self._sweep_w_design_var_input.checkbox.v_model,
             self._sweep_w_design_var_input.slider.v_model[0],
             self._sweep_w_design_var_input.slider.v_model[1],
-            not self._wing_span_constraint_input.checkbox.v_model,
             self._wing_span_constraint_input.slider.v_model,
+            is_aspect_ratio_design_variable=not self._ar_design_var_input.checkbox.v_model,
+            is_wing_span_constrained=not self._sweep_w_design_var_input.checkbox.v_model,
+            is_wing_sweep_design_variable=not self._wing_span_constraint_input.checkbox.v_model,
         )
 
     def set_initial_value_mda(self, source_data_file_name: str):
@@ -552,9 +548,7 @@ class InputsContainer(v.List):
 
         :param source_data_file_name: the source file to read data from
         """
-        reference_inputs = self.process_launcher.get_reference_inputs(
-            source_data_file_name
-        )
+        reference_inputs = self.process_launcher.get_reference_inputs(source_data_file_name)
         self._n_pax_input.slider.v_model = reference_inputs[0]
         self._v_app_input.slider.v_model = reference_inputs[1]
         self._cruise_mach_input.slider.v_model = reference_inputs[2]

@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -138,16 +137,11 @@ def _extract_value_from_flight_data_file(
     """
 
     flight_data = pd.read_csv(flight_data_file_path, index_col=0)
-    cruise_flight_data = flight_data.loc[
-        flight_data["name"] == "sizing:main_route:cruise"
-    ]
+    cruise_flight_data = flight_data.loc[flight_data["name"] == "sizing:main_route:cruise"]
 
     mean_sfc = float(np.mean(cruise_flight_data["sfc [kg/N/s]"].to_numpy()))
     mean_l_over_d = float(
-        np.mean(
-            cruise_flight_data["CL [-]"].to_numpy()
-            / cruise_flight_data["CD [-]"].to_numpy()
-        )
+        np.mean(cruise_flight_data["CL [-]"].to_numpy() / cruise_flight_data["CD [-]"].to_numpy())
     )
     # Actually constant over the flight
     mean_tas = float(cruise_flight_data["true_airspeed [m/s]"].to_numpy()[0])

@@ -287,7 +287,7 @@ class AppInterface(v.App):
             tab.disabled = False
         if self.is_MDO:
             snackbar_to_open = self.process_figures.mdo_end_snackbar
-        elif self.process_launcher.get_MDA_success():
+        elif self.process_launcher.get_mda_success():
             snackbar_to_open = self.process_figures.mda_success_snackbar
         else:
             snackbar_to_open = self.process_figures.mda_failure_snackbar
@@ -309,7 +309,7 @@ class AppInterface(v.App):
             self.inputs.retrieve_mdo_inputs()
         else:
             self.inputs.retrieve_mda_inputs()
-        self.process_launcher.launch_processes(self.is_MDO)
+        self.process_launcher.launch_processes(is_mdo=self.is_MDO)
         self._to_process_results()
 
     def _set_source_data_file(self, change):
