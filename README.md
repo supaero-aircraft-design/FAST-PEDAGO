@@ -12,7 +12,7 @@ You can open the app on a [Binder-hosted Jupyter notebook](https://mybinder.org/
 Install
 -------
 
-**Prerequisite**: FAST-PEDAGO needs at least **Python 3.7.0**.
+**Prerequisite**: FAST-PEDAGO needs at least **Python 3.10.0**.
 
 It is recommended (but not required) to install FAST-PEDAGO in a virtual
 environment ([conda](https://docs.conda.io/en/latest/),
@@ -27,4 +27,9 @@ $ pip install fast-pedago
 Once installed the cde can be run by doing the following: 
 ``` {.bash}
 $ fast-pedago run
+```
+
+If you have trouble running the app with Voila, you can also access it and run it in Jupyter Lab by using the following:
+``` {.bash}
+$ fast-pedago copy_notebook -d "FOLDER_PATH_IN_WHICH_TO_COPY_NOTEBOOK"
 ```
