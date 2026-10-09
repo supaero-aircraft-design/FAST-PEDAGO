@@ -34,7 +34,7 @@ def _static_margin_plot(
     CG_range = variables["settings:weight:aircraft:CG:range"].value[0]
     static_margin = variables["data:handling_qualities:static_margin"].value[0]
 
-    xu, yu, xl, yl = _NACA_4_digits(2, 4, round(100 * mean_thickness))
+    xu, yu, xl, yl = _naca_4_digits(2, 4, round(100 * mean_thickness))
 
     x_CG_aft = CG_aft
     x_CG_fwd = x_CG_aft - CG_range
@@ -122,7 +122,7 @@ def _static_margin_plot(
     return fig
 
 
-def _NACA_4_digits(
+def _naca_4_digits(
     max_camber: int,
     max_camber_distance: int,
     max_thickness: int,

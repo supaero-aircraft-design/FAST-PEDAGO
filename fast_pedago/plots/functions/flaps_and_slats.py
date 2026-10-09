@@ -5,7 +5,7 @@ from fastoad.io import VariableIO
 from ..plot_constants import COLORS
 
 
-def _flaps_and_slats_plot(
+def _flaps_and_slats_plot(  # noqa: PLR0915
     aircraft_file_path: str,
     name=None,
     fig=None,

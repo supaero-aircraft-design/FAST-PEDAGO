@@ -7,7 +7,7 @@ from fastoad.io import VariableIO
 from ipywidgets import widgets
 
 
-def _wing_plot(
+def _wing_plot(  # noqa: PLR0915
     aircraft_file_path: str,
     name=None,
     fig=None,

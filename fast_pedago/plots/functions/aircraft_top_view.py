@@ -11,7 +11,7 @@ from ..plot_constants import (
 )
 
 
-def _aircraft_top_view_plot(
+def _aircraft_top_view_plot(  # noqa: PLR0915
     aircraft_file_path: str,
     name=None,
     fig=None,

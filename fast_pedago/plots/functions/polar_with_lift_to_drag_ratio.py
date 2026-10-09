@@ -6,6 +6,8 @@ from fastoad.io import VariableIO
 
 from ..plot_constants import COLORS
 
+MAXIMUM_AERODYNAMIC_COEFFICIENT = 2.0
+
 
 def _polar_with_l_d_ratio_plot(
     aircraft_file_path: str | PathLike,
@@ -36,8 +38,8 @@ def _polar_with_l_d_ratio_plot(
     L_D_max = variables["data:aerodynamics:aircraft:high_speed:L_D_max"].value[0]
 
     # TODO: remove filtering one models provide proper bounds
-    cd_short = cd[cd <= 2.0]
-    cl_short = cl[cd <= 2.0]
+    cd_short = cd[cd <= MAXIMUM_AERODYNAMIC_COEFFICIENT]
+    cl_short = cl[cd <= MAXIMUM_AERODYNAMIC_COEFFICIENT]
 
     L_D_max_index = next(
         i for i in range(len(cd_short)) if cd_short[i] != 0 and cl_short[i] / cd_short[i] == L_D_max

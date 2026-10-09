@@ -258,13 +258,13 @@ class AppInterface(v.App):
         # If the button toggle is on 1, switch to MDO
         if data == "MDO":
             self.is_MDO = True
-            self.inputs.to_MDO()
-            self.process_figures.to_MDO()
+            self.inputs.to_mdo()
+            self.process_figures.to_mdo()
 
         else:
             self.is_MDO = False
-            self.inputs.to_MDA()
-            self.process_figures.to_MDA()
+            self.inputs.to_mda()
+            self.process_figures.to_mda()
 
     def _to_process_computation(self):
         """

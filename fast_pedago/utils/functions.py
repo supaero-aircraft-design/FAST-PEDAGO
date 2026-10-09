@@ -24,7 +24,7 @@ def _image_from_path(file_path: str, max_height: str = "52px") -> v.Html:
     # Remove the "." in the extension string
     file_extension = Path(file_path).suffix.replace(".", "")
 
-    with pathlib.Path(file_path).open() as file:
+    with pathlib.Path(file_path).open("rb") as file:
         image = file.read()
 
     # Encapsulate the image in a "a" tag to be able to provide a "click" event and links

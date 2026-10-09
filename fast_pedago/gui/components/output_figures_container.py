@@ -102,7 +102,7 @@ class _OutputGraph(v.Col):
     of the same category.
     """
 
-    def __init__(self, title, is_full_screen: bool = False, **kwargs):
+    def __init__(self, title, *, is_full_screen: bool = False, **kwargs):
         """
         :param title: The title of the card. Corresponds to a graph category.
         :param is_full_screen: if True, the card will take all the screen

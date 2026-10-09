@@ -18,6 +18,8 @@ OPT_SWEEP_W_MAX = 45.0
 
 OPT_WING_SPAN_MAX = 60.0
 
+COMPRESSIBILITY_MACH_NUMBER = 0.78
+
 
 class InputsContainer(v.List):
     """
@@ -34,9 +36,9 @@ class InputsContainer(v.List):
         self.process_launcher = process_launcher
 
         self._build_layout()
-        self.to_MDA()
+        self.to_mda()
 
-    def to_MDO(self):
+    def to_mdo(self):
         """
         Changes layout to MDO inputs
         """
@@ -48,7 +50,7 @@ class InputsContainer(v.List):
         self.process_name_field.label = "Optimization name"
         self.process_name_field.placeholder = "Write a name for your optimization process"
 
-    def to_MDA(self):
+    def to_mda(self):
         """
         Changes layout to MDA inputs
         """
@@ -222,26 +224,26 @@ class InputsContainer(v.List):
 
         # Range sliders to input design variables and constraints
         self._ar_design_var_input = RangeSliderInput(
-            min=5,
-            max=30,
+            slider_min=5,
+            slider_max=30,
             step=1,
-            range=[OPT_AR_MIN, OPT_AR_MAX],
+            slider_range=[OPT_AR_MIN, OPT_AR_MAX],
             label="Min/Max wing AR",
             tooltip="Range of aspect ratio for the optimization [-]",
             with_checkbox=True,
         )
         self._sweep_w_design_var_input = RangeSliderInput(
-            min=5,
-            max=50,
+            slider_min=5,
+            slider_max=50,
             step=1,
-            range=[OPT_SWEEP_W_MIN, OPT_SWEEP_W_MAX],
+            slider_range=[OPT_SWEEP_W_MIN, OPT_SWEEP_W_MAX],
             label="Sweep Range",
             tooltip="Range of wing sweep angle for the optimization [-]",
             with_checkbox=True,
         )
         self._wing_span_constraint_input = SliderInput(
-            min=20.0,
-            max=100.0,
+            slider_min=20.0,
+            slider_max=100.0,
             step=1,
             value=OPT_WING_SPAN_MAX,
             label="Max wing span",
@@ -300,57 +302,57 @@ class InputsContainer(v.List):
         Generates the layout for the MDA inputs.
         """
         self._n_pax_input = SliderInput(
-            min=20,
-            max=450,
+            slider_min=20,
+            slider_max=450,
             step=1,
             label="NPAX",
             tooltip="Number of passengers",
         )
         self._v_app_input = SliderInput(
-            min=45,
-            max=170,
+            slider_min=45,
+            slider_max=170,
             step=0.1,
             label="Vapp",
             tooltip="Approach speed [kts]",
         )
         self._cruise_mach_input = SliderInput(
-            min=0.0,
-            max=1.0,
+            slider_min=0.0,
+            slider_max=1.0,
             step=0.01,
             label="Mcruise",
             tooltip="Cruise mach",
         )
         self._range_input = SliderInput(
-            min=0,
-            max=10000,
+            slider_min=0,
+            slider_max=10000,
             step=10,
             label="Range",
             tooltip="Aircraft range [NM]",
         )
         self._payload_input = SliderInput(
-            min=0,
-            max=100000,
+            slider_min=0,
+            slider_max=100000,
             step=10,
             label="Payload",
             tooltip="Aircraft payload [kg]",
         )
         self._max_payload_input = SliderInput(
-            min=0,
-            max=100000,
+            slider_min=0,
+            slider_max=100000,
             step=10,
             label="Max Payload",
             tooltip="Aircraft max payload [kg]",
         )
         self._wing_aspect_ratio_input = SliderInput(
-            min=4,
-            max=25,
+            slider_min=4,
+            slider_max=25,
             step=0.1,
             label="Wing AR",
             tooltip="Aspect Ratio of the wing",
         )
         self._bpr_input = SliderInput(
-            min=2,
-            max=15,
+            slider_min=2,
+            slider_max=15,
             step=0.1,
             label="BPR",
             tooltip="ByPass Ratio of the engine",
@@ -418,13 +420,17 @@ class InputsContainer(v.List):
         """
         widget = change["owner"]
         if change["new"]:
-            if widget == self._sweep_w_design_var_input.checkbox:
-                if self._ar_design_var_input.checkbox.v_model:
-                    self._ar_design_var_input.checkbox.v_model = False
+            if (
+                widget == self._sweep_w_design_var_input.checkbox
+                and self._ar_design_var_input.checkbox.v_model
+            ):
+                self._ar_design_var_input.checkbox.v_model = False
 
-            elif widget == self._ar_design_var_input.checkbox:
-                if self._sweep_w_design_var_input.checkbox.v_model:
-                    self._sweep_w_design_var_input.checkbox.v_model = False
+            elif (
+                widget == self._ar_design_var_input.checkbox
+                and self._sweep_w_design_var_input.checkbox.v_model
+            ):
+                self._sweep_w_design_var_input.checkbox.v_model = False
 
     def _mach_alert(self, change):
         """
@@ -433,7 +439,10 @@ class InputsContainer(v.List):
 
         To be called with "observe" method of a widget.
         """
-        if self._cruise_mach_input.slider.v_model > 0.78 and not self._snackbar.v_model:
+        if (
+            self._cruise_mach_input.slider.v_model > COMPRESSIBILITY_MACH_NUMBER
+            and not self._snackbar.v_model
+        ):
             self._snackbar.display()
 
     def _update_process_name(self, change):
@@ -513,7 +522,7 @@ class InputsContainer(v.List):
             n_pax=self._n_pax_input.slider.v_model,
             v_app=self._v_app_input.slider.v_model,
             cruise_mach=self._cruise_mach_input.slider.v_model,
-            range=self._range_input.slider.v_model,
+            design_range=self._range_input.slider.v_model,
             payload=self._payload_input.slider.v_model,
             max_payload=self._max_payload_input.slider.v_model,
             wing_aspect_ratio=self._wing_aspect_ratio_input.slider.v_model,
@@ -571,6 +580,7 @@ class _InputsCategory(v.ListGroup):
         self,
         name: str,
         inputs: v.VuetifyWidget = None,
+        *,
         is_open: bool = False,
         **kwargs,
     ):
@@ -599,4 +609,4 @@ class _InputsCategory(v.ListGroup):
                 ],
             }
         ]
-        self.children = [v.ListItem(children=[input]) for input in inputs]
+        self.children = [v.ListItem(children=[input_widget]) for input_widget in inputs]

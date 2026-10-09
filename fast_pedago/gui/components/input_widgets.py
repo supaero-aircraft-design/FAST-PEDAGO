@@ -192,12 +192,13 @@ class SliderInput(v.Tooltip):
 
     def __init__(
         self,
-        min: float = 0,
-        max: float = 100,
+        slider_min: float = 0,
+        slider_max: float = 100,
         step: float = 10,
         label: str | None = None,
         tooltip: str | None = None,
         value: float = 0,
+        *,
         with_checkbox: bool = False,
         **kwargs,
     ):
@@ -228,8 +229,8 @@ class SliderInput(v.Tooltip):
         # its v_model from outside.
         self.slider = v.Slider(
             v_model=value,
-            max=max,
-            min=min,
+            max=slider_max,
+            min=slider_min,
             step=step,
             density="compact",
             hide_details=True,
@@ -364,12 +365,13 @@ class RangeSliderInput(v.Tooltip):
 
     def __init__(
         self,
-        min: float = 0,
-        max: float = 100,
+        slider_min: float = 0,
+        slider_max: float = 100,
         step: float = 10,
         label: str | None = None,
         tooltip: str | None = None,
-        range: [float, float] = 0,
+        slider_range: [float, float] = 0,
+        *,
         with_checkbox: bool = False,
         **kwargs,
     ):
@@ -389,9 +391,9 @@ class RangeSliderInput(v.Tooltip):
         # slider is an instance variable to be able to get the value of
         # its v_model from outside.
         self.slider = v.RangeSlider(
-            v_model=range,
-            max=max,
-            min=min,
+            v_model=slider_range,
+            max=slider_max,
+            min=slider_min,
             step=step,
             density="compact",
             thumb_label="always",
@@ -482,7 +484,7 @@ class SelectOutput(v.Select):
     A dropdown to select what output aircraft to plot.
     """
 
-    def __init__(self, is_single_output=False, **kwargs):
+    def __init__(self, *, is_single_output=False, **kwargs):
         """
         :param is_single_output: True if the selection only authorize a
             single output file. Will change the way the dropdown works.

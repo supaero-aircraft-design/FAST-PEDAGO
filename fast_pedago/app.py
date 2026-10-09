@@ -48,7 +48,7 @@ class Main:
 
         # To not get an ugly error message when you ctrl+c
         try:
-            os.system(command + str(MAIN_NOTEBOOK_NAME))
+            os.system(command + str(MAIN_NOTEBOOK_NAME))  # noqa: S605 this is a literal string, it can be considered safe.
         except KeyboardInterrupt:
             sys.exit()
 

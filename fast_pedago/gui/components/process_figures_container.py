@@ -27,19 +27,19 @@ class ProcessFiguresContainer(v.Col):
 
         self._generate_n2_xdsm()
         self._build_layout()
-        self.to_MDA()
+        self.to_mda()
 
-    def to_MDO(self):
+    def to_mdo(self):
         """
         Changes the buttons texts and the figure displayed to MDO
         """
-        self._is_MDA = False
+        self._is_mda = False
 
-    def to_MDA(self):
+    def to_mda(self):
         """
         Changes the buttons texts and the figure displayed to MDA
         """
-        self._is_MDA = True
+        self._is_mda = True
 
     def set_loading(self, message):
         """
@@ -80,10 +80,8 @@ class ProcessFiguresContainer(v.Col):
         generating them, we check if they exist.
         """
 
-        # N2 and XDSM images are wrapped in a tooltip to indicate to click on
-        # them.
-        # This is because it is impossible to load directly the .html into a
-        # frame (bugs)
+        # N2 and XDSM images are wrapped in a tooltip to indicate to click on them.
+        # This is because it is impossible to load directly the .html into a frame
         n2_image_path = PathManager.path_to("data", N2_PNG)
         n2_file_path = PathManager.path_to("data", N2_HTML)
 
