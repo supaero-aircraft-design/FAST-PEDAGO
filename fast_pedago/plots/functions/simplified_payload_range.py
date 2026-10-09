@@ -101,7 +101,7 @@ def _simplified_payload_range_plot(
         mode="lines",
         name=name + " | · = Design",
         legendgroup=name,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
     scatter_nominal_mission = go.Scatter(
         x=[nominal_range],
@@ -109,7 +109,7 @@ def _simplified_payload_range_plot(
         mode="markers",
         legendgroup=name,
         showlegend=False,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
 
     fig.add_trace(scatter_external_bound)

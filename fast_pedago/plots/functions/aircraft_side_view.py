@@ -261,7 +261,7 @@ def _aircraft_side_view_plot(
     scatter_front = go.Scatter(
         x=x_fuselage_front,
         y=z_fuselage_front,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -270,7 +270,7 @@ def _aircraft_side_view_plot(
     scatter_middle = go.Scatter(
         x=x_fuselage_middle,
         y=z_fuselage_middle,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -280,7 +280,7 @@ def _aircraft_side_view_plot(
     scatter_fuselage_rear = go.Scatter(
         x=x_fuselage_rear,
         y=z_fuselage_rear,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -290,7 +290,7 @@ def _aircraft_side_view_plot(
     scatter_rear = go.Scatter(
         x=x_rear,
         y=z_rear,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -300,7 +300,7 @@ def _aircraft_side_view_plot(
     scatter_belly = go.Scatter(
         x=x_belly,
         y=z_belly,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -310,7 +310,7 @@ def _aircraft_side_view_plot(
     scatter_wing = go.Scatter(
         x=x_wing,
         y=z_wing,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -321,7 +321,7 @@ def _aircraft_side_view_plot(
         x=x_engine,
         y=z_engine,
         fill="tonexty",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -331,7 +331,7 @@ def _aircraft_side_view_plot(
     scatter_ht = go.Scatter(
         x=x_ht,
         y=z_ht,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         fill="tonexty",
         mode="lines",
         name=name,
@@ -342,7 +342,7 @@ def _aircraft_side_view_plot(
     scatter_vt = go.Scatter(
         x=x_vt,
         y=z_vt,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -352,7 +352,7 @@ def _aircraft_side_view_plot(
     scatter_nose_cone = go.Scatter(
         x=x_nose_cone,
         y=z_nose_cone,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         fill="tonexty",
         mode="lines",
         name=name,
@@ -363,7 +363,7 @@ def _aircraft_side_view_plot(
     scatter_cockpit = go.Scatter(
         x=x_cockpit,
         y=z_cockpit,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -382,7 +382,7 @@ def _aircraft_side_view_plot(
     fig.add_trace(scatter_ht)
     fig.add_trace(scatter_nose_cone)
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     if name is None:
         fig.update_layout(
@@ -398,5 +398,4 @@ def _aircraft_side_view_plot(
             xaxis_title="y",
             yaxis_title="z",
         )
-    fig = go.FigureWidget(fig)
-    return fig
+    return go.FigureWidget(fig)

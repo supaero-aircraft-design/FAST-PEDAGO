@@ -121,13 +121,13 @@ class _OutputGraph(v.Col):
             density="compact",
             hide_details=True,
             items=list(GRAPH[title]),
-            v_model=list(GRAPH[title])[0],
+            v_model=next(iter(GRAPH[title])),
         )
         select.observe(
             lambda change: self.plotter.change_graph(title, change["new"]),
             names="v_model",
         )
-        self.plotter.change_graph(title, list(GRAPH[title])[0])
+        self.plotter.change_graph(title, next(iter(GRAPH[title])))
 
         self.children = [
             v.Card(

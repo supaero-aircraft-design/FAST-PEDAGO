@@ -172,26 +172,15 @@ class ProcessFiguresContainer(v.Col):
         self._display.children = [self._n2_widget]
 
         self.children = [
-            v.Row(
-                class_="pb-4 pt-2",
-                justify="center",
-                children=[
-                    self._display_selection_buttons,
-                ],
-            ),
+            v.Row(class_="pb-4 pt-2", justify="center", children=[self._display_selection_buttons]),
             v.Row(
                 justify="space-around",
                 align="center",
                 no_gutters=True,
-                children=[
-                    v.Col(
-                        children=[
-                            self._display,
-                        ],
-                    ),
-                ],
+                children=[v.Col(children=[self._display])],
             ),
-        ] + self._snackbars
+            *self._snackbars,
+        ]
 
     def _change_display(self, change):
         """

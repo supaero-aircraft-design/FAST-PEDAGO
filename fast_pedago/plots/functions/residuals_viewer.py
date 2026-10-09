@@ -64,7 +64,7 @@ def _residuals_viewer(
             # those constraints
             root_non_linear_solver = [
                 solver
-                for solver in case_reader.solver_metadata.keys()
+                for solver in case_reader.solver_metadata
                 if "root" in solver and "Nonlinear" in solver
             ]
             rtol = case_reader.solver_metadata[root_non_linear_solver[0]]["solver_options"]["rtol"]

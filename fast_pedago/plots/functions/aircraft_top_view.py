@@ -393,7 +393,7 @@ def _aircraft_top_view_plot(
     scatter_aircraft = go.Scatter(
         x=y_aircraft,
         y=x_aircraft,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -401,7 +401,7 @@ def _aircraft_top_view_plot(
     scatter_left_engine = go.Scatter(
         x=y_engine,
         y=x_engine,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -410,7 +410,7 @@ def _aircraft_top_view_plot(
     scatter_right_engine = go.Scatter(
         x=-y_engine,
         y=x_engine,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -420,7 +420,7 @@ def _aircraft_top_view_plot(
         x=y_flaps_inboard,
         y=x_flaps_inboard,
         mode="lines",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -429,7 +429,7 @@ def _aircraft_top_view_plot(
         x=y_flaps_outboard,
         y=x_flaps_outboard,
         mode="lines",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -438,7 +438,7 @@ def _aircraft_top_view_plot(
         x=y_design_line,
         y=x_design_line,
         mode="lines",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -446,7 +446,7 @@ def _aircraft_top_view_plot(
     scatter_slats_left = go.Scatter(
         x=y_slats_left,
         y=x_slats_left,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -455,7 +455,7 @@ def _aircraft_top_view_plot(
     scatter_slats_right = go.Scatter(
         x=y_slats_right,
         y=x_slats_right,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -464,7 +464,7 @@ def _aircraft_top_view_plot(
     scatter_elevator_right = go.Scatter(
         x=y_elevator,
         y=x_elevator,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -473,7 +473,7 @@ def _aircraft_top_view_plot(
     scatter_elevator_left = go.Scatter(
         x=-y_elevator,
         y=x_elevator,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -491,7 +491,7 @@ def _aircraft_top_view_plot(
     fig.add_trace(scatter_elevator_right)
     fig.add_trace(scatter_elevator_left)
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     if name is None:
         fig.update_layout(
@@ -508,6 +508,4 @@ def _aircraft_top_view_plot(
             yaxis_title="x",
         )
 
-    fig = go.FigureWidget(fig)
-
-    return fig
+    return go.FigureWidget(fig)

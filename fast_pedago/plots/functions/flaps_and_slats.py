@@ -231,7 +231,7 @@ def _flaps_and_slats_plot(
     scatter_wing = go.Scatter(
         x=y,
         y=x,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -240,7 +240,7 @@ def _flaps_and_slats_plot(
         x=y_inboard,
         y=x_inboard,
         mode="lines",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -249,7 +249,7 @@ def _flaps_and_slats_plot(
         x=y_outboard,
         y=x_outboard,
         mode="lines",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -258,7 +258,7 @@ def _flaps_and_slats_plot(
         x=y_design_line,
         y=x_design_line,
         mode="lines",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -266,7 +266,7 @@ def _flaps_and_slats_plot(
     scatter_slats_left = go.Scatter(
         x=y_slats_left,
         y=x_slats_left,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -275,14 +275,14 @@ def _flaps_and_slats_plot(
     scatter_slats_right = go.Scatter(
         x=y_slats_right,
         y=x_slats_right,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         mode="lines",
         name=name,
         legendgroup=name,
         showlegend=False,
     )
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     fig.add_trace(scatter_wing)
     fig.add_trace(scatter_outboard)

@@ -285,7 +285,7 @@ def _wing_plot(
     scatter = go.Scatter(
         x=y,
         y=x,
-        line=dict(color="#636efa", width=3),
+        line={"color": "#636efa", "width": 3},
         mode="lines",
         name=name,
         showlegend=False,
@@ -294,7 +294,7 @@ def _wing_plot(
     scatter_fuselage = go.Scatter(
         x=y_fuselage,
         y=x_fuselage,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -303,7 +303,7 @@ def _wing_plot(
     scatter_l3 = go.Scatter(
         x=y_l3,
         y=x_l3,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -312,7 +312,7 @@ def _wing_plot(
     scatter_x1 = go.Scatter(
         x=y_x1,
         y=x_x1,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -321,7 +321,7 @@ def _wing_plot(
     scatter_fuselage_to_tip = go.Scatter(
         x=y_fuselage_to_tip,
         y=x_fuselage_to_tip,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -330,7 +330,7 @@ def _wing_plot(
     scatter_y3 = go.Scatter(
         x=y_y3,
         y=x_y3,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -339,7 +339,7 @@ def _wing_plot(
     scatter_break = go.Scatter(
         x=y_break,
         y=x_break,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -348,7 +348,7 @@ def _wing_plot(
     scatter_mac = go.Scatter(
         x=y_mac,
         y=x_mac,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -357,7 +357,7 @@ def _wing_plot(
     scatter_perp_up = go.Scatter(
         x=y_perp_up,
         y=x_perp_up,
-        line=dict(color="grey"),
+        line={"color": "grey"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -366,7 +366,7 @@ def _wing_plot(
     scatter_perp_down = go.Scatter(
         x=y_perp_down,
         y=x_perp_down,
-        line=dict(color="grey"),
+        line={"color": "grey"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -375,7 +375,7 @@ def _wing_plot(
     scatter_l2 = go.Scatter(
         x=y_l2,
         y=x_l2,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -384,7 +384,7 @@ def _wing_plot(
     scatter_x2 = go.Scatter(
         x=y_x2,
         y=x_x2,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -393,7 +393,7 @@ def _wing_plot(
     scatter_y2 = go.Scatter(
         x=y_y2,
         y=x_y2,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -402,7 +402,7 @@ def _wing_plot(
     scatter_y0 = go.Scatter(
         x=y_y0,
         y=x_y0,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -411,7 +411,7 @@ def _wing_plot(
     scatter_down_mac = go.Scatter(
         x=y_down_mac,
         y=x_down_mac,
-        line=dict(color="gray"),
+        line={"color": "gray"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -420,7 +420,7 @@ def _wing_plot(
     scatter_x0 = go.Scatter(
         x=y_x0,
         y=x_x0,
-        line=dict(color="black", dash="dot"),
+        line={"color": "black", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -429,7 +429,7 @@ def _wing_plot(
     scatter_l0 = go.Scatter(
         x=y_l0,
         y=x_l0,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -438,7 +438,7 @@ def _wing_plot(
     scatter_continuity1 = go.Scatter(
         x=y_continuity1,
         y=x_continuity1,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -447,7 +447,7 @@ def _wing_plot(
     scatter_continuity2 = go.Scatter(
         x=y_continuity2,
         y=x_continuity2,
-        line=dict(color="gray", dash="dot"),
+        line={"color": "gray", "dash": "dot"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -456,7 +456,7 @@ def _wing_plot(
     scatter_l1 = go.Scatter(
         x=y_l1,
         y=x_l1,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,
@@ -465,7 +465,7 @@ def _wing_plot(
     scatter_y1 = go.Scatter(
         x=y_y1,
         y=x_y1,
-        line=dict(color="black"),
+        line={"color": "black"},
         mode="lines",
         name=name,
         showlegend=False,

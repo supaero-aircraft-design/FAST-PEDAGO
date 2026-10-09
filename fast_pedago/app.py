@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from argparse import (
     ArgumentDefaultsHelpFormatter,
     ArgumentParser,
@@ -49,7 +50,7 @@ class Main:
         try:
             os.system(command + str(MAIN_NOTEBOOK_NAME))
         except KeyboardInterrupt:
-            exit()
+            sys.exit()
 
     # ENTRY POINT ============================================================
     def run(self):

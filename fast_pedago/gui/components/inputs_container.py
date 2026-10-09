@@ -40,7 +40,7 @@ class InputsContainer(v.List):
         """
         Changes layout to MDO inputs
         """
-        self.children = [self.inputs_header] + self._mdo_input
+        self.children = [self.inputs_header, *self._mdo_input]
         self.launch_button.children = [
             v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch optimization",
@@ -52,7 +52,7 @@ class InputsContainer(v.List):
         """
         Changes layout to MDA inputs
         """
-        self.children = [self.inputs_header] + self._mda_input
+        self.children = [self.inputs_header, *self._mda_input]
         self.launch_button.children = [
             v.Icon(class_="px-3", children=["mdi-airplane-cog"]),
             "Launch sizing",
@@ -433,9 +433,8 @@ class InputsContainer(v.List):
 
         To be called with "observe" method of a widget.
         """
-        if self._cruise_mach_input.slider.v_model > 0.78:
-            if not self._snackbar.v_model:
-                self._snackbar.display()
+        if self._cruise_mach_input.slider.v_model > 0.78 and not self._snackbar.v_model:
+            self._snackbar.display()
 
     def _update_process_name(self, change):
         """

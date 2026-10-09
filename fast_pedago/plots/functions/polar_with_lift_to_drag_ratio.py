@@ -39,9 +39,9 @@ def _polar_with_l_d_ratio_plot(
     cd_short = cd[cd <= 2.0]
     cl_short = cl[cd <= 2.0]
 
-    L_D_max_index = [
+    L_D_max_index = next(
         i for i in range(len(cd_short)) if cd_short[i] != 0 and cl_short[i] / cd_short[i] == L_D_max
-    ][0]
+    )
 
     if fig is None:
         fig = go.Figure()
@@ -55,7 +55,7 @@ def _polar_with_l_d_ratio_plot(
         mode="lines",
         name=name + " | L/R max = " + str(round(L_D_max, 3)),
         legendgroup=name,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
 
     scatter_L_R_max = go.Scatter(
@@ -65,7 +65,7 @@ def _polar_with_l_d_ratio_plot(
         name="L/R max",
         legendgroup=name,
         showlegend=False,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
     )
 
     scatter_tangent = go.Scatter(
@@ -75,7 +75,7 @@ def _polar_with_l_d_ratio_plot(
         name=name,
         legendgroup=name,
         showlegend=False,
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
     )
 
     fig.add_trace(scatter)

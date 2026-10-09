@@ -53,7 +53,7 @@ def _objectives_viewer(
                 *[
                     (
                         i + 1,
-                        list(case_reader.get_case(case_id).get_objectives().values())[0].item(),
+                        next(iter(case_reader.get_case(case_id).get_objectives().values())).item(),
                     )
                     for i, case_id in enumerate(solver_cases)
                 ]
@@ -69,7 +69,7 @@ def _objectives_viewer(
                 name="Objective",
                 legendgrouptitle_text=name,
                 legendgroup=name,
-                line=dict(color=scatter_color),
+                line={"color": scatter_color},
             )
             fig.add_trace(objective_scatter)
 

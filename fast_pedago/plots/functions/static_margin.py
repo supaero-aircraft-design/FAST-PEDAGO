@@ -51,7 +51,7 @@ def _static_margin_plot(
     scatter_upper_airfoil_surface = go.Scatter(
         x=xu,
         y=yu,
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         mode="lines",
         name=name,
         legendgroup=name,
@@ -60,7 +60,7 @@ def _static_margin_plot(
         x=xl,
         y=yl,
         mode="lines",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -69,7 +69,7 @@ def _static_margin_plot(
         x=[x_CG_fwd, x_CG_aft],
         y=[0, 0],
         mode="lines +markers",
-        line=dict(color=COLORS[color_index], width=1),
+        line={"color": COLORS[color_index], "width": 1},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -79,7 +79,7 @@ def _static_margin_plot(
         y=[0],
         mode="markers",
         marker_symbol="x",
-        line=dict(color=COLORS[color_index]),
+        line={"color": COLORS[color_index]},
         name=name,
         legendgroup=name,
         showlegend=False,
@@ -102,7 +102,7 @@ def _static_margin_plot(
         text=name + "-Aerodynamic center",
     )
 
-    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+    fig.layout = go.Layout(yaxis={"scaleanchor": "x", "scaleratio": 1})
 
     fig.add_trace(scatter_upper_airfoil_surface)
     fig.add_trace(scatter_lower_airfoil_surface)

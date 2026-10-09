@@ -200,14 +200,14 @@ def _stability_diagram_plot(
     scatter_ac = go.Scatter(
         x=x_cg_rear_percentage * 100,
         y=surface_ratio * 100,
-        line=dict(color="darkslateblue"),
+        line={"color": "darkslateblue"},
         mode="lines",
         name="Neutral point",
     )
     scatter_ac2 = go.Scatter(
         x=x_cg_rear_percentage_minus_5perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="blue"),
+        line={"color": "blue"},
         mode="lines",
         name="Neutral point - 5%",
     )
@@ -215,14 +215,14 @@ def _stability_diagram_plot(
     scatter_ac3 = go.Scatter(
         x=x_cg_rear_percentage_minus_10perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="lightblue"),
+        line={"color": "lightblue"},
         mode="lines",
         name="Neutral point - 10%",
     )
     scatter_ac4 = go.Scatter(
         x=x_cg_rear_percentage_minus_15perc * 100,
         y=surface_ratio * 100,
-        line=dict(color="gray"),
+        line={"color": "gray"},
         mode="lines",
         name="Neutral point - 15%",
     )
@@ -230,7 +230,7 @@ def _stability_diagram_plot(
     scatter_trim_mtow = go.Scatter(
         x=x_cg_front_percentage * 100,
         y=surface_ratio * 100,
-        line=dict(color="yellow"),
+        line={"color": "yellow"},
         mode="lines",
         name="Forward limit (trim on glide)",
     )
@@ -238,7 +238,7 @@ def _stability_diagram_plot(
     scatter_actual = go.Scatter(
         x=delta_x_cg,
         y=[actual_surface_ratio * 100, actual_surface_ratio * 100],
-        line=dict(color="orange"),
+        line={"color": "orange"},
         mode="lines",
         name="CG stability range",
     )
