@@ -18,6 +18,7 @@ authors = [
 ]
 maintainers = [
     {name = "Florent LUTZ", email = "Florent.LUTZ2@isae-supaero.fr"},
+    {name = "Thomas PLANES", email = "Thomas.PLANES@isae-supaero.fr"},
 ]
 requires-python = ">=3.10,<3.15"
 
